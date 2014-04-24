@@ -30,12 +30,20 @@ class Table(dict):
 
         return Table(table)
 
-    def from_csv(self):
-        # TODO: use csvkit and convert columns into our types
-        pass
+    def to_rows(self, column_names=[], include_header=True):
+        """
+        Convert this table back to a sequence of rows.
+        """
+        if not column_names:
+            column_names = self.keys()
 
-    def to_csv(self):
-        pass
+        columns = [self[name] for name in column_names]
+        rows = transpose(columns)
+
+        if include_header:
+            rows.insert(0, column_names)
+
+        return rows
 
     def count_rows(self):
         lengths = [len(c) for c in self]
@@ -59,5 +67,3 @@ class Table(dict):
 
         return row_data
 
-    def to_rows(self, serialize_dates=False):
-        pass
