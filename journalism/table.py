@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 
+from collections import Mapping
+
 def transpose(table):
     """
     Transpose a list of lists.
     """
     return [list(t) for t in zip(*table)]
 
-class Table(dict):
+class Table(Mapping):
     """
-    A group of columns with names. Order doesn't matter.
+    A group of columns with names.
 
     TODO: dedup column names
     """
-    @staticmethod
-    def from_rows(rows, column_types=[], column_names=[], validate=False):
+    def __init__(self, rows, column_types=[], column_names=[], validate=False):
         """
         Create a table from rows of data.
 
@@ -22,51 +23,34 @@ class Table(dict):
         if not column_names:
             column_names = [unicode(d) for d in rows.pop(0)]
 
-        pairs = []
-        columns = transpose(rows)
+        self.column_names = column_names
+        self.data = rows
+        self.columns = []
 
-        for name, data, column_type in zip(column_names, columns, column_types):
-            pairs.append([name, column_type(data, validate=validate)])
+        for name, column_type in zip(column_names, column_types):
+            self.columns.append(column_type(self, name, validate=validate))
 
-        return Table(pairs)
+    def __getitem__(self, key):
+        i = self.column_names.index(key)
 
-    def to_rows(self, column_names=[], include_header=True):
+        return self.columns[i]
+
+    def __iter__(self):
+        return iter(self.columns)
+
+    def __len__(self):
+        return len(self.columns)
+
+    def _get_column_data(self, name):
         """
-        Convert this table back to a sequence of rows.
+        Method for Column instances to access their data.
         """
-        if not column_names:
-            column_names = self.keys()
+        i = self.column_names.index(name)
 
-        columns = [self[name] for name in column_names]
-        rows = transpose(columns)
+        return [r[i] for r in self.data]
 
-        if include_header:
-            rows.insert(0, column_names)
+    def aggregate(self, grouping_column, operations={}):
+        pass
 
-        return rows
-
-    def count_rows(self):
-        """
-        Get the longest column in this Table.
-        """
-        lengths = [len(c) for c in self]
-
-        if lengths:
-            return max(lengths)
-
-        return 0
-
-    def get_row(self, i):
-        """
-        Fetch a row of data from this table.
-        """
-        if i < 0:
-            raise IndexError('Negative row numbers are not valid.')
-
-        if i >= self.count_rows():
-            raise IndexError('Row number exceeds the number of rows in the table.')
-
-        row_data = [c[i] for c in self]
-
-        return row_data
-
+    def filter(self, column, values=[]):
+        pass

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from collections import Sequence
 import math
 
 from journalism.exceptions import ColumnValidationError, NullComputationError
@@ -17,51 +18,56 @@ def no_null_computations(func):
 
     return check
 
-class Column(list):
+class Column(Sequence):
     """
-    A list of data.
+    A proxy to a column with a Table.
     """
-    def __init__(self, data, validate=False):
-        if validate:
-            self.validate(data)
+    def __init__(self, table, name, validate=False):
+        self.table = table
+        self.name = name
 
-        super(Column, self).__init__(data)
+        print validate
+
+        if validate:
+            self.validate()
+
+    def _get_data(self):
+        """
+        Get column data from the parent Table.
+        """
+        return self.table._get_column_data(self.name) 
 
     def __getitem__(self, key):
         """
         Return null for keys beyond the range of the column. This allows for columns to be of uneven length and still be merged into rows cleanly.
         """
-        if key >= len(self):
-            return None
+        return self._get_data()[key]
 
-        return list.__getitem__(self, key)
+    def __len__(self):
+        return len(self._get_data())
 
-    @staticmethod
-    def validate(data):
+    def validate(self, data):
         """
         Validate that data is appropriate for this column type.
 
         Defaults to no-op.
         """
-        return
+        raise NotImplementedError()
 
     def has_nulls(self):
         """
         Check if this column contains nulls.
         """
-        return None in self 
+        return None in self._get_data() 
 
-    def filter_nulls(self):
-        """
-        Return a copy of this column without nulls.
-        """
-        return type(self)([d for d in self if d is not None])
+    def _filter_nulls(self):
+        return [d for d in self._get_data() if d is not None]
 
     def unique(self):
         """
         Return a copy of this column with only unique values.
         """
-        return type(self)((set(self)))
+        return set(self._get_data())
 
     def freq(self):
         """
@@ -74,9 +80,8 @@ class TextColumn(Column):
     """
     A column containing text data.
     """
-    @staticmethod
-    def validate(data):
-        for d in data:
+    def validate(self):
+        for d in self._get_data():
             if not isinstance(d, basestring) and d is not None:
                 raise ColumnValidationError()
 
@@ -89,13 +94,13 @@ class NumberColumn(Column):
     A column containing numeric data.
     """
     def sum(self):
-        return sum(self.filter_nulls())
+        return sum(self._filter_nulls())
 
     def min(self):
-        return min(self.filter_nulls())
+        return min(self._filter_nulls())
 
     def max(self):
-        return max(self.filter_nulls())
+        return max(self._filter_nulls())
 
     @no_null_computations
     def mean(self):
@@ -125,9 +130,9 @@ class IntColumn(NumberColumn):
     """
     A column containing integer data.
     """
-    @staticmethod
-    def validate(data):
-        for d in data:
+    print 'validate'
+    def validate(self):
+        for d in self._get_data():
             if not isinstance(d, int) and d is not None:
                 raise ColumnValidationError()
 
@@ -135,9 +140,8 @@ class FloatColumn(NumberColumn):
     """
     A column containing float data.
     """
-    @staticmethod
-    def validate(data):
-        for d in data:
+    def validate(self):
+        for d in self._get_data():
             if not isinstance(d, float) and d is not None:
                 raise ColumnValidationError()
 
