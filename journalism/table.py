@@ -32,6 +32,7 @@ def no_null_computations(func):
     return check
 
 class Column(list):
+
     def __init__(self, data, validate=False):
         if validate:
             self.validate(data)
@@ -66,20 +67,25 @@ class Column(list):
         """
         Return a copy of this column without nulls.
         """
-        return [d for d in self if d is not None]
+        return type(self)([d for d in self if d is not None])
+
+    def unique(self):
+        """
+        Return a copy of this column with only unique values.
+        """
+        return type(self)((set(self)))
+
+    def freq(self):
+        # TODO: return dict or Table?
+        pass
 
 class TextColumn(Column):
     """
     A column containing text data.
     """
     def max_length():
+        # TODO
         pass
-
-class SetColumn(Column):
-    """
-    A column containing "grouping" labels.
-    """
-    pass
 
 class NumberColumn(Column):
     """
@@ -117,13 +123,6 @@ class NumberColumn(Column):
     def stdev(self):
         return math.sqrt(sum(math.pow(v - self.mean(), 2) for v in self) / len(self))
 
-    def unique(self):
-        return list(set(self))
-
-    def freq(self):
-        # TODO: return dict or Table?
-        pass
-
 class IntColumn(NumberColumn):
     """
     A column containing integer data.
@@ -145,7 +144,7 @@ class Table(dict):
     A group of columns with names. Order doesn't matter.
     """
     def __init__(self, columns=[]):
-        # TODO: what if they pass somethign that isn't a column?
+        # TODO: what if they pass something that isn't a column?
         pass
 
     def from_csv(self):
