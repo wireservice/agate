@@ -51,4 +51,5 @@ class TestTable(unittest.TestCase):
         self.assertEqual(len(rows), 4)
         self.assertEqual(rows[0], ['one', 'three'])
         self.assertEqual(rows[1], [1, 'a'])
-        self.assertEqual(rows[2], [None, 'c'])
+        self.assertEqual(rows[2], [2, 'b'])
+        self.assertEqual(rows[3], [None, 'c'])

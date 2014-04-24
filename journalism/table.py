@@ -4,7 +4,7 @@ def transpose(table):
     """
     Transpose a list of lists.
     """
-    return zip(*table)
+    return [list(t) for t in zip(*table)]
 
 class Table(dict):
     """
@@ -22,13 +22,13 @@ class Table(dict):
         if not column_names:
             column_names = [unicode(d) for d in rows.pop(0)]
 
-        table = {}
+        pairs = []
         columns = transpose(rows)
 
         for name, data, column_type in zip(column_names, columns, column_types):
-            table[name] = column_type(data, validate=validate)
+            pairs.append([name, column_type(data, validate=validate)])
 
-        return Table(table)
+        return Table(pairs)
 
     def to_rows(self, column_names=[], include_header=True):
         """
@@ -46,6 +46,9 @@ class Table(dict):
         return rows
 
     def count_rows(self):
+        """
+        Get the longest column in this Table.
+        """
         lengths = [len(c) for c in self]
 
         if lengths:

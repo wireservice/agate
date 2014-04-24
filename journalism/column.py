@@ -74,6 +74,12 @@ class TextColumn(Column):
     """
     A column containing text data.
     """
+    @staticmethod
+    def validate(data):
+        for d in data:
+            if not isinstance(d, basestring) and d is not None:
+                raise ColumnValidationError()
+
     def max_length():
         # TODO
         pass
@@ -106,6 +112,7 @@ class NumberColumn(Column):
             b = self[length / 2]
         return (float(a + b)) / 2  
 
+    @no_null_computations
     def mode(self):
         # TODO
         pass
@@ -128,5 +135,9 @@ class FloatColumn(NumberColumn):
     """
     A column containing float data.
     """
-    pass
+    @staticmethod
+    def validate(data):
+        for d in data:
+            if not isinstance(d, float) and d is not None:
+                raise ColumnValidationError()
 
