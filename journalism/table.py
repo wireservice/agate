@@ -52,5 +52,9 @@ class Table(Mapping):
     def aggregate(self, grouping_column, operations={}):
         pass
 
-    def filter(self, column, values=[]):
-        pass
+    def filter(self, column_name, include=[], exclude=[]):
+        i = self.column_names[column_name]
+
+        rows = [row for row in self.data if row[i] in exclude and row[i] not in exclude] 
+
+        return Table(rows, [type(c) for c in self.columns], self.column_names)

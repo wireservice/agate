@@ -26,8 +26,6 @@ class Column(Sequence):
         self.table = table
         self.name = name
 
-        print validate
-
         if validate:
             self.validate()
 
@@ -130,7 +128,6 @@ class IntColumn(NumberColumn):
     """
     A column containing integer data.
     """
-    print 'validate'
     def validate(self):
         for d in self._get_data():
             if not isinstance(d, int) and d is not None:
