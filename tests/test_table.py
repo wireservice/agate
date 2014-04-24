@@ -12,7 +12,7 @@ class TestTable(unittest.TestCase):
             [None, 4, 'c']
         ]
         self.column_names = ['one', 'two', 'three']
-        self.column_types = [int, int, unicode]
+        self.column_types = [journalism.IntColumn, journalism.IntColumn, journalism.TextColumn]
 
     def test_create_table(self):
         table = journalism.Table.from_rows(self.rows, self.column_types, self.column_names)

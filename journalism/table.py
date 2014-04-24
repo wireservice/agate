@@ -1,14 +1,5 @@
 #!/usr/bin/env python
 
-from journalism.column import TextColumn, IntColumn, FloatColumn
-
-COLUMN_TYPES = {
-    str: TextColumn,
-    unicode: TextColumn,
-    int: IntColumn,
-    float: FloatColumn
-}
-
 def transpose(table):
     """
     Transpose a list of lists.
@@ -22,18 +13,11 @@ class Table(dict):
     TODO: dedup column names
     """
     @staticmethod
-    def get_column_type_for_data_type(data_type):
-        """
-        Get the Column type for a given native Python type.
-
-        TODO: UnsupportedTypeError
-        """
-        return COLUMN_TYPES[data_type] 
-
-    @staticmethod
     def from_rows(rows, column_types=[], column_names=[], validate=False):
         """
         Create a table from rows of data.
+
+        TODO: validate column_types are all subclasses of Column.
         """
         if not column_names:
             column_names = [unicode(d) for d in rows.pop(0)]
@@ -41,8 +25,7 @@ class Table(dict):
         table = {}
         columns = transpose(rows)
 
-        for name, data, data_type in zip(column_names, columns, column_types):
-            column_type = Table.get_column_type_for_data_type(data_type)
+        for name, data, column_type in zip(column_names, columns, column_types):
             table[name] = column_type(data, validate=validate)
 
         return Table(table)
