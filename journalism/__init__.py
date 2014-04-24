@@ -1,3 +1,5 @@
 #!/usr/bin/env python
 
-from table import *
+from journalism.column import TextColumn, IntColumn, FloatColumn
+from journalism.exceptions import *
+from journalism.table import Table

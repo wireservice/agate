@@ -4,46 +4,42 @@ import unittest2 as unittest
 
 import journalism
 
-class TestIntColumn(unittest.TestCase):
+class TestTable(unittest.TestCase):
     def setUp(self):
-        self.test_data = [1, 2, 4, 2]
-        self.column = journalism.IntColumn(self.test_data) 
+        self.rows = [
+            [1, 2, 'a'],
+            [2, 3, 'b'],
+            [None, 4, 'c']
+        ]
+        self.column_names = ['one', 'two', 'three']
+        self.column_types = [int, int, unicode]
 
-    def test_validation(self):
-        journalism.IntColumn(self.test_data, validate=True)
+    def test_create_table(self):
+        table = journalism.Table.from_rows(self.rows, self.column_types, self.column_names)
 
-    def test_validation_fails(self):
-        data = ['a', 2, 4]
+        self.assertEqual(len(table), 3)
 
-        self.assertRaises(journalism.ColumnValidationError, journalism.IntColumn, [data], { 'validate': True })
+        self.assertEqual(type(table['one']), journalism.IntColumn)
+        self.assertEqual(type(table['two']), journalism.IntColumn)
+        self.assertEqual(type(table['three']), journalism.TextColumn)
 
-    def test_unique(self):
-        self.assertEqual(self.column.unique(), [1, 2, 4])
-        self.assertEqual(type(self.column), type(self.column.unique()))
+        self.assertEqual(table['one'], [1, 2, None])
+        self.assertEqual(table['two'], [2, 3, 4])
+        self.assertEqual(table['three'], ['a', 'b', 'c'])
 
-    def test_sum(self):
-        # TODO: override natural operator
-        #self.assertEqual(sum(self.column), 9)
-        
-        self.assertEqual(self.column.sum(), 9)
+    def test_create_table_header(self):
+        rows = [['one', 'two', 'three']]
+        rows.extend(self.rows)
 
-class TestIntColumnWithNulls(unittest.TestCase):
-    def setUp(self):
-        self.test_data = [1, 2, None, 4, None]
-        self.column = journalism.IntColumn(self.test_data)
+        table = journalism.Table.from_rows(rows, self.column_types)
 
-    def test_filter_nulls(self):
-        self.assertEqual(self.column.filter_nulls(), [1, 2, 4])
-        self.assertEqual(type(self.column), type(self.column.filter_nulls()))
+        self.assertEqual(len(table), 3)
 
-    def test_sum(self):
-        # TODO: override natural operator
-        #self.assertEqual(sum(self.column), 7)
-        
-        self.assertEqual(self.column.sum(), 7)
+        self.assertEqual(type(table['one']), journalism.IntColumn)
+        self.assertEqual(type(table['two']), journalism.IntColumn)
+        self.assertEqual(type(table['three']), journalism.TextColumn)
 
-    def test_mean(self):
-        self.assertRaises(journalism.NullComputationError, self.column.mean)
+        self.assertEqual(table['one'], [1, 2, None])
+        self.assertEqual(table['two'], [2, 3, 4])
+        self.assertEqual(table['three'], ['a', 'b', 'c'])
 
-    def test_median(self):
-        self.assertRaises(journalism.NullComputationError, self.column.mean)
