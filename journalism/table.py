@@ -2,12 +2,6 @@
 
 from collections import Mapping
 
-def transpose(table):
-    """
-    Transpose a list of lists.
-    """
-    return [list(t) for t in zip(*table)]
-
 class Table(Mapping):
     """
     A group of columns with names.
@@ -49,18 +43,28 @@ class Table(Mapping):
 
         return [r[i] for r in self.data]
 
+    def filter(self, column_name, include=[]):
+        """
+        Filter a to only those rows where the column is in the
+        include list.
+        """
+        i = self.column_names.index(column_name)
+
+        rows = [row for row in self.data if row[i] in include] 
+
+        return Table(rows, [type(c) for c in self.columns], self.column_names)
+
+    def reject(self, column_name, exclude=[]):
+        """
+        Filter a to only those rows where the column is not in the
+        exclude list.
+        """
+        i = self.column_names.index(column_name)
+
+        rows = [row for row in self.data if row[i] not in exclude] 
+
+        return Table(rows, [type(c) for c in self.columns], self.column_names)
+
     def aggregate(self, grouping_column, operations={}):
         pass
 
-    def filter(self, column_name, include=[], exclude=[]):
-        i = self.column_names.index(column_name)
-
-        print i
-        print self.data
-
-        if include:
-            rows = [row for row in self.data if row[i] in include and row[i] not in exclude] 
-        else:
-            rows = [row for row in self.data if row[i] not in exclude] 
-
-        return Table(rows, [type(c) for c in self.columns], self.column_names)

@@ -52,3 +52,11 @@ class TestTable(unittest.TestCase):
         self.assertEqual(len(new_table), 3)
         self.assertEqual(list(new_table['one']), [2, None])
 
+    def test_reject(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.reject('one', [2, None])
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table), 3)
+        self.assertEqual(list(new_table['one']), [1])
