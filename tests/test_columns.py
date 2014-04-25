@@ -70,6 +70,17 @@ class TestColumns(unittest.TestCase):
         # TODO
         pass
 
+class TestTextColumn(unittest.TestCase):
+    def test_validate(self):
+        column = journalism.TextColumn(None, 'one')
+        column._data = lambda: ['a', 'b', 'c'] 
+        column.validate()
+
+        column._data = lambda: ['a', 'b', 3]
+
+        with self.assertRaises(journalism.ColumnValidationError):
+            column.validate()
+
 class TestIntColumn(unittest.TestCase):
     def setUp(self):
         self.rows = [
@@ -84,8 +95,14 @@ class TestIntColumn(unittest.TestCase):
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
     def test_validate(self):
-        # TODO
-        pass
+        column = journalism.IntColumn(None, 'one')
+        column._data = lambda: [1, 2, 3] 
+        column.validate()
+
+        column._data = lambda: [1, 'a', 3]
+
+        with self.assertRaises(journalism.ColumnValidationError):
+            column.validate()
 
     def test_sum(self):
         self.assertEqual(self.table.columns['one'].sum(), 5)
@@ -127,8 +144,19 @@ class TestFloatColumn(unittest.TestCase):
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
     def test_validate(self):
-        # TODO
-        pass
+        column = journalism.FloatColumn(None, 'one')
+        column._data = lambda: [1.0, 2.1, 3.3] 
+        column.validate()
+
+        column._data = lambda: [1.0, 'a', 3.3]
+
+        with self.assertRaises(journalism.ColumnValidationError):
+            column.validate()
+
+        column._data = lambda: [1, 'a', 3.3]
+
+        with self.assertRaises(journalism.ColumnValidationError):
+            column.validate()
 
     def test_sum(self):
         self.assertEqual(self.table.columns['one'].sum(), 6.5)
