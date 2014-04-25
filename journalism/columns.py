@@ -133,7 +133,10 @@ class Column(Sequence):
 class TextColumn(Column):
     def validate(self):
         """
-        Verify all values in this column are either string or null.
+        Verify all values in this column are string/unicode or null.
+
+        Will raise :exc:`journalism.exceptions.ColumnValidationError`
+        if validation fails.
         """
         for d in self._data():
             if not isinstance(d, basestring) and d is not None:
@@ -170,6 +173,11 @@ class NumberColumn(Column):
 
     @no_null_computations
     def median(self):
+        """
+        Compute the median value of this column.
+
+        Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
+        """
         data = self._data_sorted()
         length = len(data)
 
@@ -183,30 +191,57 @@ class NumberColumn(Column):
 
     @no_null_computations
     def mode(self):
-        # TODO
+        """
+        TODO: Compute the mode of this column.
+
+        Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
+        """
         raise NotImplementedError
 
     @no_null_computations
     def stdev(self):
+        """
+        Compute the standard of deviation of this column.
+
+        Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
+        """
         data = self._data()
 
         return math.sqrt(sum(math.pow(v - self.mean(), 2) for v in data) / len(data))
 
 class IntColumn(NumberColumn):
     def validate(self):
+        """
+        Verify all values in this column are int or null.
+
+        Will raise :exc:`journalism.exceptions.ColumnValidationError`
+        if validation fails.
+        """
         for d in self._data():
             if not isinstance(d, int) and d is not None:
                 raise ColumnValidationError
 
     def sum(self):
+        """
+        Compute the sum of this column.
+        """
         return sum(self._data_without_nulls())
 
 class FloatColumn(NumberColumn):
     def validate(self):
+        """
+        Verify all values in this column are float or null.
+
+        Will raise :exc:`journalism.exceptions.ColumnValidationError`
+        if validation fails.
+        """
         for d in self._data():
             if not isinstance(d, float) and d is not None:
                 raise ColumnValidationError
 
     def sum(self):
+        """
+        Compute the sum of this column using :func:`math.fsum` for precision.
+        """
         return math.fsum(self._data_without_nulls())
 
