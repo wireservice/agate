@@ -19,29 +19,21 @@ class Table(Mapping):
 
         self.column_names = column_names
         self.data = rows
-        self.columns = []
-
-        for name, column_type in zip(column_names, column_types):
-            self.columns.append(column_type(self, name, validate=validate))
+        self.column_types = column_types
 
     def __getitem__(self, key):
-        i = self.column_names.index(key)
-
-        return self.columns[i]
+        return self.data[key]
 
     def __iter__(self):
-        return iter(self.columns)
+        return iter(self.data)
 
     def __len__(self):
-        return len(self.columns)
+        return len(self.data)
 
-    def _get_column_data(self, name):
-        """
-        Method for Column instances to access their data.
-        """
-        i = self.column_names.index(name)
-
-        return [r[i] for r in self.data]
+    def apply(self, column_name, operation):
+        i = self.column_names.index(column_name)
+        
+        return operation(self.column_types[i], [r[i] for r in self.data])
 
     def filter(self, column_name, include=[]):
         """
@@ -50,9 +42,9 @@ class Table(Mapping):
         """
         i = self.column_names.index(column_name)
 
-        rows = filter(lambda r: r[i] in include, self.data)
+        rows = [row for row in self.data if row[i] in include]
 
-        return Table(rows, [type(c) for c in self.columns], self.column_names)
+        return Table(rows, self.column_types, self.column_names)
 
     def reject(self, column_name, exclude=[]):
         """
@@ -61,11 +53,11 @@ class Table(Mapping):
         """
         i = self.column_names.index(column_name)
 
-        rows = filter(lambda r: r[i] not in exclude, self.data)
+        rows = [row for row in self.data if row[i] not in exclude]
 
-        return Table(rows, [type(c) for c in self.columns], self.column_names)
+        return Table(rows, self.column_types, self.column_names)
 
-    def aggregate(self, group_by, operations={}):
+    def aggregate(self, group_by, operations=[]):
         """
         Aggregate data by a specified group_by column.
 
@@ -85,15 +77,23 @@ class Table(Mapping):
 
         output = []
 
-        for name, group in groups:
+        column_types = [self.column_types[i]]
+        column_names = [group_by]
+
+        for op_column in [op[0] for op in operations]:
+            column_types.append(self.column_names.index(op_column))
+            column_names.append(op_column)
+
+        for name, group in groups.items():
             new_row = [name]
 
-            for op_column, op_name in operations.items():
+            for op_column, operation in operations:
                 j = self.column_names.index(op_column)
+                t = self.column_types[j]
 
-                new_row.append(op_name([row[j] for row in group]))
+                new_row.append(operation(t, [row[j] for row in group]))
 
             output.append(new_row)
         
-        return output
+        return Table(output, column_types, column_names) 
 

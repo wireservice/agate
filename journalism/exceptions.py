@@ -7,6 +7,13 @@ class NullComputationError(Exception):
     """
     pass
 
+class UnsupportedOperationError(Exception):
+    """
+    Exception raised when an operation is applied
+    to an invalid column type.
+    """
+    pass
+
 class ColumnValidationError(Exception):
     """
     Exception raised in a column value can not be
