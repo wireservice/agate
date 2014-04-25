@@ -26,6 +26,15 @@ class Table(object):
         self.columns = ColumnMapping(self)
         self.rows = RowSequence(self)
 
+    def _fork(self, new_data, column_types=[], column_names=[]):
+        if not column_types:
+            column_types = self._column_types
+
+        if not column_names:
+            column_names = self._column_names
+
+        return Table(new_data, column_types, column_names)
+
     def filter(self, column_name, include=[]):
         """
         Filter a to only those rows where the column is in the

@@ -49,6 +49,27 @@ class TestColumns(unittest.TestCase):
         with self.assertRaises(TypeError):
             self.table.columns['one'][0] = 100
 
+    def test_apply(self):
+        def f(x):
+            return x + 1 if x is not None else x
+
+        new_table = self.table.columns['one'].apply(f) 
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(self.table.columns['one'], [1, 2, None])
+        self.assertEqual(self.table.rows[0], [1, 2, 'a'])
+
+        self.assertEqual(new_table.columns['one'], [2, 3, None])
+        self.assertEqual(new_table.rows[0], [2, 2, 'a'])
+
+    def test_apply_change_type(self):
+        # TODO
+        pass
+
+    def test_apply_change_name(self):
+        # TODO
+        pass
+
 class TestIntColumn(unittest.TestCase):
     def setUp(self):
         self.rows = [
@@ -85,9 +106,11 @@ class TestIntColumn(unittest.TestCase):
         self.assertEqual(self.table.columns['two'].median(), 2.5)
 
     def test_mode(self):
+        # TODO
         pass
 
     def test_stdev(self):
+        # TODO
         pass
 
 class TestFloatColumn(unittest.TestCase):
@@ -111,3 +134,4 @@ class TestFloatColumn(unittest.TestCase):
         self.assertEqual(self.table.columns['one'].sum(), 6.5)
         self.assertEqual(self.table.columns['two'].sum(), 10.71)
 
+    # TODO: test remaining basic operations

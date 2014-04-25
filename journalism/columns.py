@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from collections import Iterator, Mapping, Sequence
+import copy
 import math
 
 from journalism.exceptions import ColumnValidationError, NullComputationError
@@ -89,13 +90,34 @@ class Column(Sequence):
         return len(self._data()) 
 
     def __eq__(self, other):
-        return list(self._data()) == other
+        return self._data() == other
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def validate(self):
         raise NotImplementedError
 
     def has_nulls(self):
         return None in self._data()
+
+    def apply(self, func, new_column_type=None, new_column_name=None):
+        i = self._table._column_names.index(self._k)
+        
+        data = copy.deepcopy(self._table._data)
+        column_types = copy.deepcopy(self._table._column_types)
+        column_names = copy.deepcopy(self._table._column_names)
+
+        for row in data:
+            row[i] = func(row[i])
+
+        if new_column_type:
+            column_types[i] = new_column_type
+
+        if new_column_name:
+            column_names[i] = new_column_name
+
+        return self._table._fork(data, column_types, column_names) 
 
 class TextColumn(Column):
     def validate(self):
