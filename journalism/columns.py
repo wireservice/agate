@@ -102,6 +102,12 @@ class Column(Sequence):
         return None in self._data()
 
     def apply(self, func, new_column_type=None, new_column_name=None):
+        """
+        Apply an arbitrary function to a column of data and
+        optionally change it's type and/or name.
+
+        Returns a new Table.
+        """
         i = self._table._column_names.index(self._k)
         
         data = copy.deepcopy(self._table._data)
