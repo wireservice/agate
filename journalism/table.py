@@ -26,6 +26,10 @@ class Table(object):
         self.columns = ColumnMapping(self)
         self.rows = RowSequence(self)
 
+        if validate:
+            for column in self.columns:
+                column.validate()
+
     def _fork(self, new_data, column_types=[], column_names=[]):
         """
         Create a new table using the metadata from this one.
