@@ -63,12 +63,26 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(new_table.rows[0], [2, 2, 'a'])
 
     def test_map_change_type(self):
-        # TODO
-        pass
+        def f(x):
+            return x + 1.1 if x is not None else x
+
+        new_table = self.table.columns['one'].map(f, journalism.FloatColumn) 
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(self.table._column_types, [journalism.IntColumn, journalism.IntColumn, journalism.TextColumn])
+        self.assertEqual(self.table.columns['one'], [1, 2, None])
+        self.assertEqual(self.table.rows[0], [1, 2, 'a'])
+
+        self.assertEqual(new_table._column_types, [journalism.FloatColumn, journalism.IntColumn, journalism.TextColumn])
+        self.assertEqual(new_table.columns['one'], [2.1, 3.1, None])
+        self.assertEqual(new_table.rows[0], [2.1, 2, 'a'])
 
     def test_map_change_name(self):
-        # TODO
-        pass
+        new_table = self.table.columns['one'].map(lambda d: d, new_column_name='test') 
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(self.table._column_names, ['one', 'two', 'three'])
+        self.assertEqual(new_table._column_names, ['test', 'two', 'three'])
 
 class TestTextColumn(unittest.TestCase):
     def test_validate(self):
