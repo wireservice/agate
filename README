@@ -1,6 +1,6 @@
-journalism is a Python library that takes the horror out of basic data analysis and manipulation. It is an alternative to numpy and pandas that optimizes for human performance, instead ofCPU performance.
+journalism is a Python library that takes the horror out of basic data analysis and manipulation. It is an alternative to numpy and pandas that optimizes for human performance, rather than CPU performance.
 
-It is inspired by underscore.js and all other libraries that no how to get the hell out of the way and let me do journalism.
+It is inspired by underscore.js and all the other libraries that know how to get the hell out of the way and let me do journalism.
 
 Important links:
 
