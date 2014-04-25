@@ -12,7 +12,15 @@ class UnsupportedOperationError(Exception):
     Exception raised when an operation is applied
     to an invalid column type.
     """
-    pass
+    def __init__(self, operation, column):
+        self.operation = operation
+        self.column = column
+
+    def __unicode__(self):
+        return '`%s` is not a supported operation for %s' % (self.operation, type(self.column))
+
+    def __str__(self):
+        return str(self.__unicode__())
 
 class ColumnValidationError(Exception):
     """

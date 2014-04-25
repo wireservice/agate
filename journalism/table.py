@@ -85,7 +85,7 @@ class Table(object):
                 try:
                     op = getattr(c, operation)
                 except AttributeError:
-                    raise UnsupportedOperationError
+                    raise UnsupportedOperationError(operation, c)
 
                 new_row.append(op())
 
