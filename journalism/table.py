@@ -27,6 +27,10 @@ class Table(object):
         self.rows = RowSequence(self)
 
     def _fork(self, new_data, column_types=[], column_names=[]):
+        """
+        Create a new table using the metadata from this one.
+        Used internally by functions like :meth:`journalism.columns.Column.apply`.
+        """
         if not column_types:
             column_types = self._column_types
 
