@@ -11,7 +11,11 @@ class ColumnIterator(Iterator):
         self._i = 0
 
     def next(self):
-        v = self._table._column_names[self._i]
+        try:
+            v = self._table._column_names[self._i]
+        except IndexError:
+            raise StopIteration
+
         self._i += 1
 
         return Column(self._table, v)
@@ -24,7 +28,8 @@ class ColumnMapping(Mapping):
         self._table = table
 
     def __getitem__(self, k):
-        self._table.column_names[k] 
+        if k not in self._table._column_names:
+            raise KeyError
 
         return Column(self._table, k)
 
@@ -44,7 +49,9 @@ class Column(Sequence):
 
     def _data(self):
         # TODO: memoize?
-        return [r[self._k] for r in self._table_data]
+        i = self._table._column_names.index(self._k)
+
+        return [r[i] for r in self._table._data]
 
     def __getitem__(self, j):
         return self._data()[j]
@@ -55,8 +62,8 @@ class Column(Sequence):
     def __eq__(self, other):
         return list(self._data()) == other
 
-class Column(object):
-    pass
+#class Column(object):
+#    pass
 
 class TextColumn(Column):
     pass
