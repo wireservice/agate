@@ -42,3 +42,13 @@ class TestTable(unittest.TestCase):
         self.assertEqual(list(table['one']), [1, 2, None])
         self.assertEqual(list(table['two']), [2, 3, 4])
         self.assertEqual(list(table['three']), ['a', 'b', 'c'])
+
+    def test_filter(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.filter('one', [2, None])
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table), 3)
+        self.assertEqual(list(new_table['one']), [2, None])
+

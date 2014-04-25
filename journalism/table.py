@@ -53,8 +53,14 @@ class Table(Mapping):
         pass
 
     def filter(self, column_name, include=[], exclude=[]):
-        i = self.column_names[column_name]
+        i = self.column_names.index(column_name)
 
-        rows = [row for row in self.data if row[i] in exclude and row[i] not in exclude] 
+        print i
+        print self.data
+
+        if include:
+            rows = [row for row in self.data if row[i] in include and row[i] not in exclude] 
+        else:
+            rows = [row for row in self.data if row[i] not in exclude] 
 
         return Table(rows, [type(c) for c in self.columns], self.column_names)
