@@ -11,8 +11,10 @@ class RowIterator(Iterator):
         self._i = 0
 
     def next(self):
-        # Ensure data exists
-        self._table._data[self._i]
+        try:
+            self._table._data[self._i]
+        except IndexError:
+            raise StopIteration
         
         i = self._i
         self._i += 1
