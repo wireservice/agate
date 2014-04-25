@@ -127,8 +127,8 @@ class TestIntColumn(unittest.TestCase):
         pass
 
     def test_sum(self):
-        self.assertEqual(self.table.columns['one'].sum(), 5)
-        self.assertEqual(self.table.columns['two'].sum(), 10)
+        self.assertEqual(self.table.columns['one'].sum(), 4)
+        self.assertEqual(self.table.columns['two'].sum(), 8)
 
     def test_min(self):
         self.assertEqual(self.table.columns['one'].min(), 1)
@@ -160,7 +160,7 @@ class TestFloatColumn(unittest.TestCase):
             [1.1, 2.19, 'a'],
             [2.7, 3.42, 'b'],
             [None, 4.1, 'c'],
-            [2.7, 1, 'c']
+            [2.7, 3.42, 'c']
         ]
         self.column_names = ['one', 'two', 'three']
         self.column_types = [journalism.FloatColumn, journalism.FloatColumn, journalism.TextColumn]
@@ -188,11 +188,11 @@ class TestFloatColumn(unittest.TestCase):
 
     def test_sum(self):
         self.assertEqual(self.table.columns['one'].sum(), 6.5)
-        self.assertEqual(self.table.columns['two'].sum(), 10.71)
+        self.assertEqual(self.table.columns['two'].sum(), 13.13)
 
     def test_min(self):
         self.assertEqual(self.table.columns['one'].min(), 1.1)
-        self.assertEqual(self.table.columns['two'].min(), 1)
+        self.assertEqual(self.table.columns['two'].min(), 2.19)
 
     def test_max(self):
         self.assertEqual(self.table.columns['one'].max(), 2.7)
@@ -202,11 +202,13 @@ class TestFloatColumn(unittest.TestCase):
         with self.assertRaises(journalism.exceptions.NullComputationError):
             self.table.columns['one'].median()
 
-        self.assertEqual(self.table.columns['two'].median(), 2.805)
+        self.assertEqual(self.table.columns['two'].median(), 3.42)
 
     def test_mode(self):
-        # TODO
-        pass
+        with self.assertRaises(journalism.exceptions.NullComputationError):
+            self.table.columns['one'].mode()
+
+        self.assertEqual(self.table.columns['two'].mode(), 3.42)
 
     def test_stdev(self):
         # TODO
