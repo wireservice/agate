@@ -30,9 +30,6 @@ class TestRows(unittest.TestCase):
     def test_row_length(self):
         self.assertEqual(len(self.table.rows[0]), 3)
 
-    def test_get_row_item(self):
-        self.assertEqual(self.table.rows[0][1], 2)
-
     def test_iterate_rows(self):
         it = iter(self.table.rows)
         
@@ -49,3 +46,8 @@ class TestRows(unittest.TestCase):
 
         with self.assertRaises(TypeError):
             self.table.rows[0][0] = 100
+
+    def test_get_cell(self):
+        self.assertEqual(self.table.rows[0]['one'], 1)
+        self.assertEqual(self.table.rows[1]['two'], 3)
+        self.assertEqual(self.table.rows[2]['three'], 'c')

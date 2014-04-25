@@ -30,18 +30,18 @@ with open('examples/realdata/Datagov_FY10_EDU_recp_by_State.csv') as f:
 # Trim cruft off end
 rows = rows[:-2]
 
-table = Table(rows, COLUMN_TYPES, COLUMN_NAMES)
+table = Table(rows, COLUMN_TYPES, COLUMN_NAMES, cast=True)
 
 print 'Total of all states: %i' % table.columns['total'].sum()
 
 sort_by_total_desc = table.sort_by('total', reverse=True)
 first_place = sort_by_total_desc.rows[0]
 
-print 'Highest state: %s %i' % (first_place[0], first_place[8])
+print 'Highest state: %(state)s %(total)i' % (first_place)
 
 last_place = sort_by_total_desc.rows[-1]
 
-print 'Lowest state: %s %i' %(last_place[0], last_place[8])
+print 'Lowest state: %(state)s %(total)i' %(last_place)
 
 stdev = table.columns['total'].stdev()
 

@@ -20,7 +20,7 @@ class Table(object):
 
     TODO: dedup column names
     """
-    def __init__(self, rows, column_types=[], column_names=[], cast=True, validate=False):
+    def __init__(self, rows, column_types=[], column_names=[], cast=False, validate=False):
         """
         Create a table from rows of data.
 
