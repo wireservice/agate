@@ -53,6 +53,14 @@ class TestColumns(unittest.TestCase):
         with self.assertRaises(TypeError):
             self.table.columns['one'][0] = 100
 
+    def test_any(self):
+        self.assertEqual(self.table.columns['one'].any(lambda d: d == 2), True)
+        self.assertEqual(self.table.columns['one'].any(lambda d: d == 5), False)
+
+    def test_all(self):
+        self.assertEqual(self.table.columns['one'].all(lambda d: d != 5), True)
+        self.assertEqual(self.table.columns['one'].all(lambda d: d == 2), False)
+
     def test_map(self):
         def f(x):
             return x + 1 if x is not None else x

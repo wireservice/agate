@@ -115,6 +115,18 @@ class Column(Sequence):
         """
         return None in self._data()
 
+    def any(self, func):
+        """
+        Returns True if any value passes a truth test.
+        """
+        return any([func(d) for d in self._data()])
+
+    def all(self, func):
+        """
+        Returns True if all values pass a truth test.
+        """
+        return all([func(d) for d in self._data()])
+
     def map(self, func, new_column_type=None, new_column_name=None):
         """
         Apply an arbitrary function to a column of data and
