@@ -131,6 +131,9 @@ class Column(Sequence):
         return self._table._fork(data, column_types, column_names) 
 
 class TextColumn(Column):
+    """
+    A column containing unicode/string data.
+    """
     def validate(self):
         """
         Verify all values in this column are string/unicode or null.
@@ -143,6 +146,11 @@ class TextColumn(Column):
                 raise ColumnValidationError
 
 class NumberColumn(Column):
+    """
+    A column containing numeric data.
+    
+    Base class for :class:`IntColumn` and :class:`FloatColumn`.
+    """
     def sum(self):
         """
         Implemented in subclasses to take advantage of floating
@@ -210,6 +218,9 @@ class NumberColumn(Column):
         return math.sqrt(sum(math.pow(v - self.mean(), 2) for v in data) / len(data))
 
 class IntColumn(NumberColumn):
+    """
+    A column containing integer data.
+    """
     def validate(self):
         """
         Verify all values in this column are int or null.
@@ -228,6 +239,9 @@ class IntColumn(NumberColumn):
         return sum(self._data_without_nulls())
 
 class FloatColumn(NumberColumn):
+    """
+    A column containing float data.
+    """
     def validate(self):
         """
         Verify all values in this column are float or null.
