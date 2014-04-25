@@ -13,7 +13,7 @@ class TestColumns(unittest.TestCase):
         ]
         self.column_names = ['one', 'two', 'three']
         self.column_types = [journalism.IntColumn, journalism.IntColumn, journalism.TextColumn]
-        
+
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
     def test_length(self):
@@ -34,7 +34,7 @@ class TestColumns(unittest.TestCase):
 
     def test_iterate_columns(self):
         it = iter(self.table.columns)
-        
+
         self.assertEqual(it.next(), [1, 2, None])
         self.assertEqual(it.next(), [2, 3, 4])
         self.assertEqual(it.next(), ['a', 'b', 'c'])
@@ -53,7 +53,7 @@ class TestColumns(unittest.TestCase):
         def f(x):
             return x + 1 if x is not None else x
 
-        new_table = self.table.columns['one'].map(f) 
+        new_table = self.table.columns['one'].map(f)
 
         self.assertIsNot(new_table, self.table)
         self.assertEqual(self.table.columns['one'], [1, 2, None])
@@ -73,7 +73,7 @@ class TestColumns(unittest.TestCase):
 class TestTextColumn(unittest.TestCase):
     def test_validate(self):
         column = journalism.TextColumn(None, 'one')
-        column._data = lambda: ['a', 'b', 'c'] 
+        column._data = lambda: ['a', 'b', 'c']
         column.validate()
 
         column._data = lambda: ['a', 'b', 3]
@@ -85,18 +85,18 @@ class TestIntColumn(unittest.TestCase):
     def setUp(self):
         self.rows = [
             [1, 2, 'a'],
-            [2, 3, 'b'],
+            [1, 1, 3, 'b'],
             [None, 4, 'c'],
             [2, 1, 'c']
         ]
         self.column_names = ['one', 'two', 'three']
         self.column_types = [journalism.IntColumn, journalism.IntColumn, journalism.TextColumn]
-        
+
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
     def test_validate(self):
         column = journalism.IntColumn(None, 'one')
-        column._data = lambda: [1, 2, 3] 
+        column._data = lambda: [1, 2, 3]
         column.validate()
 
         column._data = lambda: [1, 'a', 3]
@@ -120,11 +120,13 @@ class TestIntColumn(unittest.TestCase):
         with self.assertRaises(journalism.exceptions.NullComputationError):
             self.table.columns['one'].median()
 
-        self.assertEqual(self.table.columns['two'].median(), 2.5)
+        self.assertEqual(self.table.columns['two'].median(), 1.5)
 
     def test_mode(self):
-        # TODO
-        pass
+        with self.assertRaises(journalism.exceptions.NullComputationError):
+            self.table.columns['one'].mode()
+
+        self.assertEqual(self.table.columns['two'].mode(), 1)
 
     def test_stdev(self):
         # TODO
@@ -140,12 +142,12 @@ class TestFloatColumn(unittest.TestCase):
         ]
         self.column_names = ['one', 'two', 'three']
         self.column_types = [journalism.FloatColumn, journalism.FloatColumn, journalism.TextColumn]
-        
+
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
     def test_validate(self):
         column = journalism.FloatColumn(None, 'one')
-        column._data = lambda: [1.0, 2.1, 3.3] 
+        column._data = lambda: [1.0, 2.1, 3.3]
         column.validate()
 
         column._data = lambda: [1.0, 'a', 3.3]
