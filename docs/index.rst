@@ -108,6 +108,17 @@ Here is an example of how to use journalism, using financial aid data from data.
 
     print 'Standard deviation of totals: %.2f' % stdev
 
+API Docs
+========
+
+.. toctree::
+    :maxdepth: 2
+
+    api/columns
+    api/exceptions
+    api/rows
+    api/table
+
 Contributing
 ============
 
