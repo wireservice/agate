@@ -17,11 +17,11 @@ class TestTable(unittest.TestCase):
     def test_create_table(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 
-        self.assertEqual(len(table), 3)
+        self.assertEqual(len(table.rows), 3)
 
-        self.assertEqual(table[0], [1, 2, 'a'])
-        self.assertEqual(table[1], [2, 3, 'b'])
-        self.assertEqual(table[2], [None, 4, 'c'])
+        self.assertEqual(table.rows[0], [1, 2, 'a'])
+        self.assertEqual(table.rows[1], [2, 3, 'b'])
+        self.assertEqual(table.rows[2], [None, 4, 'c'])
 
     def test_create_table_header(self):
         rows = [['one', 'two', 'three']]
@@ -29,9 +29,9 @@ class TestTable(unittest.TestCase):
 
         table = journalism.Table(rows, self.column_types)
 
-        self.assertEqual(table[0], [1, 2, 'a'])
-        self.assertEqual(table[1], [2, 3, 'b'])
-        self.assertEqual(table[2], [None, 4, 'c'])
+        self.assertEqual(table.rows[0], [1, 2, 'a'])
+        self.assertEqual(table.rows[1], [2, 3, 'b'])
+        self.assertEqual(table.rows[2], [None, 4, 'c'])
 
     def test_filter(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
@@ -39,8 +39,8 @@ class TestTable(unittest.TestCase):
         new_table = table.filter('one', [2, None])
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table), 2)
-        self.assertEqual(new_table[0], [2, 3, 'b'])
+        self.assertEqual(len(new_table.rows), 2)
+        self.assertEqual(new_table.rows[0], [2, 3, 'b'])
 
     def test_reject(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
@@ -48,8 +48,8 @@ class TestTable(unittest.TestCase):
         new_table = table.reject('one', [2, None])
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table), 1)
-        self.assertEqual(new_table[0], [1, 2, 'a'])
+        self.assertEqual(len(new_table.rows), 1)
+        self.assertEqual(new_table.rows[0], [1, 2, 'a'])
 
 class TestTableApplyOperations(unittest.TestCase):
     def setUp(self):
@@ -90,11 +90,11 @@ class TestTableAggregate(unittest.TestCase):
         new_table = table.aggregate('one', [('two', journalism.ops.sum)])
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table), 3)
-        self.assertEqual(new_table.column_names, ['one', 'two'])
-        self.assertEqual(new_table[0], ['a', 4])
-        self.assertEqual(new_table[1], [None, 3])
-        self.assertEqual(new_table[2], ['b', 3])
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(new_table._column_names, ['one', 'two'])
+        self.assertEqual(new_table.rows[0], ['a', 4])
+        self.assertEqual(new_table.rows[1], [None, 3])
+        self.assertEqual(new_table.rows[2], ['b', 3])
 
     def test_aggregate_sum_two_columns(self):
         table = journalism.Table(self.rows, self.column_types)
@@ -102,11 +102,11 @@ class TestTableAggregate(unittest.TestCase):
         new_table = table.aggregate('one', [('two', journalism.ops.sum), ('four', journalism.ops.sum)])
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table), 3)
-        self.assertEqual(new_table.column_names, ['one', 'two', 'four'])
-        self.assertEqual(new_table[0], ['a', 4, 4])
-        self.assertEqual(new_table[1], [None, 3, 0])
-        self.assertEqual(new_table[2], ['b', 3, 0])
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(new_table._column_names, ['one', 'two', 'four'])
+        self.assertEqual(new_table.rows[0], ['a', 4, 4])
+        self.assertEqual(new_table.rows[1], [None, 3, 0])
+        self.assertEqual(new_table.rows[2], ['b', 3, 0])
 
     def test_aggregate_sum_invalid(self):
         table = journalism.Table(self.rows, self.column_types)
