@@ -50,7 +50,7 @@ class Table(Mapping):
         """
         i = self.column_names.index(column_name)
 
-        rows = [row for row in self.data if row[i] in include] 
+        rows = filter(lambda r: r[i] in include, self.data)
 
         return Table(rows, [type(c) for c in self.columns], self.column_names)
 
@@ -61,10 +61,39 @@ class Table(Mapping):
         """
         i = self.column_names.index(column_name)
 
-        rows = [row for row in self.data if row[i] not in exclude] 
+        rows = filter(lambda r: r[i] not in exclude, self.data)
 
         return Table(rows, [type(c) for c in self.columns], self.column_names)
 
-    def aggregate(self, grouping_column, operations={}):
-        pass
+    def aggregate(self, group_by, operations={}):
+        """
+        Aggregate data by a specified group_by column.
+
+        Operations is a dict of column names and operators.
+        """
+        i = self.column_names.index(group_by)
+
+        groups = {}
+
+        for row in self.data:
+            group_name = row[i]
+
+            if group_name not in groups:
+                groups[group_name] = []
+
+            groups[group_name].append(row)
+
+        output = []
+
+        for name, group in groups:
+            new_row = [name]
+
+            for op_column, op_name in operations.items():
+                j = self.column_names.index(op_column)
+
+                new_row.append(op_name([row[j] for row in group]))
+
+            output.append(new_row)
+        
+        return output
 
