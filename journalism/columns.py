@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 from collections import Iterator, Mapping, Sequence
+import math
+
+from journalism.exceptions import ColumnValidationError, NullComputationError
 
 class ColumnIterator(Iterator):
     """
@@ -44,6 +47,19 @@ class ColumnMapping(Mapping):
     def __len__(self):
         return len(self._table._column_names)
 
+def no_null_computations(func):
+    """
+    Function decorator that prevents illogical computations
+    on columns containing nulls.
+    """
+    def check(l, *args, **kwargs):
+        if l.has_nulls():
+            raise NullComputationError
+
+        return func(l)
+
+    return check
+
 class Column(Sequence):
     """
     Proxy access to column data.
@@ -62,6 +78,10 @@ class Column(Sequence):
         # TODO: memoize?
         return [d for d in self._data() if d is not None]
 
+    def _data_sorted(self):
+        # TODO: memoize?
+        return sorted(self._data())
+
     def __getitem__(self, j):
         return self._data()[j]
 
@@ -71,15 +91,75 @@ class Column(Sequence):
     def __eq__(self, other):
         return list(self._data()) == other
 
+    def validate(self):
+        raise NotImplementedError
+
+    def has_nulls(self):
+        return None in self._data()
+
 class TextColumn(Column):
-    pass
+    def validate(self):
+        for d in self._data():
+            if not isinstance(d, basestring) and d is not None:
+                raise ColumnValidationError
 
 class NumberColumn(Column):
     def sum(self):
-        return sum(self._data_without_nulls())
+        """
+        Implemented in subclasses to take advantage of floating
+        point precision.
+        """
+        raise NotImplementedError
+
+    def min(self):
+        return min(self._data_without_nulls())
+
+    def max(self):
+        return max(self._data_without_nulls())
+
+    @no_null_computations
+    def mean(self):
+        return float(self.sum() / len(self))
+
+    @no_null_computations
+    def median(self):
+        data = self._data_sorted()
+        length = len(data)
+
+        if length % 2 == 1:
+            return data[((length + 1) / 2) - 1]
+        else:
+            a = data[(length / 2) - 1]
+            b = data[length / 2]
+
+        return (float(a + b)) / 2  
+
+    @no_null_computations
+    def mode(self):
+        # TODO
+        raise NotImplementedError
+
+    @no_null_computations
+    def stdev(self):
+        data = self._data()
+
+        return math.sqrt(sum(math.pow(v - self.mean(), 2) for v in data) / len(data))
 
 class IntColumn(NumberColumn):
-    pass
+    def validate(self):
+        for d in self._data():
+            if not isinstance(d, int) and d is not None:
+                raise ColumnValidationError
+
+    def sum(self):
+        return sum(self._data_without_nulls())
 
 class FloatColumn(NumberColumn):
-    pass
+    def validate(self):
+        for d in self._data():
+            if not isinstance(d, float) and d is not None:
+                raise ColumnValidationError
+
+    def sum(self):
+        return math.fsum(self._data_without_nulls())
+
