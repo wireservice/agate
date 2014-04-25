@@ -32,6 +32,10 @@ class TestColumns(unittest.TestCase):
     def test_get_column_item(self):
         self.assertEqual(self.table.columns['one'][1], 2)
 
+    def test_column_contains(self):
+        self.assertEqual(1 in self.table.columns['one'], True)
+        self.assertEqual(3 in self.table.columns['one'], False)
+
     def test_iterate_columns(self):
         it = iter(self.table.columns)
 
