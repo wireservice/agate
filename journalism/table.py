@@ -37,7 +37,7 @@ class Table(object):
     def _fork(self, new_data, column_types=[], column_names=[]):
         """
         Create a new table using the metadata from this one.
-        Used internally by functions like :meth:`journalism.columns.Column.map`.
+        Used internally by functions like :meth:`sort_by`.
         """
         if not column_types:
             column_types = self._column_types
@@ -50,6 +50,8 @@ class Table(object):
     def sort_by(self, column_name, cmp=None, reverse=False):
         """
         Sort this table by the specified column.
+
+        Returns a new :class:`Table`.
         """
         i = self._column_names.index(column_name)
 
@@ -84,6 +86,8 @@ class Table(object):
         Aggregate data by a specified group_by column.
 
         Operations is a dict of column names and operation names.
+
+        Returns a new :class:`Table`.
         """
         i = self._column_names.index(group_by)
 
