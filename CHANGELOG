@@ -1,8 +1,13 @@
 0.2.0
 -----
 
+* Table.filter and Table.reject now take funcs. (#24)
+* Column.count implemented.
+* Column.counts implemented. (#8)
+* Column.all implemented. (#5)
+* Column.any implemented. (#4)
 * Added Jeff Larson to AUTHORS.
-* Mode implmentation. (#18)
+* NumberColumn.mode implmented. (#18)
 
 0.1.0
 -----
