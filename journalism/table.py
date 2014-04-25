@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from columns import ColumnProxy
-from rows import RowProxy
+from columns import ColumnMapping
+from rows import RowSequence
 
 class Table(object):
     """
@@ -22,8 +22,8 @@ class Table(object):
         self._column_types = column_types
         self._column_names = column_names
 
-        self.columns = ColumnProxy(self)
-        self.rows = RowProxy(self)
+        self.columns = ColumnMapping(self)
+        self.rows = RowSequence(self)
 
     def apply(self, column_name, operation):
         i = self._column_names.index(column_name)

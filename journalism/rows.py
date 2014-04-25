@@ -3,6 +3,9 @@
 from collections import Iterator, Sequence
 
 class RowIterator(Iterator):
+    """
+    Iterator over row proxies.
+    """
     def __init__(self, table):
         self._table = table
         self._i = 0
@@ -14,21 +17,27 @@ class RowIterator(Iterator):
         i = self._i
         self._i += 1
 
-        return RowContext(self._table, i)
+        return Row(self._table, i)
 
-class RowProxy(Sequence):
+class RowSequence(Sequence):
+    """
+    Proxy access to rows by index.
+    """
     def __init__(self, table):
         self._table = table
 
     def __getitem__(self, i):
         self._table._data[i]
 
-        return RowContext(self._table, i)
+        return Row(self._table, i)
 
     def __len__(self):
         return len(self._table._data)
 
-class RowContext(Sequence):
+class Row(Sequence):
+    """
+    Proxy to row data.
+    """
     def __init__(self, table, i):
         self._table = table
         self._i = i
