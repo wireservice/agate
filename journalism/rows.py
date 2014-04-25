@@ -29,6 +29,11 @@ class RowSequence(Sequence):
         self._table = table
 
     def __getitem__(self, i):
+        if isinstance(i, slice):
+            indices = xrange(*i.indices(len(self)))
+
+            return [Row(self._table, row) for row in indices]
+
         self._table._data[i]
 
         return Row(self._table, i)
@@ -74,4 +79,4 @@ class Row(Mapping):
         return CellIterator(self)
 
     def __eq__(self, other):
-        return list(self._table._data[self._i]) == other
+        return self._table._data[self._i] == other

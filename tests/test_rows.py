@@ -51,3 +51,17 @@ class TestRows(unittest.TestCase):
         self.assertEqual(self.table.rows[0]['one'], 1)
         self.assertEqual(self.table.rows[1]['two'], 3)
         self.assertEqual(self.table.rows[2]['three'], 'c')
+
+    def test_slice(self):
+        s = self.table.rows[1:]
+
+        self.assertEqual(len(s), 2)
+        self.assertEqual(s[0], [2, 3, 'b'])
+        self.assertEqual(s[1], [None, 4, 'c'])
+
+    def test_slice_crazy(self):
+        s = self.table.rows[:-2:-2]
+
+        self.assertEqual(len(s), 1)
+        self.assertEqual(s[0], [None, 4, 'c'])
+

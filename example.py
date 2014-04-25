@@ -35,9 +35,11 @@ table = Table(rows, COLUMN_TYPES, COLUMN_NAMES, cast=True)
 print 'Total of all states: %i' % table.columns['total'].sum()
 
 sort_by_total_desc = table.sort_by('total', reverse=True)
-first_place = sort_by_total_desc.rows[0]
 
-print 'Highest state: %(state)s %(total)i' % (first_place)
+top_five = sort_by_total_desc.rows[0:5]
+
+for i, row in enumerate(top_five):
+    print '# %i: %s %i' % (i, row['state'], row['total'])
 
 last_place = sort_by_total_desc.rows[-1]
 
