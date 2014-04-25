@@ -16,9 +16,11 @@ class ColumnIterator(Iterator):
         except IndexError:
             raise StopIteration
 
-        self._i += 1
+        column_type = self._table._column_types[self._i]
 
-        return Column(self._table, v)
+        self._i += 1
+        
+        return column_type(self._table, v)
 
 class ColumnMapping(Mapping):
     """
@@ -31,7 +33,10 @@ class ColumnMapping(Mapping):
         if k not in self._table._column_names:
             raise KeyError
 
-        return Column(self._table, k)
+        i = self._table._column_names.index(k)
+        column_type = self._table._column_types[i]
+
+        return column_type(self._table, k)
 
     def __iter__(self):
         return ColumnIterator(self._table)
@@ -53,6 +58,10 @@ class Column(Sequence):
 
         return [r[i] for r in self._table._data]
 
+    def _data_without_nulls(self):
+        # TODO: memoize?
+        return [d for d in self._data() if d is not None]
+
     def __getitem__(self, j):
         return self._data()[j]
 
@@ -62,14 +71,15 @@ class Column(Sequence):
     def __eq__(self, other):
         return list(self._data()) == other
 
-#class Column(object):
-#    pass
-
 class TextColumn(Column):
     pass
 
-class IntColumn(Column):
+class NumberColumn(Column):
+    def sum(self):
+        return sum(self._data_without_nulls())
+
+class IntColumn(NumberColumn):
     pass
 
-class FloatColumn(Column):
+class FloatColumn(NumberColumn):
     pass

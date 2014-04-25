@@ -42,3 +42,10 @@ class TestRows(unittest.TestCase):
 
         with self.assertRaises(StopIteration):
             it.next()
+
+    def test_immutable(self):
+        with self.assertRaises(TypeError):
+            self.table.rows[0] = 'foo'
+
+        with self.assertRaises(TypeError):
+            self.table.rows[0][0] = 100
