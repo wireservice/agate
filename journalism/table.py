@@ -8,13 +8,19 @@ from journalism.columns import ColumnMapping
 from journalism.exceptions import UnsupportedOperationError
 from journalism.rows import RowSequence
 
+def transpose(data):
+    """
+    Utility function for transposing a 2D array of data.
+    """
+    return zip(*data)
+
 class Table(object):
     """
     A group of columns with names.
 
     TODO: dedup column names
     """
-    def __init__(self, rows, column_types=[], column_names=[], validate=False):
+    def __init__(self, rows, column_types=[], column_names=[], cast=True, validate=False):
         """
         Create a table from rows of data.
 
@@ -29,6 +35,14 @@ class Table(object):
 
         self.columns = ColumnMapping(self)
         self.rows = RowSequence(self)
+
+        if cast:
+            data_columns = []
+
+            for column in self.columns:
+                data_columns.append(column._cast())
+            
+            self._data = transpose(data_columns)
 
         if validate:
             for column in self.columns:

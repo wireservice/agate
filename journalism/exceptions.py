@@ -26,8 +26,14 @@ class ColumnValidationError(Exception):
     """
     Exception raised in a column value can not be
     validated.
-
-    TODO: details of what failed
     """
-    pass
+    def __init__(self, value, column):
+        self.value = value
+        self.column = column
+
+    def __unicode__(self):
+        return '`%s` is not a valid value for %s' % (self.value, type(self.column))
+
+    def __str__(self):
+        return str(self.__unicode__())
 

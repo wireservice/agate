@@ -98,6 +98,15 @@ class Column(Sequence):
         return not self.__eq__(other)
 
     def validate(self):
+        """
+        Verify values in this column are of an appopriate type.
+        """
+        raise NotImplementedError
+
+    def _cast(self):
+        """
+        Cast values in this column to an appropriate type, if possible.
+        """
         raise NotImplementedError
 
     def has_nulls(self):
@@ -143,7 +152,21 @@ class TextColumn(Column):
         """
         for d in self._data():
             if not isinstance(d, basestring) and d is not None:
-                raise ColumnValidationError
+                raise ColumnValidationError(d, self)
+
+    def _cast(self):
+        """
+        Cast values to unicode.
+        """
+        casted = []
+
+        for d in self._data():
+            if d == '':
+                casted.append(None)
+            else:
+                casted.append(unicode(d))
+
+        return casted
 
 class NumberColumn(Column):
     """
@@ -230,7 +253,24 @@ class IntColumn(NumberColumn):
         """
         for d in self._data():
             if not isinstance(d, int) and d is not None:
-                raise ColumnValidationError
+                raise ColumnValidationError(d, self)
+
+    def _cast(self):
+        """
+        Cast values in this column to integer.
+        """
+        casted = []
+
+        for d in self._data():
+            if isinstance(d, basestring):
+                d = d.replace(',' ,'').strip()
+
+            if d == '' or d is None:
+                casted.append(None)
+            else:
+                casted.append(int(d))
+
+        return casted
 
     def sum(self):
         """
@@ -251,7 +291,24 @@ class FloatColumn(NumberColumn):
         """
         for d in self._data():
             if not isinstance(d, float) and d is not None:
-                raise ColumnValidationError
+                raise ColumnValidationError(d, self)
+
+    def _cast(self):
+        """
+        Cast values in this column to float.
+        """
+        casted = []
+
+        for d in self._data():
+            if isinstance(d, basestring):
+                d = d.replace(',' ,'').strip()
+
+            if d == '' or d is None:
+                casted.append(None)
+            else:
+                casted.append(float(d))
+
+        return casted
 
     def sum(self):
         """
