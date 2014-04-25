@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from collections import Iterator, Mapping, Sequence
+from collections import Iterator, Mapping, Sequence, defaultdict
 import copy
 from functools import wraps
 import math
@@ -24,7 +24,7 @@ class ColumnIterator(Iterator):
         column_type = self._table._column_types[self._i]
 
         self._i += 1
-        
+
         return column_type(self._table, v)
 
 class ColumnMapping(Mapping):
@@ -89,7 +89,7 @@ class Column(Sequence):
         return self._data()[j]
 
     def __len__(self):
-        return len(self._data()) 
+        return len(self._data())
 
     def __eq__(self, other):
         return self._data() == other
@@ -123,7 +123,7 @@ class Column(Sequence):
         Returns a new :class:`journalism.table.Table`.
         """
         i = self._table._column_names.index(self._k)
-        
+
         data = copy.deepcopy(self._table._data)
         column_types = copy.deepcopy(self._table._column_types)
         column_names = copy.deepcopy(self._table._column_names)
@@ -137,7 +137,7 @@ class Column(Sequence):
         if new_column_name:
             column_names[i] = new_column_name
 
-        return self._table._fork(data, column_types, column_names) 
+        return self._table._fork(data, column_types, column_names)
 
 class TextColumn(Column):
     """
@@ -171,7 +171,7 @@ class TextColumn(Column):
 class NumberColumn(Column):
     """
     A column containing numeric data.
-    
+
     Base class for :class:`IntColumn` and :class:`FloatColumn`.
     """
     def sum(self):
@@ -218,16 +218,22 @@ class NumberColumn(Column):
             a = data[(length / 2) - 1]
             b = data[length / 2]
 
-        return (float(a + b)) / 2  
+        return (float(a + b)) / 2
 
     @no_null_computations
     def mode(self):
         """
-        TODO: Compute the mode of this column.
+        Compute the mode value of this column.
 
         Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
         """
-        raise NotImplementedError
+        data = self._data()
+        state = defaultdict(int)
+
+        for n in data:
+            state[n] += 1
+
+        return max(state.keys(), key=lambda x: state[x])
 
     @no_null_computations
     def stdev(self):
