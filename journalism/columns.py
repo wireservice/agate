@@ -106,7 +106,7 @@ class Column(Sequence):
         Apply an arbitrary function to a column of data and
         optionally change it's type and/or name.
 
-        Returns a new Table.
+        Returns a new :class:`journalism.table.Table`.
         """
         i = self._table._column_names.index(self._k)
         
