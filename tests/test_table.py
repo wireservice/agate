@@ -33,12 +33,22 @@ class TestTable(unittest.TestCase):
         self.assertEqual(table.rows[1], [2, 3, 'b'])
         self.assertEqual(table.rows[2], [None, 2, 'c'])
 
+    def test_cast_table(self):
+        # TODO
+        pass
+
+    def test_case_table_fails(self):
+        # TODO
+        pass
+
     def test_validate_table(self):
         journalism.Table(self.rows, self.column_types, self.column_names, validate=True)
 
     def test_validate_table_fails(self):
-        # TODO
-        pass
+        column_types = [journalism.IntColumn, journalism.IntColumn, journalism.IntColumn]
+
+        with self.assertRaises(journalism.ColumnValidationError):
+            journalism.Table(self.rows, column_types, self.column_names, validate=True)
 
     def test_sort_by(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)

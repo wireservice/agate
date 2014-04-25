@@ -95,6 +95,10 @@ class TestTextColumn(unittest.TestCase):
         with self.assertRaises(journalism.ColumnValidationError):
             column.validate()
 
+    def test_cast(self):
+        # TODO
+        pass
+
 class TestIntColumn(unittest.TestCase):
     def setUp(self):
         self.rows = [
@@ -117,6 +121,10 @@ class TestIntColumn(unittest.TestCase):
 
         with self.assertRaises(journalism.ColumnValidationError):
             column.validate()
+
+    def test_cast(self):
+        # TODO
+        pass
 
     def test_sum(self):
         self.assertEqual(self.table.columns['one'].sum(), 5)
@@ -171,6 +179,10 @@ class TestFloatColumn(unittest.TestCase):
 
         with self.assertRaises(journalism.ColumnValidationError):
             column.validate()
+
+    def test_cast(self):
+        # TODO
+        pass
 
     def test_sum(self):
         self.assertEqual(self.table.columns['one'].sum(), 6.5)
