@@ -176,4 +176,25 @@ class TestFloatColumn(unittest.TestCase):
         self.assertEqual(self.table.columns['one'].sum(), 6.5)
         self.assertEqual(self.table.columns['two'].sum(), 10.71)
 
-    # TODO: test remaining basic operations
+    def test_min(self):
+        self.assertEqual(self.table.columns['one'].min(), 1.1)
+        self.assertEqual(self.table.columns['two'].min(), 1)
+
+    def test_max(self):
+        self.assertEqual(self.table.columns['one'].max(), 2.7)
+        self.assertEqual(self.table.columns['two'].max(), 4.1)
+
+    def test_median(self):
+        with self.assertRaises(journalism.exceptions.NullComputationError):
+            self.table.columns['one'].median()
+
+        self.assertEqual(self.table.columns['two'].median(), 2.805)
+
+    def test_mode(self):
+        # TODO
+        pass
+
+    def test_stdev(self):
+        # TODO
+        pass
+
