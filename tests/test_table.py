@@ -7,9 +7,9 @@ import journalism
 class TestTable(unittest.TestCase):
     def setUp(self):
         self.rows = [
-            [1, 2, 'a'],
+            [1, 4, 'a'],
             [2, 3, 'b'],
-            [None, 4, 'c']
+            [None, 2, 'c']
         ]
         self.column_names = ['one', 'two', 'three']
         self.column_types = [journalism.IntColumn, journalism.IntColumn, journalism.TextColumn]
@@ -19,9 +19,9 @@ class TestTable(unittest.TestCase):
 
         self.assertEqual(len(table.rows), 3)
 
-        self.assertEqual(table.rows[0], [1, 2, 'a'])
+        self.assertEqual(table.rows[0], [1, 4, 'a'])
         self.assertEqual(table.rows[1], [2, 3, 'b'])
-        self.assertEqual(table.rows[2], [None, 4, 'c'])
+        self.assertEqual(table.rows[2], [None, 2, 'c'])
 
     def test_create_table_header(self):
         rows = [['one', 'two', 'three']]
@@ -29,9 +29,9 @@ class TestTable(unittest.TestCase):
 
         table = journalism.Table(rows, self.column_types)
 
-        self.assertEqual(table.rows[0], [1, 2, 'a'])
+        self.assertEqual(table.rows[0], [1, 4, 'a'])
         self.assertEqual(table.rows[1], [2, 3, 'b'])
-        self.assertEqual(table.rows[2], [None, 4, 'c'])
+        self.assertEqual(table.rows[2], [None, 2, 'c'])
 
     def test_validate_table(self):
         journalism.Table(self.rows, self.column_types, self.column_names, validate=True)
@@ -39,6 +39,45 @@ class TestTable(unittest.TestCase):
     def test_validate_table_fails(self):
         # TODO
         pass
+
+    def test_sort_by(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.sort_by('two')
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(new_table.rows[0], [None, 2, 'c'])
+        self.assertEqual(new_table.rows[1], [2, 3, 'b'])
+        self.assertEqual(new_table.rows[2], [1, 4, 'a'])
+
+        # Verify old table not changed
+        self.assertEqual(table.rows[0], [1, 4, 'a'])
+        self.assertEqual(table.rows[1], [2, 3, 'b'])
+        self.assertEqual(table.rows[2], [None, 2, 'c'])
+
+    def test_sort_by_reverse(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.sort_by('two', reverse=True)
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(new_table.rows[0], [1, 4, 'a'])
+        self.assertEqual(new_table.rows[1], [2, 3, 'b'])
+        self.assertEqual(new_table.rows[2], [None, 2, 'c'])
+
+    def test_sort_by_cmp(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        def func(a, b):
+            return -cmp(a, b)
+
+        new_table = table.sort_by('two', cmp=func)
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(new_table.rows[0], [1, 4, 'a'])
+        self.assertEqual(new_table.rows[1], [2, 3, 'b'])
+        self.assertEqual(new_table.rows[2], [None, 2, 'c'])
 
     def test_filter(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
@@ -56,7 +95,7 @@ class TestTable(unittest.TestCase):
 
         self.assertIsNot(new_table, table)
         self.assertEqual(len(new_table.rows), 1)
-        self.assertEqual(new_table.rows[0], [1, 2, 'a'])
+        self.assertEqual(new_table.rows[0], [1, 4, 'a'])
 
 class TestTableAggregate(unittest.TestCase):
     def setUp(self):

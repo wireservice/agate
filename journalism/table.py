@@ -47,6 +47,16 @@ class Table(object):
 
         return Table(new_data, column_types, column_names)
 
+    def sort_by(self, column_name, cmp=None, reverse=False):
+        """
+        Sort this table by the specified column.
+        """
+        i = self._column_names.index(column_name)
+
+        data = sorted(self._data, cmp=cmp, key=lambda r: r[i], reverse=reverse)
+
+        return self._fork(data)
+
     def filter(self, column_name, include=[]):
         """
         Filter a to only those rows where the column is in the
@@ -73,7 +83,7 @@ class Table(object):
         """
         Aggregate data by a specified group_by column.
 
-        Operations is a dict of column names and operators.
+        Operations is a dict of column names and operation names.
         """
         i = self._column_names.index(group_by)
 
