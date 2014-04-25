@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+This module contains the Table object.
+"""
+
 from journalism.columns import ColumnMapping
 from journalism.exceptions import UnsupportedOperationError
 from journalism.rows import RowSequence
