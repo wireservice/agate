@@ -30,21 +30,30 @@ with open('examples/realdata/Datagov_FY10_EDU_recp_by_State.csv') as f:
 # Trim cruft off end
 rows = rows[:-2]
 
+# Create the table
 table = Table(rows, COLUMN_TYPES, COLUMN_NAMES, cast=True)
 
-print 'Total of all states: %i' % table.columns['total'].sum()
+# Remove Phillipines and Puerto Rico
+states = table.reject(lambda r: r['state_abbr'] in ['PR', 'PH'])
 
-sort_by_total_desc = table.sort_by('total', reverse=True)
+# Sum total of all states
+print 'Total of all states: %i' % states.columns['total'].sum()
 
+# Sort state total, descending
+sort_by_total_desc = states.sort_by('total', reverse=True)
+
+# Grab just the top 5 states
 top_five = sort_by_total_desc.rows[0:5]
 
 for i, row in enumerate(top_five):
     print '# %i: %s %i' % (i, row['state'], row['total'])
 
+# Grab just the bottom state
 last_place = sort_by_total_desc.rows[-1]
 
 print 'Lowest state: %(state)s %(total)i' %(last_place)
 
-stdev = table.columns['total'].stdev()
+# Calculate the standard of deviation for the state totals
+stdev = states.columns['total'].stdev()
 
 print 'Standard deviation of totals: %.2f' % stdev

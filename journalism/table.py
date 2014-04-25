@@ -73,31 +73,25 @@ class Table(object):
 
         return self._fork(data)
 
-    def filter(self, column_name, include=[]):
+    def filter(self, func):
         """
-        Filter a to only those rows where the column is in the
-        include list.
+        Filter a to only those rows where the row passes a truth test.
 
         Returns a new :class:`Table`.
         """
-        i = self._column_names.index(column_name)
+        rows = [self._data[i] for i, row in enumerate(self.rows) if func(row)]
 
-        rows = [row for row in self._data if row[i] in include]
+        return self._fork(rows)
 
-        return Table(rows, self._column_types, self._column_names)
-
-    def reject(self, column_name, exclude=[]):
+    def reject(self, func):
         """
-        Filter a to only those rows where the column is not in the
-        exclude list.
+        Filter a to only those rows where the row fails a truth test.
 
         Returns a new :class:`Table`.
         """
-        i = self._column_names.index(column_name)
+        rows = [self._data[i] for i, row in enumerate(self.rows) if not func(row)]
 
-        rows = [row for row in self._data if row[i] not in exclude]
-
-        return Table(rows, self._column_types, self._column_names)
+        return self._fork(rows)
 
     def where(self, column_name, cmp):
         """

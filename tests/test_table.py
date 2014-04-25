@@ -92,20 +92,22 @@ class TestTable(unittest.TestCase):
     def test_filter(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 
-        new_table = table.filter('one', [2, None])
+        new_table = table.filter(lambda r: r['one'] in [2, None])
 
         self.assertIsNot(new_table, table)
         self.assertEqual(len(new_table.rows), 2)
         self.assertEqual(new_table.rows[0], [2, 3, 'b'])
+        self.assertEqual(new_table.columns['one'], [2, None])
 
     def test_reject(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 
-        new_table = table.reject('one', [2, None])
+        new_table = table.reject(lambda r: r['one'] in [2, None])
 
         self.assertIsNot(new_table, table)
         self.assertEqual(len(new_table.rows), 1)
         self.assertEqual(new_table.rows[0], [1, 4, 'a'])
+        self.assertEqual(new_table.columns['one'], [1])
 
     def test_where(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
