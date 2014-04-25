@@ -97,6 +97,16 @@ class TestTable(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 1)
         self.assertEqual(new_table.rows[0], [1, 4, 'a'])
 
+    def test_where(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.where('one', lambda x: x is not None)
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table.rows), 2)
+        self.assertEqual(new_table.rows[0], [1, 4, 'a'])
+        self.assertEqual(new_table.rows[1], [2, 3, 'b'])
+
 class TestTableAggregate(unittest.TestCase):
     def setUp(self):
         self.rows = [

@@ -77,6 +77,8 @@ class Table(object):
         """
         Filter a to only those rows where the column is in the
         include list.
+
+        Returns a new :class:`Table`.
         """
         i = self._column_names.index(column_name)
 
@@ -88,10 +90,25 @@ class Table(object):
         """
         Filter a to only those rows where the column is not in the
         exclude list.
+
+        Returns a new :class:`Table`.
         """
         i = self._column_names.index(column_name)
 
         rows = [row for row in self._data if row[i] not in exclude]
+
+        return Table(rows, self._column_types, self._column_names)
+
+    def where(self, column_name, cmp):
+        """
+        Filter the data to only those rows where the specified column
+        passes a truth test.
+
+        Returns a new :class:`Table`.
+        """
+        i = self._column_names.index(column_name)
+
+        rows = filter(lambda r: cmp(r[i]), self._data)
 
         return Table(rows, self._column_types, self._column_names)
 

@@ -13,13 +13,11 @@ Principles
 journalism is a intended to fill a very particular programming niche, that of non-professional data analysts who need to get shit done quickly. These are the principles of its development: 
 
 * Humans have less time than computers. Always optimize for humans.
-* Most datasets are small. Never optimize for large datasets.
-* Most datasets are simple. Never optimize for time-series or multi-dimensional datasets.
+* Most datasets are simple and small. Never optimize for quants.
 * Text is data. It must be a first-class citizen.
-* Python gets it right. All objects should behave like Python objects.
-* Python gets it right. Python naming conventions should be reused wherever possible.
-* Humans need a gentle learning curve. Statistical knowledge can not be required for basic use.
-* Humans are stupid. Illogical computations should not be permitted.
+* Python gets it right. Make it work like Python does. 
+* Humans are busy, stupid, lazy, etc. It must be easy.
+* Mutability is confusion. Processes that alter data must create new copies.
 
 But why not...
 
