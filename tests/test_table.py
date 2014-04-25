@@ -51,27 +51,6 @@ class TestTable(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 1)
         self.assertEqual(new_table.rows[0], [1, 2, 'a'])
 
-class TestTableApplyOperations(unittest.TestCase):
-    def setUp(self):
-        self.rows = [
-            [1, 2, 'a'],
-            [2, 3, 'b'],
-            [None, 4, 'c']
-        ]
-        self.column_names = ['one', 'two', 'three']
-        self.column_types = [journalism.IntColumn, journalism.IntColumn, journalism.TextColumn]
-
-    def test_sum(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
-
-        self.assertEqual(table.apply('one', journalism.ops.sum), 3) 
-
-    def test_sum_invalid(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
-
-        with self.assertRaises(journalism.UnsupportedOperationError):
-            table.apply('three', journalism.ops.sum)
-
 class TestTableAggregate(unittest.TestCase):
     def setUp(self):
         self.rows = [
@@ -87,7 +66,7 @@ class TestTableAggregate(unittest.TestCase):
     def test_aggregate_sum(self):
         table = journalism.Table(self.rows, self.column_types)
 
-        new_table = table.aggregate('one', [('two', journalism.ops.sum)])
+        new_table = table.aggregate('one', [('two', 'sum')])
 
         self.assertIsNot(new_table, table)
         self.assertEqual(len(new_table.rows), 3)
@@ -99,7 +78,7 @@ class TestTableAggregate(unittest.TestCase):
     def test_aggregate_sum_two_columns(self):
         table = journalism.Table(self.rows, self.column_types)
 
-        new_table = table.aggregate('one', [('two', journalism.ops.sum), ('four', journalism.ops.sum)])
+        new_table = table.aggregate('one', [('two', 'sum'), ('four', 'sum')])
 
         self.assertIsNot(new_table, table)
         self.assertEqual(len(new_table.rows), 3)
@@ -112,5 +91,5 @@ class TestTableAggregate(unittest.TestCase):
         table = journalism.Table(self.rows, self.column_types)
 
         with self.assertRaises(journalism.UnsupportedOperationError):
-            table.aggregate('two', [('one', journalism.ops.sum)])
+            table.aggregate('two', [('one', 'sum')])
 

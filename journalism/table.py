@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-from columns import ColumnMapping
-from rows import RowSequence
+from journalism.columns import ColumnMapping
+from journalism.exceptions import UnsupportedOperationError
+from journalism.rows import RowSequence
 
 class Table(object):
     """
@@ -24,11 +25,6 @@ class Table(object):
 
         self.columns = ColumnMapping(self)
         self.rows = RowSequence(self)
-
-    def apply(self, column_name, operation):
-        i = self._column_names.index(column_name)
-        
-        return operation(self._column_types[i], [r[i] for r in self._data])
 
     def filter(self, column_name, include=[]):
         """
@@ -79,14 +75,19 @@ class Table(object):
             column_types.append(self._column_names.index(op_column))
             column_names.append(op_column)
 
-        for name, group in groups.items():
+        for name, group_rows in groups.items():
+            group_table = Table(group_rows, self._column_types, self._column_names) 
             new_row = [name]
 
             for op_column, operation in operations:
-                j = self._column_names.index(op_column)
-                t = self._column_types[j]
+                c = group_table.columns[op_column]
+                
+                try:
+                    op = getattr(c, operation)
+                except AttributeError:
+                    raise UnsupportedOperationError
 
-                new_row.append(operation(t, [row[j] for row in group]))
+                new_row.append(op())
 
             output.append(new_row)
         
