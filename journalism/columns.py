@@ -2,6 +2,7 @@
 
 from collections import Iterator, Mapping, Sequence
 import copy
+from functools import wraps
 import math
 
 from journalism.exceptions import ColumnValidationError, NullComputationError
@@ -53,6 +54,7 @@ def no_null_computations(func):
     Function decorator that prevents illogical computations
     on columns containing nulls.
     """
+    @wraps(func)
     def check(l, *args, **kwargs):
         if l.has_nulls():
             raise NullComputationError
@@ -99,6 +101,9 @@ class Column(Sequence):
         raise NotImplementedError
 
     def has_nulls(self):
+        """
+        Returns True if this column contains null values.
+        """
         return None in self._data()
 
     def map(self, func, new_column_type=None, new_column_name=None):
@@ -127,6 +132,9 @@ class Column(Sequence):
 
 class TextColumn(Column):
     def validate(self):
+        """
+        Verify all values in this column are either string or null.
+        """
         for d in self._data():
             if not isinstance(d, basestring) and d is not None:
                 raise ColumnValidationError
@@ -140,13 +148,24 @@ class NumberColumn(Column):
         raise NotImplementedError
 
     def min(self):
+        """
+        Compute the minimum value of this column.
+        """
         return min(self._data_without_nulls())
 
     def max(self):
+        """
+        Compute the maximum value of this column.
+        """
         return max(self._data_without_nulls())
 
     @no_null_computations
     def mean(self):
+        """
+        Compute the mean value of this column.
+
+        Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
+        """
         return float(self.sum() / len(self))
 
     @no_null_computations

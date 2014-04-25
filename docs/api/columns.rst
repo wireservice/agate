@@ -1,6 +1,6 @@
-=====
-table
-=====
+==================
+journalism.columns
+==================
 
 .. automodule:: journalism.columns
     :members:

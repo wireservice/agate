@@ -1,6 +1,6 @@
-=====
-table
-=====
+================
+journalism.table
+================
 
 .. automodule:: journalism.table
     :members:

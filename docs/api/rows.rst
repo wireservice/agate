@@ -1,6 +1,6 @@
-=====
-table
-=====
+===============
+journalism.rows
+===============
 
 .. automodule:: journalism.rows
     :members:
