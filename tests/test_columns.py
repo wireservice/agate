@@ -49,11 +49,11 @@ class TestColumns(unittest.TestCase):
         with self.assertRaises(TypeError):
             self.table.columns['one'][0] = 100
 
-    def test_apply(self):
+    def test_map(self):
         def f(x):
             return x + 1 if x is not None else x
 
-        new_table = self.table.columns['one'].apply(f) 
+        new_table = self.table.columns['one'].map(f) 
 
         self.assertIsNot(new_table, self.table)
         self.assertEqual(self.table.columns['one'], [1, 2, None])
@@ -62,11 +62,11 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(new_table.columns['one'], [2, 3, None])
         self.assertEqual(new_table.rows[0], [2, 2, 'a'])
 
-    def test_apply_change_type(self):
+    def test_map_change_type(self):
         # TODO
         pass
 
-    def test_apply_change_name(self):
+    def test_map_change_name(self):
         # TODO
         pass
 

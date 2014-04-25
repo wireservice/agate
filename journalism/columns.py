@@ -101,7 +101,7 @@ class Column(Sequence):
     def has_nulls(self):
         return None in self._data()
 
-    def apply(self, func, new_column_type=None, new_column_name=None):
+    def map(self, func, new_column_type=None, new_column_name=None):
         """
         Apply an arbitrary function to a column of data and
         optionally change it's type and/or name.
