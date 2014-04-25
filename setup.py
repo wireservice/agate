@@ -9,7 +9,7 @@ setup(
     long_description=open('README').read(),
     author='Christopher Groskopf',
     author_email='staringmonkey@gmail.com',
-    url='',
+    url='journalism takes the horror out of basic data analysis and manipulation.',
     license='MIT',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
