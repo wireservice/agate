@@ -151,6 +151,44 @@ class Column(Sequence):
 
         return self._table._fork(data, column_types, column_names)
 
+    def count(self, value):
+        """
+        Count the number of times a specific value occurs in this column.
+        """
+        count = 0
+
+        for d in self._data():
+            if d == value:
+                count += 1
+
+        return count
+
+    def counts(self):
+        """
+        Compute the number of instances of each unique value in this
+        column.
+
+        Returns a new :class:`journalism.table.Table`, with two columns,
+        one containing the values and a a second, :class:`journalism.columns.IntColumn`
+        containing the counts.
+
+        Resulting table will be sorted by descending count.
+        """
+        i = self._table._column_names.index(self._k)
+        
+        counts = defaultdict(int)
+
+        for d in self._data():
+            counts[d] += 1
+
+        column_names = [self._k, 'count']
+        column_types = [self._table._column_types[i], IntColumn]
+        data = [list(i) for i in counts.items()]
+
+        rows = sorted(data, key=lambda r: r[1], reverse=True)
+
+        return self._table._fork(rows, column_types, column_names)
+
 class TextColumn(Column):
     """
     A column containing unicode/string data.

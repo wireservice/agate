@@ -96,6 +96,37 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(self.table._column_names, ['one', 'two', 'three'])
         self.assertEqual(new_table._column_names, ['test', 'two', 'three'])
 
+    def test_count(self):
+        rows = self.rows
+        rows.append(rows[0])
+        rows.append(rows[0])
+
+        table = journalism.Table(rows, self.column_types, self.column_names)
+
+        self.assertEqual(table.columns['one'].count(1), 3)
+        self.assertEqual(table.columns['one'].count(4), 0)
+        self.assertEqual(table.columns['one'].count(None), 1)
+
+    def test_counts(self):
+        rows = self.rows
+        rows.append(rows[0])
+        rows.append(rows[0])
+
+        table = journalism.Table(rows, self.column_types, self.column_names)
+
+        new_table = table.columns['one'].counts()
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table.columns), 2)
+        self.assertEqual(len(new_table.rows), 3) 
+
+        self.assertEqual(new_table.rows[0], [1, 3])
+        self.assertEqual(new_table.rows[1], [2, 1])
+        self.assertEqual(new_table.rows[2], [None, 1])
+
+        self.assertEqual(new_table.columns['one'], [1, 2, None])
+        self.assertEqual(new_table.columns['count'], [3, 1, 1])
+
 class TestTextColumn(unittest.TestCase):
     def test_validate(self):
         column = journalism.TextColumn(None, 'one')
