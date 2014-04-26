@@ -4,7 +4,7 @@
 * Table.percent_change implemented. (#16)
 * Table.compute implemented. (#31)
 * Table.filter and Table.reject now take funcs. (#24)
-* Column.count implemented.
+* Column.count implemented. (#12)
 * Column.counts implemented. (#8)
 * Column.all implemented. (#5)
 * Column.any implemented. (#4)
