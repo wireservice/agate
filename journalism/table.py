@@ -4,6 +4,8 @@
 This module contains the Table object.
 """
 
+import copy
+
 from journalism.columns import ColumnMapping
 from journalism.exceptions import UnsupportedOperationError
 from journalism.rows import RowSequence
@@ -151,5 +153,20 @@ class Table(object):
 
             output.append(new_row)
         
-        return Table(output, column_types, column_names) 
+        return self._fork(output, column_types, column_names) 
+
+    def compute(self, column_name, column_type, func):
+        """
+        Compute a new column by passing each row to a function.
+        
+        Returns a new :class:`Table`.
+        """
+        rows = copy.deepcopy(self._data)
+        column_types = copy.deepcopy(self._column_types) + [column_type]
+        column_names = copy.deepcopy(self._column_names) + [column_name]
+
+        for i, row in enumerate(self.rows):
+            rows[i] += [func(row)] 
+            
+        return self._fork(rows, column_types, column_names)
 

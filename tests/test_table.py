@@ -161,3 +161,26 @@ class TestTableAggregate(unittest.TestCase):
         with self.assertRaises(journalism.UnsupportedOperationError):
             table.aggregate('two', [('one', 'sum')])
 
+class TestTableCompute(unittest.TestCase):
+    def setUp(self):
+        self.rows = [
+            ['one', 'two', 'three', 'four'],
+            ['a', 2, 3, 4],
+            [None, 3, 5, None],
+            ['a', 2, 4, None],
+            ['b', 3, 4, None]
+        ]
+
+        self.column_types = [journalism.TextColumn, journalism.IntColumn, journalism.IntColumn, journalism.IntColumn]
+
+        self.table = journalism.Table(self.rows, self.column_types)
+
+    def test_compute(self):
+        new_table = self.table.compute('test', journalism.IntColumn, lambda r: r['two'] + r['three'])
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(len(new_table.rows), 4) 
+        self.assertEqual(len(new_table.columns), 5) 
+
+        self.assertEqual(new_table.rows[0], ['a', 2, 3, 4, 5])
+        self.assertEqual(new_table.columns['test'], [5, 8, 6, 7])
