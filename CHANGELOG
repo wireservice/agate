@@ -1,6 +1,7 @@
 0.2.0
 -----
 
+* Table.select implemented. (#32)
 * Eliminate repeated column index lookups. (#25)
 * Precise DecimalColumn tests.
 * Use Decimal type everywhere internally.

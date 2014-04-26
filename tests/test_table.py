@@ -110,6 +110,23 @@ class TestTable(unittest.TestCase):
         self.assertEqual(new_table.rows[0], [1, 4, 'a'])
         self.assertEqual(new_table.columns['one'], [1])
 
+    def test_select(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.select(['three'])
+
+        self.assertIsNot(new_table, table)
+        
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(new_table.rows[0], ['a'])
+        self.assertEqual(new_table.rows[1], ['b'])
+        self.assertEqual(new_table.rows[2], ['c'])
+        
+        self.assertEqual(len(new_table.columns), 1)
+        self.assertEqual(new_table._column_types, [journalism.TextColumn])
+        self.assertEqual(new_table._column_names, ['three'])
+        self.assertEqual(new_table.columns['three'], ['a', 'b', 'c'])
+
     def test_where(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 

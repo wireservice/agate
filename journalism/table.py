@@ -96,7 +96,23 @@ class Table(object):
 
         return self._fork(rows)
 
-    def where(self, column_name, cmp):
+    def select(self, column_names=[]):
+        """
+        Reduce this table to only the specified columns.
+
+        Returns a new :class:`Table`.
+        """
+        column_indices = [self._column_names.index(n) for n in column_names]
+        column_types = [self._column_types[i] for i in column_indices]
+
+        new_rows = []
+
+        for row in self._data:
+            new_rows.append([row[i] for i in column_indices])
+
+        return self._fork(new_rows, column_types, column_names)
+
+    def where(self, column_name, func):
         """
         Filter the data to only those rows where the specified column
         passes a truth test.
@@ -105,9 +121,9 @@ class Table(object):
         """
         i = self._column_names.index(column_name)
 
-        rows = filter(lambda r: cmp(r[i]), self._data)
+        rows = filter(lambda r: func(r[i]), self._data)
 
-        return Table(rows, self._column_types, self._column_names)
+        return self._fork(rows)
 
     def aggregate(self, group_by, operations=[]):
         """
