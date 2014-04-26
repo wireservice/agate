@@ -4,13 +4,12 @@ from collections import Iterator, Mapping, Sequence, defaultdict
 from decimal import Decimal
 import copy
 from functools import wraps
-import math
 
 from journalism.exceptions import ColumnValidationError, NullComputationError
 
 class ColumnIterator(Iterator):
     """
-    Iterator over column proxies.
+    Iterator over :class:`Column` instances.
     """
     def __init__(self, table):
         self._table = table
@@ -18,7 +17,7 @@ class ColumnIterator(Iterator):
 
     def next(self):
         try:
-            v = self._table._column_names[self._i]
+            self._table._column_names[self._i]
         except IndexError:
             raise StopIteration
 
@@ -26,11 +25,11 @@ class ColumnIterator(Iterator):
 
         self._i += 1
 
-        return column_type(self._table, v)
+        return column_type(self._table, self._i - 1)
 
 class ColumnMapping(Mapping):
     """
-    Proxy access to columns by name.
+    Proxy access to :class:`Column` instances by name.
     """
     def __init__(self, table):
         self._table = table
@@ -42,7 +41,7 @@ class ColumnMapping(Mapping):
         i = self._table._column_names.index(k)
         column_type = self._table._column_types[i]
 
-        return column_type(self._table, k)
+        return column_type(self._table, i)
 
     def __iter__(self):
         return ColumnIterator(self._table)
@@ -68,15 +67,13 @@ class Column(Sequence):
     """
     Proxy access to column data.
     """
-    def __init__(self, table, k):
+    def __init__(self, table, index):
         self._table = table
-        self._k = k
+        self._index = index
 
     def _data(self):
         # TODO: memoize?
-        i = self._table._column_names.index(self._k)
-
-        return [r[i] for r in self._table._data]
+        return [r[self._index] for r in self._table._data]
 
     def _data_without_nulls(self):
         # TODO: memoize?
@@ -93,9 +90,15 @@ class Column(Sequence):
         return len(self._data())
 
     def __eq__(self, other):
+        """
+        Ensure equality test with lists works.
+        """
         return self._data() == other
 
     def __ne__(self, other):
+        """
+        Ensure inequality test with lists works.
+        """
         return not self.__eq__(other)
 
     def validate(self):
@@ -135,20 +138,18 @@ class Column(Sequence):
 
         Returns a new :class:`journalism.table.Table`.
         """
-        i = self._table._column_names.index(self._k)
-
         data = copy.deepcopy(self._table._data)
         column_types = copy.deepcopy(self._table._column_types)
         column_names = copy.deepcopy(self._table._column_names)
 
         for row in data:
-            row[i] = func(row[i])
+            row[self._index] = func(row[self._index])
 
         if new_column_type:
-            column_types[i] = new_column_type
+            column_types[self._index] = new_column_type
 
         if new_column_name:
-            column_names[i] = new_column_name
+            column_names[self._index] = new_column_name
 
         return self._table._fork(data, column_types, column_names)
 
@@ -175,15 +176,13 @@ class Column(Sequence):
 
         Resulting table will be sorted by descending count.
         """
-        i = self._table._column_names.index(self._k)
-        
         counts = defaultdict(int)
 
         for d in self._data():
             counts[d] += 1
 
-        column_names = [self._k, 'count']
-        column_types = [self._table._column_types[i], IntColumn]
+        column_names = [self._table._column_names[self._index], 'count']
+        column_types = [self._table._column_types[self._index], IntColumn]
         data = [list(i) for i in counts.items()]
 
         rows = sorted(data, key=lambda r: r[1], reverse=True)
