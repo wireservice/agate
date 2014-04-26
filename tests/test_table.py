@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from decimal import Decimal
 import unittest2 as unittest
 
 import journalism
@@ -192,10 +193,11 @@ class TestTableCompute(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 4) 
         self.assertEqual(len(new_table.columns), 5) 
 
+        to_one_place = lambda d: d.quantize(Decimal('0.1'))
+
         self.assertEqual(new_table.rows[0], ['a', 2, 3, 4, 50.0])
-        self.assertAlmostEqual(new_table.columns['test'][0], 50.0, delta=0.1)
-        self.assertAlmostEqual(new_table.columns['test'][1], 66.6, delta=0.1)
-        self.assertAlmostEqual(new_table.columns['test'][2], 100.0, delta=0.1)
-        self.assertAlmostEqual(new_table.columns['test'][3], 33.3, delta=0.1)
-        
+        self.assertEqual(to_one_place(new_table.columns['test'][0]), Decimal('50.0'))
+        self.assertEqual(to_one_place(new_table.columns['test'][1]), Decimal('66.7'))
+        self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('100.0'))
+        self.assertEqual(to_one_place(new_table.columns['test'][3]), Decimal('33.3'))
 

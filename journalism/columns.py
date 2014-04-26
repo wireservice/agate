@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from collections import Iterator, Mapping, Sequence, defaultdict
+from decimal import Decimal
 import copy
 from functools import wraps
 import math
@@ -226,10 +227,9 @@ class NumberColumn(Column):
     """
     def sum(self):
         """
-        Implemented in subclasses to take advantage of floating
-        point precision.
+        Compute the sum of this column.
         """
-        raise NotImplementedError
+        return sum(self._data_without_nulls())
 
     def min(self):
         """
@@ -250,7 +250,7 @@ class NumberColumn(Column):
 
         Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
         """
-        return float(self.sum() / len(self))
+        return Decimal(self.sum()) / len(self)
 
     @no_null_computations
     def median(self):
@@ -268,7 +268,7 @@ class NumberColumn(Column):
             a = data[(length / 2) - 1]
             b = data[length / 2]
 
-        return (float(a + b)) / 2
+        return (Decimal(a + b)) / 2
 
     @no_null_computations
     def mode(self):
@@ -294,7 +294,7 @@ class NumberColumn(Column):
         """
         data = self._data()
 
-        return sum(math.pow(n - self.mean(), 2) for n in data) / len(data)       
+        return sum((n - self.mean()) ** 2 for n in data) / len(data)   
 
     @no_null_computations
     def stdev(self):
@@ -304,7 +304,7 @@ class NumberColumn(Column):
         Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
         """
 
-        return math.sqrt(self.variance())
+        return self.variance().sqrt()
 
 class IntColumn(NumberColumn):
     """
@@ -338,30 +338,29 @@ class IntColumn(NumberColumn):
 
         return casted
 
-    def sum(self):
-        """
-        Compute the sum of this column.
-        """
-        return sum(self._data_without_nulls())
-
-class FloatColumn(NumberColumn):
+class DecimalColumn(NumberColumn):
     """
-    A column containing float data.
+    A column containing decimal data.
     """
     def validate(self):
         """
-        Verify all values in this column are float or null.
+        Verify all values in this column are Decimal or null.
+
+        NB: We never use floats because of rounding error.
 
         Will raise :exc:`journalism.exceptions.ColumnValidationError`
         if validation fails.
         """
         for d in self._data():
-            if not isinstance(d, float) and d is not None:
+            if not isinstance(d, Decimal) and d is not None:
                 raise ColumnValidationError(d, self)
 
     def _cast(self):
         """
-        Cast values in this column to float.
+        Cast values in this column to Decimal.
+
+        NB: casting from float will introduce precision
+        errors. Always cast from string, e.g. '3.14'.
         """
         casted = []
 
@@ -372,13 +371,7 @@ class FloatColumn(NumberColumn):
             if d == '' or d is None:
                 casted.append(None)
             else:
-                casted.append(float(d))
+                casted.append(Decimal(d))
 
         return casted
-
-    def sum(self):
-        """
-        Compute the sum of this column using :func:`math.fsum` for precision.
-        """
-        return math.fsum(self._data_without_nulls())
 

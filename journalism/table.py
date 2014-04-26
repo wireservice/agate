@@ -5,8 +5,9 @@ This module contains the Table object.
 """
 
 import copy
+from decimal import Decimal
 
-from journalism.columns import ColumnMapping, FloatColumn
+from journalism.columns import ColumnMapping, DecimalColumn
 from journalism.exceptions import UnsupportedOperationError
 from journalism.rows import RowSequence
 
@@ -176,7 +177,7 @@ class Table(object):
         percent change between two columns.
         """
         def calc(row):
-            return float(row[after_column_name] - row[before_column_name]) / row[before_column_name] * 100
+            return Decimal(row[after_column_name] - row[before_column_name]) / row[before_column_name] * 100
 
-        return self.compute(new_column_name, FloatColumn, calc) 
+        return self.compute(new_column_name, DecimalColumn, calc) 
 
