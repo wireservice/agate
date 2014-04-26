@@ -193,6 +193,11 @@ class TestIntColumn(unittest.TestCase):
 
         self.assertEqual(self.table.columns['two'].mode(), 1)
 
+    def test_variance(self):
+        with self.assertRaises(journalism.exceptions.NullComputationError):
+            self.table.columns['one'].variance()
+        self.assertEqual(self.table.columns['two'].variance(),1.5)
+
     def test_stdev(self):
         # TODO
         pass
@@ -252,6 +257,13 @@ class TestFloatColumn(unittest.TestCase):
             self.table.columns['one'].mode()
 
         self.assertEqual(self.table.columns['two'].mode(), 3.42)
+
+    def test_variance(self):
+        # TODO add below code once decimals are fixed
+        # with self.assertRaises(journalism.exceptions.NullComputationError):
+        #     self.table.columns['one'].variance()
+        # self.assertEqual(self.table.columns['two'].variance(),0.47)
+        pass
 
     def test_stdev(self):
         # TODO

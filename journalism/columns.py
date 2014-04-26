@@ -286,15 +286,25 @@ class NumberColumn(Column):
         return max(state.keys(), key=lambda x: state[x])
 
     @no_null_computations
+    def variance(self):
+        """
+        Compute the variance of this column.
+
+        Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
+        """
+        data = self._data()
+
+        return sum(math.pow(n - self.mean(), 2) for n in data) / len(data)       
+
+    @no_null_computations
     def stdev(self):
         """
         Compute the standard of deviation of this column.
 
         Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
         """
-        data = self._data()
 
-        return math.sqrt(sum(math.pow(v - self.mean(), 2) for v in data) / len(data))
+        return math.sqrt(self.variance())
 
 class IntColumn(NumberColumn):
     """
