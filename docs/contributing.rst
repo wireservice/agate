@@ -20,7 +20,7 @@ Contributors should use the following roadmap to guide them through the process 
 #. As your coding, periodically merge in work from the master branch and verify you haven't broken anything by running the test suite.
 #. Write documentation. Seriously.
 #. Once it works, is tested, and has documentation, submit a pull request on Github.
-#. Wait for it to either be merged or to recieve a comment about what needs to be fixed.
+#. Wait for it to either be merged or to receive a comment about what needs to be fixed.
 #. Rejoice.
 
 Legalese
