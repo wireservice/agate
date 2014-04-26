@@ -6,7 +6,7 @@ This module contains the Table object.
 
 import copy
 
-from journalism.columns import ColumnMapping
+from journalism.columns import ColumnMapping, FloatColumn
 from journalism.exceptions import UnsupportedOperationError
 from journalism.rows import RowSequence
 
@@ -169,4 +169,14 @@ class Table(object):
             rows[i] += [func(row)] 
             
         return self._fork(rows, column_types, column_names)
+
+    def percent_change(self, before_column_name, after_column_name, new_column_name):
+        """
+        A wrapper around :method:`compute` for quickly computing
+        percent change between two columns.
+        """
+        def calc(row):
+            return float(row[after_column_name] - row[before_column_name]) / row[before_column_name] * 100
+
+        return self.compute(new_column_name, FloatColumn, calc) 
 

@@ -184,3 +184,18 @@ class TestTableCompute(unittest.TestCase):
 
         self.assertEqual(new_table.rows[0], ['a', 2, 3, 4, 5])
         self.assertEqual(new_table.columns['test'], [5, 8, 6, 7])
+
+    def test_percent_change(self):
+        new_table = self.table.percent_change('two', 'three', 'test')
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(len(new_table.rows), 4) 
+        self.assertEqual(len(new_table.columns), 5) 
+
+        self.assertEqual(new_table.rows[0], ['a', 2, 3, 4, 50.0])
+        self.assertAlmostEqual(new_table.columns['test'][0], 50.0, delta=0.1)
+        self.assertAlmostEqual(new_table.columns['test'][1], 66.6, delta=0.1)
+        self.assertAlmostEqual(new_table.columns['test'][2], 100.0, delta=0.1)
+        self.assertAlmostEqual(new_table.columns['test'][3], 33.3, delta=0.1)
+        
+
