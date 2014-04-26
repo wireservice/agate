@@ -172,7 +172,7 @@ class Table(object):
 
     def percent_change(self, before_column_name, after_column_name, new_column_name):
         """
-        A wrapper around :method:`compute` for quickly computing
+        A wrapper around :meth:`compute` for quickly computing
         percent change between two columns.
         """
         def calc(row):

@@ -1,6 +1,7 @@
 0.2.0
 -----
 
+*Cookbook: loading a CSV. (#37)
 * Table.percent_change implemented. (#16)
 * Table.compute implemented. (#31)
 * Table.filter and Table.reject now take funcs. (#24)
