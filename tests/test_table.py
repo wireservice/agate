@@ -137,6 +137,19 @@ class TestTable(unittest.TestCase):
         self.assertEqual(new_table.rows[0], [1, 4, 'a'])
         self.assertEqual(new_table.rows[1], [2, 3, 'b'])
 
+    def test_chain_select_where(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.select(['one', 'two']).where('two', lambda r: r == 3)
+
+        self.assertEqual(len(new_table.rows), 1)
+        self.assertEqual(new_table.rows[0], [2, 3])
+        
+        self.assertEqual(len(new_table.columns), 2)
+        self.assertEqual(new_table._column_types, [journalism.IntColumn, journalism.IntColumn])
+        self.assertEqual(new_table._column_names, ['one', 'two'])
+        self.assertEqual(new_table.columns['one'], [2])
+
 class TestTableAggregate(unittest.TestCase):
     def setUp(self):
         self.rows = [
