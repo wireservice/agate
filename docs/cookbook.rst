@@ -91,3 +91,25 @@ VLOOKUP
 -------
 
 TODO
+
+Emulating Underscore.js
+=======================
+
+filter
+------
+
+journalism's :meth:`journalism.table.Table.where` functions exactly like Underscore's `filter`.
+
+.. code-block:: python
+
+    new_table = table.where(lambda row: row['state'] == 'Texas')
+
+reject
+------
+
+To simulate Underscore's `reject`, simply negate the return value of the function you pass into journalism's :meth:`journalism.table.Table.where`.
+
+.. code-block:: python
+
+    new__table = table.where(lambda row: not (row['state'] == 'Texas'))
+
