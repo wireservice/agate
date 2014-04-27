@@ -152,7 +152,16 @@ IF
 VLOOKUP
 -------
 
-TODO
+.. code-block:: python
+
+    states = {
+        'AL': 'Alabama',
+        'AK': 'Alaska',
+        'AZ': 'Arizona',
+        ...
+    }
+
+    new_table = table.compute('state_name', TextColumn, lambda row: states[row['state_abbr']]) 
 
 Pivot tables
 ------------

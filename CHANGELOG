@@ -1,6 +1,7 @@
 0.2.0
 -----
 
+* Cookbook: VLOOKUP. (#40)
 * Cookbook: Excel formulas. (#44)
 * Cookbook: Rounding to two decimal places. (#49)
 * Better repr for Column and Row. (#56)
