@@ -51,7 +51,7 @@ Writing a table to a CSV
         writer = csv.writer(f)
 
         writer.writerow(table.get_column_names())
-        writer.writerows(table.get_data())
+        writer.writerows(table.rows)
 
 Writing a table to a CSV w/ csvkit
 ----------------------------------

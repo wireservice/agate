@@ -1,6 +1,7 @@
 0.2.0
 -----
 
+* Eliminate Table.get_data.
 * Use tuples everywhere. (#66)
 * Fixes for Python 2.6 compatibility. (#53)
 * Cookbook: multi-column sorting. (#13)

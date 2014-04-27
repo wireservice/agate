@@ -52,7 +52,7 @@ with open('sorted.csv', 'w') as f:
     writer = csv.writer(f)
 
     writer.writerow(order_by_total_desc.get_column_names())
-    writer.writerows(order_by_total_desc.get_data())
+    writer.writerows(order_by_total_desc.rows)
 
 # Grab just the bottom state
 last_place = order_by_total_desc.rows[-1]

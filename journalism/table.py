@@ -100,12 +100,6 @@ class Table(object):
 
         return Table(rows, column_types, column_names, _forked=True)
 
-    def get_data(self):
-        """
-        Get the raw data in this table.
-        """
-        return self._data
-
     def get_column_types(self):
         """
         Get an ordered list of this table's column types.
