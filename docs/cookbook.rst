@@ -76,7 +76,7 @@ For example, here we find all states that start with "C".
 
 This can also be useful for finding values that **don't** match your expectations. For example, finding all values in the "phone number" column that don't look like phone numbers:
 
-..code-block:: python
+.. code-block:: python
 
     new_table = table.where(lambda row: not re.match('\d{3}-\d{3}-\d{4}'))
 
