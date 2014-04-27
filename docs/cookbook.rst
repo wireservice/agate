@@ -78,7 +78,7 @@ This can also be useful for finding values that **don't** match your expectation
 
 .. code-block:: python
 
-    new_table = table.where(lambda row: not re.match('\d{3}-\d{3}-\d{4}'))
+    new_table = table.where(lambda row: not re.match('\d{3}-\d{3}-\d{4}', row['phone']))
 
 Filter by glob
 --------------
