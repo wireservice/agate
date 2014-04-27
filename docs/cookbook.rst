@@ -16,8 +16,8 @@ If your file does not have headers:
 
     from journalism import Table, TextColumn, IntColumn, FloatColumn
 
-    column_names = ['city', 'area', 'population']
-    column_types = [TextColumn, FloatColumn, IntColumn]
+    column_names = ('city', 'area', 'population')
+    column_types = (TextColumn, FloatColumn, IntColumn)
 
     with open('population.csv') as f:
         rows = list(csv.reader(f) 
@@ -28,14 +28,14 @@ If your file does have headers:
 
 .. code-block:: python
 
-    column_types = [TextColumn, FloatColumn, IntColumn]
+    column_types = (TextColumn, FloatColumn, IntColumn)
 
     with open('population.csv') as f:
         rows = list(csv.reader(f))
 
-    # Omitting third argument will cause journalism to use
-    # first row as column names
-    table = Table(rows, column_types)
+    column_names = rows.pop(0)
+
+    table = Table(rows, column_types, column_names)
 
 Loading a table from a CSV w/ csvkit
 -------------------------------------
@@ -196,9 +196,9 @@ SUM
 .. code-block:: python
 
     def five_year_total(row):
-        columns = ['2009', '2010', '2011', '2012', '2013']
+        columns = ('2009', '2010', '2011', '2012', '2013')
 
-        return sum([row[c] for c in columns]]
+        return sum(tuple(row[c] for c in columns)]
 
     new_table = table.compute('five_year_total', DecimalColumn, five_year_total)  
 

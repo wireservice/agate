@@ -7,13 +7,13 @@ import journalism
 
 class TestColumns(unittest.TestCase):
     def setUp(self):
-        self.rows = [
-            [1, 2, 'a'],
-            [2, 3, 'b'],
-            [None, 4, 'c']
-        ]
-        self.column_names = ['one', 'two', 'three']
-        self.column_types = [journalism.IntColumn, journalism.IntColumn, journalism.TextColumn]
+        self.rows = (
+            (1, 2, 'a'),
+            (2, 3, 'b'),
+            (None, 4, 'c')
+        )
+        self.column_names = ('one', 'two', 'three')
+        self.column_types = (journalism.IntColumn, journalism.IntColumn, journalism.TextColumn)
 
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
@@ -21,7 +21,7 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(len(self.table.columns), 3)
 
     def test_get_column_data(self):
-        self.assertEqual(self.table.columns['one']._data(), [1, 2, None])
+        self.assertEqual(self.table.columns['one']._data(), (1, 2, None))
 
     def test_get_column_data_cached(self):
         c = self.table.columns['one']
@@ -30,14 +30,14 @@ class TestColumns(unittest.TestCase):
 
         data = c._data()
 
-        self.assertEqual(c._cached_data, [1, 2, None])
+        self.assertEqual(c._cached_data, (1, 2, None))
         
         data2 = c._data()
 
         self.assertIs(data, data2)
 
     def test_get_column(self):
-        self.assertEqual(self.table.columns['one'], [1, 2, None])
+        self.assertEqual(self.table.columns['one'], (1, 2, None))
 
     def test_get_column_cached(self):
         c = self.table.columns['one']
@@ -64,9 +64,9 @@ class TestColumns(unittest.TestCase):
     def test_iterate_columns(self):
         it = iter(self.table.columns)
 
-        self.assertEqual(it.next(), [1, 2, None])
-        self.assertEqual(it.next(), [2, 3, 4])
-        self.assertEqual(it.next(), ['a', 'b', 'c'])
+        self.assertEqual(it.next(), (1, 2, None))
+        self.assertEqual(it.next(), (2, 3, 4))
+        self.assertEqual(it.next(), ('a', 'b', 'c'))
 
         with self.assertRaises(StopIteration):
             it.next()
@@ -87,13 +87,13 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(self.table.columns['one'].all(lambda d: d == 2), False)
 
     def test_count(self):
-        rows = [
-            [1, 2, 'a'],
-            [2, 3, 'b'],
-            [None, 4, 'c'],
-            [1, 2, 'a'],
-            [1, 2, 'a']
-        ]
+        rows = (
+            (1, 2, 'a'),
+            (2, 3, 'b'),
+            (None, 4, 'c'),
+            (1, 2, 'a'),
+            (1, 2, 'a')
+        )
 
         table = journalism.Table(rows, self.column_types, self.column_names)
 
@@ -102,13 +102,13 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(table.columns['one'].count(None), 1)
 
     def test_counts(self):
-        rows = [
-            [1, 2, 'a'],
-            [2, 3, 'b'],
-            [None, 4, 'c'],
-            [1, 2, 'a'],
-            [1, 2, 'a']
-        ]
+        rows = (
+            (1, 2, 'a'),
+            (2, 3, 'b'),
+            (None, 4, 'c'),
+            (1, 2, 'a'),
+            (1, 2, 'a')
+        )
 
         table = journalism.Table(rows, self.column_types, self.column_names)
 
@@ -118,20 +118,20 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(len(new_table.columns), 2)
         self.assertEqual(len(new_table.rows), 3) 
 
-        self.assertEqual(new_table.rows[0], [1, 3])
-        self.assertEqual(new_table.rows[1], [2, 1])
-        self.assertEqual(new_table.rows[2], [None, 1])
+        self.assertEqual(new_table.rows[0], (1, 3))
+        self.assertEqual(new_table.rows[1], (2, 1))
+        self.assertEqual(new_table.rows[2], (None, 1))
 
-        self.assertEqual(new_table.columns['one'], [1, 2, None])
-        self.assertEqual(new_table.columns['count'], [3, 1, 1])
+        self.assertEqual(new_table.columns['one'], (1, 2, None))
+        self.assertEqual(new_table.columns['count'], (3, 1, 1))
 
 class TestTextColumn(unittest.TestCase):
     def test_validate(self):
         column = journalism.TextColumn(None, 'one')
-        column._data = lambda: ['a', 'b', 'c']
+        column._data = lambda: ('a', 'b', 'c')
         column.validate()
 
-        column._data = lambda: ['a', 'b', 3]
+        column._data = lambda: ('a', 'b', 3)
 
         with self.assertRaises(journalism.ColumnValidationError):
             column.validate()
@@ -142,23 +142,23 @@ class TestTextColumn(unittest.TestCase):
 
 class TestIntColumn(unittest.TestCase):
     def setUp(self):
-        self.rows = [
-            [1, 2, 'a'],
-            [1, 1, 3, 'b'],
-            [None, 4, 'c'],
-            [2, 1, 'c']
-        ]
-        self.column_names = ['one', 'two', 'three']
-        self.column_types = [journalism.IntColumn, journalism.IntColumn, journalism.TextColumn]
+        self.rows = (
+            (1, 2, 'a'),
+            (1, 1, 3, 'b'),
+            (None, 4, 'c'),
+            (2, 1, 'c')
+        )
+        self.column_names = ('one', 'two', 'three')
+        self.column_types = (journalism.IntColumn, journalism.IntColumn, journalism.TextColumn)
 
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
     def test_validate(self):
         column = journalism.IntColumn(None, 'one')
-        column._data = lambda: [1, 2, 3]
+        column._data = lambda: (1, 2, 3)
         column.validate()
 
-        column._data = lambda: [1, 'a', 3]
+        column._data = lambda: (1, 'a', 3)
 
         with self.assertRaises(journalism.ColumnValidationError):
             column.validate()
@@ -202,29 +202,29 @@ class TestIntColumn(unittest.TestCase):
 
 class TestDecimalColumn(unittest.TestCase):
     def setUp(self):
-        self.rows = [
-            [Decimal('1.1'), Decimal('2.19'), 'a'],
-            [Decimal('2.7'), Decimal('3.42'), 'b'],
-            [None, Decimal('4.1'), 'c'],
-            [Decimal('2.7'), Decimal('3.42'), 'c']
-        ]
-        self.column_names = ['one', 'two', 'three']
-        self.column_types = [journalism.DecimalColumn, journalism.DecimalColumn, journalism.TextColumn]
+        self.rows = (
+            (Decimal('1.1'), Decimal('2.19'), 'a'),
+            (Decimal('2.7'), Decimal('3.42'), 'b'),
+            (None, Decimal('4.1'), 'c'),
+            (Decimal('2.7'), Decimal('3.42'), 'c')
+        )
+        self.column_names = ('one', 'two', 'three')
+        self.column_types = (journalism.DecimalColumn, journalism.DecimalColumn, journalism.TextColumn)
 
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
     def test_validate(self):
         column = journalism.DecimalColumn(None, 'one')
-        column._data = lambda: [Decimal('1.0'), Decimal('2.1'), Decimal('3.3')]
+        column._data = lambda: (Decimal('1.0'), Decimal('2.1'), Decimal('3.3'))
         column.validate()
 
-        column._data = lambda: [Decimal('1.0'), 'a', Decimal('3.3')]
+        column._data = lambda: (Decimal('1.0'), 'a', Decimal('3.3'))
 
         with self.assertRaises(journalism.ColumnValidationError):
             column.validate()
 
         # Floats, not decimals
-        column._data = lambda: [1.0, 2.1, 3.3]
+        column._data = lambda: (1.0, 2.1, 3.3)
 
         with self.assertRaises(journalism.ColumnValidationError):
             column.validate()

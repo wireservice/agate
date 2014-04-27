@@ -28,7 +28,7 @@ class Table(object):
 
     TODO: dedup column names
     """
-    def __init__(self, rows, column_types=[], column_names=[], cast=False, validate=False, _forked=False):
+    def __init__(self, rows, column_types, column_names, cast=False, validate=False, _forked=False):
         """
         Create a table from rows of data.
 
@@ -36,9 +36,6 @@ class Table(object):
 
         TODO: validate column_types are all subclasses of Column.
         """
-        if not column_names:
-            column_names = [unicode(d) for d in rows.pop(0)]
-
         # Forked tables can share data (because they are immutable)
         # but original data should be buffered so it can't be changed
         if not _forked:
@@ -46,8 +43,8 @@ class Table(object):
         else:
             self._data = rows
 
-        self._column_types = column_types
-        self._column_names = column_names
+        self._column_types = tuple(column_types)
+        self._column_names = tuple(column_names)
         self._cached_columns = {}
         self._cached_rows = {}
 
@@ -121,19 +118,19 @@ class Table(object):
         """
         return self._column_names
 
-    def select(self, column_names=[]):
+    def select(self, column_names):
         """
         Reduce this table to only the specified columns.
 
         Returns a new :class:`Table`.
         """
-        column_indices = [self._column_names.index(n) for n in column_names]
-        column_types = [self._column_types[i] for i in column_indices]
+        column_indices = tuple(self._column_names.index(n) for n in column_names)
+        column_types = tuple(self._column_types[i] for i in column_indices)
 
         new_rows = []
 
         for row in self.rows:
-            new_rows.append([row[i] for i in column_indices])
+            new_rows.append(tuple(row[i] for i in column_indices))
 
         return self._fork(new_rows, column_types, column_names)
 
@@ -214,7 +211,7 @@ class Table(object):
 
                 new_row.append(op())
 
-            output.append(new_row)
+            output.append(tuple(new_row))
         
         return self._fork(output, column_types, column_names) 
 
@@ -227,11 +224,11 @@ class Table(object):
         # Ensure we have raw data, not Row instances
         rows = [list(row) for row in self._data]
 
-        column_types = copy.deepcopy(self._column_types) + [column_type]
-        column_names = copy.deepcopy(self._column_names) + [column_name]
+        column_types = list(copy.copy(self._column_types)) + [column_type]
+        column_names = list(copy.copy(self._column_names)) + [column_name]
 
         for i, row in enumerate(self.rows):
-            rows[i] += [func(row)] 
+            rows[i] = tuple(rows[i] + [func(row)]) 
 
         return self._fork(rows, column_types, column_names)
 

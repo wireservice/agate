@@ -4,7 +4,7 @@ import csv
 
 from journalism import Table, TextColumn, IntColumn
 
-COLUMNS = [
+COLUMNS = ( 
     ('state', TextColumn),
     ('state_abbr', TextColumn),
     ('9_11_gi_bill1', IntColumn),
@@ -14,10 +14,10 @@ COLUMNS = [
     ('reserve', IntColumn),
     ('vietnam', IntColumn),
     ('total', IntColumn)
-]
+)
 
-COLUMN_NAMES = [c[0] for c in COLUMNS]
-COLUMN_TYPES = [c[1] for c in COLUMNS]
+COLUMN_NAMES = tuple(c[0] for c in COLUMNS)
+COLUMN_TYPES = tuple(c[1] for c in COLUMNS)
 
 with open('examples/realdata/Datagov_FY10_EDU_recp_by_State.csv') as f:
     # Skip headers
@@ -34,7 +34,7 @@ rows = rows[:-2]
 table = Table(rows, COLUMN_TYPES, COLUMN_NAMES, cast=True)
 
 # Remove Phillipines and Puerto Rico
-states = table.where(lambda r: r['state_abbr'] not in ['PR', 'PH'])
+states = table.where(lambda r: r['state_abbr'] not in ('PR', 'PH'))
 
 # Sum total of all states
 print 'Total of all states: %i' % states.columns['total'].sum()

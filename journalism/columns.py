@@ -91,13 +91,13 @@ class Column(Sequence):
 
     def _data(self):
         if self._cached_data is None:
-            self._cached_data = [r[self._index] for r in self._table._data]
+            self._cached_data = tuple(r[self._index] for r in self._table._data)
 
         return self._cached_data
 
     def _data_without_nulls(self):
         if self._cached_data_without_nulls is None:
-            self._cached_data_without_nulls = [d for d in self._data() if d is not None]
+            self._cached_data_without_nulls = tuple(d for d in self._data() if d is not None)
 
         return self._cached_data_without_nulls
 
@@ -147,13 +147,13 @@ class Column(Sequence):
         """
         Returns True if any value passes a truth test.
         """
-        return any([func(d) for d in self._data()])
+        return any(func(d) for d in self._data())
 
     def all(self, func):
         """
         Returns True if all values pass a truth test.
         """
-        return all([func(d) for d in self._data()])
+        return all(func(d) for d in self._data())
 
     def count(self, value):
         """
@@ -186,9 +186,9 @@ class Column(Sequence):
 
             counts[d] += 1
 
-        column_names = [self._table._column_names[self._index], 'count']
-        column_types = [self._table._column_types[self._index], IntColumn]
-        data = [list(i) for i in counts.items()]
+        column_names = (self._table._column_names[self._index], 'count')
+        column_types = (self._table._column_types[self._index], IntColumn)
+        data = (tuple(i) for i in counts.items())
 
         rows = sorted(data, key=lambda r: r[1], reverse=True)
 

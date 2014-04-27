@@ -6,13 +6,13 @@ import journalism
 
 class TestRows(unittest.TestCase):
     def setUp(self):
-        self.rows = [
-            [1, 2, 'a'],
-            [2, 3, 'b'],
-            [None, 4, 'c']
-        ]
-        self.column_names = ['one', 'two', 'three']
-        self.column_types = [journalism.IntColumn, journalism.IntColumn, journalism.TextColumn]
+        self.rows = (
+            (1, 2, 'a'),
+            (2, 3, 'b'),
+            (None, 4, 'c')
+        )
+        self.column_names = ('one', 'two', 'three')
+        self.column_types = (journalism.IntColumn, journalism.IntColumn, journalism.TextColumn)
         
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
@@ -20,8 +20,8 @@ class TestRows(unittest.TestCase):
         self.assertEqual(len(self.table.rows), 3)
 
     def test_get_row(self):
-        self.assertEqual(self.table.rows[0], [1, 2, 'a'])
-        self.assertEqual(self.table.rows[1], [2, 3, 'b'])
+        self.assertEqual(self.table.rows[0], (1, 2, 'a'))
+        self.assertEqual(self.table.rows[1], (2, 3, 'b'))
 
     def test_get_row_cached(self):
         r = self.table.rows[0]
@@ -41,9 +41,9 @@ class TestRows(unittest.TestCase):
     def test_iterate_rows(self):
         it = iter(self.table.rows)
         
-        self.assertEqual(it.next(), [1, 2, 'a'])
-        self.assertEqual(it.next(), [2, 3, 'b'])
-        self.assertEqual(it.next(), [None, 4, 'c'])
+        self.assertEqual(it.next(), (1, 2, 'a'))
+        self.assertEqual(it.next(), (2, 3, 'b'))
+        self.assertEqual(it.next(), (None, 4, 'c'))
 
         with self.assertRaises(StopIteration):
             it.next()
@@ -64,12 +64,12 @@ class TestRows(unittest.TestCase):
         s = self.table.rows[1:]
 
         self.assertEqual(len(s), 2)
-        self.assertEqual(s[0], [2, 3, 'b'])
-        self.assertEqual(s[1], [None, 4, 'c'])
+        self.assertEqual(s[0], (2, 3, 'b'))
+        self.assertEqual(s[1], (None, 4, 'c'))
 
     def test_slice_crazy(self):
         s = self.table.rows[:-2:-2]
 
         self.assertEqual(len(s), 1)
-        self.assertEqual(s[0], [None, 4, 'c'])
+        self.assertEqual(s[0], (None, 4, 'c'))
 

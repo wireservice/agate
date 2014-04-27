@@ -33,7 +33,7 @@ class RowSequence(Sequence):
         if isinstance(i, slice):
             indices = xrange(*i.indices(len(self)))
 
-            return [self._table._get_row(row) for row in indices]
+            return tuple(self._table._get_row(row) for row in indices)
 
         # Verify the row exists
         self._table._data[i]
