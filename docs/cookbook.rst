@@ -114,12 +114,10 @@ To round to one decimal place you would simply change :code:`0.01` to :code:`0.1
 Emulating Excel
 ===============
 
-Formulas
---------
-
 One of journalism's most powerful assets is that instead of a wimpy "formula" language, you have the entire Python language at your disposal. Here are examples of how to translate a few common Excel operations.
 
-:code:`SUM`:
+SUM
+---
 
 .. code-block:: python
 
@@ -130,31 +128,34 @@ One of journalism's most powerful assets is that instead of a wimpy "formula" la
 
     new_table = table.compute('five_year_total', DecimalColumn, five_year_total)  
 
-:code:`TRIM`:
+TRIM
+----
 
 .. code-block:: python
 
     new_table = table.compute('name_stripped', TextColumn, lambda row: row['name'].strip())
 
-:code:`CONCATENATE`:
+CONCATENATE
+-----------
 
 .. code-block:: python
 
     new_table = table.compute('full_name', TextColumn, lambda row '%(first_name)s %(middle_name)s %(last_name)s' % row) 
 
-:code:`IF`:
+IF
+--
 
 .. code-block:: python
 
     new_table = table.compute('mvp_candidate', TextColumn, lambda row: 'Yes' if row['batting_average'] > 0.3 else 'No'
 
-Pivot tables
-------------
+VLOOKUP
+-------
 
 TODO
 
-VLOOKUP
--------
+Pivot tables
+------------
 
 TODO
 
