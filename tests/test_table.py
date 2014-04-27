@@ -269,7 +269,7 @@ class TestTableCompute(unittest.TestCase):
 
         to_one_place = lambda d: d.quantize(Decimal('0.1'))
 
-        self.assertEqual(new_table.rows[0], ['a', 2, 3, 4, 50.0])
+        self.assertEqual(new_table.rows[0], ['a', 2, 3, 4, Decimal('50.0')])
         self.assertEqual(to_one_place(new_table.columns['test'][0]), Decimal('50.0'))
         self.assertEqual(to_one_place(new_table.columns['test'][1]), Decimal('66.7'))
         self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('100.0'))

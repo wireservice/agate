@@ -4,6 +4,11 @@ from collections import Iterator, Mapping, Sequence, defaultdict
 from decimal import Decimal
 from functools import wraps
 
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
+
 from journalism.exceptions import ColumnValidationError, NullComputationError
 
 class ColumnIterator(Iterator):
@@ -173,9 +178,12 @@ class Column(Sequence):
 
         Resulting table will be sorted by descending count.
         """
-        counts = defaultdict(int)
+        counts = OrderedDict()
 
         for d in self._data():
+            if d not in counts:
+                counts[d] = 0
+
             counts[d] += 1
 
         column_names = [self._table._column_names[self._index], 'count']

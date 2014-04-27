@@ -1,6 +1,7 @@
 0.2.0
 -----
 
+* Fixes for Python 2.6 compatibility. (#53)
 * Cookbook: multi-column sorting. (#13)
 * Cookbook: simple sorting.
 * Destructive Table ops now deepcopy row data. (#63)

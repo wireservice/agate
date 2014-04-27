@@ -87,9 +87,13 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(self.table.columns['one'].all(lambda d: d == 2), False)
 
     def test_count(self):
-        rows = self.rows
-        rows.append(rows[0])
-        rows.append(rows[0])
+        rows = [
+            [1, 2, 'a'],
+            [2, 3, 'b'],
+            [None, 4, 'c'],
+            [1, 2, 'a'],
+            [1, 2, 'a']
+        ]
 
         table = journalism.Table(rows, self.column_types, self.column_names)
 
@@ -98,9 +102,13 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(table.columns['one'].count(None), 1)
 
     def test_counts(self):
-        rows = self.rows
-        rows.append(rows[0])
-        rows.append(rows[0])
+        rows = [
+            [1, 2, 'a'],
+            [2, 3, 'b'],
+            [None, 4, 'c'],
+            [1, 2, 'a'],
+            [1, 2, 'a']
+        ]
 
         table = journalism.Table(rows, self.column_types, self.column_names)
 
@@ -175,7 +183,7 @@ class TestIntColumn(unittest.TestCase):
         with self.assertRaises(journalism.exceptions.NullComputationError):
             self.table.columns['one'].median()
 
-        self.assertEqual(self.table.columns['two'].median(), 1.5)
+        self.assertEqual(self.table.columns['two'].median(), Decimal('1.5'))
 
     def test_mode(self):
         with self.assertRaises(journalism.exceptions.NullComputationError):
@@ -186,7 +194,7 @@ class TestIntColumn(unittest.TestCase):
     def test_variance(self):
         with self.assertRaises(journalism.exceptions.NullComputationError):
             self.table.columns['one'].variance()
-        self.assertEqual(self.table.columns['two'].variance(),1.5)
+        self.assertEqual(self.table.columns['two'].variance(), Decimal('1.5'))
 
     def test_stdev(self):
         # TODO

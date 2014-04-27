@@ -28,5 +28,6 @@ setup(
         'journalism',
     ],
     install_requires = [
+        'ordereddict>=1.1'
     ]
 )

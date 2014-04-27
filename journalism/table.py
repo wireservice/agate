@@ -7,6 +7,11 @@ This module contains the Table object.
 import copy
 from decimal import Decimal
 
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
+
 from journalism.columns import ColumnMapping, DecimalColumn
 from journalism.exceptions import UnsupportedOperationError
 from journalism.rows import RowSequence, Row
@@ -176,7 +181,7 @@ class Table(object):
         """
         i = self._column_names.index(group_by)
 
-        groups = {}
+        groups = OrderedDict() 
 
         for row in self._data:
             group_name = row[i]
