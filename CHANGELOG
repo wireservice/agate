@@ -1,6 +1,7 @@
 0.2.0
 -----
 
+* Cookbook: Rounding to two decimal places. (#49)
 * Better repr for Column and Row. (#56)
 * Cookbook: Filter by regex. (#27)
 * Cookbook: Underscore filter & reject. (#57)
