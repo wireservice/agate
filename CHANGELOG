@@ -1,6 +1,8 @@
 0.2.0
 -----
 
+* Cookbook: sampleing. (#59)
+* Cookbook: random sort order. (#68)
 * Eliminate Table.get_data.
 * Use tuples everywhere. (#66)
 * Fixes for Python 2.6 compatibility. (#53)

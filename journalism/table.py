@@ -151,7 +151,7 @@ class Table(object):
 
         return self._fork(data)
 
-    def limit(self, start_or_stop, stop=None, step=None):
+    def limit(self, start_or_stop=None, stop=None, step=None):
         """
         Filter data to a subset of all rows.If only one argument is specified,
         that many rows will be returned. Otherwise, the arguments function as

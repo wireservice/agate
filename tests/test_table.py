@@ -175,6 +175,17 @@ class TestTable(unittest.TestCase):
         self.assertEqual(new_table.rows[1], (1, 4, 'a'))
         self.assertEqual(new_table.columns['one'], (2, 1))
 
+    def test_limit_step_only(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.limit(step=2)
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table.rows), 2)
+        self.assertEqual(new_table.rows[0], (1, 4, 'a'))
+        self.assertEqual(new_table.rows[1], (None, 2, 'c'))
+        self.assertEqual(new_table.columns['one'], (1, None))
+
     def test_chain_select_where(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 

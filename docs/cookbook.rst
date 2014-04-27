@@ -90,6 +90,27 @@ Filter to values within a range
 
 TODO
 
+Random sample
+--------------
+
+By combining a random sort with limiting, we can effectively get a random sample from a table.
+
+.. code-block:: python
+
+    import random
+
+    randomized = table.order_by(lambda row: random.random())
+    sampled = table.limit(10)
+
+Ordered sample
+--------------
+
+With can also get an ordered sample by simply using the :code:`step` parameter of the :meth:`.Table.limit` method to get every Nth row.
+
+.. code-block:: python
+
+    sampled = table.limit(step=10)
+
 Sorting
 =======
 
@@ -113,6 +134,15 @@ Because Python's internal sorting works natively with arrays, we can implement m
     new_table = table.order_by(lambda row: [row['last_name'], row['first_name'])
 
 This table will now be ordered by :code:`last_name`, then :code:`first_name`.
+
+Randomizing order
+-----------------
+
+.. code-block:: python
+
+    import random
+
+    new_table = table.order_by(lambda row: random.random())
 
 Modifying data
 ==============
