@@ -69,7 +69,15 @@ class Row(Mapping):
         self._i = i
 
     def __repr__(self):
-        return '<journalism.rows.Row: %s>' % repr(self._table._data[self._i])
+        data = self._table._data[self._i]
+
+        sample = repr(data[:5])
+
+        if len(data) > 5:
+            last = sample[-1]
+            sample = sample[:-1] + ', ...' + last
+
+        return '<journalism.rows.Row: %s>' % sample 
 
     def __getitem__(self, k):
         j = self._table._column_names.index(k)

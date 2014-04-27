@@ -73,6 +73,17 @@ class Column(Sequence):
         self._cached_data_without_nulls = None
         self._cached_data_sorted = None
 
+    def __repr__(self):
+        data = self._data()
+
+        sample = repr(data[:5])
+
+        if len(data) > 5:
+            last = sample[-1]
+            sample = sample[:-1] + ', ...' + last
+
+        return '<journalism.columns.%s: %s>' % (self.__class__.__name__, sample)
+
     def _data(self):
         if self._cached_data is None:
             self._cached_data = [r[self._index] for r in self._table._data]
