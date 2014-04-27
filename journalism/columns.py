@@ -21,11 +21,11 @@ class ColumnIterator(Iterator):
         except IndexError:
             raise StopIteration
 
-        column_type = self._table._column_types[self._i]
+        column = self._table._get_column(self._i)
 
         self._i += 1
 
-        return column_type(self._table, self._i - 1)
+        return column 
 
 class ColumnMapping(Mapping):
     """
@@ -39,9 +39,8 @@ class ColumnMapping(Mapping):
             raise KeyError
 
         i = self._table._column_names.index(k)
-        column_type = self._table._column_types[i]
 
-        return column_type(self._table, i)
+        return self._table._get_column(i) 
 
     def __iter__(self):
         return ColumnIterator(self._table)
@@ -55,11 +54,11 @@ def no_null_computations(func):
     on columns containing nulls.
     """
     @wraps(func)
-    def check(l, *args, **kwargs):
-        if l.has_nulls():
+    def check(c, *args, **kwargs):
+        if c.has_nulls():
             raise NullComputationError
 
-        return func(l)
+        return func(c)
 
     return check
 
@@ -71,17 +70,27 @@ class Column(Sequence):
         self._table = table
         self._index = index
 
+        self._cached_data = None
+        self._cached_data_without_nulls = None
+        self._cached_data_sorted = None
+
     def _data(self):
-        # TODO: memoize?
-        return [r[self._index] for r in self._table._data]
+        if self._cached_data is None:
+            self._cached_data = [r[self._index] for r in self._table._data]
+
+        return self._cached_data
 
     def _data_without_nulls(self):
-        # TODO: memoize?
-        return [d for d in self._data() if d is not None]
+        if self._cached_data_without_nulls is None:
+            self._cached_data_without_nulls = [d for d in self._data() if d is not None]
+
+        return self._cached_data_without_nulls
 
     def _data_sorted(self):
-        # TODO: memoize?
-        return sorted(self._data())
+        if self._cached_data_sorted is None:
+            self._cached_data_sorted = sorted(self._data())
+
+        return self._cached_data_sorted
 
     def __getitem__(self, j):
         return self._data()[j]

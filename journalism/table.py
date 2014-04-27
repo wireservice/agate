@@ -35,6 +35,7 @@ class Table(object):
         self._data = rows
         self._column_types = column_types
         self._column_names = column_names
+        self._cached_columns = {}
 
         self.columns = ColumnMapping(self)
         self.rows = RowSequence(self)
@@ -50,6 +51,17 @@ class Table(object):
         if validate:
             for column in self.columns:
                 column.validate()
+
+    def _get_column(self, i):
+        """
+        Get a Column of data, caching a copy for next request.
+        """
+        if i not in self._cached_columns:
+            column_type = self._column_types[i]
+
+            self._cached_columns[i] = column_type(self, i)
+
+        return self._cached_columns[i]
 
     def _fork(self, new_data, column_types=[], column_names=[]):
         """
