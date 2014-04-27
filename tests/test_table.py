@@ -109,6 +109,23 @@ class TestTable(unittest.TestCase):
         self.assertEqual(table.rows[1], [2, 3, 'b'])
         self.assertEqual(table.rows[2], [None, 2, 'c'])
 
+    def test_order_by_two_columns(self):
+        rows = [
+            [1, 2, 'a'],
+            [2, 1, 'b'],
+            [1, 1, 'c']
+        ]
+
+        table = journalism.Table(rows, self.column_types, self.column_names)
+
+        new_table = table.order_by(lambda r: (r['one'], r['two']))
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(new_table.rows[0], [1, 1, 'c'])
+        self.assertEqual(new_table.rows[1], [1, 2, 'a'])
+        self.assertEqual(new_table.rows[2], [2, 1, 'b'])
+
     def test_order_by_reverse(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 

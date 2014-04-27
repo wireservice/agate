@@ -1,6 +1,8 @@
 0.2.0
 -----
 
+* Cookbook: multi-column sorting. (#13)
+* Cookbook: simple sorting.
 * Destructive Table ops now deepcopy row data. (#63)
 * Non-destructive Table ops now share row data. (#63)
 * Table.sort_by now accepts a function. (#65)
