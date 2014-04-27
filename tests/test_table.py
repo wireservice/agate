@@ -132,6 +132,38 @@ class TestTable(unittest.TestCase):
         self.assertEqual(new_table.rows[0], [2, 3, 'b'])
         self.assertEqual(new_table.columns['one'], [2, None])
 
+    def test_limit(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.limit(2)
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table.rows), 2)
+        self.assertEqual(new_table.rows[0], [1, 4, 'a'])
+        self.assertEqual(new_table.columns['one'], [1, 2])
+
+    def test_limit_slice(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.limit(0, 3, 2)
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table.rows), 2)
+        self.assertEqual(new_table.rows[0], [1, 4, 'a'])
+        self.assertEqual(new_table.rows[1], [None, 2, 'c'])
+        self.assertEqual(new_table.columns['one'], [1, None])
+
+    def test_limit_slice_negative(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.limit(-2, step=-1)
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table.rows), 2)
+        self.assertEqual(new_table.rows[0], [2, 3, 'b'])
+        self.assertEqual(new_table.rows[1], [1, 4, 'a'])
+        self.assertEqual(new_table.columns['one'], [2, 1])
+
     def test_chain_select_where(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 

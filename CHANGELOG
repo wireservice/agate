@@ -1,6 +1,7 @@
 0.2.0
 -----
 
+* Table.limit implemented. (#58)
 * Cookbook: writing a CSV. (#51)
 * Kill Table.filter and Table.reject. (#55)
 * Column.map removed. (#43)

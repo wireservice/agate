@@ -34,6 +34,7 @@ class RowSequence(Sequence):
 
             return [Row(self._table, row) for row in indices]
 
+        # Verify the row exists
         self._table._data[i]
 
         return Row(self._table, i)
@@ -66,6 +67,9 @@ class Row(Mapping):
     def __init__(self, table, i):
         self._table = table
         self._i = i
+
+    def __repr__(self):
+        return '<journalism.rows.Row: %s>' % repr(self._table._data[self._i])
 
     def __getitem__(self, k):
         j = self._table._column_names.index(k)

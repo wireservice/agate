@@ -132,6 +132,17 @@ class Table(object):
 
         return self._fork(rows)
 
+    def limit(self, start_or_stop, stop=None, step=None):
+        """
+        Filter data to a subset of all rows.If only one argument is specified,
+        that many rows will be returned. Otherwise, the arguments function as
+        `start`, `stop` and `step`, just like Python's builtin :func:`slice`.
+        """
+        if stop or step:
+            return self._fork(self._data[slice(start_or_stop, stop, step)])
+        
+        return self._fork(self._data[:start_or_stop])
+
     def aggregate(self, group_by, operations=[]):
         """
         Aggregate data by a specified group_by column.
