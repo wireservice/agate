@@ -104,7 +104,10 @@ We can use :meth:`.Table.compute` to apply the quantize to generate a rounded co
 
     from decimal import Decimal
 
-    new_table = table.compute(lambda row: row['price'].quantize(Decimal('0.01')))
+    def round_price(row):
+        return row['price'].quantize(Decimal('0.01'))
+
+    new_table = table.compute('price_rounded', DecimalColumn, round_price)
 
 To round to one decimal place you would simply change :code:`0.01` to :code:`0.1`.
 
@@ -114,7 +117,36 @@ Emulating Excel
 Formulas
 --------
 
-TODO
+One of journalism's most powerful assets is that instead of a wimpy "formula" language, you have the entire Python language at your disposal. Here are examples of how to translate a few common Excel operations.
+
+:code:`SUM`:
+
+.. code-block:: python
+
+    def five_year_total(row):
+        columns = ['2009', '2010', '2011', '2012', '2013']
+
+        return sum([row[c] for c in columns]]
+
+    new_table = table.compute('five_year_total', DecimalColumn, five_year_total)  
+
+:code:`TRIM`:
+
+.. code-block:: python
+
+    new_table = table.compute('name_stripped', TextColumn, lambda row: row['name'].strip())
+
+:code:`CONCATENATE`:
+
+.. code-block:: python
+
+    new_table = table.compute('full_name', TextColumn, lambda row '%(first_name)s %(middle_name)s %(last_name)s' % row) 
+
+:code:`IF`:
+
+.. code-block:: python
+
+    new_table = table.compute('mvp_candidate', TextColumn, lambda row: 'Yes' if row['batting_average'] > 0.3 else 'No'
 
 Pivot tables
 ------------
