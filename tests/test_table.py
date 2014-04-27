@@ -51,6 +51,21 @@ class TestTable(unittest.TestCase):
         with self.assertRaises(journalism.ColumnValidationError):
             journalism.Table(self.rows, column_types, self.column_names, validate=True)
 
+    def test_get_data(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        self.assertEqual(table.get_data(), self.rows)
+
+    def test_get_column_types(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        self.assertEqual(table.get_column_types(), self.column_types)
+
+    def test_get_column_names(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        self.assertEqual(table.get_column_names(), ['one', 'two', 'three'])
+
     def test_sort_by(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 

@@ -5,8 +5,8 @@ Cookbook
 The basics
 ==========
 
-Loading a CSV
--------------
+Loading a table from a CSV
+--------------------------
 
 If your file does not have headers:
 
@@ -35,8 +35,24 @@ If your file does have headers:
     # first row as column names
     table = Table(rows, column_types)
 
-Loading a CSV w/ csvkit
------------------------
+Loading a table from a CSV w/ csvkit
+-------------------------------------
+
+TODO
+
+Writing data to a CSV
+---------------------
+
+.. code-block:: python
+
+    with open('output.csv') as f:
+        writer = csv.writer(f)
+
+        writer.writerow(table.get_column_names())
+        writer.writerows(table.get_data())
+
+Writing data to a CSV w/ csvkit
+-------------------------------
 
 TODO
 

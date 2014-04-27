@@ -48,6 +48,12 @@ top_five = sort_by_total_desc.rows[0:5]
 for i, row in enumerate(top_five):
     print '# %i: %s %i' % (i, row['state'], row['total'])
 
+with open('sorted.csv', 'w') as f:
+    writer = csv.writer(f)
+
+    writer.writerow(sort_by_total_desc.get_column_names())
+    writer.writerows(sort_by_total_desc.get_data())
+
 # Grab just the bottom state
 last_place = sort_by_total_desc.rows[-1]
 

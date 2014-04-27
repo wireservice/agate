@@ -76,6 +76,24 @@ class Table(object):
 
         return Table(new_data, column_types, column_names)
 
+    def get_data(self):
+        """
+        Get the raw data in this table.
+        """
+        return self._data
+
+    def get_column_types(self):
+        """
+        Get an ordered list of this table's column types.
+        """
+        return self._column_types
+
+    def get_column_names(self):
+        """
+        Get an ordered list of this table's column names.
+        """
+        return self._column_names
+
     def sort_by(self, column_name, cmp=None, reverse=False):
         """
         Sort this table by the specified column.
