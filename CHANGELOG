@@ -1,6 +1,7 @@
 0.2.0
 -----
 
+* Column.map removed. (#43)
 * Column instance & data caching implemented. (#42)
 * Table.select implemented. (#32)
 * Eliminate repeated column index lookups. (#25)

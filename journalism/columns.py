@@ -140,28 +140,6 @@ class Column(Sequence):
         """
         return all([func(d) for d in self._data()])
 
-    def map(self, func, new_column_type=None, new_column_name=None):
-        """
-        Apply an arbitrary function to a column of data and
-        optionally change it's type and/or name.
-
-        Returns a new :class:`journalism.table.Table`.
-        """
-        data = copy.deepcopy(self._table._data)
-        column_types = copy.deepcopy(self._table._column_types)
-        column_names = copy.deepcopy(self._table._column_names)
-
-        for row in data:
-            row[self._index] = func(row[self._index])
-
-        if new_column_type:
-            column_types[self._index] = new_column_type
-
-        if new_column_name:
-            column_names[self._index] = new_column_name
-
-        return self._table._fork(data, column_types, column_names)
-
     def count(self, value):
         """
         Count the number of times a specific value occurs in this column.
