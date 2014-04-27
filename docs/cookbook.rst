@@ -42,8 +42,8 @@ Loading a table from a CSV w/ csvkit
 
 TODO
 
-Writing data to a CSV
----------------------
+Writing a table to a CSV
+------------------------
 
 .. code-block:: python
 
@@ -53,8 +53,8 @@ Writing data to a CSV
         writer.writerow(table.get_column_names())
         writer.writerows(table.get_data())
 
-Writing data to a CSV w/ csvkit
--------------------------------
+Writing a table to a CSV w/ csvkit
+----------------------------------
 
 TODO
 
@@ -110,6 +110,38 @@ We can use :meth:`.Table.compute` to apply the quantize to generate a rounded co
     new_table = table.compute('price_rounded', DecimalColumn, round_price)
 
 To round to one decimal place you would simply change :code:`0.01` to :code:`0.1`.
+
+Plotting with matplotlib
+========================
+
+journalism integrates well with Python plotting library `matplotlib <http://matplotlib.org/>`_
+
+Simple line chart
+-----------------
+
+.. code-block:: python
+
+    import pylab
+
+    pylab.plot(table.columns['homeruns'], table.columns['wins'])
+    pylab.xlabel('Homeruns')
+    pylab.ylabel('Wins')
+    pylab.title('How homeruns affect wins')
+
+    pylab.show()
+
+Simple histogram
+----------------
+
+.. code-block:: python
+
+    pylab.hist(table.columns['state'])
+
+    pylab.xlabel('State')
+    pylab.ylabel('Count')
+    pylab.title('Count by state')
+
+    pylab.show()
 
 Emulating Excel
 ===============
