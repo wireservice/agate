@@ -1,6 +1,9 @@
 0.2.0
 -----
 
+* Destructive Table ops now deepcopy row data. (#63)
+* Non-destructive Table ops now share row data. (#63)
+* Table.sort_by now accepts a function. (#65)
 * Cookbook: pygal.
 * Cookbook: Matplotlib.
 * Cookbook: VLOOKUP. (#40)

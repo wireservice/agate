@@ -59,6 +59,8 @@ Here is an example of how to use journalism, using financial aid data from data.
 
 .. code-block:: python
 
+    #!/usr/bin/env python
+
     import csv
 
     from journalism import Table, TextColumn, IntColumn
@@ -93,22 +95,28 @@ Here is an example of how to use journalism, using financial aid data from data.
     table = Table(rows, COLUMN_TYPES, COLUMN_NAMES, cast=True)
 
     # Remove Phillipines and Puerto Rico
-    states = table.reject(lambda r: r['state_abbr'] in ['PR', 'PH'])
+    states = table.where(lambda r: r['state_abbr'] not in ['PR', 'PH'])
 
     # Sum total of all states
     print 'Total of all states: %i' % states.columns['total'].sum()
 
     # Sort state total, descending
-    sort_by_total_desc = states.sort_by('total', reverse=True)
+    order_by_total_desc = states.order_by(lambda r: r['total'], reverse=True)
 
     # Grab just the top 5 states
-    top_five = sort_by_total_desc.rows[0:5]
+    top_five = order_by_total_desc.rows[:5]
 
     for i, row in enumerate(top_five):
         print '# %i: %s %i' % (i, row['state'], row['total'])
 
+    with open('sorted.csv', 'w') as f:
+        writer = csv.writer(f)
+
+        writer.writerow(order_by_total_desc.get_column_names())
+        writer.writerows(order_by_total_desc.get_data())
+
     # Grab just the bottom state
-    last_place = sort_by_total_desc.rows[-1]
+    last_place = order_by_total_desc.rows[-1]
 
     print 'Lowest state: %(state)s %(total)i' %(last_place)
 

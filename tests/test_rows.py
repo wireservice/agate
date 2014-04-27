@@ -23,6 +23,14 @@ class TestRows(unittest.TestCase):
         self.assertEqual(self.table.rows[0], [1, 2, 'a'])
         self.assertEqual(self.table.rows[1], [2, 3, 'b'])
 
+    def test_get_row_cached(self):
+        r = self.table.rows[0]
+        r2 = self.table.rows[0]
+        r3 = self.table.rows[1]
+
+        self.assertIs(r, r2)
+        self.assertIsNot(r, r3)
+
     def test_get_invalid_column(self):
         with self.assertRaises(IndexError):
             self.table.rows[3]

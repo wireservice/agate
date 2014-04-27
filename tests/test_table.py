@@ -66,45 +66,6 @@ class TestTable(unittest.TestCase):
 
         self.assertEqual(table.get_column_names(), ['one', 'two', 'three'])
 
-    def test_sort_by(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
-
-        new_table = table.sort_by('two')
-
-        self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(new_table.rows[0], [None, 2, 'c'])
-        self.assertEqual(new_table.rows[1], [2, 3, 'b'])
-        self.assertEqual(new_table.rows[2], [1, 4, 'a'])
-
-        # Verify old table not changed
-        self.assertEqual(table.rows[0], [1, 4, 'a'])
-        self.assertEqual(table.rows[1], [2, 3, 'b'])
-        self.assertEqual(table.rows[2], [None, 2, 'c'])
-
-    def test_sort_by_reverse(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
-
-        new_table = table.sort_by('two', reverse=True)
-
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(new_table.rows[0], [1, 4, 'a'])
-        self.assertEqual(new_table.rows[1], [2, 3, 'b'])
-        self.assertEqual(new_table.rows[2], [None, 2, 'c'])
-
-    def test_sort_by_cmp(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
-
-        def func(a, b):
-            return -cmp(a, b)
-
-        new_table = table.sort_by('two', cmp=func)
-
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(new_table.rows[0], [1, 4, 'a'])
-        self.assertEqual(new_table.rows[1], [2, 3, 'b'])
-        self.assertEqual(new_table.rows[2], [None, 2, 'c'])
-
     def test_select(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 
@@ -131,6 +92,45 @@ class TestTable(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 2)
         self.assertEqual(new_table.rows[0], [2, 3, 'b'])
         self.assertEqual(new_table.columns['one'], [2, None])
+
+    def test_order_by(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.order_by(lambda r: r['two'])
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(new_table.rows[0], [None, 2, 'c'])
+        self.assertEqual(new_table.rows[1], [2, 3, 'b'])
+        self.assertEqual(new_table.rows[2], [1, 4, 'a'])
+
+        # Verify old table not changed
+        self.assertEqual(table.rows[0], [1, 4, 'a'])
+        self.assertEqual(table.rows[1], [2, 3, 'b'])
+        self.assertEqual(table.rows[2], [None, 2, 'c'])
+
+    def test_order_by_reverse(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_table = table.order_by(lambda r: r['two'], reverse=True)
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(new_table.rows[0], [1, 4, 'a'])
+        self.assertEqual(new_table.rows[1], [2, 3, 'b'])
+        self.assertEqual(new_table.rows[2], [None, 2, 'c'])
+
+    def test_order_by_cmp(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        def func(a, b):
+            return -cmp(a, b)
+
+        new_table = table.order_by(lambda r: r['two'], cmp=func)
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(new_table.rows[0], [1, 4, 'a'])
+        self.assertEqual(new_table.rows[1], [2, 3, 'b'])
+        self.assertEqual(new_table.rows[2], [None, 2, 'c'])
 
     def test_limit(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
@@ -257,4 +257,60 @@ class TestTableCompute(unittest.TestCase):
         self.assertEqual(to_one_place(new_table.columns['test'][1]), Decimal('66.7'))
         self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('100.0'))
         self.assertEqual(to_one_place(new_table.columns['test'][3]), Decimal('33.3'))
+
+class TestTableData(unittest.TestCase):
+    def setUp(self):
+        self.rows = [
+            [1, 4, 'a'],
+            [2, 3, 'b'],
+            [None, 2, 'c']
+        ]
+        self.column_names = ['one', 'two', 'three']
+        self.column_types = [journalism.IntColumn, journalism.IntColumn, journalism.TextColumn]
+
+    def test_data_immutable(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        self.rows[0] = [2, 2, 2]
+        self.assertEqual(table.rows[0], [1, 4, 'a'])
+
+    def test_fork_preserves_data(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table2 = table._fork(table._data)
+
+        self.assertIs(table._data, table2._data)
+
+    def test_where_preserves_rows(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table2 = table.where(lambda r: r['one'] == 1)
+        table3 = table2.where(lambda r: r['one'] == 1)
+
+        self.assertIsNot(table._data[0], table2._data[0])
+        self.assertIs(table2._data[0], table3._data[0])
+
+    def test_order_by_preserves_rows(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table2 = table.order_by(lambda r: r['one'])
+        table3 = table2.order_by(lambda r: r['one'])
+
+        self.assertIsNot(table._data[0], table2._data[0])
+        self.assertIs(table2._data[0], table3._data[0])
+
+    def test_limit_preserves_rows(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table2 = table.limit(2)
+        table3 = table2.limit(2)
+
+        self.assertIsNot(table._data[0], table2._data[0])
+        self.assertIs(table2._data[0], table3._data[0])
+
+    def test_compute_creates_rows(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table2 = table.compute('new2', journalism.IntColumn, lambda r: r['one'])
+        table3 = table2.compute('new3', journalism.IntColumn, lambda r: r['one'])
+
+        self.assertIsNot(table._data[0], table2._data[0])
+        self.assertNotEqual(table._data[0], table2._data[0])
+        self.assertIsNot(table2._data[0], table3._data[0])
+        self.assertNotEqual(table2._data[0], table3._data[0])
+        self.assertEqual(table._data[0], [1, 4, 'a'])
 

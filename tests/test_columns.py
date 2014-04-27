@@ -42,8 +42,10 @@ class TestColumns(unittest.TestCase):
     def test_get_column_cached(self):
         c = self.table.columns['one']
         c2 = self.table.columns['one']
+        c3 = self.table.columns['two']
 
         self.assertIs(c, c2)
+        self.assertIsNot(c2, c3)
 
     def test_get_invalid_column(self):
         with self.assertRaises(KeyError):

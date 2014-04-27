@@ -16,10 +16,11 @@ class RowIterator(Iterator):
         except IndexError:
             raise StopIteration
         
-        i = self._i
+        row = self._table._get_row(self._i)
+
         self._i += 1
 
-        return Row(self._table, i)
+        return row
 
 class RowSequence(Sequence):
     """
@@ -32,12 +33,12 @@ class RowSequence(Sequence):
         if isinstance(i, slice):
             indices = xrange(*i.indices(len(self)))
 
-            return [Row(self._table, row) for row in indices]
+            return [self._table._get_row(row) for row in indices]
 
         # Verify the row exists
         self._table._data[i]
 
-        return Row(self._table, i)
+        return self._table._get_row(i) 
 
     def __len__(self):
         return len(self._table._data)
@@ -80,8 +81,11 @@ class Row(Mapping):
         return '<journalism.rows.Row: %s>' % sample 
 
     def __getitem__(self, k):
-        j = self._table._column_names.index(k)
+        if isinstance(k, int):
+            return self._table._data[self._i][k]
 
+        j = self._table._column_names.index(k)
+        
         return self._table._data[self._i][j]
 
     def __len__(self):
