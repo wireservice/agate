@@ -2,7 +2,6 @@
 
 from collections import Iterator, Mapping, Sequence, defaultdict
 from decimal import Decimal
-import copy
 from functools import wraps
 
 from journalism.exceptions import ColumnValidationError, NullComputationError
@@ -157,8 +156,8 @@ class Column(Sequence):
         Compute the number of instances of each unique value in this
         column.
 
-        Returns a new :class:`journalism.table.Table`, with two columns,
-        one containing the values and a a second, :class:`journalism.columns.IntColumn`
+        Returns a new :class:`.Table`, with two columns,
+        one containing the values and a a second, :class:`IntColumn`
         containing the counts.
 
         Resulting table will be sorted by descending count.
@@ -184,7 +183,7 @@ class TextColumn(Column):
         """
         Verify all values in this column are string/unicode or null.
 
-        Will raise :exc:`journalism.exceptions.ColumnValidationError`
+        Will raise :exc:`.ColumnValidationError`
         if validation fails.
         """
         for d in self._data():
@@ -209,7 +208,7 @@ class NumberColumn(Column):
     """
     A column containing numeric data.
 
-    Base class for :class:`IntColumn` and :class:`FloatColumn`.
+    Base class for :class:`IntColumn` and :class:`DecimalColumn`.
     """
     def sum(self):
         """
@@ -234,7 +233,7 @@ class NumberColumn(Column):
         """
         Compute the mean value of this column.
 
-        Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
+        Will raise :exc:`.NullComputationError` if this column contains nulls.
         """
         return Decimal(self.sum()) / len(self)
 
@@ -243,7 +242,7 @@ class NumberColumn(Column):
         """
         Compute the median value of this column.
 
-        Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
+        Will raise :exc:`.NullComputationError` if this column contains nulls.
         """
         data = self._data_sorted()
         length = len(data)
@@ -261,7 +260,7 @@ class NumberColumn(Column):
         """
         Compute the mode value of this column.
 
-        Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
+        Will raise :exc:`.NullComputationError` if this column contains nulls.
         """
         data = self._data()
         state = defaultdict(int)
@@ -276,7 +275,7 @@ class NumberColumn(Column):
         """
         Compute the variance of this column.
 
-        Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
+        Will raise :exc:`.NullComputationError` if this column contains nulls.
         """
         data = self._data()
 
@@ -287,7 +286,7 @@ class NumberColumn(Column):
         """
         Compute the standard of deviation of this column.
 
-        Will raise :exc:`journalism.exceptions.NullComputationError` if this column contains nulls.
+        Will raise :exc:`.NullComputationError` if this column contains nulls.
         """
 
         return self.variance().sqrt()
@@ -300,8 +299,7 @@ class IntColumn(NumberColumn):
         """
         Verify all values in this column are int or null.
 
-        Will raise :exc:`journalism.exceptions.ColumnValidationError`
-        if validation fails.
+        Will raise :exc:`.ColumnValidationError` if validation fails.
         """
         for d in self._data():
             if not isinstance(d, int) and d is not None:
@@ -334,8 +332,7 @@ class DecimalColumn(NumberColumn):
 
         NB: We never use floats because of rounding error.
 
-        Will raise :exc:`journalism.exceptions.ColumnValidationError`
-        if validation fails.
+        Will raise :exc:`.ColumnValidationError` if validation fails.
         """
         for d in self._data():
             if not isinstance(d, Decimal) and d is not None:
