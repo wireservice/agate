@@ -34,7 +34,7 @@ rows = rows[:-2]
 table = Table(rows, COLUMN_TYPES, COLUMN_NAMES, cast=True)
 
 # Remove Phillipines and Puerto Rico
-states = table.reject(lambda r: r['state_abbr'] in ['PR', 'PH'])
+states = table.where(lambda r: r['state_abbr'] not in ['PR', 'PH'])
 
 # Sum total of all states
 print 'Total of all states: %i' % states.columns['total'].sum()

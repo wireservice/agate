@@ -1,6 +1,7 @@
 0.2.0
 -----
 
+* Kill Table.filter and Table.reject. (#55)
 * Column.map removed. (#43)
 * Column instance & data caching implemented. (#42)
 * Table.select implemented. (#32)

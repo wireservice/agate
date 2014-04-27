@@ -88,26 +88,6 @@ class Table(object):
 
         return self._fork(data)
 
-    def filter(self, func):
-        """
-        Filter a to only those rows where the row passes a truth test.
-
-        Returns a new :class:`Table`.
-        """
-        rows = [self._data[i] for i, row in enumerate(self.rows) if func(row)]
-
-        return self._fork(rows)
-
-    def reject(self, func):
-        """
-        Filter a to only those rows where the row fails a truth test.
-
-        Returns a new :class:`Table`.
-        """
-        rows = [self._data[i] for i, row in enumerate(self.rows) if not func(row)]
-
-        return self._fork(rows)
-
     def select(self, column_names=[]):
         """
         Reduce this table to only the specified columns.
@@ -124,16 +104,13 @@ class Table(object):
 
         return self._fork(new_rows, column_types, column_names)
 
-    def where(self, column_name, func):
+    def where(self, func):
         """
-        Filter the data to only those rows where the specified column
-        passes a truth test.
+        Filter a to only those rows where the row passes a truth test.
 
         Returns a new :class:`Table`.
         """
-        i = self._column_names.index(column_name)
-
-        rows = filter(lambda r: func(r[i]), self._data)
+        rows = [self._data[i] for i, row in enumerate(self.rows) if func(row)]
 
         return self._fork(rows)
 
