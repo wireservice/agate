@@ -1,6 +1,7 @@
 0.2.0
 -----
 
+* Cookbook: percent change. (#67)
 * Cookbook: sampleing. (#59)
 * Cookbook: random sort order. (#68)
 * Eliminate Table.get_data.

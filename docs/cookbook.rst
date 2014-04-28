@@ -147,6 +147,17 @@ Randomizing order
 Modifying data
 ==============
 
+Computing percent change
+------------------------
+
+You could use :meth:`.Table.compute` to calculate percent change, however, for your convenience journalism has a builtin shorthand:
+
+.. code-block:: python
+
+    new_table = table.percent_change('july', 'august', 'pct_change')
+
+This will compute the percent change between the :code:`july` and :code:`august` columns and put the result in a new :code:`pct_change` column in the resulting table.
+
 Rounding to two decimal places
 ------------------------------
 
