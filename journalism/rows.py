@@ -2,6 +2,8 @@
 
 from collections import Iterator, Mapping, Sequence
 
+from journalism.exceptions import ColumnDoesNotExistError
+
 class RowIterator(Iterator):
     """
     Iterator over row proxies.
@@ -82,10 +84,16 @@ class Row(Mapping):
 
     def __getitem__(self, k):
         if isinstance(k, int):
-            return self._table._data[self._i][k]
+            try:
+                return self._table._data[self._i][k]
+            except IndexError:
+                raise ColumnDoesNotExistError(k)
 
-        j = self._table._column_names.index(k)
-        
+        try:
+            j = self._table._column_names.index(k)
+        except ValueError:
+            raise ColumnDoesNotExistError(k)
+
         return self._table._data[self._i][j]
 
     def __len__(self):

@@ -73,3 +73,16 @@ class TestRows(unittest.TestCase):
         self.assertEqual(len(s), 1)
         self.assertEqual(s[0], (None, 4, 'c'))
 
+    def test_column_in_row(self):
+        row = self.table.rows[0]
+
+        self.assertEqual(row['one'], 1)
+
+    def test_column_in_row_invalid(self):
+        row = self.table.rows[0]
+
+        with self.assertRaises(journalism.ColumnDoesNotExistError):
+            row['four']
+
+        with self.assertRaises(journalism.ColumnDoesNotExistError):
+            row[3]

@@ -48,7 +48,7 @@ class TestColumns(unittest.TestCase):
         self.assertIsNot(c2, c3)
 
     def test_get_invalid_column(self):
-        with self.assertRaises(KeyError):
+        with self.assertRaises(journalism.ColumnDoesNotExistError):
             self.table.columns['four']
 
     def test_column_length(self):

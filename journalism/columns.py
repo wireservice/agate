@@ -9,7 +9,7 @@ try:
 except ImportError:
     from ordereddict import OrderedDict
 
-from journalism.exceptions import ColumnValidationError, NullComputationError
+from journalism.exceptions import ColumnDoesNotExistError, ColumnValidationError, NullComputationError
 
 class ColumnIterator(Iterator):
     """
@@ -40,7 +40,7 @@ class ColumnMapping(Mapping):
 
     def __getitem__(self, k):
         if k not in self._table._column_names:
-            raise KeyError
+            raise ColumnDoesNotExistError(k)
 
         i = self._table._column_names.index(k)
 

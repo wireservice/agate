@@ -37,3 +37,16 @@ class ColumnValidationError(Exception):
     def __str__(self):
         return str(self.__unicode__())
 
+class ColumnDoesNotExistError(Exception):
+    """
+    Exception raised when trying to access a column
+    that does not exist.
+    """
+    def __init__(self, k):
+        self.k = k
+    
+    def __unicode__(self):
+        return 'Column `%s` does not exist.' % (self.k)
+
+    def __str__(self):
+        return str(self.__unicode())
