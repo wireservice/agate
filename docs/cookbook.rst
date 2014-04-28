@@ -205,56 +205,6 @@ We can use :meth:`.Table.compute` to apply the quantize to generate a rounded co
 
 To round to one decimal place you would simply change :code:`0.01` to :code:`0.1`.
 
-Plotting with matplotlib
-========================
-
-journalism integrates well with Python plotting library `matplotlib <http://matplotlib.org/>`_.
-
-Line chart
-----------
-
-.. code-block:: python
-
-    import pylab
-
-    pylab.plot(table.columns['homeruns'], table.columns['wins'])
-    pylab.xlabel('Homeruns')
-    pylab.ylabel('Wins')
-    pylab.title('How homeruns correlate to wins')
-
-    pylab.show()
-
-Histogram
----------
-
-.. code-block:: python
-
-    pylab.hist(table.columns['state'])
-
-    pylab.xlabel('State')
-    pylab.ylabel('Count')
-    pylab.title('Count by state')
-
-    pylab.show()
-
-Plotting with pygal
-===================
-
-`pygal <http://pygal.org/>`_ is a neat library for generating SVG charts. journalism works well with it too.
-
-Line chart
-----------
-
-.. code-block:: python
-
-    import pygal
-
-    line_chart = pygal.Line()
-    line_chart.title = 'State totals'
-    line_chart.x_labels = states.columns['state_abbr']
-    line_chart.add('Total', states.columns['total'])
-    line_chart.render_to_file('total_by_state.svg') 
-
 Emulating SQL
 =============
 
@@ -420,4 +370,55 @@ To simulate Underscore's `reject`, simply negate the return value of the functio
 .. code-block:: python
 
     new__table = table.where(lambda row: not (row['state'] == 'Texas'))
+
+Plotting with matplotlib
+========================
+
+journalism integrates well with Python plotting library `matplotlib <http://matplotlib.org/>`_.
+
+Line chart
+----------
+
+.. code-block:: python
+
+    import pylab
+
+    pylab.plot(table.columns['homeruns'], table.columns['wins'])
+    pylab.xlabel('Homeruns')
+    pylab.ylabel('Wins')
+    pylab.title('How homeruns correlate to wins')
+
+    pylab.show()
+
+Histogram
+---------
+
+.. code-block:: python
+
+    pylab.hist(table.columns['state'])
+
+    pylab.xlabel('State')
+    pylab.ylabel('Count')
+    pylab.title('Count by state')
+
+    pylab.show()
+
+Plotting with pygal
+===================
+
+`pygal <http://pygal.org/>`_ is a neat library for generating SVG charts. journalism works well with it too.
+
+Line chart
+----------
+
+.. code-block:: python
+
+    import pygal
+
+    line_chart = pygal.Line()
+    line_chart.title = 'State totals'
+    line_chart.x_labels = states.columns['state_abbr']
+    line_chart.add('Total', states.columns['total'])
+    line_chart.render_to_file('total_by_state.svg') 
+
 
