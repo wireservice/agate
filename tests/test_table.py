@@ -289,6 +289,52 @@ class TestTableCompute(unittest.TestCase):
         self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('100.0'))
         self.assertEqual(to_one_place(new_table.columns['test'][3]), Decimal('33.3'))
 
+class TestTableJoin(unittest.TestCase):
+    def setUp(self):
+        self.left_rows = (
+            (1, 4, 'a'),
+            (2, 3, 'b'),
+            (None, 2, 'c')
+        )
+
+        self.right_rows = (
+            (1, 4, 'a'),
+            (2, 3, 'b'),
+            (None, 2, 'c')
+        )
+
+        self.column_types = (journalism.TextColumn, journalism.IntColumn, journalism.IntColumn)
+        self.column_names = ('one', 'two', 'three')
+
+        self.left = journalism.Table(self.left_rows, self.column_types, ('one', 'two', 'three'))
+        self.right = journalism.Table(self.right_rows, self.column_types, ('four', 'five', 'six'))
+
+    def test_inner_join(self):
+        new_table = self.left.inner_join(
+            lambda lr: lr['one'], 
+            self.right,
+            lambda rr: rr['four']
+        )
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 6)
+
+        self.assertEqual(new_table.rows[0], (1, 4, 'a', 1, 4, 'a'))
+        self.assertEqual(new_table.rows[1], (2, 3, 'b', 2, 3, 'b'))
+        self.assertEqual(new_table.rows[2], (None, 2, 'c', None, 2, 'c'))
+
+    def test_inner_join2(self):
+        new_table = self.left.inner_join(
+            lambda lr: lr['one'], 
+            self.right,
+            lambda rr: rr['five']
+        )
+
+        self.assertEqual(len(new_table.rows), 1)
+        self.assertEqual(len(new_table.columns), 6)
+
+        self.assertEqual(new_table.rows[0], (2, 3, 'b', None, 2, 'c'))
+
 class TestTableData(unittest.TestCase):
     def setUp(self):
         self.rows = ( 

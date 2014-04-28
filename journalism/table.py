@@ -190,6 +190,35 @@ class Table(object):
         
         return self._fork(self.rows[:start_or_stop])
 
+    def inner_join(self, left_func, table, right_func):
+        """
+        Performs an "inner join", combining columns from this table
+        and the specified table anywhere that the output of `left_func`
+        and `right_func` are the equivalent.
+
+        Returns a new :class:`Table`.
+        """
+        left = []
+        right = []
+
+        for row in self.rows:
+            left.append(left_func(row))
+
+        for row in table.rows:
+            right.append(right_func(row))
+
+        rows = []
+
+        for i, l in enumerate(left):
+            for j, r in enumerate(right):
+                if l == r:
+                    rows.append(tuple(self.rows[i]) + tuple(table.rows[j]))
+
+        column_types = self._column_types + table._column_types
+        column_names = self._column_names + table._column_names
+
+        return self._fork(rows, column_types, column_names)
+
     def aggregate(self, group_by, operations=[]):
         """
         Aggregate data by a specified group_by column.
