@@ -1,6 +1,7 @@
 0.3.0
 -----
 
+* Table.left_outer_join implemented. (#11)
 * Table.inner_join implemented. (#11)
 
 0.2.0

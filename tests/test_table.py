@@ -335,6 +335,34 @@ class TestTableJoin(unittest.TestCase):
 
         self.assertEqual(new_table.rows[0], (2, 3, 'b', None, 2, 'c'))
 
+    def test_left_outer_join(self):
+        new_table = self.left.left_outer_join(
+            lambda lr: lr['one'], 
+            self.right,
+            lambda rr: rr['four']
+        )
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 6)
+
+        self.assertEqual(new_table.rows[0], (1, 4, 'a', 1, 4, 'a'))
+        self.assertEqual(new_table.rows[1], (2, 3, 'b', 2, 3, 'b'))
+        self.assertEqual(new_table.rows[2], (None, 2, 'c', None, 2, 'c'))
+
+    def test_left_outer_join2(self):
+        new_table = self.left.left_outer_join(
+            lambda lr: lr['one'], 
+            self.right,
+            lambda rr: rr['five']
+        )
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 6)
+
+        self.assertEqual(new_table.rows[0], (1, 4, 'a', None, None, None))
+        self.assertEqual(new_table.rows[1], (2, 3, 'b', None, 2, 'c'))
+        self.assertEqual(new_table.rows[2], (None, 2, 'c', None, None, None))
+
 class TestTableData(unittest.TestCase):
     def setUp(self):
         self.rows = ( 

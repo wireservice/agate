@@ -194,8 +194,8 @@ class Table(object):
     def inner_join(self, left_func, table, right_func):
         """
         Performs an "inner join", combining columns from this table
-        and the specified table anywhere that the output of :code:`left_func`
-        and :code:`right_func` are the equivalent.
+        and from :code:`table` anywhere that the output of :code:`left_func`
+        and :code:`right_func` are equivalent.
 
         Returns a new :class:`Table`.
         """
@@ -214,6 +214,38 @@ class Table(object):
             for j, r in enumerate(right):
                 if l == r:
                     rows.append(tuple(self.rows[i]) + tuple(table.rows[j]))
+
+        column_types = self._column_types + table._column_types
+        column_names = self._column_names + table._column_names
+
+        return self._fork(rows, column_types, column_names)
+
+    def left_outer_join(self, left_func, table, right_func):
+        """
+        Performs a "left outer join", including all columns from this table
+        and any from :code:`table` where the output of :code:`left_func`
+        and :code:`right_func` are equivalent.
+
+        Returns a new :class:`Table`.
+        """
+        left = []
+        right = []
+
+        for row in self.rows:
+            left.append(left_func(row))
+
+        for row in table.rows:
+            right.append(right_func(row))
+
+        rows = []
+
+        for i, l in enumerate(left):
+            if l in right:
+                for j, r in enumerate(right):
+                    if l == r:
+                        rows.append(tuple(list(self.rows[i]) + list(table.rows[j])))
+            else:
+                rows.append(tuple(list(self.rows[i]) + [None] * len(table.columns))) 
 
         column_types = self._column_types + table._column_types
         column_names = self._column_names + table._column_names
