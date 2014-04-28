@@ -221,7 +221,7 @@ class TextColumn(Column):
             if d == '':
                 casted.append(None)
             else:
-                casted.append(unicode(d))
+                casted.append(six.u(d))
 
         return casted
 

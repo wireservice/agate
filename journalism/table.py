@@ -12,6 +12,8 @@ try:
 except ImportError:
     from ordereddict import OrderedDict
 
+import six
+
 from journalism.columns import ColumnMapping, DecimalColumn
 from journalism.exceptions import UnsupportedOperationError
 from journalism.rows import RowSequence, Row
@@ -20,6 +22,10 @@ def transpose(data):
     """
     Utility function for transposing a 2D array of data.
     """
+    if six.PY3:
+        # Run generator
+        return tuple(zip(*data))
+
     return zip(*data)
     
 class NullOrder(object):
