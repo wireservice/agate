@@ -255,6 +255,94 @@ Line chart
     line_chart.add('Total', states.columns['total'])
     line_chart.render_to_file('total_by_state.svg') 
 
+Emulating SQL
+=============
+
+journalism's command structure is very similar to SQL. The primary difference between journalism and SQL is that commands like :code:`SELECT` and :code:`WHERE` explicitly create new tables. You can chain them together as you would with SQL, but be aware each command is actually creating a new table.
+
+SELECT
+------
+
+SQL:
+
+.. code-block:: sql
+
+    SELECT state, total FROM table;
+
+journalism:
+
+.. code-block:: python
+
+    new_table = table.select(('state', 'total'))
+
+WHERE
+-----
+
+SQL:
+
+.. code-block:: sql
+
+    SELECT * FROM table WHERE LOWER(state) = 'california';
+
+journalism:
+
+.. code-block:: python
+
+    new_table = table.where(lambda row: row['state'].lower() == 'california')
+
+ORDER BY
+--------
+
+SQL:
+
+.. code-block:: sql
+
+    SELECT * FROM table ORDER BY total DESC;
+
+journalism:
+
+.. code-block:: python
+
+    new_table = table.where(lambda row: row['total'], reverse=True)
+
+Chaining commands together
+--------------------------
+
+SQL:
+
+.. code-block:: SQL
+
+    SELECT state, total FROM table WHERE LOWER(state) = 'california' ORDER BY total DESC;
+
+journalism:
+
+.. code-block:: python
+
+    new_table = table \
+        .select(('state', 'total')) \
+        .where(lambda row: row['state'].lower() == 'california') \
+        .order_by(lambda row: row['total'], reverse=True)
+
+.. note::
+
+    I don't advise chaining commands like this. Being explicit about each step is usually better.
+
+INNER JOIN
+----------
+
+TODO
+
+LEFT OUTER JOIN
+---------------
+
+TODO
+
+
+GROUP BY
+--------
+
+TODO
+
 Emulating Excel
 ===============
 
