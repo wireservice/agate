@@ -83,7 +83,13 @@ This can also be useful for finding values that **don't** match your expectation
 Filter by glob
 --------------
 
-TODO
+Hate regexes? You can use glob (a.k.a. :mod:`fnmatch`) syntax too!
+
+.. code-block:: python
+
+    from fnmatch import fnmatch
+
+    new_table = table.where(lambda row: fnmatch('C*', row['state'])
 
 Filter to values within a range
 -------------------------------
