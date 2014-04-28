@@ -88,7 +88,11 @@ TODO
 Filter to values within a range
 -------------------------------
 
-TODO
+This snippet filters the dataset to incomes between 100,000 and 200,000.
+
+.. code-block:: python
+
+    new_table = table.where(lambda row: 100000 < row['income'] < 200000) 
 
 Random sample
 --------------
