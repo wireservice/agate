@@ -1,6 +1,7 @@
 0.2.0
 -----
 
+* Python 3.2, 3.3 and 3.4 support. (#52)
 * Documented supported platforms.
 * Cookbook: csvkit. (#36)
 * Cookbook: glob syntax. (#28)
