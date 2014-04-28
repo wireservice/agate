@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 
 from setuptools import setup
+import sys
+
+install_requires = [
+    'six==1.6.1' 
+]
+
+if sys.version_info == (2, 6):
+    install_requires.append('ordereddict>=1.1')
 
 setup(
     name='journalism',
@@ -27,7 +35,5 @@ setup(
     packages=[
         'journalism',
     ],
-    install_requires = [
-        'ordereddict>=1.1'
-    ]
+    install_requires=install_requires
 )

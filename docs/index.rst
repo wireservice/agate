@@ -59,6 +59,9 @@ journalism supports the following versions of Python:
 
 * Python 2.6
 * Python 2.7
+* Python 3.2
+* Python 3.3
+* Python 3.4
 * Latest `PyPy <http://pypy.org/>`_
 
 It is tested on OSX, but due to it's minimal dependencies should work fine on both Linux and Windows.
