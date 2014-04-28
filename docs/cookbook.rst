@@ -40,7 +40,20 @@ If your file does have headers:
 Loading a table from a CSV w/ csvkit
 -------------------------------------
 
-TODO
+Of course, cool kids use `csvkit <http://csvkit.rtfd.org/>`_. (Hint: it supports unicode!)
+
+.. code-block:: python
+
+    import csvkit
+
+    column_types = (TextColumn, FloatColumn, IntColumn)
+
+    with open('population.csv') as f:
+        rows = list(csvkit.reader(f))
+
+    column_names = rows.pop(0)
+
+    table = Table(rows, column_types, column_names)
 
 Writing a table to a CSV
 ------------------------
@@ -56,7 +69,13 @@ Writing a table to a CSV
 Writing a table to a CSV w/ csvkit
 ----------------------------------
 
-TODO
+.. code-block:: python
+
+    with open('output.csv') as f:
+        writer = csvkit.writer(f)
+
+        writer.writerow(table.get_column_names())
+        writer.writerows(table.rows)
 
 Filtering
 =========
@@ -189,7 +208,7 @@ To round to one decimal place you would simply change :code:`0.01` to :code:`0.1
 Plotting with matplotlib
 ========================
 
-journalism integrates well with Python plotting library `matplotlib <http://matplotlib.org/>`_
+journalism integrates well with Python plotting library `matplotlib <http://matplotlib.org/>`_.
 
 Line chart
 ----------

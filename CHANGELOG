@@ -1,6 +1,7 @@
 0.2.0
 -----
 
+* Cookbook: csvkit. (#36)
 * Cookbook: glob syntax. (#28)
 * Cookbook: filter to values in range. (#30)
 * RowDoesNotExistError implemented. (#70)
