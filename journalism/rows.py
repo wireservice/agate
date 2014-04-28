@@ -2,7 +2,7 @@
 
 from collections import Iterator, Mapping, Sequence
 
-from journalism.exceptions import ColumnDoesNotExistError
+from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 
 class RowIterator(Iterator):
     """
@@ -38,9 +38,15 @@ class RowSequence(Sequence):
             return tuple(self._table._get_row(row) for row in indices)
 
         # Verify the row exists
-        self._table._data[i]
+        try:
+            self._table._data[i]
+        except IndexError:
+            raise RowDoesNotExistError(i)
 
         return self._table._get_row(i) 
+
+    def __iter__(self):
+        return RowIterator(self._table)
 
     def __len__(self):
         return len(self._table._data)

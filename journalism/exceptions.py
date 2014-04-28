@@ -50,3 +50,17 @@ class ColumnDoesNotExistError(Exception):
 
     def __str__(self):
         return str(self.__unicode())
+
+class RowDoesNotExistError(Exception):
+    """
+    Exception raised when trying to access a row
+    that does not exist.
+    """
+    def __init__(self, i):
+        self.i = i
+    
+    def __unicode__(self):
+        return 'Row `%i` does not exist.' % (self.i)
+
+    def __str__(self):
+        return str(self.__unicode())

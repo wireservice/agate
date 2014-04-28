@@ -32,7 +32,7 @@ class TestRows(unittest.TestCase):
         self.assertIsNot(r, r3)
 
     def test_get_invalid_column(self):
-        with self.assertRaises(IndexError):
+        with self.assertRaises(journalism.RowDoesNotExistError):
             self.table.rows[3]
 
     def test_row_length(self):
