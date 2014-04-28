@@ -52,6 +52,17 @@ If you are a developer that also wants to hack on journalism, install it this wa
     python setup.py develop
     nosetests --with-coverage --cover-package=journalism
 
+Supported platforms
+-------------------
+
+journalism supports the following versions of Python:
+
+* Python 2.6
+* Python 2.7
+* Latest `PyPy <http://pypy.org/>`_
+
+It is tested on OSX, but due to it's minimal dependencies should work fine on both Linux and Windows.
+
 Usage
 =====
 
