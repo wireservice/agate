@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-from collections import Iterator, Mapping, Sequence
+from collections import Mapping, Sequence
 
 from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
+import six
 
-class RowIterator(Iterator):
+class RowIterator(six.Iterator):
     """
     Iterator over row proxies.
     """
@@ -12,7 +13,7 @@ class RowIterator(Iterator):
         self._table = table
         self._i = 0
 
-    def next(self):
+    def __next__(self):
         try:
             self._table._data[self._i]
         except IndexError:
@@ -51,7 +52,7 @@ class RowSequence(Sequence):
     def __len__(self):
         return len(self._table._data)
 
-class CellIterator(Iterator):
+class CellIterator(six.Iterator):
     """
     Iterator over row cells.
     """
@@ -59,7 +60,7 @@ class CellIterator(Iterator):
         self._row = row
         self._i = 0
 
-    def next(self):
+    def __next__(self):
         try:
             v = self._row._table._data[self._row._i][self._i]
         except IndexError:

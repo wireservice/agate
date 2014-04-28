@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from collections import Iterator, Mapping, Sequence, defaultdict
+from collections import Mapping, Sequence, defaultdict
 from decimal import Decimal
 from functools import wraps
 
@@ -9,9 +9,11 @@ try:
 except ImportError:
     from ordereddict import OrderedDict
 
+import six
+
 from journalism.exceptions import ColumnDoesNotExistError, ColumnValidationError, NullComputationError
 
-class ColumnIterator(Iterator):
+class ColumnIterator(six.Iterator):
     """
     Iterator over :class:`Column` instances.
     """
@@ -19,7 +21,7 @@ class ColumnIterator(Iterator):
         self._table = table
         self._i = 0
 
-    def next(self):
+    def __next__(self):
         try:
             self._table._column_names[self._i]
         except IndexError:

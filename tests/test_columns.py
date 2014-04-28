@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
 from decimal import Decimal
-import unittest2 as unittest
+
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 import journalism
 
