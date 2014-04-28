@@ -208,7 +208,7 @@ class TextColumn(Column):
         if validation fails.
         """
         for d in self._data():
-            if not isinstance(d, basestring) and d is not None:
+            if not isinstance(d, six.string_types) and d is not None:
                 raise ColumnValidationError(d, self)
 
     def _cast(self):
@@ -271,10 +271,11 @@ class NumberColumn(Column):
         if length % 2 == 1:
             return data[((length + 1) / 2) - 1]
         else:
-            a = data[(length / 2) - 1]
-            b = data[length / 2]
+            half = length // 2
+            a = data[half - 1]
+            b = data[half]
 
-        return (Decimal(a + b)) / 2
+        return Decimal(a + b) / 2
 
     @no_null_computations
     def mode(self):
@@ -333,7 +334,7 @@ class IntColumn(NumberColumn):
         casted = []
 
         for d in self._data():
-            if isinstance(d, basestring):
+            if isinstance(d, six.string_types):
                 d = d.replace(',' ,'').strip()
 
             if d == '' or d is None:
@@ -369,7 +370,7 @@ class DecimalColumn(NumberColumn):
         casted = []
 
         for d in self._data():
-            if isinstance(d, basestring):
+            if isinstance(d, six.string_types):
                 d = d.replace(',' ,'').strip()
 
             if d == '' or d is None:

@@ -5,6 +5,9 @@ from collections import Mapping, Sequence
 from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 import six
 
+if six.PY3:
+    xrange = range
+
 class RowIterator(six.Iterator):
     """
     Iterator over row proxies.

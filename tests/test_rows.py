@@ -44,12 +44,12 @@ class TestRows(unittest.TestCase):
     def test_iterate_rows(self):
         it = iter(self.table.rows)
         
-        self.assertEqual(it.next(), (1, 2, 'a'))
-        self.assertEqual(it.next(), (2, 3, 'b'))
-        self.assertEqual(it.next(), (None, 4, 'c'))
+        self.assertEqual(next(it), (1, 2, 'a'))
+        self.assertEqual(next(it), (2, 3, 'b'))
+        self.assertEqual(next(it), (None, 4, 'c'))
 
         with self.assertRaises(StopIteration):
-            it.next()
+            next(it)
 
     def test_immutable(self):
         with self.assertRaises(TypeError):

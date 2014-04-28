@@ -21,6 +21,21 @@ def transpose(data):
     Utility function for transposing a 2D array of data.
     """
     return zip(*data)
+    
+class NullOrder(object):
+    """
+    Dummy object used for sorting in place of None.
+
+    Sorts as "greater than everything but other nulls."
+    """
+    def __lt__(self, other):
+        return False 
+
+    def __gt__(self, other):
+        if other is None:
+            return False
+
+        return True
 
 class Table(object):
     """
@@ -138,16 +153,23 @@ class Table(object):
 
         return self._fork(rows)
 
-    def order_by(self, func, cmp=None, reverse=False):
+    def order_by(self, func, reverse=False):
         """
         Sort this table by the key returned from the row function.
 
-        Optionally you can also specify a custom comparison function.
         See :func:`sorted` for more details.
 
         Returns a new :class:`Table`.
         """
-        data = sorted(self.rows, cmp=cmp, key=func, reverse=reverse)
+        def null_handler(row):
+            k = func(row)
+
+            if k is None:
+                return NullOrder() 
+
+            return k
+
+        data = sorted(self.rows, key=null_handler, reverse=reverse)
 
         return self._fork(data)
 

@@ -68,12 +68,12 @@ class TestColumns(unittest.TestCase):
     def test_iterate_columns(self):
         it = iter(self.table.columns)
 
-        self.assertEqual(it.next(), (1, 2, None))
-        self.assertEqual(it.next(), (2, 3, 4))
-        self.assertEqual(it.next(), ('a', 'b', 'c'))
+        self.assertEqual(next(it), (1, 2, None))
+        self.assertEqual(next(it), (2, 3, 4))
+        self.assertEqual(next(it), ('a', 'b', 'c'))
 
         with self.assertRaises(StopIteration):
-            it.next()
+            next(it)
 
     def test_immutable(self):
         with self.assertRaises(TypeError):
@@ -238,7 +238,6 @@ class TestDecimalColumn(unittest.TestCase):
         pass
 
     def test_sum(self):
-        print list(self.table.columns['one'])
         self.assertEqual(self.table.columns['one'].sum(), Decimal('6.5'))
         self.assertEqual(self.table.columns['two'].sum(), Decimal('13.13'))
 

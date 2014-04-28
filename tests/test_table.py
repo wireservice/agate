@@ -134,18 +134,23 @@ class TestTable(unittest.TestCase):
         self.assertEqual(new_table.rows[1], (2, 3, 'b'))
         self.assertEqual(new_table.rows[2], (None, 2, 'c'))
 
-    def test_order_by_cmp(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+    def test_order_by_nulls(self):
+        rows = (
+            (1, 2, 'a'),
+            (2, None, None),
+            (1, 1, 'c'),
+            (1, None, None)
+        )
 
-        def func(a, b):
-            return -cmp(a, b)
+        table = journalism.Table(rows, self.column_types, self.column_names)
 
-        new_table = table.order_by(lambda r: r['two'], cmp=func)
+        new_table = table.order_by(lambda r: r['two'])
 
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(new_table.rows[0], (1, 4, 'a'))
-        self.assertEqual(new_table.rows[1], (2, 3, 'b'))
-        self.assertEqual(new_table.rows[2], (None, 2, 'c'))
+        self.assertEqual(new_table.columns['two'], (1, 2, None, None))
+
+        new_table = table.order_by(lambda r: r['three'])
+
+        self.assertEqual(new_table.columns['three'], ('a', 'c', None, None))
 
     def test_limit(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
