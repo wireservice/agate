@@ -149,8 +149,8 @@ Need some more specific examples? Try these out:
 
     cookbook
 
-API Docs
-========
+API
+===
 
 .. toctree::
     :maxdepth: 2

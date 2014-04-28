@@ -181,9 +181,10 @@ class Table(object):
 
     def limit(self, start_or_stop=None, stop=None, step=None):
         """
-        Filter data to a subset of all rows.If only one argument is specified,
+        Filter data to a subset of all rows. If only one argument is specified,
         that many rows will be returned. Otherwise, the arguments function as
-        `start`, `stop` and `step`, just like Python's builtin :func:`slice`.
+        :code:`start`, :code:`stop` and :code:`step`, just like Python's
+        builtin :func:`slice`.
         """
         if stop or step:
             return self._fork(self.rows[slice(start_or_stop, stop, step)])
@@ -193,8 +194,8 @@ class Table(object):
     def inner_join(self, left_func, table, right_func):
         """
         Performs an "inner join", combining columns from this table
-        and the specified table anywhere that the output of `left_func`
-        and `right_func` are the equivalent.
+        and the specified table anywhere that the output of :code:`left_func`
+        and :code:`right_func` are the equivalent.
 
         Returns a new :class:`Table`.
         """
