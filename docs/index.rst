@@ -50,7 +50,7 @@ If you are a developer that also wants to hack on journalism, install it this wa
     mkvirtualenv --no-site-packages journalism
     pip install -r requirements.txt
     python setup.py develop
-    nosetests
+    nosetests --with-coverage --cover-package=journalism
 
 Usage
 =====
