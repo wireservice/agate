@@ -12,7 +12,7 @@ if sys.version_info == (2, 6):
 
 setup(
     name='journalism',
-    version='0.2.0',
+    version='0.3.0',
     description='',
     long_description=open('README').read(),
     author='Christopher Groskopf',
@@ -20,7 +20,7 @@ setup(
     url='journalism takes the horror out of basic data analysis and manipulation.',
     license='MIT',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Science/Research',
