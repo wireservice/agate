@@ -1,6 +1,7 @@
 This is the release process for journalism:
 
 #. Verify all unit tests pass.
+#. Make sure the example script still works.
 #. Ensure CHANGELOG is up to date.
 #. Create a release tag: `git tag - x.y.z -m "x.y.z release."
 #. Push tags upstream: `git push --tags`
