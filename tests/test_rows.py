@@ -23,8 +23,8 @@ class TestRows(unittest.TestCase):
         self.assertEqual(len(self.table.rows), 3)
 
     def test_get_row(self):
-        self.assertEqual(self.table.rows[0], (1, 2, 'a'))
-        self.assertEqual(self.table.rows[1], (2, 3, 'b'))
+        self.assertSequenceEqual(self.table.rows[0], (1, 2, 'a'))
+        self.assertSequenceEqual(self.table.rows[1], (2, 3, 'b'))
 
     def test_get_row_cached(self):
         r = self.table.rows[0]
@@ -44,9 +44,9 @@ class TestRows(unittest.TestCase):
     def test_iterate_rows(self):
         it = iter(self.table.rows)
         
-        self.assertEqual(next(it), (1, 2, 'a'))
-        self.assertEqual(next(it), (2, 3, 'b'))
-        self.assertEqual(next(it), (None, 4, 'c'))
+        self.assertSequenceEqual(next(it), (1, 2, 'a'))
+        self.assertSequenceEqual(next(it), (2, 3, 'b'))
+        self.assertSequenceEqual(next(it), (None, 4, 'c'))
 
         with self.assertRaises(StopIteration):
             next(it)
@@ -67,14 +67,14 @@ class TestRows(unittest.TestCase):
         s = self.table.rows[1:]
 
         self.assertEqual(len(s), 2)
-        self.assertEqual(s[0], (2, 3, 'b'))
-        self.assertEqual(s[1], (None, 4, 'c'))
+        self.assertSequenceEqual(s[0], (2, 3, 'b'))
+        self.assertSequenceEqual(s[1], (None, 4, 'c'))
 
     def test_slice_crazy(self):
         s = self.table.rows[:-2:-2]
 
         self.assertEqual(len(s), 1)
-        self.assertEqual(s[0], (None, 4, 'c'))
+        self.assertSequenceEqual(s[0], (None, 4, 'c'))
 
     def test_column_in_row(self):
         row = self.table.rows[0]

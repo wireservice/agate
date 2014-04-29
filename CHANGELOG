@@ -1,6 +1,7 @@
 0.3.0
 -----
 
+* Use assertSequenceEqual in tests. (#84)
 * Docs: features section. (#87)
 * Cookbook: emulating SQL. (#79)
 * Table.left_outer_join implemented. (#11)

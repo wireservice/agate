@@ -25,7 +25,7 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(len(self.table.columns), 3)
 
     def test_get_column_data(self):
-        self.assertEqual(self.table.columns['one']._data(), (1, 2, None))
+        self.assertSequenceEqual(self.table.columns['one']._data(), (1, 2, None))
 
     def test_get_column_data_cached(self):
         c = self.table.columns['one']
@@ -34,14 +34,14 @@ class TestColumns(unittest.TestCase):
 
         data = c._data()
 
-        self.assertEqual(c._cached_data, (1, 2, None))
+        self.assertSequenceEqual(c._cached_data, (1, 2, None))
         
         data2 = c._data()
 
         self.assertIs(data, data2)
 
     def test_get_column(self):
-        self.assertEqual(self.table.columns['one'], (1, 2, None))
+        self.assertSequenceEqual(self.table.columns['one'], (1, 2, None))
 
     def test_get_column_cached(self):
         c = self.table.columns['one']
@@ -68,9 +68,9 @@ class TestColumns(unittest.TestCase):
     def test_iterate_columns(self):
         it = iter(self.table.columns)
 
-        self.assertEqual(next(it), (1, 2, None))
-        self.assertEqual(next(it), (2, 3, 4))
-        self.assertEqual(next(it), ('a', 'b', 'c'))
+        self.assertSequenceEqual(next(it), (1, 2, None))
+        self.assertSequenceEqual(next(it), (2, 3, 4))
+        self.assertSequenceEqual(next(it), ('a', 'b', 'c'))
 
         with self.assertRaises(StopIteration):
             next(it)
@@ -122,12 +122,12 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(len(new_table.columns), 2)
         self.assertEqual(len(new_table.rows), 3) 
 
-        self.assertEqual(new_table.rows[0], (1, 3))
-        self.assertEqual(new_table.rows[1], (2, 1))
-        self.assertEqual(new_table.rows[2], (None, 1))
+        self.assertSequenceEqual(new_table.rows[0], (1, 3))
+        self.assertSequenceEqual(new_table.rows[1], (2, 1))
+        self.assertSequenceEqual(new_table.rows[2], (None, 1))
 
-        self.assertEqual(new_table.columns['one'], (1, 2, None))
-        self.assertEqual(new_table.columns['count'], (3, 1, 1))
+        self.assertSequenceEqual(new_table.columns['one'], (1, 2, None))
+        self.assertSequenceEqual(new_table.columns['count'], (3, 1, 1))
 
 class TestTextColumn(unittest.TestCase):
     def test_validate(self):
