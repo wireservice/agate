@@ -38,12 +38,13 @@ class TestTable(unittest.TestCase):
         self.assertEqual(table.get_column_names()[0], 'one')
 
     def test_cast_table(self):
-        # TODO
-        pass
+        table = journalism.Table(self.rows, self.column_types, self.column_names, cast=True)
 
-    def test_case_table_fails(self):
-        # TODO
-        pass
+        self.assertEqual(len(table.rows), 3)
+
+        self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
+        self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
+        self.assertSequenceEqual(table.rows[2], (None, 2, 'c'))
 
     def test_validate_table(self):
         journalism.Table(self.rows, self.column_types, self.column_names, validate=True)

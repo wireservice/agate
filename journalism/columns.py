@@ -7,7 +7,7 @@ import warnings
 
 try:
     from collections import OrderedDict
-except ImportError:
+except ImportError: #pragma: nocover
     from ordereddict import OrderedDict
 
 import six
@@ -314,7 +314,6 @@ class NumberColumn(Column):
 
         Will raise :exc:`.NullComputationError` if this column contains nulls.
         """
-
         return self.variance().sqrt()
 
 class IntColumn(NumberColumn):

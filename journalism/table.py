@@ -9,7 +9,7 @@ from decimal import Decimal
 
 try:
     from collections import OrderedDict
-except ImportError:
+except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 import six
@@ -22,7 +22,7 @@ def transpose(data):
     """
     Utility function for transposing a 2D array of data.
     """
-    if six.PY3:
+    if six.PY3: #pragma: no cover
         # Run generator
         return tuple(zip(*data))
 

@@ -218,11 +218,14 @@ class TestIntColumn(unittest.TestCase):
     def test_variance(self):
         with self.assertRaises(journalism.exceptions.NullComputationError):
             self.table.columns['one'].variance()
+
         self.assertEqual(self.table.columns['two'].variance(), Decimal('1.5'))
 
     def test_stdev(self):
-        # TODO
-        pass
+        with self.assertRaises(journalism.exceptions.NullComputationError):
+            self.table.columns['one'].stdev()
+
+        self.assertAlmostEqual(self.table.columns['two'].stdev(), Decimal('1.22474487'))
 
 class TestDecimalColumn(unittest.TestCase):
     def setUp(self):
@@ -296,6 +299,8 @@ class TestDecimalColumn(unittest.TestCase):
         self.assertEqual(self.table.columns['two'].variance().quantize(Decimal('0.01')), Decimal('0.47'))
 
     def test_stdev(self):
-        # TODO
-        pass
+        with self.assertRaises(journalism.exceptions.NullComputationError):
+            self.table.columns['one'].stdev()
+
+        self.assertAlmostEqual(self.table.columns['two'].stdev().quantize(Decimal('0.01')), Decimal('0.69'))
 
