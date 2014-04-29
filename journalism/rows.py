@@ -81,7 +81,7 @@ class Row(Mapping):
         self._table = table
         self._i = i
 
-    def __repr__(self):
+    def __unicode__(self):
         data = self._table._data[self._i]
 
         sample = repr(data[:5])
@@ -91,6 +91,9 @@ class Row(Mapping):
             sample = sample[:-1] + ', ...' + last
 
         return '<journalism.rows.Row: %s>' % sample 
+
+    def __str__(self):
+        return str(self.__unicode__())
 
     def __getitem__(self, k):
         if isinstance(k, int):

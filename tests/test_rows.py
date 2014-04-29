@@ -19,6 +19,18 @@ class TestRows(unittest.TestCase):
         
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
+    def test_stringify(self):
+        self.assertEqual(str(self.table.rows[0]), "<journalism.rows.Row: (1, 2, 'a')>")
+
+    def test_stringify_long(self):
+        rows = (
+            (1, 2, 'a', 'b', 'c', 'd'),
+        )
+        
+        self.table = journalism.Table(rows, self.column_types, self.column_names)
+
+        self.assertEqual(str(self.table.rows[0]), "<journalism.rows.Row: (1, 2, 'a', 'b', 'c', ...)>")
+
     def test_length(self):
         self.assertEqual(len(self.table.rows), 3)
 
