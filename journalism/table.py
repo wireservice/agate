@@ -197,22 +197,32 @@ class Table(object):
         
         return self._fork(self.rows[:start_or_stop])
 
-    def distinct(self, func):
+    def distinct(self, key=None):
         """
-        Filter data to only rows where the output of the row function is
-        unique. If multiple rows have identical output, the first will be
-        accepted.
+        Filter data to only rows that are unique. Uniqueness is determined
+        by the value of :code:`key`. If it is a column name, that column
+        will be used to determine uniqueness. If it is a callable, it
+        will be passed each row and the resulting values will be used to
+        determine uniqueness. If it :code:`None`, the entire row will
+        be used to verify uniqueness.
 
         Returns a new :class:`Table`.
         """
+        key_is_row_function = hasattr(key, '__call__')
+
         uniques = []
         rows = []
 
         for row in self.rows:
-            key = func(row)
+            if key_is_row_function:
+                k = key(row)
+            elif key is None:
+                k = tuple(row)
+            else:
+                k = row[key]
 
-            if key not in uniques:
-                uniques.append(key)
+            if k not in uniques:
+                uniques.append(k)
                 rows.append(row)
 
         return self._fork(rows)

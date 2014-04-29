@@ -290,7 +290,7 @@ journalism:
 
 .. code-block:: python
 
-    new_table = table.distinct(lamda row: row['state'])
+    new_table = table.distinct('state')
 
 .. note::
 
