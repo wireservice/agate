@@ -175,9 +175,9 @@ class Table(object):
 
             return k
 
-        data = sorted(self.rows, key=null_handler, reverse=reverse)
+        rows = sorted(self.rows, key=null_handler, reverse=reverse)
 
-        return self._fork(data)
+        return self._fork(rows)
 
     def limit(self, start_or_stop=None, stop=None, step=None):
         """
@@ -185,11 +185,33 @@ class Table(object):
         that many rows will be returned. Otherwise, the arguments function as
         :code:`start`, :code:`stop` and :code:`step`, just like Python's
         builtin :func:`slice`.
+
+        Returns a new :class:`Table`.
         """
         if stop or step:
             return self._fork(self.rows[slice(start_or_stop, stop, step)])
         
         return self._fork(self.rows[:start_or_stop])
+
+    def distinct(self, func):
+        """
+        Filter data to only rows where the output of the row function is
+        unique. If multiple rows have identical output, the first will be
+        accepted.
+
+        Returns a new :class:`Table`.
+        """
+        uniques = []
+        rows = []
+
+        for row in self.rows:
+            key = func(row)
+
+            if key not in uniques:
+                uniques.append(key)
+                rows.append(row)
+
+        return self._fork(rows)
 
     def inner_join(self, left_func, table, right_func):
         """

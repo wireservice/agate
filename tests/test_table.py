@@ -195,6 +195,24 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[1], (None, 2, 'c'))
         self.assertSequenceEqual(new_table.columns['one'], (1, None))
 
+    def test_distinct(self):
+        rows = (
+            (1, 2, 'a'),
+            (2, None, None),
+            (1, 1, 'c'),
+            (1, None, None)
+        )
+
+        table = journalism.Table(rows, self.column_types, self.column_names)
+
+        new_table = table.distinct(lambda row: row['one'])
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table.rows), 2)
+        self.assertSequenceEqual(new_table.rows[0], (1, 2, 'a'))
+        self.assertSequenceEqual(new_table.rows[1], (2, None, None))
+        self.assertSequenceEqual(new_table.columns['one'], (1, 2))
+
     def test_chain_select_where(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 

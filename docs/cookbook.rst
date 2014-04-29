@@ -277,6 +277,25 @@ journalism:
 
     I don't advise chaining commands like this. Being explicit about each step is usually better.
 
+DISTINCT
+--------
+
+SQL:
+
+.. code-block:: sql
+
+    SELECT DISTINCT ON (state) * FROM table;
+
+journalism:
+
+.. code-block:: python
+
+    new_table = table.distinct(lamda row: row['state'])
+
+.. note::
+
+    Unlike most SQL implementations, journalism always returns the full row. Use :code:`select` if you want to filter the columns first.
+
 INNER JOIN
 ----------
 
