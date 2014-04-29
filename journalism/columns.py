@@ -81,7 +81,7 @@ class Column(Sequence):
         self._cached_data_without_nulls = None
         self._cached_data_sorted = None
 
-    def __repr__(self):
+    def __unicode__(self):
         data = self._data()
 
         sample = repr(data[:5])
@@ -91,6 +91,9 @@ class Column(Sequence):
             sample = sample[:-1] + ', ...' + last
 
         return '<journalism.columns.%s: %s>' % (self.__class__.__name__, sample)
+
+    def __str__(self):
+        return str(self.__unicode__())
 
     def _data(self):
         if self._cached_data is None:

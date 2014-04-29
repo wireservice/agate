@@ -22,6 +22,23 @@ class TestColumns(unittest.TestCase):
 
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
+    def test_stringify(self):
+        self.assertEqual(str(self.table.columns['one']), "<journalism.columns.IntColumn: (1, 2, None)>")
+
+    def test_stringify_long(self):
+        rows = (
+            (1, 2, 'a'),
+            (2, 3, 'b'),
+            (None, 4, 'c'),
+            (1, 2, 'a'),
+            (2, 3, 'b'),
+            (None, 4, 'c')
+        )
+        
+        self.table = journalism.Table(rows, self.column_types, self.column_names)
+
+        self.assertEqual(str(self.table.columns['one']), "<journalism.columns.IntColumn: (1, 2, None, 1, 2, ...)>")
+
     def test_length(self):
         self.assertEqual(len(self.table.columns), 3)
 
