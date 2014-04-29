@@ -14,7 +14,7 @@ except ImportError: # pragma: no cover
 
 import six
 
-from journalism.columns import ColumnMapping, DecimalColumn
+from journalism.columns import ColumnMapping, IntColumn, DecimalColumn
 from journalism.exceptions import UnsupportedOperationError
 from journalism.rows import RowSequence, Row
 
@@ -342,9 +342,29 @@ class Table(object):
         """
         A wrapper around :meth:`compute` for quickly computing
         percent change between two columns.
+
+        Returns a new :class:`Table`.
         """
         def calc(row):
             return Decimal(row[after_column_name] - row[before_column_name]) / row[before_column_name] * 100
 
         return self.compute(new_column_name, DecimalColumn, calc) 
+
+    def rank(self, func, new_column_name):
+        """
+        Creates a new column that is the rank order of the values
+        returned by the row function.
+
+        Returns a new :class:`Table`.
+        """
+        def null_handler(k):
+            if k is None:
+                return NullOrder() 
+
+            return k
+
+        func_column = [func(row) for row in self.rows]
+        rank_column = sorted(func_column, key=null_handler)
+        
+        return self.compute(new_column_name, IntColumn, lambda row: rank_column.index(func(row)) + 1)
 

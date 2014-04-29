@@ -1,6 +1,7 @@
 0.3.0
 -----
 
+* Table.rank implemented. (#15)
 * Reached 100% test coverage. (#76)
 * Tests for Column._cast methods. (#20)
 * Table.distinct implemented. (#83)

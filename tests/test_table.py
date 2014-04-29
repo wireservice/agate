@@ -308,6 +308,32 @@ class TestTableCompute(unittest.TestCase):
         self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('100.0'))
         self.assertEqual(to_one_place(new_table.columns['test'][3]), Decimal('33.3'))
 
+    def test_rank(self):
+        new_table = self.table.rank(lambda r: r['two'], 'rank')
+
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 1))
+        self.assertSequenceEqual(new_table.rows[1], (None, 3, 5, None, 3))
+        self.assertSequenceEqual(new_table.rows[2], ('a', 2, 4, None, 1))
+        self.assertSequenceEqual(new_table.rows[3], ('b', 3, 4, None, 3))
+
+        self.assertSequenceEqual(new_table.columns['rank'], (1, 3, 1, 3))
+
+    def test_rank2(self):
+        new_table = self.table.rank(lambda r: r['one'], 'rank')
+
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 1))
+        self.assertSequenceEqual(new_table.rows[1], (None, 3, 5, None, 4))
+        self.assertSequenceEqual(new_table.rows[2], ('a', 2, 4, None, 1))
+        self.assertSequenceEqual(new_table.rows[3], ('b', 3, 4, None, 3))
+
+        self.assertSequenceEqual(new_table.columns['rank'], (1, 4, 1, 3))
+
 class TestTableJoin(unittest.TestCase):
     def setUp(self):
         self.left_rows = (
