@@ -7,6 +7,19 @@ About
 
 .. include:: ../README
 
+Features
+========
+
+Why use journalism?
+
+* A clean, readable API.
+* Optimized for exploratory use in the shell.
+* A full set of SQL-like operations.
+* Pure-Python. It works everywhere.
+* A robust test suite.
+* Extensive user documentation.
+* Access to the full power of Python in every command.
+
 Principles
 ==========
 
@@ -57,11 +70,8 @@ Supported platforms
 
 journalism supports the following versions of Python:
 
-* Python 2.6
-* Python 2.7
-* Python 3.2
-* Python 3.3
-* Python 3.4
+* Python 2.6+
+* Python 3.2+
 * Latest `PyPy <http://pypy.org/>`_
 
 It is tested on OSX, but due to it's minimal dependencies should work fine on both Linux and Windows.
