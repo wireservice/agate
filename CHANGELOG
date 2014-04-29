@@ -1,6 +1,7 @@
 0.3.0
 -----
 
+* Tests for Column._cast methods. (#20)
 * Table.distinct implemented. (#83)
 * Use assertSequenceEqual in tests. (#84)
 * Docs: features section. (#87)

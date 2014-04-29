@@ -3,6 +3,7 @@
 from collections import Mapping, Sequence, defaultdict
 from decimal import Decimal
 from functools import wraps
+import warnings
 
 try:
     from collections import OrderedDict
@@ -218,10 +219,10 @@ class TextColumn(Column):
         casted = []
 
         for d in self._data():
-            if d == '':
+            if d == '' or d is None:
                 casted.append(None)
             else:
-                casted.append(six.u(d))
+                casted.append(six.text_type(d))
 
         return casted
 
@@ -375,6 +376,8 @@ class DecimalColumn(NumberColumn):
 
             if d == '' or d is None:
                 casted.append(None)
+            elif isinstance(d, float):
+                warnings.warn('Casting float to Decimal! Precision lost. Cast from string instead!')
             else:
                 casted.append(Decimal(d))
 

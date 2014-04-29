@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from decimal import Decimal
+import warnings
 
 try:
     import unittest2 as unittest
@@ -141,8 +142,9 @@ class TestTextColumn(unittest.TestCase):
             column.validate()
 
     def test_cast(self):
-        # TODO
-        pass
+        column = journalism.TextColumn(None, 'one')
+        column._data = lambda: ('a', 1, None, Decimal('2.7'))
+        self.assertSequenceEqual(column._cast(), ('a', '1', None, '2.7'))
 
 class TestIntColumn(unittest.TestCase):
     def setUp(self):
@@ -168,8 +170,9 @@ class TestIntColumn(unittest.TestCase):
             column.validate()
 
     def test_cast(self):
-        # TODO
-        pass
+        column = journalism.IntColumn(None, 'one')
+        column._data = lambda: (2, 1, None, Decimal('2.7'))
+        self.assertSequenceEqual(column._cast(), (2, 1, None, 2))
 
     def test_sum(self):
         self.assertEqual(self.table.columns['one'].sum(), 4)
@@ -234,8 +237,16 @@ class TestDecimalColumn(unittest.TestCase):
             column.validate()
 
     def test_cast(self):
-        # TODO
-        pass
+        column = journalism.DecimalColumn(None, 'one')
+        column._data = lambda: (2, 1, None, Decimal('2.7'))
+        self.assertSequenceEqual(column._cast(), (Decimal('2'), Decimal('1'), None, Decimal('2.7')))
+
+    def test_cast_warn(self):
+        column = journalism.DecimalColumn(None, 'one')
+        column._data = lambda: (2, 1.1, None, Decimal('2.7'))
+
+        with warnings.catch_warnings(record=True) as w:
+            column._cast()
 
     def test_sum(self):
         self.assertEqual(self.table.columns['one'].sum(), Decimal('6.5'))
