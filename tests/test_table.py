@@ -387,17 +387,12 @@ class TestTableJoin(unittest.TestCase):
         )
 
         self.column_types = (journalism.TextColumn, journalism.IntColumn, journalism.IntColumn)
-        self.column_names = ('one', 'two', 'three')
 
         self.left = journalism.Table(self.left_rows, self.column_types, ('one', 'two', 'three'))
         self.right = journalism.Table(self.right_rows, self.column_types, ('four', 'five', 'six'))
 
     def test_inner_join(self):
-        new_table = self.left.inner_join(
-            lambda lr: lr['one'], 
-            self.right,
-            lambda rr: rr['four']
-        )
+        new_table = self.left.inner_join('one', self.right, 'four')
 
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 6)
@@ -407,16 +402,22 @@ class TestTableJoin(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, 2, 'c'))
 
     def test_inner_join2(self):
-        new_table = self.left.inner_join(
-            lambda lr: lr['one'], 
-            self.right,
-            lambda rr: rr['five']
-        )
+        new_table = self.left.inner_join('one', self.right, 'five')
 
         self.assertEqual(len(new_table.rows), 1)
         self.assertEqual(len(new_table.columns), 6)
 
         self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b', None, 2, 'c'))
+
+    def test_inner_join_func(self):
+        new_table = self.left.inner_join(
+            lambda left: '%i%s' % (left['two'], left['three']),
+            self.right,
+            lambda right: '%i%s' % (right['five'], right['six'])
+        )
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 6)
 
     def test_left_outer_join(self):
         new_table = self.left.left_outer_join(

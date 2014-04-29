@@ -227,7 +227,7 @@ class Table(object):
 
         return self._fork(rows)
 
-    def inner_join(self, left_func, table, right_func):
+    def inner_join(self, left_key, table, right_key):
         """
         Performs an "inner join", combining columns from this table
         and from :code:`table` anywhere that the output of :code:`left_func`
@@ -235,14 +235,23 @@ class Table(object):
 
         Returns a new :class:`Table`.
         """
+        left_key_is_row_function = hasattr(left_key, '__call__')
+        right_key_is_row_function = hasattr(right_key, '__call__')
+
         left = []
         right = []
 
-        for row in self.rows:
-            left.append(left_func(row))
+        if left_key_is_row_function:
+            left = [left_key(row) for row in self.rows]
+        else:
+            c = self._column_names.index(left_key)
+            left = self._get_column(c)
 
-        for row in table.rows:
-            right.append(right_func(row))
+        if right_key_is_row_function:
+            right = [right_key(row) for row in table.rows]
+        else:
+            c = table._column_names.index(right_key)
+            right = table._get_column(c)
 
         rows = []
 
