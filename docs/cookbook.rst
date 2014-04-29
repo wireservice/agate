@@ -294,7 +294,7 @@ journalism:
 
 .. note::
 
-    Unlike most SQL implementations, journalism always returns the full row. Use :code:`select` if you want to filter the columns first.
+    Unlike most SQL implementations, journalism always returns the full row. Use :meth:`.Table.select` if you want to filter the columns first.
 
 INNER JOIN
 ----------

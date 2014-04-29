@@ -17,7 +17,7 @@ Why use journalism?
 * A full set of SQL-like operations.
 * Full unicode support.
 * Decimal precision everywhere.
-* Pure-Python. It works everywhere.
+* Pure Python. It works everywhere.
 * 100% test coverage.
 * Extensive user documentation.
 * Access to the full power of Python in every command.
