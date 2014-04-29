@@ -1,6 +1,7 @@
 This is the release process for journalism:
 
-#. Verify all unit tests pass.
+#. Verify all unit tests pass: `tox`.
+#. Verify 100% test coverage: `nosetests --with-coverage --cover-package=journalism`.
 #. Make sure the example script still works.
 #. Ensure CHANGELOG is up to date.
 #. Create a release tag: `git tag - x.y.z -m "x.y.z release."
