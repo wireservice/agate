@@ -149,26 +149,30 @@ class Table(object):
 
         return self._fork(new_rows, column_types, column_names)
 
-    def where(self, func):
+    def where(self, test):
         """
         Filter a to only those rows where the row passes a truth test.
 
         Returns a new :class:`Table`.
         """
-        rows = [row for row in self.rows if func(row)]
+        rows = [row for row in self.rows if test(row)]
 
         return self._fork(rows)
 
-    def order_by(self, func, reverse=False):
+    def order_by(self, key, reverse=False):
         """
-        Sort this table by the key returned from the row function.
-
-        See :func:`sorted` for more details.
+        Sort this table by the :code:`key`. This can be either a
+        column_name or callable that returns a value to sort by.
 
         Returns a new :class:`Table`.
         """
+        key_is_row_function = hasattr(key, '__call__')
+
         def null_handler(row):
-            k = func(row)
+            if key_is_row_function:
+                k = key(row)
+            else:
+                k = row[key]
 
             if k is None:
                 return NullOrder() 

@@ -40,7 +40,7 @@ states = table.where(lambda r: r['state_abbr'] not in ('PR', 'PH'))
 print('Total of all states: %i' % states.columns['total'].sum())
 
 # Sort state total, descending
-order_by_total_desc = states.order_by(lambda r: r['total'], reverse=True)
+order_by_total_desc = states.order_by('total', reverse=True)
 
 # Grab just the top 5 states
 top_five = order_by_total_desc.rows[:5]

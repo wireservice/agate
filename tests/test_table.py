@@ -95,7 +95,7 @@ class TestTable(unittest.TestCase):
     def test_order_by(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 
-        new_table = table.order_by(lambda r: r['two'])
+        new_table = table.order_by('two')
 
         self.assertIsNot(new_table, table)
         self.assertEqual(len(new_table.rows), 3)
@@ -108,7 +108,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[2], (None, 2, 'c'))
 
-    def test_order_by_two_columns(self):
+    def test_order_by_func(self):
         rows = (
             (1, 2, 'a'),
             (2, 1, 'b'),
