@@ -210,12 +210,16 @@ Emulating SQL
 
 journalism's command structure is very similar to SQL. The primary difference between journalism and SQL is that commands like :code:`SELECT` and :code:`WHERE` explicitly create new tables. You can chain them together as you would with SQL, but be aware each command is actually creating a new table.
 
+.. note::
+
+    All examples in this section use the `PostgreSQL <http://www.postgresql.org/>`_ dialect for comparison.
+
 SELECT
 ------
 
 SQL:
 
-.. code-block:: sql
+.. code-block:: postgres
 
     SELECT state, total FROM table;
 
@@ -230,7 +234,7 @@ WHERE
 
 SQL:
 
-.. code-block:: sql
+.. code-block:: postgres
 
     SELECT * FROM table WHERE LOWER(state) = 'california';
 
@@ -245,7 +249,7 @@ ORDER BY
 
 SQL:
 
-.. code-block:: sql
+.. code-block:: postgres 
 
     SELECT * FROM table ORDER BY total DESC;
 
@@ -260,7 +264,7 @@ Chaining commands together
 
 SQL:
 
-.. code-block:: SQL
+.. code-block:: postgres
 
     SELECT state, total FROM table WHERE LOWER(state) = 'california' ORDER BY total DESC;
 
@@ -282,7 +286,7 @@ DISTINCT
 
 SQL:
 
-.. code-block:: sql
+.. code-block:: postgres
 
     SELECT DISTINCT ON (state) * FROM table;
 
@@ -299,18 +303,54 @@ journalism:
 INNER JOIN
 ----------
 
-TODO
+SQL (two ways):
+
+.. code-block:: postgres
+
+    SELECT * FROM patient, doctor WHERE patient.doctor = doctor.id;
+
+    SELECT * FROM patient INNER JOIN doctor ON (patient.doctor = doctor.id);
+
+journalism:
+
+.. code-block:: python
+
+    joined = patient.inner_join('doctor', doctor, 'id')
 
 LEFT OUTER JOIN
 ---------------
 
-TODO
+SQL:
 
+.. code-block:: postgres
+
+    SELECT * FROM patient LEFT OUTER JOIN doctor ON (patient.doctor = doctor.id);
+
+journalism:
+
+.. code-block:: python
+
+    joined = patient.left_outer_join('doctor', doctor, 'id')
 
 GROUP BY
 --------
 
 TODO
+
+Aggregate functions
+-------------------
+
+SQL:
+
+.. code-block:: postgres
+
+    SELECT mean(age) FROM patient GROUP BY doctor;
+
+journalism:
+
+.. code-block:: python
+
+    new_table = patient.aggregate('doctor', { 'age': 'mean' })
 
 Emulating Excel
 ===============
