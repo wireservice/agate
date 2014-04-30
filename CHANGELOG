@@ -1,6 +1,7 @@
 0.3.0
 -----
 
+* Cookbook: emulating R. (#81)
 * Table.left_outer_join now accepts column names or key functions. (#80)
 * Table.inner_join now accepts column names or key functions. (#80)
 * Table.distinct now accepts a column name or key function. (#80)
