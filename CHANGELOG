@@ -1,6 +1,7 @@
 0.3.0
 -----
 
+* Table.outliers implemented. (#86)
 * Table.group_by implemented. (#3)
 * Cookbook: emulating R. (#81)
 * Table.left_outer_join now accepts column names or key functions. (#80)

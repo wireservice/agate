@@ -92,6 +92,34 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b'))
         self.assertSequenceEqual(new_table.columns['one'], (2, None))
 
+    def test_outliers(self):
+        rows = [ 
+            (50, 4, 'a'),
+        ] * 10
+            
+        rows.append((200, 1, 'b'))
+        
+        table = journalism.Table(rows, self.column_types, self.column_names)
+
+        new_table = table.outliers('one')
+
+        self.assertEqual(len(new_table.rows), 10)
+        self.assertNotIn(200, new_table.columns['one'])
+
+    def test_outliers_reject(self):
+        rows = [ 
+            (50, 4, 'a'),
+        ] * 10
+            
+        rows.append((200, 1, 'b'))
+        
+        table = journalism.Table(rows, self.column_types, self.column_names)
+
+        new_table = table.outliers('one', reject=True)
+
+        self.assertEqual(len(new_table.rows), 1)
+        self.assertSequenceEqual(new_table.columns['one'], (200,))
+
     def test_order_by(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 

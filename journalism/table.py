@@ -159,6 +159,35 @@ class Table(object):
 
         return self._fork(rows)
 
+    def outliers(self, column_name, deviations=3, reject=False):
+        """
+        A wrapper around :meth:`where` that filters the dataset to
+        rows where the value of the column are more than some number
+        of standard deviations from the mean.
+
+        If :code:`reject` is False than this method will return
+        everything *except* the outliers.
+
+        NB: This method makes no attempt to validate that the
+        distribution of your data is normal.
+
+        NB: There are well-known cases in which this algorithm will
+        fail to identify outliers. If you need statistical confidence
+        do your reading first.
+        """
+        mean = self.columns[column_name].mean()
+        sd = self.columns[column_name].stdev()
+
+        lower_bound = mean - (sd * deviations)
+        upper_bound = mean + (sd * deviations)
+
+        if reject:
+            f = lambda row: row[column_name] < lower_bound or row[column_name] > upper_bound
+        else:
+            f = lambda row: lower_bound <= row[column_name] <= upper_bound
+
+        return self.where(f)
+
     def order_by(self, key, reverse=False):
         """
         Sort this table by the :code:`key`. This can be either a
