@@ -230,8 +230,9 @@ class Table(object):
     def inner_join(self, left_key, table, right_key):
         """
         Performs an "inner join", combining columns from this table
-        and from :code:`table` anywhere that the output of :code:`left_func`
-        and :code:`right_func` are equivalent.
+        and from :code:`table` anywhere that the output of :code:`left_key`
+        and :code:`right_key` are equivalent. These may be either column
+        names or row functions.
 
         Returns a new :class:`Table`.
         """
@@ -267,9 +268,13 @@ class Table(object):
 
     def left_outer_join(self, left_key, table, right_key):
         """
-        Performs a "left outer join", including all columns from this table
-        and any from :code:`table` where the output of :code:`left_func`
-        and :code:`right_func` are equivalent.
+        Performs an "left outer join", combining columns from this table
+        and from :code:`table` anywhere that the output of :code:`left_key`
+        and :code:`right_key` are equivalent. These may be either column
+        names or row functions.
+
+        Where there is no match for :code:`left_key`the left columns will
+        be included with the right columns set to :code:`None`.
 
         Returns a new :class:`Table`.
         """
