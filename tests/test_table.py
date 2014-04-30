@@ -265,7 +265,7 @@ class TestTable(unittest.TestCase):
         self.assertEqual(new_table._column_names, ('one', 'two'))
         self.assertSequenceEqual(new_table.columns['one'], (2,))
 
-class TestTableAggregate(unittest.TestCase):
+class TestTableGrouping(unittest.TestCase):
     def setUp(self):
         self.rows = (
             ('a', 2, 3, 4),
@@ -276,6 +276,21 @@ class TestTableAggregate(unittest.TestCase):
 
         self.column_types = (journalism.TextColumn, journalism.IntColumn, journalism.IntColumn, journalism.IntColumn)
         self.column_names = ('one', 'two', 'three', 'four')
+
+    def test_group_by(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        new_tables = table.group_by('one')
+
+        self.assertEqual(len(new_tables), 3)
+
+        self.assertIn('a', new_tables.keys())
+        self.assertIn('b', new_tables.keys())
+        self.assertIn(None, new_tables.keys())
+
+        self.assertSequenceEqual(new_tables['a'].columns['one'], ('a', 'a'))
+        self.assertSequenceEqual(new_tables['b'].columns['one'], ('b',))
+        self.assertSequenceEqual(new_tables[None].columns['one'], (None,))
 
     def test_aggregate_sum(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)

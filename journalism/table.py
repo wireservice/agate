@@ -311,6 +311,30 @@ class Table(object):
 
         return self._fork(rows, column_types, column_names)
 
+    def group_by(self, group_by):
+        """
+        Create one new :class:`Table` for each unique value in the
+        :code:`group_by` column and return them as a dict.
+        """
+        i = self._column_names.index(group_by)
+
+        groups = OrderedDict() 
+
+        for row in self._data:
+            group_name = row[i]
+
+            if group_name not in groups:
+                groups[group_name] = []
+
+            groups[group_name].append(row)
+
+        output = {}
+
+        for group, rows in groups.items():
+            output[group] = self._fork(rows)
+
+        return output
+
     def aggregate(self, group_by, operations=[]):
         """
         Aggregate data by a specified group_by column.

@@ -315,7 +315,7 @@ journalism:
 
 .. code-block:: python
 
-    joined = patient.inner_join('doctor', doctor, 'id')
+    joined = patients.inner_join('doctor', doctors, 'id')
 
 LEFT OUTER JOIN
 ---------------
@@ -330,12 +330,16 @@ journalism:
 
 .. code-block:: python
 
-    joined = patient.left_outer_join('doctor', doctor, 'id')
+    joined = patients.left_outer_join('doctor', doctors, 'id')
 
 GROUP BY
 --------
 
-TODO
+journalism's :meth:`.Table.group_by` works slightly different than SQLs. It does not require an aggregate function. Instead it returns a dictionary of :code:`group`, :meth:`.Table` pairs. To see how to perform the equivalent of a SQL aggregate, see the next example.
+
+.. code-block:: python
+
+    groups = patients.group_by('doctor')
 
 Aggregate functions
 -------------------
