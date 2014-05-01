@@ -81,6 +81,9 @@ def cast_number(d):
     """
     Cast a single value to a type appropriate for :class:`NumberColumn`.
     """
+    if isinstance(d, Decimal):
+        return d
+
     if isinstance(d, six.string_types):
         d = d.replace(',' ,'').strip()
 
