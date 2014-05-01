@@ -172,14 +172,40 @@ class Table(object):
         distribution of your data is normal.
 
         NB: There are well-known cases in which this algorithm will
-        fail to identify outliers. If you need statistical confidence
-        do your reading first.
+        fail to identify outliers. For a more robust measure see
+        :meth:`outliers_mad`.
         """
         mean = self.columns[column_name].mean()
         sd = self.columns[column_name].stdev()
 
         lower_bound = mean - (sd * deviations)
         upper_bound = mean + (sd * deviations)
+
+        if reject:
+            f = lambda row: row[column_name] < lower_bound or row[column_name] > upper_bound
+        else:
+            f = lambda row: lower_bound <= row[column_name] <= upper_bound
+
+        return self.where(f)
+
+    def outliers_mad(self, column_name, deviations=3, reject=False):
+        """
+        A wrapper around :meth:`where` that filters the dataset to
+        rows where the value of the column are more than some number of
+        `median absolute deviations <http://en.wikipedia.org/wiki/Median_absolute_deviation>`_
+        from the median.
+
+        If :code:`reject` is False than this method will return
+        everything *except* the outliers.
+
+        NB: This method makes no attempt to validate that the
+        distribution of your data is normal.
+        """
+        median = self.columns[column_name].median()
+        mad = self.columns[column_name].mad()
+
+        lower_bound = median - (mad * deviations)
+        upper_bound = median + (mad * deviations)
 
         if reject:
             f = lambda row: row[column_name] < lower_bound or row[column_name] > upper_bound

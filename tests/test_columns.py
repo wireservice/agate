@@ -227,6 +227,12 @@ class TestIntColumn(unittest.TestCase):
 
         self.assertAlmostEqual(self.table.columns['two'].stdev(), Decimal('1.22474487'))
 
+    def test_mad(self):
+        with self.assertRaises(journalism.exceptions.NullComputationError):
+            self.table.columns['one'].mad()
+
+        self.assertAlmostEqual(self.table.columns['two'].mad(), Decimal('0.5'))
+
 class TestDecimalColumn(unittest.TestCase):
     def setUp(self):
         self.rows = (
