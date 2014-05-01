@@ -84,11 +84,12 @@ class Row(Mapping):
     def __unicode__(self):
         data = self._table._data[self._i]
 
-        sample = repr(data[:5])
+        sample = ', '.join(six.text_type(d) for d in data[:5])
 
         if len(data) > 5:
-            last = sample[-1]
-            sample = sample[:-1] + ', ...' + last
+            sample = '%s, ...' % sample
+
+        sample = '(%s)' % sample
 
         return '<journalism.rows.Row: %s>' % sample 
 

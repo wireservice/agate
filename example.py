@@ -2,18 +2,18 @@
 
 import csv
 
-from journalism import Table, TextColumn, IntColumn
+from journalism import Table, TextColumn, NumberColumn
 
 COLUMNS = ( 
     ('state', TextColumn),
     ('state_abbr', TextColumn),
-    ('9_11_gi_bill1', IntColumn),
-    ('montogomery_gi_bill_active', IntColumn),
-    ('montgomery_gi_bill_reserve', IntColumn),
-    ('dependants', IntColumn),
-    ('reserve', IntColumn),
-    ('vietnam', IntColumn),
-    ('total', IntColumn)
+    ('9_11_gi_bill1', NumberColumn),
+    ('montogomery_gi_bill_active', NumberColumn),
+    ('montgomery_gi_bill_reserve', NumberColumn),
+    ('dependants', NumberColumn),
+    ('reserve', NumberColumn),
+    ('vietnam', NumberColumn),
+    ('total', NumberColumn)
 )
 
 COLUMN_NAMES = tuple(c[0] for c in COLUMNS)
@@ -31,7 +31,7 @@ with open('examples/realdata/Datagov_FY10_EDU_recp_by_State.csv') as f:
 rows = rows[:-2]
 
 # Create the table
-table = Table(rows, COLUMN_TYPES, COLUMN_NAMES, cast=True)
+table = Table(rows, COLUMN_TYPES, COLUMN_NAMES)
 
 # Remove Phillipines and Puerto Rico
 states = table.where(lambda r: r['state_abbr'] not in ('PR', 'PH'))

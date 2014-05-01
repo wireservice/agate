@@ -14,7 +14,7 @@ except ImportError: # pragma: no cover
 
 import six
 
-from journalism.columns import ColumnMapping, IntColumn, DecimalColumn
+from journalism.columns import ColumnMapping, NumberColumn
 from journalism.exceptions import UnsupportedOperationError
 from journalism.rows import RowSequence, Row
 
@@ -49,21 +49,14 @@ class Table(object):
 
     TODO: dedup column names
     """
-    def __init__(self, rows, column_types, column_names, cast=False, validate=False, _forked=False):
+    def __init__(self, rows, column_types, column_names, _forked=False):
         """
         Create a table from rows of data.
 
-        Rows is a 2D array of any common iterable: tuple, list, etc.
+        Rows is a 2D sequence of any sequences: tuples, lists, etc.
 
         TODO: validate column_types are all subclasses of Column.
         """
-        # Forked tables can share data (because they are immutable)
-        # but original data should be buffered so it can't be changed
-        if not _forked:
-            self._data = copy.deepcopy(rows)
-        else:
-            self._data = rows
-
         self._column_types = tuple(column_types)
         self._column_names = tuple(column_names)
         self._cached_columns = {}
@@ -72,17 +65,21 @@ class Table(object):
         self.columns = ColumnMapping(self)
         self.rows = RowSequence(self)
 
-        if cast:
-            data_columns = []
+        cast_data = []
 
-            for column in self.columns:
-                data_columns.append(column._cast())
-            
-            self._data = transpose(data_columns)
+        cast_funcs = [c._get_cast_func() for c in self.columns]
 
-        if validate:
-            for column in self.columns:
-                column.validate()
+        for row in rows:
+            # Forked tables can share data (because they are immutable)
+            # but original data should be buffered so it can't be changed
+            if isinstance(row, Row):
+                cast_data.append(row)
+
+                continue
+
+            cast_data.append(tuple(cast_funcs[i](d) for i, d in enumerate(row)))
+        
+        self._data = tuple(cast_data) 
 
     def _get_column(self, i):
         """
@@ -416,7 +413,10 @@ class Table(object):
         column_names = [group_by]
 
         for op_column in [op[0] for op in operations]:
-            column_types.append(self._column_names.index(op_column))
+            i = self._column_names.index(op_column)
+            column_type = self._column_types[i]
+
+            column_types.append(column_type)
             column_names.append(op_column)
 
         for name, group_rows in groups.items():
@@ -464,7 +464,7 @@ class Table(object):
         def calc(row):
             return Decimal(row[after_column_name] - row[before_column_name]) / row[before_column_name] * 100
 
-        return self.compute(new_column_name, DecimalColumn, calc) 
+        return self.compute(new_column_name, NumberColumn, calc) 
 
     def rank(self, func, new_column_name):
         """
@@ -482,5 +482,5 @@ class Table(object):
         func_column = [func(row) for row in self.rows]
         rank_column = sorted(func_column, key=null_handler)
         
-        return self.compute(new_column_name, IntColumn, lambda row: rank_column.index(func(row)) + 1)
+        return self.compute(new_column_name, NumberColumn, lambda row: rank_column.index(func(row)) + 1)
 

@@ -89,18 +89,18 @@ Here is an example of how to use journalism, using financial aid data from data.
 
     import csv
 
-    from journalism import Table, TextColumn, IntColumn
+    from journalism import Table, TextColumn, NumberColumn
 
     COLUMNS = ( 
         ('state', TextColumn),
         ('state_abbr', TextColumn),
-        ('9_11_gi_bill1', IntColumn),
-        ('montogomery_gi_bill_active', IntColumn),
-        ('montgomery_gi_bill_reserve', IntColumn),
-        ('dependants', IntColumn),
-        ('reserve', IntColumn),
-        ('vietnam', IntColumn),
-        ('total', IntColumn)
+        ('9_11_gi_bill1', NumberColumn),
+        ('montogomery_gi_bill_active', NumberColumn),
+        ('montgomery_gi_bill_reserve', NumberColumn),
+        ('dependants', NumberColumn),
+        ('reserve', NumberColumn),
+        ('vietnam', NumberColumn),
+        ('total', NumberColumn)
     )
 
     COLUMN_NAMES = tuple(c[0] for c in COLUMNS)
@@ -118,7 +118,7 @@ Here is an example of how to use journalism, using financial aid data from data.
     rows = rows[:-2]
 
     # Create the table
-    table = Table(rows, COLUMN_TYPES, COLUMN_NAMES, cast=True)
+    table = Table(rows, COLUMN_TYPES, COLUMN_NAMES)
 
     # Remove Phillipines and Puerto Rico
     states = table.where(lambda r: r['state_abbr'] not in ('PR', 'PH'))
@@ -127,7 +127,7 @@ Here is an example of how to use journalism, using financial aid data from data.
     print('Total of all states: %i' % states.columns['total'].sum())
 
     # Sort state total, descending
-    order_by_total_desc = states.order_by(lambda r: r['total'], reverse=True)
+    order_by_total_desc = states.order_by('total', reverse=True)
 
     # Grab just the top 5 states
     top_five = order_by_total_desc.rows[:5]
@@ -149,7 +149,7 @@ Here is an example of how to use journalism, using financial aid data from data.
     # Calculate the standard of deviation for the state totals
     stdev = states.columns['total'].stdev()
 
-    print('Standard deviation of totals: %.2f' % stdev)    print 'Standard deviation of totals: %.2f' % stdev
+    print('Standard deviation of totals: %.2f' % stdev)
 
 Cookbook
 ========

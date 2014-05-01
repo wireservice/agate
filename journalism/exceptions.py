@@ -22,20 +22,12 @@ class UnsupportedOperationError(Exception):  # pragma: no cover
     def __str__(self):
         return str(self.__unicode__())
 
-class ColumnValidationError(Exception):  # pragma: no cover
+class CastError(Exception):   #pragma: no cover
     """
-    Exception raised in a column value can not be
-    validated.
+    Exception raised when a column value can not be
+    cast to the correct type.
     """
-    def __init__(self, value, column):
-        self.value = value
-        self.column = column
-
-    def __unicode__(self):
-        return '`%s` is not a valid value for %s' % (self.value, type(self.column))
-
-    def __str__(self):
-        return str(self.__unicode__())
+    pass
 
 class ColumnDoesNotExistError(Exception):  # pragma: no cover
     """

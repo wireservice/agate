@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 
 from collections import Mapping, Sequence, defaultdict
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from functools import wraps
-import warnings
 
 try:
     from collections import OrderedDict
-except ImportError: #pragma: nocover
+except ImportError: #pragma: no cover
     from ordereddict import OrderedDict
 
 import six
 
-from journalism.exceptions import ColumnDoesNotExistError, ColumnValidationError, NullComputationError
+from journalism.exceptions import ColumnDoesNotExistError, NullComputationError, CastError
 
 class ColumnIterator(six.Iterator):
     """
@@ -69,6 +68,33 @@ def no_null_computations(func):
 
     return check
 
+def cast_text(d):
+    """
+    Cast a single value to a type appropriate for :class:`TextColumn`.
+    """
+    if d == '' or d is None:
+        return None 
+
+    return six.text_type(d)
+
+def cast_number(d):
+    """
+    Cast a single value to a type appropriate for :class:`NumberColumn`.
+    """
+    if isinstance(d, six.string_types):
+        d = d.replace(',' ,'').strip()
+
+    if d == '' or d is None:
+        return None
+    
+    if isinstance(d, float):
+        raise CastError('Can not convert float to Decimal for NumberColumn. Convert data to string first!')
+
+    try:
+        return Decimal(d)
+    except InvalidOperation:
+        raise CastError('Can not convert %s to Decimal for NumberColumn.' % repr(d)) 
+
 def median(data_sorted):
     """
     Compute the median value of this column.
@@ -76,7 +102,7 @@ def median(data_sorted):
     length = len(data_sorted)
 
     if length % 2 == 1:
-        return data_sorted[((length + 1) / 2) - 1]
+        return data_sorted[((length + 1) // 2) - 1]
     else:
         half = length // 2
         a = data_sorted[half - 1]
@@ -99,11 +125,12 @@ class Column(Sequence):
     def __unicode__(self):
         data = self._data()
 
-        sample = repr(data[:5])
+        sample = ', '.join(six.text_type(d) for d in data[:5])
 
         if len(data) > 5:
-            last = sample[-1]
-            sample = sample[:-1] + ', ...' + last
+            sample = '%s, ...' % sample
+
+        sample = '(%s)' % sample
 
         return '<journalism.columns.%s: %s>' % (self.__class__.__name__, sample)
 
@@ -146,17 +173,19 @@ class Column(Sequence):
         """
         return not self.__eq__(other)
 
-    def validate(self):
+    def _get_cast_func(self):
         """
-        Verify values in this column are of an appopriate type.
+        Return the function used to cast values in this column.
         """
-        raise NotImplementedError
+        raise NotImplementedError   # pragma: no cover
 
     def _cast(self):
         """
         Cast values in this column to an appropriate type, if possible.
         """
-        raise NotImplementedError
+        cast_func = self._get_cast_func()
+
+        return tuple(cast_func(d) for d in self._data())
 
     def has_nulls(self):
         """
@@ -194,7 +223,7 @@ class Column(Sequence):
         column.
 
         Returns a new :class:`.Table`, with two columns,
-        one containing the values and a a second, :class:`IntColumn`
+        one containing the values and a a second, :class:`NumberColumn`
         containing the counts.
 
         Resulting table will be sorted by descending count.
@@ -208,7 +237,7 @@ class Column(Sequence):
             counts[d] += 1
 
         column_names = (self._table._column_names[self._index], 'count')
-        column_types = (self._table._column_types[self._index], IntColumn)
+        column_types = (self._table._column_types[self._index], NumberColumn)
         data = (tuple(i) for i in counts.items())
 
         rows = sorted(data, key=lambda r: r[1], reverse=True)
@@ -219,37 +248,18 @@ class TextColumn(Column):
     """
     A column containing unicode/string data.
     """
-    def validate(self):
-        """
-        Verify all values in this column are string/unicode or null.
-
-        Will raise :exc:`.ColumnValidationError`
-        if validation fails.
-        """
-        for d in self._data():
-            if not isinstance(d, six.string_types) and d is not None:
-                raise ColumnValidationError(d, self)
-
-    def _cast(self):
-        """
-        Cast values to unicode.
-        """
-        casted = []
-
-        for d in self._data():
-            if d == '' or d is None:
-                casted.append(None)
-            else:
-                casted.append(six.text_type(d))
-
-        return casted
+    def _get_cast_func(self):
+        return cast_text 
 
 class NumberColumn(Column):
     """
     A column containing numeric data.
-
-    Base class for :class:`IntColumn` and :class:`DecimalColumn`.
+    
+    All data is represented by the :class:`decimal.Decimal` class.' 
     """
+    def _get_cast_func(self):
+        return cast_number
+
     def sum(self):
         """
         Compute the sum of this column.
@@ -334,73 +344,4 @@ class NumberColumn(Column):
         m = median(data)
 
         return median(tuple(abs(n - m) for n in data))
-
-class IntColumn(NumberColumn):
-    """
-    A column containing integer data.
-    """
-    def validate(self):
-        """
-        Verify all values in this column are int or null.
-
-        Will raise :exc:`.ColumnValidationError` if validation fails.
-        """
-        for d in self._data():
-            if not isinstance(d, int) and d is not None:
-                raise ColumnValidationError(d, self)
-
-    def _cast(self):
-        """
-        Cast values in this column to integer.
-        """
-        casted = []
-
-        for d in self._data():
-            if isinstance(d, six.string_types):
-                d = d.replace(',' ,'').strip()
-
-            if d == '' or d is None:
-                casted.append(None)
-            else:
-                casted.append(int(d))
-
-        return casted
-
-class DecimalColumn(NumberColumn):
-    """
-    A column containing decimal data.
-    """
-    def validate(self):
-        """
-        Verify all values in this column are Decimal or null.
-
-        NB: We never use floats because of rounding error.
-
-        Will raise :exc:`.ColumnValidationError` if validation fails.
-        """
-        for d in self._data():
-            if not isinstance(d, Decimal) and d is not None:
-                raise ColumnValidationError(d, self)
-
-    def _cast(self):
-        """
-        Cast values in this column to Decimal.
-
-        NB: casting from float will introduce precision
-        errors. Always cast from string, e.g. '3.14'.
-        """
-        casted = []
-
-        for d in self._data():
-            if isinstance(d, six.string_types):
-                d = d.replace(',' ,'').strip()
-
-            if d == '' or d is None:
-                casted.append(None)
-            elif isinstance(d, float):
-                warnings.warn('Casting float to Decimal! Precision lost. Cast from string instead!')
-            else:
-                casted.append(Decimal(d))
-
-        return casted
 
