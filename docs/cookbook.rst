@@ -40,7 +40,20 @@ If your file does have headers:
 Loading a table from a CSV w/ csvkit
 -------------------------------------
 
-TODO
+Of course, cool kids use `csvkit <http://csvkit.rtfd.org/>`_. (Hint: it supports unicode!)
+
+.. code-block:: python
+
+    import csvkit
+
+    column_types = (TextColumn, FloatColumn, IntColumn)
+
+    with open('population.csv') as f:
+        rows = list(csvkit.reader(f))
+
+    column_names = rows.pop(0)
+
+    table = Table(rows, column_types, column_names)
 
 Writing a table to a CSV
 ------------------------
@@ -51,12 +64,18 @@ Writing a table to a CSV
         writer = csv.writer(f)
 
         writer.writerow(table.get_column_names())
-        writer.writerows(table.get_data())
+        writer.writerows(table.rows)
 
 Writing a table to a CSV w/ csvkit
 ----------------------------------
 
-TODO
+.. code-block:: python
+
+    with open('output.csv') as f:
+        writer = csvkit.writer(f)
+
+        writer.writerow(table.get_column_names())
+        writer.writerows(table.rows)
 
 Filtering
 =========
@@ -83,12 +102,43 @@ This can also be useful for finding values that **don't** match your expectation
 Filter by glob
 --------------
 
-TODO
+Hate regexes? You can use glob (a.k.a. :mod:`fnmatch`) syntax too!
+
+.. code-block:: python
+
+    from fnmatch import fnmatch
+
+    new_table = table.where(lambda row: fnmatch('C*', row['state'])
 
 Filter to values within a range
 -------------------------------
 
-TODO
+This snippet filters the dataset to incomes between 100,000 and 200,000.
+
+.. code-block:: python
+
+    new_table = table.where(lambda row: 100000 < row['income'] < 200000) 
+
+Random sample
+--------------
+
+By combining a random sort with limiting, we can effectively get a random sample from a table.
+
+.. code-block:: python
+
+    import random
+
+    randomized = table.order_by(lambda row: random.random())
+    sampled = table.limit(10)
+
+Ordered sample
+--------------
+
+With can also get an ordered sample by simply using the :code:`step` parameter of the :meth:`.Table.limit` method to get every Nth row.
+
+.. code-block:: python
+
+    sampled = table.limit(step=10)
 
 Sorting
 =======
@@ -100,13 +150,13 @@ Order a table by the :code:`last_name` column:
 
 .. code-block:: python
 
-    new_table = table.order_by(lambda row: row['last_name'])
+    new_table = table.order_by('last_name')
 
 
 Multicolumn sort
 ----------------
 
-Because Python's internal sorting works natively with arrays, we can implement multi-column sort by returning an array from the order function.
+Because Python's internal sorting works natively with arrays, we can implement multi-column sort by returning an array from the key function.
 
 .. code-block:: python
 
@@ -114,8 +164,28 @@ Because Python's internal sorting works natively with arrays, we can implement m
 
 This table will now be ordered by :code:`last_name`, then :code:`first_name`.
 
+Randomizing order
+-----------------
+
+.. code-block:: python
+
+    import random
+
+    new_table = table.order_by(lambda row: random.random())
+
 Modifying data
 ==============
+
+Computing percent change
+------------------------
+
+You could use :meth:`.Table.compute` to calculate percent change, however, for your convenience journalism has a builtin shorthand:
+
+.. code-block:: python
+
+    new_table = table.percent_change('july', 'august', 'pct_change')
+
+This will compute the percent change between the :code:`july` and :code:`august` columns and put the result in a new :code:`pct_change` column in the resulting table.
 
 Rounding to two decimal places
 ------------------------------
@@ -135,55 +205,156 @@ We can use :meth:`.Table.compute` to apply the quantize to generate a rounded co
 
 To round to one decimal place you would simply change :code:`0.01` to :code:`0.1`.
 
-Plotting with matplotlib
-========================
+Emulating SQL
+=============
 
-journalism integrates well with Python plotting library `matplotlib <http://matplotlib.org/>`_
+journalism's command structure is very similar to SQL. The primary difference between journalism and SQL is that commands like :code:`SELECT` and :code:`WHERE` explicitly create new tables. You can chain them together as you would with SQL, but be aware each command is actually creating a new table.
 
-Line chart
+.. note::
+
+    All examples in this section use the `PostgreSQL <http://www.postgresql.org/>`_ dialect for comparison.
+
+SELECT
+------
+
+SQL:
+
+.. code-block:: postgres
+
+    SELECT state, total FROM table;
+
+journalism:
+
+.. code-block:: python
+
+    new_table = table.select(('state', 'total'))
+
+WHERE
+-----
+
+SQL:
+
+.. code-block:: postgres
+
+    SELECT * FROM table WHERE LOWER(state) = 'california';
+
+journalism:
+
+.. code-block:: python
+
+    new_table = table.where(lambda row: row['state'].lower() == 'california')
+
+ORDER BY
+--------
+
+SQL:
+
+.. code-block:: postgres 
+
+    SELECT * FROM table ORDER BY total DESC;
+
+journalism:
+
+.. code-block:: python
+
+    new_table = table.where(lambda row: row['total'], reverse=True)
+
+Chaining commands together
+--------------------------
+
+SQL:
+
+.. code-block:: postgres
+
+    SELECT state, total FROM table WHERE LOWER(state) = 'california' ORDER BY total DESC;
+
+journalism:
+
+.. code-block:: python
+
+    new_table = table \
+        .select(('state', 'total')) \
+        .where(lambda row: row['state'].lower() == 'california') \
+        .order_by('total', reverse=True)
+
+.. note::
+
+    I don't advise chaining commands like this. Being explicit about each step is usually better.
+
+DISTINCT
+--------
+
+SQL:
+
+.. code-block:: postgres
+
+    SELECT DISTINCT ON (state) * FROM table;
+
+journalism:
+
+.. code-block:: python
+
+    new_table = table.distinct('state')
+
+.. note::
+
+    Unlike most SQL implementations, journalism always returns the full row. Use :meth:`.Table.select` if you want to filter the columns first.
+
+INNER JOIN
 ----------
 
-.. code-block:: python
+SQL (two ways):
 
-    import pylab
+.. code-block:: postgres
 
-    pylab.plot(table.columns['homeruns'], table.columns['wins'])
-    pylab.xlabel('Homeruns')
-    pylab.ylabel('Wins')
-    pylab.title('How homeruns correlate to wins')
+    SELECT * FROM patient, doctor WHERE patient.doctor = doctor.id;
 
-    pylab.show()
+    SELECT * FROM patient INNER JOIN doctor ON (patient.doctor = doctor.id);
 
-Histogram
----------
+journalism:
 
 .. code-block:: python
 
-    pylab.hist(table.columns['state'])
+    joined = patients.inner_join('doctor', doctors, 'id')
 
-    pylab.xlabel('State')
-    pylab.ylabel('Count')
-    pylab.title('Count by state')
+LEFT OUTER JOIN
+---------------
 
-    pylab.show()
+SQL:
 
-Plotting with pygal
-===================
+.. code-block:: postgres
 
-`pygal <http://pygal.org/>`_ is a neat library for generating SVG charts. journalism works well with it too.
+    SELECT * FROM patient LEFT OUTER JOIN doctor ON (patient.doctor = doctor.id);
 
-Line chart
-----------
+journalism:
 
 .. code-block:: python
 
-    import pygal
+    joined = patients.left_outer_join('doctor', doctors, 'id')
 
-    line_chart = pygal.Line()
-    line_chart.title = 'State totals'
-    line_chart.x_labels = states.columns['state_abbr']
-    line_chart.add('Total', states.columns['total'])
-    line_chart.render_to_file('total_by_state.svg') 
+GROUP BY
+--------
+
+journalism's :meth:`.Table.group_by` works slightly different than SQLs. It does not require an aggregate function. Instead it returns a dictionary of :code:`group`, :meth:`.Table` pairs. To see how to perform the equivalent of a SQL aggregate, see the next example.
+
+.. code-block:: python
+
+    groups = patients.group_by('doctor')
+
+Aggregate functions
+-------------------
+
+SQL:
+
+.. code-block:: postgres
+
+    SELECT mean(age) FROM patient GROUP BY doctor;
+
+journalism:
+
+.. code-block:: python
+
+    new_table = patient.aggregate('doctor', { 'age': 'mean' })
 
 Emulating Excel
 ===============
@@ -242,6 +413,24 @@ Pivot tables
 
 TODO
 
+Emulating R
+===========
+
+aggregate
+---------
+
+R:
+
+.. code-block:: r
+
+    aggregate(employees$salary, list(job = employees$job), mean)
+
+journalism:
+
+.. code-block:: python
+
+    aggregates = employees..aggregate('job', { 'salary': 'mean' })
+
 Emulating Underscore.js
 =======================
 
@@ -262,4 +451,55 @@ To simulate Underscore's `reject`, simply negate the return value of the functio
 .. code-block:: python
 
     new__table = table.where(lambda row: not (row['state'] == 'Texas'))
+
+Plotting with matplotlib
+========================
+
+journalism integrates well with Python plotting library `matplotlib <http://matplotlib.org/>`_.
+
+Line chart
+----------
+
+.. code-block:: python
+
+    import pylab
+
+    pylab.plot(table.columns['homeruns'], table.columns['wins'])
+    pylab.xlabel('Homeruns')
+    pylab.ylabel('Wins')
+    pylab.title('How homeruns correlate to wins')
+
+    pylab.show()
+
+Histogram
+---------
+
+.. code-block:: python
+
+    pylab.hist(table.columns['state'])
+
+    pylab.xlabel('State')
+    pylab.ylabel('Count')
+    pylab.title('Count by state')
+
+    pylab.show()
+
+Plotting with pygal
+===================
+
+`pygal <http://pygal.org/>`_ is a neat library for generating SVG charts. journalism works well with it too.
+
+Line chart
+----------
+
+.. code-block:: python
+
+    import pygal
+
+    line_chart = pygal.Line()
+    line_chart.title = 'State totals'
+    line_chart.x_labels = states.columns['state_abbr']
+    line_chart.add('Total', states.columns['total'])
+    line_chart.render_to_file('total_by_state.svg') 
+
 

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-class NullComputationError(Exception):
+class NullComputationError(Exception):  # pragma: no cover
     """
     Exception raised if an illogical computation is
     attempted on a Column containing nulls.
     """
     pass
 
-class UnsupportedOperationError(Exception):
+class UnsupportedOperationError(Exception):  # pragma: no cover
     """
     Exception raised when an operation is applied
     to an invalid column type.
@@ -22,7 +22,7 @@ class UnsupportedOperationError(Exception):
     def __str__(self):
         return str(self.__unicode__())
 
-class ColumnValidationError(Exception):
+class ColumnValidationError(Exception):  # pragma: no cover
     """
     Exception raised in a column value can not be
     validated.
@@ -37,3 +37,30 @@ class ColumnValidationError(Exception):
     def __str__(self):
         return str(self.__unicode__())
 
+class ColumnDoesNotExistError(Exception):  # pragma: no cover
+    """
+    Exception raised when trying to access a column
+    that does not exist.
+    """
+    def __init__(self, k):
+        self.k = k
+    
+    def __unicode__(self):
+        return 'Column `%s` does not exist.' % (self.k)
+
+    def __str__(self):
+        return str(self.__unicode())
+
+class RowDoesNotExistError(Exception):  # pragma: no cover
+    """
+    Exception raised when trying to access a row
+    that does not exist.
+    """
+    def __init__(self, i):
+        self.i = i
+    
+    def __unicode__(self):
+        return 'Row `%i` does not exist.' % (self.i)
+
+    def __str__(self):
+        return str(self.__unicode())

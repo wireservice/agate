@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 
-from collections import Iterator, Mapping, Sequence, defaultdict
+from collections import Mapping, Sequence, defaultdict
 from decimal import Decimal
 from functools import wraps
+import warnings
 
 try:
     from collections import OrderedDict
-except ImportError:
+except ImportError: #pragma: nocover
     from ordereddict import OrderedDict
 
-from journalism.exceptions import ColumnValidationError, NullComputationError
+import six
 
-class ColumnIterator(Iterator):
+from journalism.exceptions import ColumnDoesNotExistError, ColumnValidationError, NullComputationError
+
+class ColumnIterator(six.Iterator):
     """
     Iterator over :class:`Column` instances.
     """
@@ -19,7 +22,7 @@ class ColumnIterator(Iterator):
         self._table = table
         self._i = 0
 
-    def next(self):
+    def __next__(self):
         try:
             self._table._column_names[self._i]
         except IndexError:
@@ -40,7 +43,7 @@ class ColumnMapping(Mapping):
 
     def __getitem__(self, k):
         if k not in self._table._column_names:
-            raise KeyError
+            raise ColumnDoesNotExistError(k)
 
         i = self._table._column_names.index(k)
 
@@ -78,7 +81,7 @@ class Column(Sequence):
         self._cached_data_without_nulls = None
         self._cached_data_sorted = None
 
-    def __repr__(self):
+    def __unicode__(self):
         data = self._data()
 
         sample = repr(data[:5])
@@ -88,6 +91,9 @@ class Column(Sequence):
             sample = sample[:-1] + ', ...' + last
 
         return '<journalism.columns.%s: %s>' % (self.__class__.__name__, sample)
+
+    def __str__(self):
+        return str(self.__unicode__())
 
     def _data(self):
         if self._cached_data is None:
@@ -206,7 +212,7 @@ class TextColumn(Column):
         if validation fails.
         """
         for d in self._data():
-            if not isinstance(d, basestring) and d is not None:
+            if not isinstance(d, six.string_types) and d is not None:
                 raise ColumnValidationError(d, self)
 
     def _cast(self):
@@ -216,10 +222,10 @@ class TextColumn(Column):
         casted = []
 
         for d in self._data():
-            if d == '':
+            if d == '' or d is None:
                 casted.append(None)
             else:
-                casted.append(unicode(d))
+                casted.append(six.text_type(d))
 
         return casted
 
@@ -269,10 +275,11 @@ class NumberColumn(Column):
         if length % 2 == 1:
             return data[((length + 1) / 2) - 1]
         else:
-            a = data[(length / 2) - 1]
-            b = data[length / 2]
+            half = length // 2
+            a = data[half - 1]
+            b = data[half]
 
-        return (Decimal(a + b)) / 2
+        return Decimal(a + b) / 2
 
     @no_null_computations
     def mode(self):
@@ -307,7 +314,6 @@ class NumberColumn(Column):
 
         Will raise :exc:`.NullComputationError` if this column contains nulls.
         """
-
         return self.variance().sqrt()
 
     @no_null_computations
@@ -340,7 +346,7 @@ class IntColumn(NumberColumn):
         casted = []
 
         for d in self._data():
-            if isinstance(d, basestring):
+            if isinstance(d, six.string_types):
                 d = d.replace(',' ,'').strip()
 
             if d == '' or d is None:
@@ -376,11 +382,13 @@ class DecimalColumn(NumberColumn):
         casted = []
 
         for d in self._data():
-            if isinstance(d, basestring):
+            if isinstance(d, six.string_types):
                 d = d.replace(',' ,'').strip()
 
             if d == '' or d is None:
                 casted.append(None)
+            elif isinstance(d, float):
+                warnings.warn('Casting float to Decimal! Precision lost. Cast from string instead!')
             else:
                 casted.append(Decimal(d))
 

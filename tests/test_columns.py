@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
 from decimal import Decimal
-import unittest2 as unittest
+import warnings
+
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 import journalism
 
@@ -17,11 +22,28 @@ class TestColumns(unittest.TestCase):
 
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
+    def test_stringify(self):
+        self.assertEqual(str(self.table.columns['one']), "<journalism.columns.IntColumn: (1, 2, None)>")
+
+    def test_stringify_long(self):
+        rows = (
+            (1, 2, 'a'),
+            (2, 3, 'b'),
+            (None, 4, 'c'),
+            (1, 2, 'a'),
+            (2, 3, 'b'),
+            (None, 4, 'c')
+        )
+        
+        self.table = journalism.Table(rows, self.column_types, self.column_names)
+
+        self.assertEqual(str(self.table.columns['one']), "<journalism.columns.IntColumn: (1, 2, None, 1, 2, ...)>")
+
     def test_length(self):
         self.assertEqual(len(self.table.columns), 3)
 
     def test_get_column_data(self):
-        self.assertEqual(self.table.columns['one']._data(), (1, 2, None))
+        self.assertSequenceEqual(self.table.columns['one']._data(), (1, 2, None))
 
     def test_get_column_data_cached(self):
         c = self.table.columns['one']
@@ -30,14 +52,14 @@ class TestColumns(unittest.TestCase):
 
         data = c._data()
 
-        self.assertEqual(c._cached_data, (1, 2, None))
+        self.assertSequenceEqual(c._cached_data, (1, 2, None))
         
         data2 = c._data()
 
         self.assertIs(data, data2)
 
     def test_get_column(self):
-        self.assertEqual(self.table.columns['one'], (1, 2, None))
+        self.assertSequenceEqual(self.table.columns['one'], (1, 2, None))
 
     def test_get_column_cached(self):
         c = self.table.columns['one']
@@ -48,7 +70,7 @@ class TestColumns(unittest.TestCase):
         self.assertIsNot(c2, c3)
 
     def test_get_invalid_column(self):
-        with self.assertRaises(KeyError):
+        with self.assertRaises(journalism.ColumnDoesNotExistError):
             self.table.columns['four']
 
     def test_column_length(self):
@@ -64,12 +86,12 @@ class TestColumns(unittest.TestCase):
     def test_iterate_columns(self):
         it = iter(self.table.columns)
 
-        self.assertEqual(it.next(), (1, 2, None))
-        self.assertEqual(it.next(), (2, 3, 4))
-        self.assertEqual(it.next(), ('a', 'b', 'c'))
+        self.assertSequenceEqual(next(it), (1, 2, None))
+        self.assertSequenceEqual(next(it), (2, 3, 4))
+        self.assertSequenceEqual(next(it), ('a', 'b', 'c'))
 
         with self.assertRaises(StopIteration):
-            it.next()
+            next(it)
 
     def test_immutable(self):
         with self.assertRaises(TypeError):
@@ -118,12 +140,12 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(len(new_table.columns), 2)
         self.assertEqual(len(new_table.rows), 3) 
 
-        self.assertEqual(new_table.rows[0], (1, 3))
-        self.assertEqual(new_table.rows[1], (2, 1))
-        self.assertEqual(new_table.rows[2], (None, 1))
+        self.assertSequenceEqual(new_table.rows[0], (1, 3))
+        self.assertSequenceEqual(new_table.rows[1], (2, 1))
+        self.assertSequenceEqual(new_table.rows[2], (None, 1))
 
-        self.assertEqual(new_table.columns['one'], (1, 2, None))
-        self.assertEqual(new_table.columns['count'], (3, 1, 1))
+        self.assertSequenceEqual(new_table.columns['one'], (1, 2, None))
+        self.assertSequenceEqual(new_table.columns['count'], (3, 1, 1))
 
 class TestTextColumn(unittest.TestCase):
     def test_validate(self):
@@ -137,8 +159,9 @@ class TestTextColumn(unittest.TestCase):
             column.validate()
 
     def test_cast(self):
-        # TODO
-        pass
+        column = journalism.TextColumn(None, 'one')
+        column._data = lambda: ('a', 1, None, Decimal('2.7'))
+        self.assertSequenceEqual(column._cast(), ('a', '1', None, '2.7'))
 
 class TestIntColumn(unittest.TestCase):
     def setUp(self):
@@ -164,8 +187,9 @@ class TestIntColumn(unittest.TestCase):
             column.validate()
 
     def test_cast(self):
-        # TODO
-        pass
+        column = journalism.IntColumn(None, 'one')
+        column._data = lambda: (2, 1, None, Decimal('2.7'))
+        self.assertSequenceEqual(column._cast(), (2, 1, None, 2))
 
     def test_sum(self):
         self.assertEqual(self.table.columns['one'].sum(), 4)
@@ -194,11 +218,14 @@ class TestIntColumn(unittest.TestCase):
     def test_variance(self):
         with self.assertRaises(journalism.exceptions.NullComputationError):
             self.table.columns['one'].variance()
+
         self.assertEqual(self.table.columns['two'].variance(), Decimal('1.5'))
 
     def test_stdev(self):
-        # TODO
-        pass
+        with self.assertRaises(journalism.exceptions.NullComputationError):
+            self.table.columns['one'].stdev()
+
+        self.assertAlmostEqual(self.table.columns['two'].stdev(), Decimal('1.22474487'))
 
 class TestDecimalColumn(unittest.TestCase):
     def setUp(self):
@@ -230,11 +257,18 @@ class TestDecimalColumn(unittest.TestCase):
             column.validate()
 
     def test_cast(self):
-        # TODO
-        pass
+        column = journalism.DecimalColumn(None, 'one')
+        column._data = lambda: (2, 1, None, Decimal('2.7'))
+        self.assertSequenceEqual(column._cast(), (Decimal('2'), Decimal('1'), None, Decimal('2.7')))
+
+    def test_cast_warn(self):
+        column = journalism.DecimalColumn(None, 'one')
+        column._data = lambda: (2, 1.1, None, Decimal('2.7'))
+
+        with warnings.catch_warnings(record=True) as w:
+            column._cast()
 
     def test_sum(self):
-        print list(self.table.columns['one'])
         self.assertEqual(self.table.columns['one'].sum(), Decimal('6.5'))
         self.assertEqual(self.table.columns['two'].sum(), Decimal('13.13'))
 
@@ -265,6 +299,8 @@ class TestDecimalColumn(unittest.TestCase):
         self.assertEqual(self.table.columns['two'].variance().quantize(Decimal('0.01')), Decimal('0.47'))
 
     def test_stdev(self):
-        # TODO
-        pass
+        with self.assertRaises(journalism.exceptions.NullComputationError):
+            self.table.columns['one'].stdev()
+
+        self.assertAlmostEqual(self.table.columns['two'].stdev().quantize(Decimal('0.01')), Decimal('0.69'))
 

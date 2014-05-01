@@ -1,6 +1,37 @@
+0.3.0
+-----
+
+* Table.outliers implemented. (#86)
+* Table.group_by implemented. (#3)
+* Cookbook: emulating R. (#81)
+* Table.left_outer_join now accepts column names or key functions. (#80)
+* Table.inner_join now accepts column names or key functions. (#80)
+* Table.distinct now accepts a column name or key function. (#80)
+* Table.order_by now accepts a column name or key function. (#80)
+* Table.rank implemented. (#15)
+* Reached 100% test coverage. (#76)
+* Tests for Column._cast methods. (#20)
+* Table.distinct implemented. (#83)
+* Use assertSequenceEqual in tests. (#84)
+* Docs: features section. (#87)
+* Cookbook: emulating SQL. (#79)
+* Table.left_outer_join implemented. (#11)
+* Table.inner_join implemented. (#11)
+
 0.2.0
 -----
 
+* Python 3.2, 3.3 and 3.4 support. (#52)
+* Documented supported platforms.
+* Cookbook: csvkit. (#36)
+* Cookbook: glob syntax. (#28)
+* Cookbook: filter to values in range. (#30)
+* RowDoesNotExistError implemented. (#70)
+* ColumnDoesNotExistError implemented. (#71)
+* Cookbook: percent change. (#67)
+* Cookbook: sampleing. (#59)
+* Cookbook: random sort order. (#68)
+* Eliminate Table.get_data.
 * Use tuples everywhere. (#66)
 * Fixes for Python 2.6 compatibility. (#53)
 * Cookbook: multi-column sorting. (#13)

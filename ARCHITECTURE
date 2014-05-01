@@ -8,9 +8,9 @@ A few notes regarding journalism's internal architecture. (Users should not care
 
 * Tables that are forked will share Row instances for memory efficiency. This is safe because row data is immutable. Methods that create new data will copy data first. (e.g. Table.compute)
 
-* ColumnMapping, Row Sequence, Column, and Row have **read only** access to a Table's private variables. They are purely a formal abstraction and for purposes of encapsulation they can be treated as a single unit.
+* ColumnMapping, RowSequence, Column, and Row have **read only** access to a Table's private variables. They are purely a formal abstraction and for purposes of encapsulation they can be treated as a single unit.
 
-* Columns lazy construct a copy of their data from their parent Table and then cache it.
+* Columns lazily construct a copy of their data from their parent Table and then cache it.
 
 * Operations accept functional arguments wherever possible for maximum flexibility.
 

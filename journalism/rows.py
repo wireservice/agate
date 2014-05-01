@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 
-from collections import Iterator, Mapping, Sequence
+from collections import Mapping, Sequence
 
-class RowIterator(Iterator):
+from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
+import six
+
+if six.PY3:
+    xrange = range
+
+class RowIterator(six.Iterator):
     """
     Iterator over row proxies.
     """
@@ -10,7 +16,7 @@ class RowIterator(Iterator):
         self._table = table
         self._i = 0
 
-    def next(self):
+    def __next__(self):
         try:
             self._table._data[self._i]
         except IndexError:
@@ -36,14 +42,20 @@ class RowSequence(Sequence):
             return tuple(self._table._get_row(row) for row in indices)
 
         # Verify the row exists
-        self._table._data[i]
+        try:
+            self._table._data[i]
+        except IndexError:
+            raise RowDoesNotExistError(i)
 
         return self._table._get_row(i) 
+
+    def __iter__(self):
+        return RowIterator(self._table)
 
     def __len__(self):
         return len(self._table._data)
 
-class CellIterator(Iterator):
+class CellIterator(six.Iterator):
     """
     Iterator over row cells.
     """
@@ -51,7 +63,7 @@ class CellIterator(Iterator):
         self._row = row
         self._i = 0
 
-    def next(self):
+    def __next__(self):
         try:
             v = self._row._table._data[self._row._i][self._i]
         except IndexError:
@@ -69,7 +81,7 @@ class Row(Mapping):
         self._table = table
         self._i = i
 
-    def __repr__(self):
+    def __unicode__(self):
         data = self._table._data[self._i]
 
         sample = repr(data[:5])
@@ -80,12 +92,21 @@ class Row(Mapping):
 
         return '<journalism.rows.Row: %s>' % sample 
 
+    def __str__(self):
+        return str(self.__unicode__())
+
     def __getitem__(self, k):
         if isinstance(k, int):
-            return self._table._data[self._i][k]
+            try:
+                return self._table._data[self._i][k]
+            except IndexError:
+                raise ColumnDoesNotExistError(k)
 
-        j = self._table._column_names.index(k)
-        
+        try:
+            j = self._table._column_names.index(k)
+        except ValueError:
+            raise ColumnDoesNotExistError(k)
+
         return self._table._data[self._i][j]
 
     def __len__(self):

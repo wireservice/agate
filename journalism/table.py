@@ -9,10 +9,12 @@ from decimal import Decimal
 
 try:
     from collections import OrderedDict
-except ImportError:
+except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-from journalism.columns import ColumnMapping, DecimalColumn
+import six
+
+from journalism.columns import ColumnMapping, IntColumn, DecimalColumn
 from journalism.exceptions import UnsupportedOperationError
 from journalism.rows import RowSequence, Row
 
@@ -20,7 +22,26 @@ def transpose(data):
     """
     Utility function for transposing a 2D array of data.
     """
+    if six.PY3: #pragma: no cover
+        # Run generator
+        return tuple(zip(*data))
+
     return zip(*data)
+    
+class NullOrder(object):
+    """
+    Dummy object used for sorting in place of None.
+
+    Sorts as "greater than everything but other nulls."
+    """
+    def __lt__(self, other):
+        return False 
+
+    def __gt__(self, other):
+        if other is None:
+            return False
+
+        return True
 
 class Table(object):
     """
@@ -100,12 +121,6 @@ class Table(object):
 
         return Table(rows, column_types, column_names, _forked=True)
 
-    def get_data(self):
-        """
-        Get the raw data in this table.
-        """
-        return self._data
-
     def get_column_types(self):
         """
         Get an ordered list of this table's column types.
@@ -134,39 +149,220 @@ class Table(object):
 
         return self._fork(new_rows, column_types, column_names)
 
-    def where(self, func):
+    def where(self, test):
         """
         Filter a to only those rows where the row passes a truth test.
 
         Returns a new :class:`Table`.
         """
-        rows = [row for row in self.rows if func(row)]
+        rows = [row for row in self.rows if test(row)]
 
         return self._fork(rows)
 
-    def order_by(self, func, cmp=None, reverse=False):
+    def outliers(self, column_name, deviations=3, reject=False):
         """
-        Sort this table by the key returned from the row function.
+        A wrapper around :meth:`where` that filters the dataset to
+        rows where the value of the column are more than some number
+        of standard deviations from the mean.
 
-        Optionally you can also specify a custom comparison function.
-        See :func:`sorted` for more details.
+        If :code:`reject` is False than this method will return
+        everything *except* the outliers.
+
+        NB: This method makes no attempt to validate that the
+        distribution of your data is normal.
+
+        NB: There are well-known cases in which this algorithm will
+        fail to identify outliers. If you need statistical confidence
+        do your reading first.
+        """
+        mean = self.columns[column_name].mean()
+        sd = self.columns[column_name].stdev()
+
+        lower_bound = mean - (sd * deviations)
+        upper_bound = mean + (sd * deviations)
+
+        if reject:
+            f = lambda row: row[column_name] < lower_bound or row[column_name] > upper_bound
+        else:
+            f = lambda row: lower_bound <= row[column_name] <= upper_bound
+
+        return self.where(f)
+
+    def order_by(self, key, reverse=False):
+        """
+        Sort this table by the :code:`key`. This can be either a
+        column_name or callable that returns a value to sort by.
 
         Returns a new :class:`Table`.
         """
-        data = sorted(self.rows, cmp=cmp, key=func, reverse=reverse)
+        key_is_row_function = hasattr(key, '__call__')
 
-        return self._fork(data)
+        def null_handler(row):
+            if key_is_row_function:
+                k = key(row)
+            else:
+                k = row[key]
 
-    def limit(self, start_or_stop, stop=None, step=None):
+            if k is None:
+                return NullOrder() 
+
+            return k
+
+        rows = sorted(self.rows, key=null_handler, reverse=reverse)
+
+        return self._fork(rows)
+
+    def limit(self, start_or_stop=None, stop=None, step=None):
         """
-        Filter data to a subset of all rows.If only one argument is specified,
+        Filter data to a subset of all rows. If only one argument is specified,
         that many rows will be returned. Otherwise, the arguments function as
-        `start`, `stop` and `step`, just like Python's builtin :func:`slice`.
+        :code:`start`, :code:`stop` and :code:`step`, just like Python's
+        builtin :func:`slice`.
+
+        Returns a new :class:`Table`.
         """
         if stop or step:
             return self._fork(self.rows[slice(start_or_stop, stop, step)])
         
         return self._fork(self.rows[:start_or_stop])
+
+    def distinct(self, key=None):
+        """
+        Filter data to only rows that are unique. Uniqueness is determined
+        by the value of :code:`key`. If it is a column name, that column
+        will be used to determine uniqueness. If it is a callable, it
+        will be passed each row and the resulting values will be used to
+        determine uniqueness. If it :code:`None`, the entire row will
+        be used to verify uniqueness.
+
+        Returns a new :class:`Table`.
+        """
+        key_is_row_function = hasattr(key, '__call__')
+
+        uniques = []
+        rows = []
+
+        for row in self.rows:
+            if key_is_row_function:
+                k = key(row)
+            elif key is None:
+                k = tuple(row)
+            else:
+                k = row[key]
+
+            if k not in uniques:
+                uniques.append(k)
+                rows.append(row)
+
+        return self._fork(rows)
+
+    def inner_join(self, left_key, table, right_key):
+        """
+        Performs an "inner join", combining columns from this table
+        and from :code:`table` anywhere that the output of :code:`left_key`
+        and :code:`right_key` are equivalent. These may be either column
+        names or row functions.
+
+        Returns a new :class:`Table`.
+        """
+        left_key_is_row_function = hasattr(left_key, '__call__')
+        right_key_is_row_function = hasattr(right_key, '__call__')
+
+        left = []
+        right = []
+
+        if left_key_is_row_function:
+            left = [left_key(row) for row in self.rows]
+        else:
+            c = self._column_names.index(left_key)
+            left = self._get_column(c)
+
+        if right_key_is_row_function:
+            right = [right_key(row) for row in table.rows]
+        else:
+            c = table._column_names.index(right_key)
+            right = table._get_column(c)
+
+        rows = []
+
+        for i, l in enumerate(left):
+            for j, r in enumerate(right):
+                if l == r:
+                    rows.append(tuple(self.rows[i]) + tuple(table.rows[j]))
+
+        column_types = self._column_types + table._column_types
+        column_names = self._column_names + table._column_names
+
+        return self._fork(rows, column_types, column_names)
+
+    def left_outer_join(self, left_key, table, right_key):
+        """
+        Performs an "left outer join", combining columns from this table
+        and from :code:`table` anywhere that the output of :code:`left_key`
+        and :code:`right_key` are equivalent. These may be either column
+        names or row functions.
+
+        Where there is no match for :code:`left_key`the left columns will
+        be included with the right columns set to :code:`None`.
+
+        Returns a new :class:`Table`.
+        """
+        left_key_is_row_function = hasattr(left_key, '__call__')
+        right_key_is_row_function = hasattr(right_key, '__call__')
+
+        left = []
+        right = []
+
+        if left_key_is_row_function:
+            left = [left_key(row) for row in self.rows]
+        else:
+            c = self._column_names.index(left_key)
+            left = self._get_column(c)
+
+        if right_key_is_row_function:
+            right = [right_key(row) for row in table.rows]
+        else:
+            c = table._column_names.index(right_key)
+            right = table._get_column(c)
+
+        rows = []
+
+        for i, l in enumerate(left):
+            if l in right:
+                for j, r in enumerate(right):
+                    if l == r:
+                        rows.append(tuple(list(self.rows[i]) + list(table.rows[j])))
+            else:
+                rows.append(tuple(list(self.rows[i]) + [None] * len(table.columns))) 
+
+        column_types = self._column_types + table._column_types
+        column_names = self._column_names + table._column_names
+
+        return self._fork(rows, column_types, column_names)
+
+    def group_by(self, group_by):
+        """
+        Create one new :class:`Table` for each unique value in the
+        :code:`group_by` column and return them as a dict.
+        """
+        i = self._column_names.index(group_by)
+
+        groups = OrderedDict() 
+
+        for row in self._data:
+            group_name = row[i]
+
+            if group_name not in groups:
+                groups[group_name] = []
+
+            groups[group_name].append(row)
+
+        output = {}
+
+        for group, rows in groups.items():
+            output[group] = self._fork(rows)
+
+        return output
 
     def aggregate(self, group_by, operations=[]):
         """
@@ -236,9 +432,29 @@ class Table(object):
         """
         A wrapper around :meth:`compute` for quickly computing
         percent change between two columns.
+
+        Returns a new :class:`Table`.
         """
         def calc(row):
             return Decimal(row[after_column_name] - row[before_column_name]) / row[before_column_name] * 100
 
         return self.compute(new_column_name, DecimalColumn, calc) 
+
+    def rank(self, func, new_column_name):
+        """
+        Creates a new column that is the rank order of the values
+        returned by the row function.
+
+        Returns a new :class:`Table`.
+        """
+        def null_handler(k):
+            if k is None:
+                return NullOrder() 
+
+            return k
+
+        func_column = [func(row) for row in self.rows]
+        rank_column = sorted(func_column, key=null_handler)
+        
+        return self.compute(new_column_name, IntColumn, lambda row: rank_column.index(func(row)) + 1)
 
