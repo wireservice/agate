@@ -13,6 +13,7 @@ except ImportError: #pragma: nocover
 import six
 
 from journalism.exceptions import ColumnDoesNotExistError, ColumnValidationError, NullComputationError
+from journalism import stats
 
 class ColumnIterator(six.Iterator):
     """
@@ -68,6 +69,21 @@ def no_null_computations(func):
         return func(c)
 
     return check
+
+def median(data_sorted):
+    """
+    Compute the median value of this column.
+    """
+    length = len(data_sorted)
+
+    if length % 2 == 1:
+        return data_sorted[((length + 1) / 2) - 1]
+    else:
+        half = length // 2
+        a = data_sorted[half - 1]
+        b = data_sorted[half]
+
+    return Decimal(a + b) / 2
 
 class Column(Sequence):
     """
@@ -269,17 +285,7 @@ class NumberColumn(Column):
 
         Will raise :exc:`.NullComputationError` if this column contains nulls.
         """
-        data = self._data_sorted()
-        length = len(data)
-
-        if length % 2 == 1:
-            return data[((length + 1) / 2) - 1]
-        else:
-            half = length // 2
-            a = data[half - 1]
-            b = data[half]
-
-        return Decimal(a + b) / 2
+        return median(self._data_sorted())
 
     @no_null_computations
     def mode(self):
@@ -304,8 +310,9 @@ class NumberColumn(Column):
         Will raise :exc:`.NullComputationError` if this column contains nulls.
         """
         data = self._data()
+        mean = self.mean()
 
-        return sum((n - self.mean()) ** 2 for n in data) / len(data)   
+        return sum((n - mean) ** 2 for n in data) / len(data)   
 
     @no_null_computations
     def stdev(self):
@@ -317,13 +324,17 @@ class NumberColumn(Column):
         return self.variance().sqrt()
 
     @no_null_computations
-    def percentile(self):
+    def mad(self):
         """
-        Compute the percentile of this column.
+        Compute the `median absolute deviation <http://en.wikipedia.org/wiki/Median_absolute_deviation>`_
+        of this column.
 
-        Will raise :exc:`>.NullComputationError` if this column contains nulls.
+        Will raise :exc:`.NullComputationError` if this column contains nulls.
         """
-        pass
+        data = self._data_sorted()
+        m = median(data)
+
+        return median(tuple(abs(n - m) for n in data))
 
 class IntColumn(NumberColumn):
     """

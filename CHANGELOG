@@ -1,6 +1,8 @@
 0.3.0
 -----
 
+* Table.outliers_mad implemented. (#93)
+* Column.mad implemented. (#93)
 * Table.outliers implemented. (#86)
 * Table.group_by implemented. (#3)
 * Cookbook: emulating R. (#81)

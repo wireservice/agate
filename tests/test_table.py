@@ -120,6 +120,34 @@ class TestTable(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 1)
         self.assertSequenceEqual(new_table.columns['one'], (200,))
 
+    def test_outliers_mad(self):
+        rows = [ 
+            (50, 4, 'a'),
+        ] * 10
+            
+        rows.append((200, 1, 'b'))
+        
+        table = journalism.Table(rows, self.column_types, self.column_names)
+
+        new_table = table.outliers_mad('one')
+
+        self.assertEqual(len(new_table.rows), 10)
+        self.assertNotIn(200, new_table.columns['one'])
+
+    def test_outliers_mad_reject(self):
+        rows = [ 
+            (50, 4, 'a'),
+        ] * 10
+            
+        rows.append((200, 1, 'b'))
+        
+        table = journalism.Table(rows, self.column_types, self.column_names)
+
+        new_table = table.outliers_mad('one', reject=True)
+
+        self.assertEqual(len(new_table.rows), 1)
+        self.assertSequenceEqual(new_table.columns['one'], (200,))
+
     def test_order_by(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 
