@@ -310,6 +310,15 @@ class NumberColumn(Column):
 
         return self.variance().sqrt()
 
+    @no_null_computations
+    def percentile(self):
+        """
+        Compute the percentile of this column.
+
+        Will raise :exc:`>.NullComputationError` if this column contains nulls.
+        """
+        pass
+
 class IntColumn(NumberColumn):
     """
     A column containing integer data.
