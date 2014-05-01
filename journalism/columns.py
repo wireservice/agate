@@ -3,6 +3,8 @@
 from collections import Mapping, Sequence, defaultdict
 from decimal import Decimal
 from functools import wraps
+import functools
+import math
 import warnings
 
 try:
@@ -335,6 +337,39 @@ class NumberColumn(Column):
         m = median(data)
 
         return median(tuple(abs(n - m) for n in data))
+
+    @no_null_computations
+    def percentile(self, one_pct=None):
+        """
+        Compute the `percentile <http://stackoverflow.com/questions/2374640/how-do-i-calculate-percentiles-with-python-numpy/2753343#2753343>`_
+        of this column or of one row.
+
+        Returns a list of the percentile.
+
+        Will raise :exc:`>.NullComputationError` if this column contains nulls.
+        """
+        data_sorted = sorted(self._data_without_nulls())
+
+        def percentiler(data_sorted, percent):
+            if not data_sorted: # Yoda logic!
+                return None
+            k = (len(data_sorted)-1) * percent
+            f = math.floor(k)
+            c = math.ceil(k)
+            if f == c:
+                return key(data_sorted[int(k)])
+            d0 = key(data_sorted[int(f)]) * (c-k)
+            d1 = key(data_sorted[int(c)]) * (k-f)
+            return d0+d1
+
+        if one_pct:
+            return [percentiler(data_sorted, percent)]
+        else:
+            percentile_list = []
+            for each_pct in range(1, 101):
+                percent = each_pct * .01
+                percentile_list.append(percentiler(data_sorted, percent))
+            return percentile_list
 
 class IntColumn(NumberColumn):
     """
