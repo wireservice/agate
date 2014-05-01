@@ -4,7 +4,6 @@
 This module contains the Table object.
 """
 
-import copy
 from decimal import Decimal
 
 try:
@@ -12,22 +11,10 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-import six
-
 from journalism.columns import ColumnMapping, NumberColumn
 from journalism.exceptions import UnsupportedOperationError
 from journalism.rows import RowSequence, Row
 
-def transpose(data):
-    """
-    Utility function for transposing a 2D array of data.
-    """
-    if six.PY3: #pragma: no cover
-        # Run generator
-        return tuple(zip(*data))
-
-    return zip(*data)
-    
 class NullOrder(object):
     """
     Dummy object used for sorting in place of None.
@@ -46,16 +33,12 @@ class NullOrder(object):
 class Table(object):
     """
     A group of columns with names.
-
-    TODO: dedup column names
     """
     def __init__(self, rows, column_types, column_names, _forked=False):
         """
         Create a table from rows of data.
 
         Rows is a 2D sequence of any sequences: tuples, lists, etc.
-
-        TODO: validate column_types are all subclasses of Column.
         """
         self._column_types = tuple(column_types)
         self._column_names = tuple(column_names)
@@ -443,16 +426,15 @@ class Table(object):
         
         Returns a new :class:`Table`.
         """
-        # Ensure we have raw data, not Row instances
-        rows = [list(row) for row in self._data]
+        column_types = self._column_types + (column_type,)
+        column_names = self._column_names + (column_name,)
 
-        column_types = list(copy.copy(self._column_types)) + [column_type]
-        column_names = list(copy.copy(self._column_names)) + [column_name]
+        new_rows = []
 
-        for i, row in enumerate(self.rows):
-            rows[i] = tuple(rows[i] + [func(row)]) 
+        for row in self.rows:
+            new_rows.append(tuple(row) + (func(row),))
 
-        return self._fork(rows, column_types, column_names)
+        return self._fork(new_rows, column_types, column_names)
 
     def percent_change(self, before_column_name, after_column_name, new_column_name):
         """
