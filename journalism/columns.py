@@ -13,7 +13,6 @@ except ImportError: #pragma: nocover
 import six
 
 from journalism.exceptions import ColumnDoesNotExistError, ColumnValidationError, NullComputationError
-from journalism import stats
 
 class ColumnIterator(six.Iterator):
     """
