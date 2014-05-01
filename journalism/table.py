@@ -12,7 +12,7 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 from journalism.columns import ColumnMapping, NumberColumn
-from journalism.exceptions import UnsupportedOperationError
+from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
 from journalism.rows import RowSequence, Row
 
 class NullOrder(object):
@@ -351,7 +351,10 @@ class Table(object):
         Create one new :class:`Table` for each unique value in the
         :code:`group_by` column and return them as a dict.
         """
-        i = self._column_names.index(group_by)
+        try:
+            i = self._column_names.index(group_by)
+        except ValueError:
+            raise ColumnDoesNotExistError(group_by)
 
         groups = OrderedDict() 
 
@@ -378,7 +381,10 @@ class Table(object):
 
         Returns a new :class:`Table`.
         """
-        i = self._column_names.index(group_by)
+        try:
+            i = self._column_names.index(group_by)
+        except ValueError:
+            raise ColumnDoesNotExistError(group_by)
 
         groups = OrderedDict() 
 
@@ -396,8 +402,12 @@ class Table(object):
         column_names = [group_by]
 
         for op_column in [op[0] for op in operations]:
-            i = self._column_names.index(op_column)
-            column_type = self._column_types[i]
+            try:
+                j = self._column_names.index(op_column)
+            except ValueError:
+                raise ColumnDoesNotExistError(op_column)
+
+            column_type = self._column_types[j]
 
             column_types.append(column_type)
             column_names.append(op_column)

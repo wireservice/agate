@@ -330,6 +330,12 @@ class TestTableGrouping(unittest.TestCase):
         self.assertSequenceEqual(new_tables['b'].columns['one'], ('b',))
         self.assertSequenceEqual(new_tables[None].columns['one'], (None,))
 
+    def test_group_by_bad_column(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        with self.assertRaises(journalism.ColumnDoesNotExistError):
+            table.group_by('bad')
+
     def test_aggregate_sum(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
 
@@ -359,6 +365,15 @@ class TestTableGrouping(unittest.TestCase):
 
         with self.assertRaises(journalism.UnsupportedOperationError):
             table.aggregate('two', (('one', 'sum'), ))
+
+    def test_aggregeate_bad_column(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        with self.assertRaises(journalism.ColumnDoesNotExistError):
+            table.aggregate('bad', (('one', 'sum'), ))
+
+        with self.assertRaises(journalism.ColumnDoesNotExistError):
+            table.aggregate('two', (('bad', 'sum'), ))
 
 class TestTableCompute(unittest.TestCase):
     def setUp(self):

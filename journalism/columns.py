@@ -41,10 +41,10 @@ class ColumnMapping(Mapping):
         self._table = table
 
     def __getitem__(self, k):
-        if k not in self._table._column_names:
+        try:
+            i = self._table._column_names.index(k)
+        except ValueError:
             raise ColumnDoesNotExistError(k)
-
-        i = self._table._column_names.index(k)
 
         return self._table._get_column(i) 
 
