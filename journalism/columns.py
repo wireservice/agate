@@ -402,7 +402,7 @@ class NumberColumn(Column):
 
         return median(tuple(abs(n - m) for n in data))
 
-#    @no_null_computations
+#     @no_null_computations
     def percentile(self, one_pct):
         """
         Compute the `percentile <http://stackoverflow.com/questions/2374640/how-do-i-calculate-percentiles-with-python-numpy/2753343#2753343>`_
