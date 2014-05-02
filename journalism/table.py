@@ -43,7 +43,7 @@ class Table(object):
         len_column_types = len(column_types)
 
         if len_column_types != len(column_names):
-            raise ValueError('column_types and column_names must be the same length')
+            raise ValueError('column_types and column_names must be the same length.')
 
         self._column_types = tuple(column_types)
         self._column_names = tuple(column_names)

@@ -1,6 +1,7 @@
 0.3.0
 -----
 
+* Better error handling in Table.__init__. (#38)
 * Collapse IntColumn and FloatColumn into NumberColumn. (#64)
 * Table.mad_outliers implemented. (#93)
 * Column.mad implemented. (#93)
