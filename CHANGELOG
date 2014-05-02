@@ -1,6 +1,7 @@
 0.3.0
 -----
 
+* BooleanColumn implemented. (#6)
 * TextColumn.max_length implemented. (#95)
 * Table.find implemented. (#14)
 * Better error handling in Table.__init__. (#38)

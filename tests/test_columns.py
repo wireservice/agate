@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from decimal import Decimal
-import warnings
 
 try:
     import unittest2 as unittest
@@ -150,14 +149,35 @@ class TestColumns(unittest.TestCase):
 class TestTextColumn(unittest.TestCase):
     def test_cast(self):
         column = journalism.TextColumn(None, 'one')
-        column._data = lambda: ('a', 1, None, Decimal('2.7'))
-        self.assertSequenceEqual(column._cast(), ('a', '1', None, '2.7'))
+        column._data = lambda: ('a', 1, None, Decimal('2.7'), 'n/a')
+        self.assertSequenceEqual(column._cast(), ('a', '1', None, '2.7', None))
 
     def test_max_length(self):
         column = journalism.TextColumn(None, 'one')
         column._data = lambda: ('a', 'gobble', 'wow')
         self.assertEqual(column.max_length(), 6)
 
+class TestBooleanColumn(unittest.TestCase):
+    def test_cast(self):
+        column = journalism.BooleanColumn(None, 'one')
+        column._data = lambda: (True, 'yes', None, False, 'no', 'n/a')
+        self.assertSequenceEqual(column._cast(), (True, True, None, False, False, None))
+
+    def test_any(self):
+        column = journalism.BooleanColumn(None, 'one')
+        column._data = lambda: (True, False, None)
+        self.assertEqual(column.any(), True)
+
+        column._data = lambda: (False, False, None)
+        self.assertEqual(column.any(), False)
+
+    def test_all(self):
+        column = journalism.BooleanColumn(None, 'one')
+        column._data = lambda: (True, True, None)
+        self.assertEqual(column.all(), False)
+
+        column._data = lambda: (True, True, True)
+        self.assertEqual(column.all(), True)
 
 class TestNumberColumn(unittest.TestCase):
     def setUp(self):
@@ -174,19 +194,19 @@ class TestNumberColumn(unittest.TestCase):
 
     def test_cast(self):
         column = journalism.NumberColumn(None, 'one')
-        column._data = lambda: (2, 1, None, Decimal('2.7'))
-        self.assertSequenceEqual(column._cast(), (Decimal('2'), Decimal('1'), None, Decimal('2.7')))
+        column._data = lambda: (2, 1, None, Decimal('2.7'), 'n/a')
+        self.assertSequenceEqual(column._cast(), (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None))
 
     def test_cast_text(self):
         column = journalism.NumberColumn(None, 'one')
-        column._data = lambda: ('a', 1.1, None, Decimal('2.7'))
+        column._data = lambda: ('a', 1.1, None, Decimal('2.7'), 'n/a')
 
         with self.assertRaises(journalism.CastError):
             column._cast()
 
     def test_cast_float(self):
         column = journalism.NumberColumn(None, 'one')
-        column._data = lambda: (2, 1.1, None, Decimal('2.7'))
+        column._data = lambda: (2, 1.1, None, Decimal('2.7'), 'n/a')
 
         with self.assertRaises(journalism.CastError):
             column._cast()

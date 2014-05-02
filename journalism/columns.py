@@ -13,6 +13,10 @@ import six
 
 from journalism.exceptions import ColumnDoesNotExistError, NullComputationError, CastError
 
+NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
+TRUE_VALUES = ('yes', 'y', 'true', 't')
+FALSE_VALUES = ('no', 'n', 'false', 'f')
+
 class ColumnIterator(six.Iterator):
     """
     Iterator over :class:`Column` instances.
@@ -72,23 +76,49 @@ def cast_text(d):
     """
     Cast a single value to a type appropriate for :class:`TextColumn`.
     """
-    if d == '' or d is None:
-        return None 
+    if d is None:
+        return d
+
+    if isinstance(d, six.string_types):
+        d = d.strip()
+
+        if d.lower() in NULL_VALUES:
+            return None 
 
     return six.text_type(d)
 
-def cast_number(d):
-    """
-    Cast a single value to a type appropriate for :class:`NumberColumn`.
-    """
-    if isinstance(d, Decimal):
+def cast_boolean(d):
+    if isinstance(d, bool) or d is None:
         return d
 
     if isinstance(d, six.string_types):
         d = d.replace(',' ,'').strip()
 
-    if d == '' or d is None:
-        return None
+        d_lower = d.lower()
+
+        if d_lower in NULL_VALUES:
+            return None
+        
+        if d_lower in TRUE_VALUES:
+            return True
+
+        if d_lower in FALSE_VALUES:
+            return False
+
+    raise CastError('Can not convert value %s to bool for BooleanColumn.' % d) 
+
+def cast_number(d):
+    """
+    Cast a single value to a type appropriate for :class:`NumberColumn`.
+    """
+    if isinstance(d, Decimal) or d is None:
+        return d
+
+    if isinstance(d, six.string_types):
+        d = d.replace(',' ,'').strip()
+
+        if d.lower() in NULL_VALUES:
+            return None
     
     if isinstance(d, float):
         raise CastError('Can not convert float to Decimal for NumberColumn. Convert data to string first!')
@@ -96,7 +126,7 @@ def cast_number(d):
     try:
         return Decimal(d)
     except InvalidOperation:
-        raise CastError('Can not convert %s to Decimal for NumberColumn.' % repr(d)) 
+        raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d) 
 
 def median(data_sorted):
     """
@@ -257,6 +287,25 @@ class TextColumn(Column):
     def max_length(self):
         return max([len(d) for d in self._data_without_nulls()])
 
+class BooleanColumn(Column):
+    """
+    A column containing true/false data.
+    """
+    def _get_cast_func(self):
+        return cast_boolean
+
+    def any(self):
+        """
+        Returns True if any value passes a truth test.
+        """
+        return any(self._data())
+
+    def all(self):
+        """
+        Returns True if all values pass a truth test.
+        """
+        return all(self._data())
+  
 class NumberColumn(Column):
     """
     A column containing numeric data.
