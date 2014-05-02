@@ -402,7 +402,6 @@ class NumberColumn(Column):
 
         return median(tuple(abs(n - m) for n in data))
 
-<<<<<<< HEAD
     @no_null_computations
     def percentile(self, one_pct=None):
         """
