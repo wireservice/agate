@@ -254,6 +254,9 @@ class TextColumn(Column):
     def _get_cast_func(self):
         return cast_text 
 
+    def max_length(self):
+        return max([len(d) for d in self._data_without_nulls()])
+
 class NumberColumn(Column):
     """
     A column containing numeric data.

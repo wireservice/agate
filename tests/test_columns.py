@@ -153,6 +153,12 @@ class TestTextColumn(unittest.TestCase):
         column._data = lambda: ('a', 1, None, Decimal('2.7'))
         self.assertSequenceEqual(column._cast(), ('a', '1', None, '2.7'))
 
+    def test_max_length(self):
+        column = journalism.TextColumn(None, 'one')
+        column._data = lambda: ('a', 'gobble', 'wow')
+        self.assertEqual(column.max_length(), 6)
+
+
 class TestNumberColumn(unittest.TestCase):
     def setUp(self):
         self.rows = (
