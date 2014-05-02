@@ -450,7 +450,16 @@ To simulate Underscore's `reject`, simply negate the return value of the functio
 
 .. code-block:: python
 
-    new__table = table.where(lambda row: not (row['state'] == 'Texas'))
+    new_table = table.where(lambda row: not (row['state'] == 'Texas'))
+
+find
+----
+
+journalism's:meth:`..Table.find` works exactly like Undrescore's `find`.
+
+.. code-block:: python
+
+    row = table.find(lambda row: row['state'].startswith('T'))
 
 Plotting with matplotlib
 ========================

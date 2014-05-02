@@ -84,6 +84,13 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b'))
         self.assertSequenceEqual(new_table.columns['one'], (2, None))
 
+    def test_find(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        row = table.find(lambda r: r['two'] - r['one'] == 1)
+
+        self.assertIs(row, table.rows[1])
+
     def test_stdev_outliers(self):
         rows = [ 
             (50, 4, 'a'),

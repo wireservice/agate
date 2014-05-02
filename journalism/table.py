@@ -147,6 +147,19 @@ class Table(object):
 
         return self._fork(rows)
 
+    def find(self, test):
+        """
+        Find the first row that passes a truth test.
+
+        Returns a single :class:`.Row` or:code:`None` if there
+        is no match found.
+        """
+        for row in self.rows:
+            if test(row):
+                return row
+
+        return None
+
     def stdev_outliers(self, column_name, deviations=3, reject=False):
         """
         A wrapper around :meth:`where` that filters the dataset to
