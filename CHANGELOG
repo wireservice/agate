@@ -1,9 +1,14 @@
 0.3.0
 -----
 
-* Table.outliers_mad implemented. (#93)
+* BooleanColumn implemented. (#6)
+* TextColumn.max_length implemented. (#95)
+* Table.find implemented. (#14)
+* Better error handling in Table.__init__. (#38)
+* Collapse IntColumn and FloatColumn into NumberColumn. (#64)
+* Table.mad_outliers implemented. (#93)
 * Column.mad implemented. (#93)
-* Table.outliers implemented. (#86)
+* Table.stdev_outliers implemented. (#86)
 * Table.group_by implemented. (#3)
 * Cookbook: emulating R. (#81)
 * Table.left_outer_join now accepts column names or key functions. (#80)

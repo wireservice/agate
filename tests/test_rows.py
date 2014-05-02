@@ -15,21 +15,24 @@ class TestRows(unittest.TestCase):
             (None, 4, 'c')
         )
         self.column_names = ('one', 'two', 'three')
-        self.column_types = (journalism.IntColumn, journalism.IntColumn, journalism.TextColumn)
+        self.column_types = (journalism.NumberColumn, journalism.NumberColumn, journalism.TextColumn)
         
         self.table = journalism.Table(self.rows, self.column_types, self.column_names)
 
     def test_stringify(self):
-        self.assertEqual(str(self.table.rows[0]), "<journalism.rows.Row: (1, 2, 'a')>")
+        self.assertEqual(str(self.table.rows[0]), "<journalism.rows.Row: (1, 2, a)>")
 
     def test_stringify_long(self):
         rows = (
             (1, 2, 'a', 'b', 'c', 'd'),
         )
         
-        self.table = journalism.Table(rows, self.column_types, self.column_names)
+        column_types = (journalism.NumberColumn, journalism.NumberColumn, journalism.TextColumn, journalism.TextColumn, journalism.TextColumn, journalism.TextColumn)
+        column_names = ('one', 'two', 'three', 'four', 'five', 'six')
 
-        self.assertEqual(str(self.table.rows[0]), "<journalism.rows.Row: (1, 2, 'a', 'b', 'c', ...)>")
+        self.table = journalism.Table(rows, column_types, column_names)
+
+        self.assertEqual(str(self.table.rows[0]), "<journalism.rows.Row: (1, 2, a, b, c, ...)>")
 
     def test_length(self):
         self.assertEqual(len(self.table.rows), 3)

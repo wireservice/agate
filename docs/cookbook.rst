@@ -14,10 +14,10 @@ If your file does not have headers:
 
 .. code-block:: python
 
-    from journalism import Table, TextColumn, IntColumn, FloatColumn
+    from journalism import Table, TextColumn, NumberColumn
 
     column_names = ('city', 'area', 'population')
-    column_types = (TextColumn, FloatColumn, IntColumn)
+    column_types = (TextColumn, NumberColumn, NumberColumn)
 
     with open('population.csv') as f:
         rows = list(csv.reader(f) 
@@ -28,7 +28,7 @@ If your file does have headers:
 
 .. code-block:: python
 
-    column_types = (TextColumn, FloatColumn, IntColumn)
+    column_types = (TextColumn, NumberColumn, NumberColumn)
 
     with open('population.csv') as f:
         rows = list(csv.reader(f))
@@ -46,7 +46,7 @@ Of course, cool kids use `csvkit <http://csvkit.rtfd.org/>`_. (Hint: it supports
 
     import csvkit
 
-    column_types = (TextColumn, FloatColumn, IntColumn)
+    column_types = (TextColumn, NumberColumn, NumberColumn)
 
     with open('population.csv') as f:
         rows = list(csvkit.reader(f))
@@ -190,7 +190,7 @@ This will compute the percent change between the :code:`july` and :code:`august`
 Rounding to two decimal places
 ------------------------------
 
-journalism stores fractional values using Python's :class:`decimal.Decimal` type. This data type ensures numerical precision beyond what is supported by the native :func:`float` type, however, because of this we can not use Python's builtin :func:`round` function. Instead we must use :meth:`decimal.Decimal.quantize`.
+journalism stores numerical values using Python's :class:`decimal.Decimal` type. This data type ensures numerical precision beyond what is supported by the native :func:`float` type, however, because of this we can not use Python's builtin :func:`round` function. Instead we must use :meth:`decimal.Decimal.quantize`.
 
 We can use :meth:`.Table.compute` to apply the quantize to generate a rounded column from an existing one:
 
@@ -450,7 +450,16 @@ To simulate Underscore's `reject`, simply negate the return value of the functio
 
 .. code-block:: python
 
-    new__table = table.where(lambda row: not (row['state'] == 'Texas'))
+    new_table = table.where(lambda row: not (row['state'] == 'Texas'))
+
+find
+----
+
+journalism's:meth:`..Table.find` works exactly like Undrescore's `find`.
+
+.. code-block:: python
+
+    row = table.find(lambda row: row['state'].startswith('T'))
 
 Plotting with matplotlib
 ========================

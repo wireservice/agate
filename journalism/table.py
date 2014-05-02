@@ -4,7 +4,6 @@
 This module contains the Table object.
 """
 
-import copy
 from decimal import Decimal
 
 try:
@@ -12,22 +11,10 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-import six
-
-from journalism.columns import ColumnMapping, IntColumn, DecimalColumn
-from journalism.exceptions import UnsupportedOperationError
+from journalism.columns import ColumnMapping, NumberColumn
+from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
 from journalism.rows import RowSequence, Row
 
-def transpose(data):
-    """
-    Utility function for transposing a 2D array of data.
-    """
-    if six.PY3: #pragma: no cover
-        # Run generator
-        return tuple(zip(*data))
-
-    return zip(*data)
-    
 class NullOrder(object):
     """
     Dummy object used for sorting in place of None.
@@ -46,23 +33,17 @@ class NullOrder(object):
 class Table(object):
     """
     A group of columns with names.
-
-    TODO: dedup column names
     """
-    def __init__(self, rows, column_types, column_names, cast=False, validate=False, _forked=False):
+    def __init__(self, rows, column_types, column_names, _forked=False):
         """
         Create a table from rows of data.
 
-        Rows is a 2D array of any common iterable: tuple, list, etc.
-
-        TODO: validate column_types are all subclasses of Column.
+        Rows is a 2D sequence of any sequences: tuples, lists, etc.
         """
-        # Forked tables can share data (because they are immutable)
-        # but original data should be buffered so it can't be changed
-        if not _forked:
-            self._data = copy.deepcopy(rows)
-        else:
-            self._data = rows
+        len_column_types = len(column_types)
+
+        if len_column_types != len(column_names):
+            raise ValueError('column_types and column_names must be the same length.')
 
         self._column_types = tuple(column_types)
         self._column_names = tuple(column_names)
@@ -72,17 +53,24 @@ class Table(object):
         self.columns = ColumnMapping(self)
         self.rows = RowSequence(self)
 
-        if cast:
-            data_columns = []
+        cast_data = []
 
-            for column in self.columns:
-                data_columns.append(column._cast())
-            
-            self._data = transpose(data_columns)
+        cast_funcs = [c._get_cast_func() for c in self.columns]
 
-        if validate:
-            for column in self.columns:
-                column.validate()
+        for i, row in enumerate(rows):
+            if len(row) != len_column_types:
+                raise ValueError('Row %i has length %i, but Table only has %i columns.' % (i, len(row), len_column_types))
+
+            # Forked tables can share data (because they are immutable)
+            # but original data should be buffered so it can't be changed
+            if isinstance(row, Row):
+                cast_data.append(row)
+
+                continue
+
+            cast_data.append(tuple(cast_funcs[i](d) for i, d in enumerate(row)))
+        
+        self._data = tuple(cast_data) 
 
     def _get_column(self, i):
         """
@@ -159,7 +147,20 @@ class Table(object):
 
         return self._fork(rows)
 
-    def outliers(self, column_name, deviations=3, reject=False):
+    def find(self, test):
+        """
+        Find the first row that passes a truth test.
+
+        Returns a single :class:`.Row` or:code:`None` if there
+        is no match found.
+        """
+        for row in self.rows:
+            if test(row):
+                return row
+
+        return None
+
+    def stdev_outliers(self, column_name, deviations=3, reject=False):
         """
         A wrapper around :meth:`where` that filters the dataset to
         rows where the value of the column are more than some number
@@ -188,7 +189,7 @@ class Table(object):
 
         return self.where(f)
 
-    def outliers_mad(self, column_name, deviations=3, reject=False):
+    def mad_outliers(self, column_name, deviations=3, reject=False):
         """
         A wrapper around :meth:`where` that filters the dataset to
         rows where the value of the column are more than some number of
@@ -371,7 +372,10 @@ class Table(object):
         Create one new :class:`Table` for each unique value in the
         :code:`group_by` column and return them as a dict.
         """
-        i = self._column_names.index(group_by)
+        try:
+            i = self._column_names.index(group_by)
+        except ValueError:
+            raise ColumnDoesNotExistError(group_by)
 
         groups = OrderedDict() 
 
@@ -398,7 +402,10 @@ class Table(object):
 
         Returns a new :class:`Table`.
         """
-        i = self._column_names.index(group_by)
+        try:
+            i = self._column_names.index(group_by)
+        except ValueError:
+            raise ColumnDoesNotExistError(group_by)
 
         groups = OrderedDict() 
 
@@ -416,7 +423,14 @@ class Table(object):
         column_names = [group_by]
 
         for op_column in [op[0] for op in operations]:
-            column_types.append(self._column_names.index(op_column))
+            try:
+                j = self._column_names.index(op_column)
+            except ValueError:
+                raise ColumnDoesNotExistError(op_column)
+
+            column_type = self._column_types[j]
+
+            column_types.append(column_type)
             column_names.append(op_column)
 
         for name, group_rows in groups.items():
@@ -443,16 +457,15 @@ class Table(object):
         
         Returns a new :class:`Table`.
         """
-        # Ensure we have raw data, not Row instances
-        rows = [list(row) for row in self._data]
+        column_types = self._column_types + (column_type,)
+        column_names = self._column_names + (column_name,)
 
-        column_types = list(copy.copy(self._column_types)) + [column_type]
-        column_names = list(copy.copy(self._column_names)) + [column_name]
+        new_rows = []
 
-        for i, row in enumerate(self.rows):
-            rows[i] = tuple(rows[i] + [func(row)]) 
+        for row in self.rows:
+            new_rows.append(tuple(row) + (func(row),))
 
-        return self._fork(rows, column_types, column_names)
+        return self._fork(new_rows, column_types, column_names)
 
     def percent_change(self, before_column_name, after_column_name, new_column_name):
         """
@@ -464,7 +477,7 @@ class Table(object):
         def calc(row):
             return Decimal(row[after_column_name] - row[before_column_name]) / row[before_column_name] * 100
 
-        return self.compute(new_column_name, DecimalColumn, calc) 
+        return self.compute(new_column_name, NumberColumn, calc) 
 
     def rank(self, func, new_column_name):
         """
@@ -482,5 +495,5 @@ class Table(object):
         func_column = [func(row) for row in self.rows]
         rank_column = sorted(func_column, key=null_handler)
         
-        return self.compute(new_column_name, IntColumn, lambda row: rank_column.index(func(row)) + 1)
+        return self.compute(new_column_name, NumberColumn, lambda row: rank_column.index(func(row)) + 1)
 

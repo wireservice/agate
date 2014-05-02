@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from journalism.columns import TextColumn, IntColumn, DecimalColumn
+from journalism.columns import TextColumn, BooleanColumn, NumberColumn
 from journalism.exceptions import *
 from journalism.table import Table
 
