@@ -40,6 +40,11 @@ class Table(object):
 
         Rows is a 2D sequence of any sequences: tuples, lists, etc.
         """
+        len_column_types = len(column_types)
+
+        if len_column_types != len(column_names):
+            raise ValueError('column_types and column_names must be the same length')
+
         self._column_types = tuple(column_types)
         self._column_names = tuple(column_names)
         self._cached_columns = {}
@@ -52,7 +57,10 @@ class Table(object):
 
         cast_funcs = [c._get_cast_func() for c in self.columns]
 
-        for row in rows:
+        for i, row in enumerate(rows):
+            if len(row) != len_column_types:
+                raise ValueError('Row %i has length %i, but Table only has %i columns.' % (i, len(row), len_column_types))
+
             # Forked tables can share data (because they are immutable)
             # but original data should be buffered so it can't be changed
             if isinstance(row, Row):

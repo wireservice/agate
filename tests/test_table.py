@@ -28,6 +28,16 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[2], (None, 2, 'c'))
 
+    def test_create_table_args(self):
+        with self.assertRaises(ValueError):
+            journalism.Table(self.rows, [journalism.NumberColumn, journalism.NumberColumn, journalism.TextColumn, journalism.TextColumn], self.column_names)
+
+        with self.assertRaises(ValueError):
+            journalism.Table(self.rows, self.column_types, ['one', 'two', 'three', 'four'])
+
+        with self.assertRaises(ValueError):
+            journalism.Table(self.rows, [journalism.NumberColumn, journalism.NumberColumn], ['one', 'two'])
+
     def test_column_names_immutable(self):
         column_names = ['one', 'two', 'three']
         
