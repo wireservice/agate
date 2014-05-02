@@ -74,7 +74,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b'))
         self.assertSequenceEqual(new_table.columns['one'], (2, None))
 
-    def test_outliers(self):
+    def test_stdev_outliers(self):
         rows = [ 
             (50, 4, 'a'),
         ] * 10
@@ -83,12 +83,12 @@ class TestTable(unittest.TestCase):
         
         table = journalism.Table(rows, self.column_types, self.column_names)
 
-        new_table = table.outliers('one')
+        new_table = table.stdev_outliers('one')
 
         self.assertEqual(len(new_table.rows), 10)
         self.assertNotIn(200, new_table.columns['one'])
 
-    def test_outliers_reject(self):
+    def test_stdev_outliers_reject(self):
         rows = [ 
             (50, 4, 'a'),
         ] * 10
@@ -97,12 +97,12 @@ class TestTable(unittest.TestCase):
         
         table = journalism.Table(rows, self.column_types, self.column_names)
 
-        new_table = table.outliers('one', reject=True)
+        new_table = table.stdev_outliers('one', reject=True)
 
         self.assertEqual(len(new_table.rows), 1)
         self.assertSequenceEqual(new_table.columns['one'], (200,))
 
-    def test_outliers_mad(self):
+    def test_mad_outliers(self):
         rows = [ 
             (50, 4, 'a'),
         ] * 10
@@ -111,12 +111,12 @@ class TestTable(unittest.TestCase):
         
         table = journalism.Table(rows, self.column_types, self.column_names)
 
-        new_table = table.outliers_mad('one')
+        new_table = table.mad_outliers('one')
 
         self.assertEqual(len(new_table.rows), 10)
         self.assertNotIn(200, new_table.columns['one'])
 
-    def test_outliers_mad_reject(self):
+    def test_mad_outliers_reject(self):
         rows = [ 
             (50, 4, 'a'),
         ] * 10
@@ -125,7 +125,7 @@ class TestTable(unittest.TestCase):
         
         table = journalism.Table(rows, self.column_types, self.column_names)
 
-        new_table = table.outliers_mad('one', reject=True)
+        new_table = table.mad_outliers('one', reject=True)
 
         self.assertEqual(len(new_table.rows), 1)
         self.assertSequenceEqual(new_table.columns['one'], (200,))

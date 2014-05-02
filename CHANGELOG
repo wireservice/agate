@@ -2,9 +2,9 @@
 -----
 
 * Collapse IntColumn and FloatColumn into NumberColumn. (#64)
-* Table.outliers_mad implemented. (#93)
+* Table.mad_outliers implemented. (#93)
 * Column.mad implemented. (#93)
-* Table.outliers implemented. (#86)
+* Table.stdev_outliers implemented. (#86)
 * Table.group_by implemented. (#3)
 * Cookbook: emulating R. (#81)
 * Table.left_outer_join now accepts column names or key functions. (#80)

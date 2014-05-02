@@ -139,7 +139,7 @@ class Table(object):
 
         return self._fork(rows)
 
-    def outliers(self, column_name, deviations=3, reject=False):
+    def stdev_outliers(self, column_name, deviations=3, reject=False):
         """
         A wrapper around :meth:`where` that filters the dataset to
         rows where the value of the column are more than some number
@@ -168,7 +168,7 @@ class Table(object):
 
         return self.where(f)
 
-    def outliers_mad(self, column_name, deviations=3, reject=False):
+    def mad_outliers(self, column_name, deviations=3, reject=False):
         """
         A wrapper around :meth:`where` that filters the dataset to
         rows where the value of the column are more than some number of
