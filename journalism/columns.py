@@ -414,12 +414,15 @@ class NumberColumn(Column):
         """
         data_sorted = sorted(self._data_without_nulls())
 
-        def percentiler(data_sorted, percent):
+        def percentiler(data_sorted, percent, key=lambda x:x):
             if not data_sorted: # Yoda logic!
                 return None
             k = (len(data_sorted)-1) * percent
+            k = Decimal(k)
             f = math.floor(k)
+            f = Decimal(f)
             c = math.ceil(k)
+            c = Decimal(c)
             if f == c:
                 return key(data_sorted[int(k)])
             d0 = key(data_sorted[int(f)]) * (c-k)
