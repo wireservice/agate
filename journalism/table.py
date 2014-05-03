@@ -20,6 +20,10 @@ class Table(object):
     :param column_types: A sequence of :class:`.Column` subclasses (not instances),
         one per column of data.
     :param column_names: A sequence of strings that are names for the columns.
+
+    :var columns: A :class:`.ColumnMapping` for accessing the columns in this
+        table.
+    :var rows: A :class:`.RowSequence` for accessing the rows in this table.
     """
     def __init__(self, rows, column_types, column_names):
         len_column_types = len(column_types)
@@ -399,6 +403,7 @@ class Table(object):
         :returns: A :class:`dict` where the keys are unique values from
             the :code:`group_by` column and the values are new :class:`Table`
             instances.
+        :raises: :exc:`.ColumnDoesNotExistError`
         """
         try:
             i = self._column_names.index(group_by)
@@ -436,6 +441,7 @@ class Table(object):
             and the values are the names of :class:`Column` methods, such
             as "sum" or "max_length".
         :returns: A new :class:`Table`.
+        :raises: :exc:`.ColumnDoesNotExistError`, :exc:`.UnsupportedOperationError`
         """
         try:
             i = self._column_names.index(group_by)

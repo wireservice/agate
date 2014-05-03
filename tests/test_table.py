@@ -207,19 +207,19 @@ class TestTable(unittest.TestCase):
 
     def test_order_by_nulls(self):
         rows = (
-            (1, 2, 'a'),
+            (1, 2, None),
             (2, None, None),
             (1, 1, 'c'),
-            (1, None, None)
+            (1, None, 'a')
         )
 
         table = journalism.Table(rows, self.column_types, self.column_names)
 
-        new_table = table.order_by(lambda r: r['two'])
+        new_table = table.order_by('two')
 
         self.assertSequenceEqual(new_table.columns['two'], (1, 2, None, None))
 
-        new_table = table.order_by(lambda r: r['three'])
+        new_table = table.order_by('three')
 
         self.assertSequenceEqual(new_table.columns['three'], ('a', 'c', None, None))
 

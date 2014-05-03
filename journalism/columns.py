@@ -17,50 +17,14 @@ import six
 
 from journalism.exceptions import ColumnDoesNotExistError, NullComputationError, CastError
 
+#: String values which will be automatically cast to :code:`None`.
 NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
+
+#: String values which will be automatically cast to :code:`True`.
 TRUE_VALUES = ('yes', 'y', 'true', 't')
+
+#: String values which will be automatically cast to :code:`False`.
 FALSE_VALUES = ('no', 'n', 'false', 'f')
-
-class ColumnIterator(six.Iterator):
-    """
-    Iterator over :class:`Column` instances.
-    """
-    def __init__(self, table):
-        self._table = table
-        self._i = 0
-
-    def __next__(self):
-        try:
-            self._table._column_names[self._i]
-        except IndexError:
-            raise StopIteration
-
-        column = self._table._get_column(self._i)
-
-        self._i += 1
-
-        return column 
-
-class ColumnMapping(Mapping):
-    """
-    Proxy access to :class:`Column` instances by name.
-    """
-    def __init__(self, table):
-        self._table = table
-
-    def __getitem__(self, k):
-        try:
-            i = self._table._column_names.index(k)
-        except ValueError:
-            raise ColumnDoesNotExistError(k)
-
-        return self._table._get_column(i) 
-
-    def __iter__(self):
-        return ColumnIterator(self._table)
-
-    def __len__(self):
-        return len(self._table._column_names)
 
 def no_null_computations(func):
     """
@@ -78,7 +42,11 @@ def no_null_computations(func):
 
 def cast_text(d):
     """
-    Cast a single value to a type appropriate for :class:`TextColumn`.
+    Cast a single value to :func:`unicode` (:func:`str` in Python 3)
+    for :class:`TextColumn`.
+
+    :param d: A value to cast.
+    :returns: :func:`unicode` (:func:`str` in Python 3) or :code:`None`
     """
     if d is None:
         return d
@@ -92,6 +60,12 @@ def cast_text(d):
     return six.text_type(d)
 
 def cast_boolean(d):
+    """
+    Cast a single value to :func:`bool` for :class:`BooleanColumn`.
+
+    :param d: A value to cast.
+    :returns: :func:`bool` or :code:`None`.
+    """
     if isinstance(d, bool) or d is None:
         return d
 
@@ -113,7 +87,11 @@ def cast_boolean(d):
 
 def cast_number(d):
     """
-    Cast a single value to a type appropriate for :class:`NumberColumn`.
+    Cast a single value to a :class:`decimal.Decimal` for
+    :class:`NumberColumn`.
+
+    :returns: :class:`decimal.Decimal` or :code:`None`.
+    :raises: :exc:`.CastError`
     """
     if isinstance(d, Decimal) or d is None:
         return d
@@ -134,7 +112,10 @@ def cast_number(d):
 
 def median(data_sorted):
     """
-    Compute the median value of this column.
+    Compute the median value of a sequence of values.
+
+    :param data_sorted: A sorted sequence of :class:`decimal.Decimal`.
+    :returns: :class:`decimal.Decimal`.
     """
     length = len(data_sorted)
 
@@ -147,9 +128,37 @@ def median(data_sorted):
 
     return (a + b) / 2
 
+class ColumnMapping(Mapping):
+    """
+    Proxy access to :class:`Column` instances by name.
+
+    :param table: The :class:`.Table` containing the columns. 
+    """
+    def __init__(self, table):
+        self._table = table
+
+    def __getitem__(self, k):
+        try:
+            i = self._table._column_names.index(k)
+        except ValueError:
+            raise ColumnDoesNotExistError(k)
+
+        return self._table._get_column(i) 
+
+    def __iter__(self):
+        return ColumnIterator(self._table)
+
+    def __len__(self):
+        return len(self._table._column_names)
+
 class Column(Sequence):
     """
-    Proxy access to column data.
+    Proxy access to column data. Instances of :class:`Column` should
+    not be constructed directly. They are created by :class:`.Table`
+    instances.
+
+    :param table: The table that contains this column.
+    :param index: The index of this column in the table.
     """
     def __init__(self, table, index):
         self._table = table
@@ -230,21 +239,29 @@ class Column(Sequence):
         """
         return None in self._data()
 
-    def any(self, func):
+    def any(self, test):
         """
-        Returns True if any value passes a truth test.
+        Returns :code:`True` if any value passes a truth test.
+        
+        :param test: A function that takes a value and returns :code:`True`
+            or :code:`False`.
         """
-        return any(func(d) for d in self._data())
+        return any(test(d) for d in self._data())
 
-    def all(self, func):
+    def all(self, test):
         """
-        Returns True if all values pass a truth test.
+        Returns :code:`True` if all values pass a truth test.
+        
+        :param test: A function that takes a value and returns :code:`True`
+            or :code:`False`.
         """
-        return all(func(d) for d in self._data())
+        return all(test(d) for d in self._data())
 
     def count(self, value):
         """
         Count the number of times a specific value occurs in this column.
+
+        :param value: he value to be counted.
         """
         count = 0
 
@@ -293,20 +310,20 @@ class TextColumn(Column):
 
 class BooleanColumn(Column):
     """
-    A column containing true/false data.
+    A column containing :func:`bool` data.
     """
     def _get_cast_func(self):
         return cast_boolean
 
     def any(self):
         """
-        Returns True if any value passes a truth test.
+        Returns :code:`True` if any value is :code:`True`.
         """
         return any(self._data())
 
     def all(self):
         """
-        Returns True if all values pass a truth test.
+        Returns :code:`True` if all values are :code:`True`.
         """
         return all(self._data())
   
@@ -322,18 +339,24 @@ class NumberColumn(Column):
     def sum(self):
         """
         Compute the sum of this column.
+
+        :returns: :class:`decimal.Decimal`.
         """
         return sum(self._data_without_nulls())
 
     def min(self):
         """
         Compute the minimum value of this column.
+
+        :returns: :class:`decimal.Decimal`.
         """
         return min(self._data_without_nulls())
 
     def max(self):
         """
         Compute the maximum value of this column.
+
+        :returns: :class:`decimal.Decimal`.
         """
         return max(self._data_without_nulls())
 
@@ -342,7 +365,8 @@ class NumberColumn(Column):
         """
         Compute the mean value of this column.
 
-        Will raise :exc:`.NullComputationError` if this column contains nulls.
+        :returns: :class:`decimal.Decimal`.
+        :raises: :exc:`.NullComputationError`
         """
         return self.sum() / len(self)
 
@@ -351,7 +375,8 @@ class NumberColumn(Column):
         """
         Compute the median value of this column.
 
-        Will raise :exc:`.NullComputationError` if this column contains nulls.
+        :returns: :class:`decimal.Decimal`.
+        :raises: :exc:`.NullComputationError`
         """
         return median(self._data_sorted())
 
@@ -360,7 +385,8 @@ class NumberColumn(Column):
         """
         Compute the mode value of this column.
 
-        Will raise :exc:`.NullComputationError` if this column contains nulls.
+        :returns: :class:`decimal.Decimal`.
+        :raises: :exc:`.NullComputationError`
         """
         data = self._data()
         state = defaultdict(int)
@@ -375,7 +401,8 @@ class NumberColumn(Column):
         """
         Compute the variance of this column.
 
-        Will raise :exc:`.NullComputationError` if this column contains nulls.
+        :returns: :class:`decimal.Decimal`.
+        :raises: :exc:`.NullComputationError`
         """
         data = self._data()
         mean = self.mean()
@@ -387,7 +414,8 @@ class NumberColumn(Column):
         """
         Compute the standard of deviation of this column.
 
-        Will raise :exc:`.NullComputationError` if this column contains nulls.
+        :returns: :class:`decimal.Decimal`.
+        :raises: :exc:`.NullComputationError`
         """
         return self.variance().sqrt()
 
@@ -397,10 +425,33 @@ class NumberColumn(Column):
         Compute the `median absolute deviation <http://en.wikipedia.org/wiki/Median_absolute_deviation>`_
         of this column.
 
-        Will raise :exc:`.NullComputationError` if this column contains nulls.
+        :returns: :class:`decimal.Decimal`.
+        :raises: :exc:`.NullComputationError`
         """
         data = self._data_sorted()
         m = median(data)
 
         return median(tuple(abs(n - m) for n in data))
+
+class ColumnIterator(six.Iterator):
+    """
+    Iterator over :class:`Column` instances.
+
+    :param table: The :class:`.Table` containing the columns.
+    """
+    def __init__(self, table):
+        self._table = table
+        self._i = 0
+
+    def __next__(self):
+        try:
+            self._table._column_names[self._i]
+        except IndexError:
+            raise StopIteration
+
+        column = self._table._get_column(self._i)
+
+        self._i += 1
+
+        return column 
 
