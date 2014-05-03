@@ -1,6 +1,7 @@
 0.3.0
 -----
 
+* Cookbook: Excel pivot tables. (#41)
 * Cookbook: statistics, including outlier detection. (#82)
 * Cookbook: emulating Underscore's any and all. (#107)
 * Parameter documention for method parameters. (#108)

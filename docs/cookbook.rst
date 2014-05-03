@@ -467,7 +467,13 @@ VLOOKUP
 Pivot tables
 ------------
 
-TODO
+You can emulate most of the functionality of Excel's pivot tables using the :meth:`.Table.aggregate` method.
+
+.. code-block:: python
+
+    summary = table.aggregate('profession', { 'salary': 'mean', 'salary': 'median' }) 
+
+The :code:`summary` table in this example would have these columns: :code:`('profession', 'salary_mean', 'salary_median')`.
 
 Emulating R
 ===========
