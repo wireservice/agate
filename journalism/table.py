@@ -41,9 +41,13 @@ class Table(object):
         Rows is a 2D sequence of any sequences: tuples, lists, etc.
         """
         len_column_types = len(column_types)
+        len_column_names = len(column_names)
 
-        if len_column_types != len(column_names):
+        if len_column_types != len_column_names:
             raise ValueError('column_types and column_names must be the same length.')
+
+        if len(set(column_names)) != len_column_names:
+            raise ValueError('Duplicate column names are not allowed.')
 
         self._column_types = tuple(column_types)
         self._column_names = tuple(column_names)
@@ -398,7 +402,10 @@ class Table(object):
         """
         Aggregate data by a specified group_by column.
 
-        Operations is a dict of column names and operation names.
+        Operations is a dict of column names and operation names. The
+        columns of the output table (except for the :code:`group_by`
+        column, will be named :code:`originalname_operation`. For instance
+        :code:`salaries_median`.
 
         Returns a new :class:`Table`.
         """
@@ -422,7 +429,7 @@ class Table(object):
         column_types = [self._column_types[i]]
         column_names = [group_by]
 
-        for op_column in [op[0] for op in operations]:
+        for op_column, operation in operations:
             try:
                 j = self._column_names.index(op_column)
             except ValueError:
@@ -431,7 +438,7 @@ class Table(object):
             column_type = self._column_types[j]
 
             column_types.append(column_type)
-            column_names.append(op_column)
+            column_names.append('%s_%s' % (op_column, operation))
 
         for name, group_rows in groups.items():
             group_table = Table(group_rows, self._column_types, self._column_names) 

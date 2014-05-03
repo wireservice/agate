@@ -1,6 +1,8 @@
 0.3.0
 -----
 
+* Smart naming of aggregate columns.
+* Duplicate columns names are now an error. (#92)
 * BooleanColumn implemented. (#6)
 * TextColumn.max_length implemented. (#95)
 * Table.find implemented. (#14)
