@@ -3,12 +3,6 @@
 """
 This module contains the Table object.
 """
-
-try:
-    from cdecimal import Decimal
-except ImportError: #pragma: no cover
-    from decimal import Decimal
-
 try:
     from collections import OrderedDict
 except ImportError: # pragma: no cover
