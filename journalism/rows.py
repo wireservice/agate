@@ -8,29 +8,11 @@ import six
 if six.PY3:
     xrange = range
 
-class RowIterator(six.Iterator):
-    """
-    Iterator over row proxies.
-    """
-    def __init__(self, table):
-        self._table = table
-        self._i = 0
-
-    def __next__(self):
-        try:
-            self._table._data[self._i]
-        except IndexError:
-            raise StopIteration
-        
-        row = self._table._get_row(self._i)
-
-        self._i += 1
-
-        return row
-
 class RowSequence(Sequence):
     """
     Proxy access to rows by index.
+
+    :param table: The :class:`.Table` that contains the rows. 
     """
     def __init__(self, table):
         self._table = table
@@ -55,27 +37,15 @@ class RowSequence(Sequence):
     def __len__(self):
         return len(self._table._data)
 
-class CellIterator(six.Iterator):
-    """
-    Iterator over row cells.
-    """
-    def __init__(self, row):
-        self._row = row
-        self._i = 0
-
-    def __next__(self):
-        try:
-            v = self._row._table._data[self._row._i][self._i]
-        except IndexError:
-            raise StopIteration
-        
-        self._i += 1
-
-        return v 
-
 class Row(Mapping):
     """
     Proxy to row data.
+
+    Values within a row can be accessed by column name or
+    column index.
+
+    :param table: The :class:`Table` that contains this row.
+    :param i: The index of this row in the :class:`Table`.
     """
     def __init__(self, table, i):
         self._table = table
@@ -118,3 +88,46 @@ class Row(Mapping):
 
     def __eq__(self, other):
         return self._table._data[self._i] == other
+
+class RowIterator(six.Iterator):
+    """
+    Iterator over row proxies.
+
+    :param table: The :class:`.Table` of which to iterate.
+    """
+    def __init__(self, table):
+        self._table = table
+        self._i = 0
+
+    def __next__(self):
+        try:
+            self._table._data[self._i]
+        except IndexError:
+            raise StopIteration
+        
+        row = self._table._get_row(self._i)
+
+        self._i += 1
+
+        return row
+
+class CellIterator(six.Iterator):
+    """
+    Iterator over row cells.
+
+    :param row: The class:`Row` over which to iterate.
+    """
+    def __init__(self, row):
+        self._row = row
+        self._i = 0
+
+    def __next__(self):
+        try:
+            v = self._row._table._data[self._row._i][self._i]
+        except IndexError:
+            raise StopIteration
+        
+        self._i += 1
+
+        return v 
+
