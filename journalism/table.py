@@ -12,31 +12,16 @@ from journalism.columns import ColumnMapping, NumberColumn
 from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
 from journalism.rows import RowSequence, Row
 
-class NullOrder(object):
-    """
-    Dummy object used for sorting in place of None.
-
-    Sorts as "greater than everything but other nulls."
-    """
-    def __lt__(self, other):
-        return False 
-
-    def __gt__(self, other):
-        if other is None:
-            return False
-
-        return True
-
 class Table(object):
     """
-    A group of columns with names.
-    """
-    def __init__(self, rows, column_types, column_names, _forked=False):
-        """
-        Create a table from rows of data.
+    A dataset consisting of rows and columns.
 
-        Rows is a 2D sequence of any sequences: tuples, lists, etc.
-        """
+    :param rows: The data as a sequence of any sequences: tuples, lists, etc.
+    :param column_types: A sequence of :class:`.Column` subclasses (not instances),
+        one per column of data.
+    :param column_names: A sequence of strings that are names for the columns.
+    """
+    def __init__(self, rows, column_types, column_names):
         len_column_types = len(column_types)
         len_column_names = len(column_names)
 
@@ -108,17 +93,21 @@ class Table(object):
         if not column_names:
             column_names = self._column_names
 
-        return Table(rows, column_types, column_names, _forked=True)
+        return Table(rows, column_types, column_names)
 
     def get_column_types(self):
         """
         Get an ordered list of this table's column types.
+
+        :returns: A :class:`tuple` of :class:`.Column` instances.
         """
         return self._column_types
 
     def get_column_names(self):
         """
         Get an ordered list of this table's column names.
+        
+        :returns: A :class:`tuple` of strings.
         """
         return self._column_names
 
@@ -126,7 +115,8 @@ class Table(object):
         """
         Reduce this table to only the specified columns.
 
-        Returns a new :class:`Table`.
+        :param column_names: A sequence of names of columns to include in the new table. 
+        :returns: A new :class:`Table`.
         """
         column_indices = tuple(self._column_names.index(n) for n in column_names)
         column_types = tuple(self._column_types[i] for i in column_indices)
@@ -142,7 +132,10 @@ class Table(object):
         """
         Filter a to only those rows where the row passes a truth test.
 
-        Returns a new :class:`Table`.
+        :param test: A function that takes a :class:`.Row` and returns
+            :code:`True` if it should be included. 
+        :type test: :class:`function`
+        :returns: A new :class:`Table`.
         """
         rows = [row for row in self.rows if test(row)]
 
@@ -152,8 +145,10 @@ class Table(object):
         """
         Find the first row that passes a truth test.
 
-        Returns a single :class:`.Row` or:code:`None` if there
-        is no match found.
+        :param test: A function that takes a :class:`.Row` and returns
+            :code:`True` if it matches. 
+        :type test: :class:`function`
+        :returns: A single :class:`.Row` or :code:`None` if not found.
         """
         for row in self.rows:
             if test(row):
@@ -167,15 +162,19 @@ class Table(object):
         rows where the value of the column are more than some number
         of standard deviations from the mean.
 
-        If :code:`reject` is False than this method will return
-        everything *except* the outliers.
+        This method makes no attempt to validate that the distribution
+        of your data is normal.
 
-        NB: This method makes no attempt to validate that the
-        distribution of your data is normal.
-
-        NB: There are well-known cases in which this algorithm will
+        There are well-known cases in which this algorithm will
         fail to identify outliers. For a more robust measure see
-        :meth:`outliers_mad`.
+        :meth:`mad_outliers`.
+
+        :param column_name: The name of the column to compute outliers on. 
+        :param deviations: The number of deviations from the mean a data point
+            must be to qualify as an outlier.
+        :param reject: If :code:`True` then the new :class:`Table` will contain 
+            everything *except* the outliers.
+        :returns: A new :class:`Table`.
         """
         mean = self.columns[column_name].mean()
         sd = self.columns[column_name].stdev()
@@ -197,11 +196,15 @@ class Table(object):
         `median absolute deviations <http://en.wikipedia.org/wiki/Median_absolute_deviation>`_
         from the median.
 
-        If :code:`reject` is False than this method will return
-        everything *except* the outliers.
+        This method makes no attempt to validate that the distribution
+        of your data is normal.
 
-        NB: This method makes no attempt to validate that the
-        distribution of your data is normal.
+        :param column_name: The name of the column to compute outliers on. 
+        :param deviations: The number of deviations from the median a data point
+            must be to qualify as an outlier.
+        :param reject: If :code:`True` then the new :class:`Table` will contain 
+            everything *except* the outliers.
+        :returns: A new :class:`Table`.
         """
         median = self.columns[column_name].median()
         mad = self.columns[column_name].mad()
@@ -221,7 +224,11 @@ class Table(object):
         Sort this table by the :code:`key`. This can be either a
         column_name or callable that returns a value to sort by.
 
-        Returns a new :class:`Table`.
+        :param key: Either the name of a column to sort by or a :class:`function`
+            that takes a row and returns a value to sort by. 
+        :param reverse: If :code:`True` then sort in reverse (typically, 
+            descending) order.
+        :returns: A new :class:`Table`.
         """
         key_is_row_function = hasattr(key, '__call__')
 
@@ -242,12 +249,16 @@ class Table(object):
 
     def limit(self, start_or_stop=None, stop=None, step=None):
         """
-        Filter data to a subset of all rows. If only one argument is specified,
-        that many rows will be returned. Otherwise, the arguments function as
-        :code:`start`, :code:`stop` and :code:`step`, just like Python's
-        builtin :func:`slice`.
+        Filter data to a subset of all rows.
+        
+        See also: Python's :func:`slice`.
 
-        Returns a new :class:`Table`.
+        :param start_or_stop: If the only argument, then how many rows to
+            include, otherwise, the index of the first row to include. 
+        :param stop: The index of the last row to include.
+        :param step: The size of the jump between rows to include.
+            (*step=2* will return every other row.)
+        :returns: A new :class:`Table`.
         """
         if stop or step:
             return self._fork(self.rows[slice(start_or_stop, stop, step)])
@@ -256,14 +267,13 @@ class Table(object):
 
     def distinct(self, key=None):
         """
-        Filter data to only rows that are unique. Uniqueness is determined
-        by the value of :code:`key`. If it is a column name, that column
-        will be used to determine uniqueness. If it is a callable, it
-        will be passed each row and the resulting values will be used to
-        determine uniqueness. If it :code:`None`, the entire row will
-        be used to verify uniqueness.
+        Filter data to only rows that are unique.
 
-        Returns a new :class:`Table`.
+        :param key: Either 1) the name of a column to use to identify
+            unique rows or 2) a :class:`function` that takes a row and
+            returns a value to identify unique rows or 3) :code:`None`,
+            in which case the entire row will be checked for uniqueness.
+        :returns: A new :class:`Table`.
         """
         key_is_row_function = hasattr(key, '__call__')
 
@@ -288,10 +298,16 @@ class Table(object):
         """
         Performs an "inner join", combining columns from this table
         and from :code:`table` anywhere that the output of :code:`left_key`
-        and :code:`right_key` are equivalent. These may be either column
-        names or row functions.
+        and :code:`right_key` are equivalent.
 
-        Returns a new :class:`Table`.
+        :param left_key: Either the name of a column from the this table
+            to join on, or a :class:`function` that takes a row and returns
+            a value to join on. 
+        :param table: The "right" table to join to.
+        :param right_key: Either the name of a column from :code:table`
+            to join on, or a :class:`function` that takes a row and returns
+            a value to join on. 
+        :returns: A new :class:`Table`.
         """
         left_key_is_row_function = hasattr(left_key, '__call__')
         right_key_is_row_function = hasattr(right_key, '__call__')
@@ -327,13 +343,19 @@ class Table(object):
         """
         Performs an "left outer join", combining columns from this table
         and from :code:`table` anywhere that the output of :code:`left_key`
-        and :code:`right_key` are equivalent. These may be either column
-        names or row functions.
+        and :code:`right_key` are equivalent.
 
         Where there is no match for :code:`left_key`the left columns will
         be included with the right columns set to :code:`None`.
 
-        Returns a new :class:`Table`.
+        :param left_key: Either the name of a column from the this table
+            to join on, or a :class:`function` that takes a row and returns
+            a value to join on. 
+        :param table: The "right" table to join to.
+        :param right_key: Either the name of a column from :code:table`
+            to join on, or a :class:`function` that takes a row and returns
+            a value to join on. 
+        :returns: A new :class:`Table`.
         """
         left_key_is_row_function = hasattr(left_key, '__call__')
         right_key_is_row_function = hasattr(right_key, '__call__')
@@ -370,8 +392,13 @@ class Table(object):
 
     def group_by(self, group_by):
         """
-        Create one new :class:`Table` for each unique value in the
+        Create a new :class:`Table` for **each** unique value in the
         :code:`group_by` column and return them as a dict.
+
+        :param group_by: The name of a column to group by. 
+        :returns: A :class:`dict` where the keys are unique values from
+            the :code:`group_by` column and the values are new :class:`Table`
+            instances.
         """
         try:
             i = self._column_names.index(group_by)
@@ -395,16 +422,20 @@ class Table(object):
 
         return output
 
-    def aggregate(self, group_by, operations=[]):
+    def aggregate(self, group_by, operations):
         """
-        Aggregate data by a specified :code:`group_by` column.
+        Aggregate data by grouping values together and performing some
+        set of column operations on the groups.
 
-        Operations is a dict of column names and operation names. The
-        columns of the output table (except for the :code:`group_by`
+        The columns of the output table (except for the :code:`group_by`
         column, will be named :code:`originalname_operation`. For instance
         :code:`salaries_median`.
 
-        Returns a new :class:`Table`.
+        :param group_by: The name of a column to group by. 
+        :param operations: A :class:`dict: where the keys are column names
+            and the values are the names of :class:`Column` methods, such
+            as "sum" or "max_length".
+        :returns: A new :class:`Table`.
         """
         try:
             i = self._column_names.index(group_by)
@@ -459,7 +490,11 @@ class Table(object):
         """
         Compute a new column by passing each row to a function.
         
-        Returns a new :class:`Table`.
+        :param column_name: A name of the new column. 
+        :param column_type: A subclass of :class:`.Column`.
+        :param func: A :class:`function` that will be passed a :class:`.Row`
+            and should return the computed value for the new column.
+        :returns: A new :class:`Table`.
         """
         column_types = self._column_types + (column_type,)
         column_names = self._column_names + (column_name,)
@@ -476,28 +511,61 @@ class Table(object):
         A wrapper around :meth:`compute` for quickly computing
         percent change between two columns.
 
-        Returns a new :class:`Table`.
+        :param before_column_name: The name of the column containing the
+            *before* values. 
+        :param after_column_name: The name of the column containing the
+            *after* values.
+        :param new_column_name: The name of the resulting column.
+        :returns: A new :class:`Table`.
         """
         def calc(row):
             return (row[after_column_name] - row[before_column_name]) / row[before_column_name] * 100
 
         return self.compute(new_column_name, NumberColumn, calc) 
 
-    def rank(self, func, new_column_name):
+    def rank(self, key, new_column_name):
         """
         Creates a new column that is the rank order of the values
         returned by the row function.
 
-        Returns a new :class:`Table`.
+        :param key:  
+        :param after_column_name: The name of the column containing the
+            *after* values.
+        :param new_column_name: The name of the resulting column.
+        :returns: A new :class:`Table`.
         """
+        key_is_row_function = hasattr(key, '__call__')
+
         def null_handler(k):
             if k is None:
                 return NullOrder() 
 
             return k
 
-        func_column = [func(row) for row in self.rows]
-        rank_column = sorted(func_column, key=null_handler)
-        
-        return self.compute(new_column_name, NumberColumn, lambda row: rank_column.index(func(row)) + 1)
+        if key_is_row_function:
+            values = [key(row) for row in self.rows]
+            compute_func = lambda row: rank_column.index(key(row)) + 1
+        else:
+            values = [row[key] for row in self.rows]
+            compute_func = lambda row: rank_column.index(row[key]) + 1
+
+        rank_column = sorted(values, key=null_handler)
+
+        return self.compute(new_column_name, NumberColumn, compute_func)
+
+class NullOrder(object):
+    """
+    Dummy object used for sorting in place of None.
+
+    Sorts as "greater than everything but other nulls."
+    """
+    def __lt__(self, other):
+        return False 
+
+    def __gt__(self, other):
+        if other is None:
+            return False
+
+        return True
+
 

@@ -1,6 +1,8 @@
 0.3.0
 -----
 
+* Parameter documention for Table methods. (#108)
+* Table.rank now accepts a column name or key function. 
 * Optionally use cdecimal for improved performance. (#106)
 * Smart naming of aggregate columns.
 * Duplicate columns names are now an error. (#92)

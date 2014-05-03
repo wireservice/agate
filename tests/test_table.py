@@ -19,6 +19,7 @@ class TestTable(unittest.TestCase):
             (2, 3, 'b'),
             (None, 2, 'c')
         )
+
         self.column_names = ('one', 'two', 'three')
         self.column_types = (journalism.NumberColumn, journalism.NumberColumn, journalism.TextColumn)
 
@@ -482,6 +483,19 @@ class TestTableCompute(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[3], ('b', 3, 4, None, 3))
 
         self.assertSequenceEqual(new_table.columns['rank'], (1, 4, 1, 3))
+
+    def test_rank_column_name(self):
+        new_table = self.table.rank('two', 'rank')
+
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 1))
+        self.assertSequenceEqual(new_table.rows[1], (None, 3, 5, None, 3))
+        self.assertSequenceEqual(new_table.rows[2], ('a', 2, 4, None, 1))
+        self.assertSequenceEqual(new_table.rows[3], ('b', 3, 4, None, 3))
+
+        self.assertSequenceEqual(new_table.columns['rank'], (1, 3, 1, 3))
 
 class TestTableJoin(unittest.TestCase):
     def setUp(self):
