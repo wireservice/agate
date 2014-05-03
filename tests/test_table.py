@@ -375,10 +375,11 @@ class TestTableGrouping(unittest.TestCase):
 
         self.assertIsNot(new_table, table)
         self.assertEqual(len(new_table.rows), 3)
-        self.assertSequenceEqual(new_table._column_names, ('one', 'two_sum'))
-        self.assertSequenceEqual(new_table.rows[0], ('a', 4))
-        self.assertSequenceEqual(new_table.rows[1], (None, 3))
-        self.assertSequenceEqual(new_table.rows[2], ('b', 3))
+        self.assertEqual(len(new_table.columns), 3)
+        self.assertSequenceEqual(new_table._column_names, ('one', 'one_count', 'two_sum'))
+        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 4))
+        self.assertSequenceEqual(new_table.rows[1], (None, 1, 3))
+        self.assertSequenceEqual(new_table.rows[2], ('b', 1, 3))
 
     def test_aggregate_sum_two_columns(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
@@ -387,10 +388,11 @@ class TestTableGrouping(unittest.TestCase):
 
         self.assertIsNot(new_table, table)
         self.assertEqual(len(new_table.rows), 3)
-        self.assertSequenceEqual(new_table._column_names, ('one', 'two_sum', 'four_sum'))
-        self.assertSequenceEqual(new_table.rows[0], ('a', 4, 4))
-        self.assertSequenceEqual(new_table.rows[1], (None, 3, 0))
-        self.assertSequenceEqual(new_table.rows[2], ('b', 3, 0))
+        self.assertEqual(len(new_table.columns), 4)
+        self.assertSequenceEqual(new_table._column_names, ('one', 'one_count', 'two_sum', 'four_sum'))
+        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 4, 4))
+        self.assertSequenceEqual(new_table.rows[1], (None, 1, 3, 0))
+        self.assertSequenceEqual(new_table.rows[2], ('b', 1, 3, 0))
 
     def test_aggregate_two_ops(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)
@@ -399,10 +401,11 @@ class TestTableGrouping(unittest.TestCase):
 
         self.assertIsNot(new_table, table)
         self.assertEqual(len(new_table.rows), 3)
-        self.assertSequenceEqual(new_table._column_names, ('one', 'two_sum', 'two_mean'))
-        self.assertSequenceEqual(new_table.rows[0], ('a', 4, 2))
-        self.assertSequenceEqual(new_table.rows[1], (None, 3, 3))
-        self.assertSequenceEqual(new_table.rows[2], ('b', 3, 3))
+        self.assertEqual(len(new_table.columns), 4)
+        self.assertSequenceEqual(new_table._column_names, ('one', 'one_count', 'two_sum', 'two_mean'))
+        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 4, 2))
+        self.assertSequenceEqual(new_table.rows[1], (None, 1, 3, 3))
+        self.assertSequenceEqual(new_table.rows[2], ('b', 1, 3, 3))
 
     def test_aggregate_sum_invalid(self):
         table = journalism.Table(self.rows, self.column_types, self.column_names)

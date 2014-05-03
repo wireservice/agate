@@ -204,7 +204,7 @@ You can also generate aggregate statistics for subsets of data (sometimes colloq
 
     summary = table.aggregate('profession', { 'salary': 'mean', 'salary': 'median' }) 
 
-The :code:`summary` table in this example would have these columns: :code:`('profession', 'salary_mean', 'salary_median')`.
+A "count" column is always return in the results. The :code:`summary` table in this example would have these columns: :code:`('profession', 'profession_count', 'salary_mean', 'salary_median')`.
 
 Identifying outliers
 --------------------
@@ -473,7 +473,7 @@ You can emulate most of the functionality of Excel's pivot tables using the :met
 
     summary = table.aggregate('profession', { 'salary': 'mean', 'salary': 'median' }) 
 
-The :code:`summary` table in this example would have these columns: :code:`('profession', 'salary_mean', 'salary_median')`.
+A "count" column is always return in the results. The :code:`summary` table in this example would have these columns: :code:`('profession', 'profession_count', 'salary_mean', 'salary_median')`.
 
 Emulating R
 ===========

@@ -436,6 +436,10 @@ class Table(object):
         column, will be named :code:`originalname_operation`. For instance
         :code:`salaries_median`.
 
+        A :code:`group_by_count` column will always be added to the output.
+        The order of the output columns will be :code:`('group_by', 
+        'group_by_count', 'column_one_operation', ...)`.
+
         :param group_by: The name of a column to group by. 
         :param operations: A :class:`dict: where the keys are column names
             and the values are the names of :class:`Column` methods, such
@@ -460,8 +464,8 @@ class Table(object):
 
         output = []
 
-        column_types = [self._column_types[i]]
-        column_names = [group_by]
+        column_types = [self._column_types[i], NumberColumn]
+        column_names = [group_by, '%s_count' % group_by]
 
         for op_column, operation in operations:
             try:
@@ -476,7 +480,7 @@ class Table(object):
 
         for name, group_rows in groups.items():
             group_table = Table(group_rows, self._column_types, self._column_names) 
-            new_row = [name]
+            new_row = [name, len(group_table.rows)]
 
             for op_column, operation in operations:
                 c = group_table.columns[op_column]

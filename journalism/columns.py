@@ -261,7 +261,7 @@ class Column(Sequence):
         """
         Count the number of times a specific value occurs in this column.
 
-        :param value: he value to be counted.
+        :param value: The value to be counted.
         """
         count = 0
 
