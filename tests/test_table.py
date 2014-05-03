@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
-from decimal import Decimal
+try:
+    from cdecimal import Decimal
+except ImportError: #pragma: no cover
+    from decimal import Decimal
 
 try:
     import unittest2 as unittest
@@ -94,6 +97,13 @@ class TestTable(unittest.TestCase):
         row = table.find(lambda r: r['two'] - r['one'] == 1)
 
         self.assertIs(row, table.rows[1])
+
+    def test_find_none(self):
+        table = journalism.Table(self.rows, self.column_types, self.column_names)
+
+        row = table.find(lambda r: r['one'] == 'FOO')
+
+        self.assertIs(row, None)
 
     def test_stdev_outliers(self):
         rows = [ 
@@ -441,7 +451,7 @@ class TestTableCompute(unittest.TestCase):
 
         to_one_place = lambda d: d.quantize(Decimal('0.1'))
 
-        self.assertEqual(new_table.rows[0], ('a', 2, 3, 4, Decimal('50.0')))
+        self.assertSequenceEqual(new_table.rows[0], ('a', Decimal('2'), Decimal('3'), Decimal('4'), Decimal('50.0')))
         self.assertEqual(to_one_place(new_table.columns['test'][0]), Decimal('50.0'))
         self.assertEqual(to_one_place(new_table.columns['test'][1]), Decimal('66.7'))
         self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('100.0'))

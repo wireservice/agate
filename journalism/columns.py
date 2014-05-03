@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 
 from collections import Mapping, Sequence, defaultdict
-from decimal import Decimal, InvalidOperation
 from functools import wraps
+
+try:
+    from cdecimal import Decimal, InvalidOperation
+except ImportError: #pragma: no cover
+    from decimal import Decimal, InvalidOperation
 
 try:
     from collections import OrderedDict
@@ -141,7 +145,7 @@ def median(data_sorted):
         a = data_sorted[half - 1]
         b = data_sorted[half]
 
-    return Decimal(a + b) / 2
+    return (a + b) / 2
 
 class Column(Sequence):
     """
@@ -340,7 +344,7 @@ class NumberColumn(Column):
 
         Will raise :exc:`.NullComputationError` if this column contains nulls.
         """
-        return Decimal(self.sum()) / len(self)
+        return self.sum() / len(self)
 
     @no_null_computations
     def median(self):

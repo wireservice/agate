@@ -4,7 +4,10 @@
 This module contains the Table object.
 """
 
-from decimal import Decimal
+try:
+    from cdecimal import Decimal
+except ImportError: #pragma: no cover
+    from decimal import Decimal
 
 try:
     from collections import OrderedDict
@@ -400,7 +403,7 @@ class Table(object):
 
     def aggregate(self, group_by, operations=[]):
         """
-        Aggregate data by a specified group_by column.
+        Aggregate data by a specified :code:`group_by` column.
 
         Operations is a dict of column names and operation names. The
         columns of the output table (except for the :code:`group_by`
@@ -482,7 +485,7 @@ class Table(object):
         Returns a new :class:`Table`.
         """
         def calc(row):
-            return Decimal(row[after_column_name] - row[before_column_name]) / row[before_column_name] * 100
+            return (row[after_column_name] - row[before_column_name]) / row[before_column_name] * 100
 
         return self.compute(new_column_name, NumberColumn, calc) 
 
