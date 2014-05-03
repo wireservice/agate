@@ -1,6 +1,7 @@
 0.3.0
 -----
 
+* Cookbook: statistics, including outlier detection. (#82)
 * Cookbook: emulating Underscore's any and all. (#107)
 * Parameter documention for method parameters. (#108)
 * Table.rank now accepts a column name or key function. 
