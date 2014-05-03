@@ -55,6 +55,10 @@ If you only want to use journalism, install it this way::
 
     pip install journalism 
 
+.. note::
+
+    Need more speed? If you're running Python 2.6, 2.7 or 3.2, you can :code:`pip install cdecimal` for a significant speed boost. This isn't installed automatically because it can create additional complications.
+
 Developers
 ----------
 
