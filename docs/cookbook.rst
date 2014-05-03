@@ -173,6 +173,38 @@ Randomizing order
 
     new_table = table.order_by(lambda row: random.random())
 
+Statistics
+==========
+
+Descriptive statistics
+----------------------
+
+journalism includes a full set of standard descriptive statistics that can be applied to any :class:`.NumberColumn`.
+
+.. code-block:: python
+
+    column = table.columns['salaries']
+
+    column.sum()
+    column.min()
+    column.max()
+    column.mean()
+    column.median()
+    column.mode()
+    column.variance()
+    column.stdev()
+    column.mad()
+
+Aggregate statistics
+--------------------
+
+TODO
+
+Identifying outliers
+--------------------
+
+TODO
+
 Modifying data
 ==============
 
@@ -455,7 +487,7 @@ To simulate Underscore's :code:`reject`, simply negate the return value of the f
 find
 ----
 
-journalism's:meth:`.Table.find` works exactly like Undrescore's :code:`find`.
+journalism's :meth:`.Table.find` works exactly like Undrescore's :code:`find`.
 
 .. code-block:: python
 
