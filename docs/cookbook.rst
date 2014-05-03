@@ -259,28 +259,6 @@ journalism:
 
     new_table = table.where(lambda row: row['total'], reverse=True)
 
-Chaining commands together
---------------------------
-
-SQL:
-
-.. code-block:: postgres
-
-    SELECT state, total FROM table WHERE LOWER(state) = 'california' ORDER BY total DESC;
-
-journalism:
-
-.. code-block:: python
-
-    new_table = table \
-        .select(('state', 'total')) \
-        .where(lambda row: row['state'].lower() == 'california') \
-        .order_by('total', reverse=True)
-
-.. note::
-
-    I don't advise chaining commands like this. Being explicit about each step is usually better.
-
 DISTINCT
 --------
 
@@ -340,6 +318,28 @@ journalism's :meth:`.Table.group_by` works slightly different than SQLs. It does
 .. code-block:: python
 
     groups = patients.group_by('doctor')
+
+Chaining commands together
+--------------------------
+
+SQL:
+
+.. code-block:: postgres
+
+    SELECT state, total FROM table WHERE LOWER(state) = 'california' ORDER BY total DESC;
+
+journalism:
+
+.. code-block:: python
+
+    new_table = table \
+        .select(('state', 'total')) \
+        .where(lambda row: row['state'].lower() == 'california') \
+        .order_by('total', reverse=True)
+
+.. note::
+
+    I don't advise chaining commands like this. Being explicit about each step is usually better.
 
 Aggregate functions
 -------------------
@@ -437,7 +437,7 @@ Emulating Underscore.js
 filter
 ------
 
-journalism's :meth:`.Table.where` functions exactly like Underscore's `filter`.
+journalism's :meth:`.Table.where` functions exactly like Underscore's :code:`filter`.
 
 .. code-block:: python
 
@@ -446,7 +446,7 @@ journalism's :meth:`.Table.where` functions exactly like Underscore's `filter`.
 reject
 ------
 
-To simulate Underscore's `reject`, simply negate the return value of the function you pass into journalism's :meth:`.Table.where`.
+To simulate Underscore's :code:`reject`, simply negate the return value of the function you pass into journalism's :meth:`.Table.where`.
 
 .. code-block:: python
 
@@ -455,11 +455,33 @@ To simulate Underscore's `reject`, simply negate the return value of the functio
 find
 ----
 
-journalism's:meth:`..Table.find` works exactly like Undrescore's `find`.
+journalism's:meth:`.Table.find` works exactly like Undrescore's :code:`find`.
 
 .. code-block:: python
 
     row = table.find(lambda row: row['state'].startswith('T'))
+
+any
+---
+
+journalism's columns have an :meth:`.Column.any` method that functions like Underscore's :code:`any`.
+
+.. code-block:: python
+
+    true_or_false = table.columns['salaries'].any(lambda d: d > 100000)
+
+You can also use :meth:`.Table.where` to filter to columns that pass the truth test.
+
+all
+---
+
+journalism's columns have an :meth:`.Column.all` method that functions like Underscore's :code:`all`.
+
+.. code-block:: python
+
+    true_or_false = table.columns['salaries'].all(lambda d: d > 100000)
+
+You can also use :meth:`.Table.where` to filter to columns that pass the truth test.
 
 Plotting with matplotlib
 ========================
