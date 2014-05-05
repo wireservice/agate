@@ -93,18 +93,21 @@ Here is an example of how to use journalism, using financial aid data from data.
 
     import csv
 
-    from journalism import Table, TextColumn, NumberColumn
+    from journalism import Table, TextType, NumberType
+
+    text_type = TextType()
+    number_type = NumberType()
 
     COLUMNS = ( 
-        ('state', TextColumn),
-        ('state_abbr', TextColumn),
-        ('9_11_gi_bill1', NumberColumn),
-        ('montogomery_gi_bill_active', NumberColumn),
-        ('montgomery_gi_bill_reserve', NumberColumn),
-        ('dependants', NumberColumn),
-        ('reserve', NumberColumn),
-        ('vietnam', NumberColumn),
-        ('total', NumberColumn)
+        ('state', text_type),
+        ('state_abbr', text_type),
+        ('9_11_gi_bill1', number_type),
+        ('montogomery_gi_bill_active', number_type),
+        ('montgomery_gi_bill_reserve', number_type),
+        ('dependants', number_type),
+        ('reserve', number_type),
+        ('vietnam', number_type),
+        ('total', number_type)
     )
 
     COLUMN_NAMES = tuple(c[0] for c in COLUMNS)

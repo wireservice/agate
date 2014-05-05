@@ -10,7 +10,9 @@ try:
 except ImportError:
     import unittest
 
-import journalism
+from journalism import Table
+from journalism.columns import TextType, NumberType
+from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
 
 class TestTable(unittest.TestCase):
     def setUp(self):
@@ -21,10 +23,12 @@ class TestTable(unittest.TestCase):
         )
 
         self.column_names = ('one', 'two', 'three')
-        self.column_types = (journalism.NumberColumn, journalism.NumberColumn, journalism.TextColumn)
+        self.number_type = NumberType()
+        self.text_type = TextType()
+        self.column_types = (self.number_type, self.number_type, self.text_type)
 
     def test_create_table(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         self.assertEqual(len(table.rows), 3)
 
@@ -34,39 +38,39 @@ class TestTable(unittest.TestCase):
 
     def test_create_table_args(self):
         with self.assertRaises(ValueError):
-            journalism.Table(self.rows, [journalism.NumberColumn, journalism.NumberColumn, journalism.TextColumn, journalism.TextColumn], self.column_names)
+            Table(self.rows, [self.number_type, self.number_type, self.text_type, self.text_type], self.column_names)
 
         with self.assertRaises(ValueError):
-            journalism.Table(self.rows, self.column_types, ['one', 'two', 'three', 'four'])
+            Table(self.rows, self.column_types, ['one', 'two', 'three', 'four'])
 
         with self.assertRaises(ValueError):
-            journalism.Table(self.rows, [journalism.NumberColumn, journalism.NumberColumn], ['one', 'two'])
+            Table(self.rows, [self.number_type, self.number_type], ['one', 'two'])
 
     def test_create_duplicate_column_names(self):
         with self.assertRaises(ValueError):
-            journalism.Table(self.rows, self.column_types, ['one', 'two', 'one'])
+            Table(self.rows, self.column_types, ['one', 'two', 'one'])
 
     def test_column_names_immutable(self):
         column_names = ['one', 'two', 'three']
         
-        table = journalism.Table(self.rows, self.column_types, column_names)
+        table = Table(self.rows, self.column_types, column_names)
 
         column_names[0] = 'five'
 
         self.assertEqual(table.get_column_names()[0], 'one')
 
     def test_get_column_types(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         self.assertEqual(table.get_column_types(), self.column_types)
 
     def test_get_column_names(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         self.assertSequenceEqual(table.get_column_names(), ('one', 'two', 'three'))
 
     def test_select(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_table = table.select(('three',))
 
@@ -78,12 +82,12 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], ('c',))
         
         self.assertEqual(len(new_table.columns), 1)
-        self.assertSequenceEqual(new_table._column_types, (journalism.TextColumn,))
+        self.assertSequenceEqual(new_table._column_types, (self.text_type,))
         self.assertSequenceEqual(new_table._column_names, ('three',))
         self.assertSequenceEqual(new_table.columns['three'], ('a', 'b', 'c'))
 
     def test_where(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_table = table.where(lambda r: r['one'] in (2, None))
 
@@ -93,14 +97,14 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['one'], (2, None))
 
     def test_find(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         row = table.find(lambda r: r['two'] - r['one'] == 1)
 
         self.assertIs(row, table.rows[1])
 
     def test_find_none(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         row = table.find(lambda r: r['one'] == 'FOO')
 
@@ -113,7 +117,7 @@ class TestTable(unittest.TestCase):
             
         rows.append((200, 1, 'b'))
         
-        table = journalism.Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.stdev_outliers('one')
 
@@ -127,7 +131,7 @@ class TestTable(unittest.TestCase):
             
         rows.append((200, 1, 'b'))
         
-        table = journalism.Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.stdev_outliers('one', reject=True)
 
@@ -141,7 +145,7 @@ class TestTable(unittest.TestCase):
             
         rows.append((200, 1, 'b'))
         
-        table = journalism.Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.mad_outliers('one')
 
@@ -155,7 +159,7 @@ class TestTable(unittest.TestCase):
             
         rows.append((200, 1, 'b'))
         
-        table = journalism.Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.mad_outliers('one', reject=True)
 
@@ -163,7 +167,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['one'], (200,))
 
     def test_order_by(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_table = table.order_by('two')
 
@@ -185,7 +189,7 @@ class TestTable(unittest.TestCase):
             (1, 1, 'c')
         )
 
-        table = journalism.Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.order_by(lambda r: (r['one'], r['two']))
 
@@ -196,7 +200,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], (2, 1, 'b'))
 
     def test_order_by_reverse(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_table = table.order_by(lambda r: r['two'], reverse=True)
 
@@ -213,7 +217,7 @@ class TestTable(unittest.TestCase):
             (1, None, 'a')
         )
 
-        table = journalism.Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.order_by('two')
 
@@ -224,7 +228,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['three'], ('a', 'c', None, None))
 
     def test_limit(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_table = table.limit(2)
 
@@ -234,7 +238,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['one'], (1, 2))
 
     def test_limit_slice(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_table = table.limit(0, 3, 2)
 
@@ -245,7 +249,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['one'], (1, None))
 
     def test_limit_slice_negative(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_table = table.limit(-2, step=-1)
 
@@ -256,7 +260,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['one'], (2, 1))
 
     def test_limit_step_only(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_table = table.limit(step=2)
 
@@ -274,7 +278,7 @@ class TestTable(unittest.TestCase):
             (1, None, None)
         )
 
-        table = journalism.Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.distinct('one')
 
@@ -292,7 +296,7 @@ class TestTable(unittest.TestCase):
             (1, None, None)
         )
 
-        table = journalism.Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.distinct(lambda row: (row['two'], row['three']))
 
@@ -311,7 +315,7 @@ class TestTable(unittest.TestCase):
             (1, None, None)
         )
 
-        table = journalism.Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.distinct()
 
@@ -323,7 +327,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['one'], (1, 1, 1))
 
     def test_chain_select_where(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_table = table.select(('one', 'two')).where(lambda r: r['two'] == 3)
 
@@ -331,7 +335,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[0], (2, 3))
         
         self.assertEqual(len(new_table.columns), 2)
-        self.assertSequenceEqual(new_table._column_types, (journalism.NumberColumn, journalism.NumberColumn))
+        self.assertSequenceEqual(new_table._column_types, (self.number_type, self.number_type))
         self.assertEqual(new_table._column_names, ('one', 'two'))
         self.assertSequenceEqual(new_table.columns['one'], (2,))
 
@@ -344,11 +348,13 @@ class TestTableGrouping(unittest.TestCase):
             ('b', 3, 4, None)
         )
 
-        self.column_types = (journalism.TextColumn, journalism.NumberColumn, journalism.NumberColumn, journalism.NumberColumn)
+        self.number_type = NumberType()
+        self.text_type = TextType()
+        self.column_types = (self.text_type, self.number_type, self.number_type, self.number_type)
         self.column_names = ('one', 'two', 'three', 'four')
 
     def test_group_by(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_tables = table.group_by('one')
 
@@ -363,13 +369,13 @@ class TestTableGrouping(unittest.TestCase):
         self.assertSequenceEqual(new_tables[None].columns['one'], (None,))
 
     def test_group_by_bad_column(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
-        with self.assertRaises(journalism.ColumnDoesNotExistError):
+        with self.assertRaises(ColumnDoesNotExistError):
             table.group_by('bad')
 
     def test_aggregate_sum(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_table = table.aggregate('one', (('two', 'sum'), ))
 
@@ -382,7 +388,7 @@ class TestTableGrouping(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], ('b', 1, 3))
 
     def test_aggregate_sum_two_columns(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_table = table.aggregate('one', (('two', 'sum'), ('four', 'sum')))
 
@@ -395,7 +401,7 @@ class TestTableGrouping(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], ('b', 1, 3, 0))
 
     def test_aggregate_two_ops(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
         new_table = table.aggregate('one', (('two', 'sum'), ('two', 'mean')))
 
@@ -408,18 +414,18 @@ class TestTableGrouping(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], ('b', 1, 3, 3))
 
     def test_aggregate_sum_invalid(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
-        with self.assertRaises(journalism.UnsupportedOperationError):
+        with self.assertRaises(UnsupportedOperationError):
             table.aggregate('two', (('one', 'sum'), ))
 
     def test_aggregeate_bad_column(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
 
-        with self.assertRaises(journalism.ColumnDoesNotExistError):
+        with self.assertRaises(ColumnDoesNotExistError):
             table.aggregate('bad', (('one', 'sum'), ))
 
-        with self.assertRaises(journalism.ColumnDoesNotExistError):
+        with self.assertRaises(ColumnDoesNotExistError):
             table.aggregate('two', (('bad', 'sum'), ))
 
 class TestTableCompute(unittest.TestCase):
@@ -431,13 +437,15 @@ class TestTableCompute(unittest.TestCase):
             ('b', 3, 4, None)
         )
 
-        self.column_types = (journalism.TextColumn, journalism.NumberColumn, journalism.NumberColumn, journalism.NumberColumn)
+        self.number_type = NumberType()
+        self.text_type = TextType()
+        self.column_types = (self.text_type, self.number_type, self.number_type, self.number_type)
         self.column_names = ('one', 'two', 'three', 'four')
 
-        self.table = journalism.Table(self.rows, self.column_types, self.column_names)
+        self.table = Table(self.rows, self.column_types, self.column_names)
 
     def test_compute(self):
-        new_table = self.table.compute('test', journalism.NumberColumn, lambda r: r['two'] + r['three'])
+        new_table = self.table.compute('test', self.number_type, lambda r: r['two'] + r['three'])
 
         self.assertIsNot(new_table, self.table)
         self.assertEqual(len(new_table.rows), 4) 
@@ -514,10 +522,12 @@ class TestTableJoin(unittest.TestCase):
             (None, 2, 'c')
         )
 
-        self.column_types = (journalism.NumberColumn, journalism.NumberColumn, journalism.TextColumn)
+        self.number_type = NumberType()
+        self.text_type = TextType()
+        self.column_types = (self.number_type, self.number_type, self.text_type)
 
-        self.left = journalism.Table(self.left_rows, self.column_types, ('one', 'two', 'three'))
-        self.right = journalism.Table(self.right_rows, self.column_types, ('four', 'five', 'six'))
+        self.left = Table(self.left_rows, self.column_types, ('one', 'two', 'three'))
+        self.right = Table(self.right_rows, self.column_types, ('four', 'five', 'six'))
 
     def test_inner_join(self):
         new_table = self.left.inner_join('one', self.right, 'four')
@@ -588,8 +598,11 @@ class TestTableData(unittest.TestCase):
             (2, 3, 'b'),
             (None, 2, 'c')
         )
+
+        self.number_type = NumberType()
+        self.text_type = TextType()
         self.column_names = ['one', 'two', 'three']
-        self.column_types = [journalism.NumberColumn, journalism.NumberColumn, journalism.TextColumn]
+        self.column_types = [self.number_type, self.number_type, self.text_type]
 
     def test_data_immutable(self):
         rows = [ 
@@ -598,12 +611,12 @@ class TestTableData(unittest.TestCase):
             [None, 2, 'c']
         ]
 
-        table = journalism.Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.column_types, self.column_names)
         rows[0] = [2, 2, 2]
         self.assertSequenceEqual(table.rows[0], [1, 4, 'a'])
 
     def test_fork_preserves_data(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
         table2 = table._fork(table.rows)
 
         self.assertIs(table.rows[0], table2._data[0])
@@ -615,7 +628,7 @@ class TestTableData(unittest.TestCase):
         self.assertIs(table.rows[2], table2.rows[2])
 
     def test_where_preserves_rows(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
         table2 = table.where(lambda r: r['one'] == 1)
         table3 = table2.where(lambda r: r['one'] == 1)
 
@@ -623,7 +636,7 @@ class TestTableData(unittest.TestCase):
         self.assertIs(table2._data[0], table3._data[0])
 
     def test_order_by_preserves_rows(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
         table2 = table.order_by(lambda r: r['one'])
         table3 = table2.order_by(lambda r: r['one'])
 
@@ -631,7 +644,7 @@ class TestTableData(unittest.TestCase):
         self.assertIs(table2._data[0], table3._data[0])
 
     def test_limit_preserves_rows(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.column_types, self.column_names)
         table2 = table.limit(2)
         table3 = table2.limit(2)
 
@@ -639,9 +652,9 @@ class TestTableData(unittest.TestCase):
         self.assertIs(table2._data[0], table3._data[0])
 
     def test_compute_creates_rows(self):
-        table = journalism.Table(self.rows, self.column_types, self.column_names)
-        table2 = table.compute('new2', journalism.NumberColumn, lambda r: r['one'])
-        table3 = table2.compute('new3', journalism.NumberColumn, lambda r: r['one'])
+        table = Table(self.rows, self.column_types, self.column_names)
+        table2 = table.compute('new2', self.number_type, lambda r: r['one'])
+        table3 = table2.compute('new3', self.number_type, lambda r: r['one'])
 
         self.assertIsNot(table._data[0], table2._data[0])
         self.assertNotEqual(table._data[0], table2._data[0])

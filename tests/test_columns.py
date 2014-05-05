@@ -12,7 +12,22 @@ try:
 except ImportError:
     import unittest
 
-import journalism
+from journalism import Table
+from journalism.columns import TextType, BooleanType, NumberType, DateType, TextColumn, BooleanColumn, NumberColumn, DateColumn
+from journalism.exceptions import CastError, ColumnDoesNotExistError, NullComputationError
+
+class TestColumnTypes(unittest.TestCase):
+    def test_text(self):
+        self.assertIsInstance(TextType().create(None, 1), TextColumn)
+
+    def test_boolean(self):
+        self.assertIsInstance(BooleanType().create(None, 1), BooleanColumn)
+
+    def test_number(self):
+        self.assertIsInstance(NumberType().create(None, 1), NumberColumn)
+
+    def test_date(self):
+        self.assertIsInstance(DateType().create(None, 1), DateColumn)
 
 class TestColumns(unittest.TestCase):
     def setUp(self):
@@ -22,9 +37,11 @@ class TestColumns(unittest.TestCase):
             (None, 4, 'c')
         )
         self.column_names = ('one', 'two', 'three')
-        self.column_types = (journalism.NumberColumn, journalism.NumberColumn, journalism.TextColumn)
+        self.number_type = NumberType()
+        self.text_type = TextType()
+        self.column_types = (self.number_type, self.number_type, self.text_type)
 
-        self.table = journalism.Table(self.rows, self.column_types, self.column_names)
+        self.table = Table(self.rows, self.column_types, self.column_names)
 
     def test_stringify(self):
         self.assertEqual(str(self.table.columns['one']), "<journalism.columns.NumberColumn: (1, 2, None)>")
@@ -39,7 +56,7 @@ class TestColumns(unittest.TestCase):
             (None, 4, 'c')
         )
         
-        self.table = journalism.Table(rows, self.column_types, self.column_names)
+        self.table = Table(rows, self.column_types, self.column_names)
 
         self.assertEqual(str(self.table.columns['one']), "<journalism.columns.NumberColumn: (1, 2, None, 1, 2, ...)>")
 
@@ -74,7 +91,7 @@ class TestColumns(unittest.TestCase):
         self.assertIsNot(c2, c3)
 
     def test_get_invalid_column(self):
-        with self.assertRaises(journalism.ColumnDoesNotExistError):
+        with self.assertRaises(ColumnDoesNotExistError):
             self.table.columns['four']
 
     def test_column_length(self):
@@ -121,7 +138,7 @@ class TestColumns(unittest.TestCase):
             (1, 2, 'a')
         )
 
-        table = journalism.Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.column_types, self.column_names)
 
         self.assertEqual(table.columns['one'].count(1), 3)
         self.assertEqual(table.columns['one'].count(4), 0)
@@ -136,7 +153,7 @@ class TestColumns(unittest.TestCase):
             (1, 2, 'a')
         )
 
-        table = journalism.Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.columns['one'].counts()
 
@@ -153,23 +170,23 @@ class TestColumns(unittest.TestCase):
 
 class TestTextColumn(unittest.TestCase):
     def test_cast(self):
-        column = journalism.TextColumn(None, 'one')
+        column = TextColumn(None, 'one')
         column._data = lambda: ('a', 1, None, Decimal('2.7'), 'n/a')
         self.assertSequenceEqual(column._cast(), ('a', '1', None, '2.7', None))
 
     def test_max_length(self):
-        column = journalism.TextColumn(None, 'one')
+        column = TextColumn(None, 'one')
         column._data = lambda: ('a', 'gobble', 'wow')
         self.assertEqual(column.max_length(), 6)
 
 class TestBooleanColumn(unittest.TestCase):
     def test_cast(self):
-        column = journalism.BooleanColumn(None, 'one')
+        column = BooleanColumn(None, 'one')
         column._data = lambda: (True, 'yes', None, False, 'no', 'n/a')
         self.assertSequenceEqual(column._cast(), (True, True, None, False, False, None))
 
     def test_any(self):
-        column = journalism.BooleanColumn(None, 'one')
+        column = BooleanColumn(None, 'one')
         column._data = lambda: (True, False, None)
         self.assertEqual(column.any(), True)
 
@@ -177,7 +194,7 @@ class TestBooleanColumn(unittest.TestCase):
         self.assertEqual(column.any(), False)
 
     def test_all(self):
-        column = journalism.BooleanColumn(None, 'one')
+        column = BooleanColumn(None, 'one')
         column._data = lambda: (True, True, None)
         self.assertEqual(column.all(), False)
 
@@ -193,27 +210,29 @@ class TestNumberColumn(unittest.TestCase):
             (Decimal('2.7'), Decimal('3.42'), 'c')
         )
         self.column_names = ('one', 'two', 'three')
-        self.column_types = (journalism.NumberColumn, journalism.NumberColumn, journalism.TextColumn)
+        self.number_type = NumberType()
+        self.text_type = TextType()
+        self.column_types = (self.number_type, self.number_type, self.text_type)
 
-        self.table = journalism.Table(self.rows, self.column_types, self.column_names)
+        self.table = Table(self.rows, self.column_types, self.column_names)
 
     def test_cast(self):
-        column = journalism.NumberColumn(None, 'one')
+        column = NumberColumn(None, 'one')
         column._data = lambda: (2, 1, None, Decimal('2.7'), 'n/a')
         self.assertSequenceEqual(column._cast(), (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None))
 
     def test_cast_text(self):
-        column = journalism.NumberColumn(None, 'one')
+        column = NumberColumn(None, 'one')
         column._data = lambda: ('a', 1.1, None, Decimal('2.7'), 'n/a')
 
-        with self.assertRaises(journalism.CastError):
+        with self.assertRaises(CastError):
             column._cast()
 
     def test_cast_float(self):
-        column = journalism.NumberColumn(None, 'one')
+        column = NumberColumn(None, 'one')
         column._data = lambda: (2, 1.1, None, Decimal('2.7'), 'n/a')
 
-        with self.assertRaises(journalism.CastError):
+        with self.assertRaises(CastError):
             column._cast()
 
     def test_sum(self):
@@ -229,38 +248,38 @@ class TestNumberColumn(unittest.TestCase):
         self.assertEqual(self.table.columns['two'].max(), Decimal('4.1'))
 
     def test_median(self):
-        with self.assertRaises(journalism.exceptions.NullComputationError):
+        with self.assertRaises(NullComputationError):
             self.table.columns['one'].median()
 
         self.assertEqual(self.table.columns['two'].median(), Decimal('3.42'))
 
     def test_mode(self):
-        with self.assertRaises(journalism.exceptions.NullComputationError):
+        with self.assertRaises(NullComputationError):
             self.table.columns['one'].mode()
 
         self.assertEqual(self.table.columns['two'].mode(), Decimal('3.42'))
 
     def test_variance(self):
-        with self.assertRaises(journalism.exceptions.NullComputationError):
+        with self.assertRaises(NullComputationError):
             self.table.columns['one'].variance()
         
         self.assertEqual(self.table.columns['two'].variance().quantize(Decimal('0.01')), Decimal('0.47'))
 
     def test_stdev(self):
-        with self.assertRaises(journalism.exceptions.NullComputationError):
+        with self.assertRaises(NullComputationError):
             self.table.columns['one'].stdev()
 
         self.assertAlmostEqual(self.table.columns['two'].stdev().quantize(Decimal('0.01')), Decimal('0.69'))
 
     def test_mad(self):
-        with self.assertRaises(journalism.exceptions.NullComputationError):
+        with self.assertRaises(NullComputationError):
             self.table.columns['one'].mad()
 
         self.assertAlmostEqual(self.table.columns['two'].mad(), Decimal('0'))
 
 class TestDateColumn(unittest.TestCase):
     def test_cast(self):
-        column = journalism.DateColumn(None, 'one')
+        column = DateColumn(None, 'one')
         column._data = lambda: ('3-1-1994', '2/17/1011', None, 'January 5th, 1984')
         self.assertSequenceEqual(column._cast(), (
             datetime.date(1994, 3, 1),
@@ -270,7 +289,7 @@ class TestDateColumn(unittest.TestCase):
         ))
 
     def test_min(self):
-        column = journalism.DateColumn(None, 'one')
+        column = DateColumn(None, 'one')
         column._data_without_nulls = lambda: (
             datetime.date(1994, 3, 1),
             datetime.date(1011, 2, 17),
@@ -280,7 +299,7 @@ class TestDateColumn(unittest.TestCase):
         self.assertEqual(column.min(), datetime.date(1011, 2, 17)) 
 
     def test_max(self):
-        column = journalism.DateColumn(None, 'one')
+        column = DateColumn(None, 'one')
         column._data_without_nulls = lambda: (
             datetime.date(1994, 3, 1),
             datetime.date(1011, 2, 17),

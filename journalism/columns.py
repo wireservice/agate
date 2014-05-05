@@ -312,12 +312,19 @@ class Column(Sequence):
             counts[d] += 1
 
         column_names = (self._table._column_names[self._index], 'count')
-        column_types = (self._table._column_types[self._index], NumberColumn)
+        column_types = (self._table._column_types[self._index], NumberType())
         data = (tuple(i) for i in counts.items())
 
         rows = sorted(data, key=lambda r: r[1], reverse=True)
 
         return self._table._fork(rows, column_types, column_names)
+
+class ColumnType(object):
+    """
+    Base class for column data types.
+    """
+    def create(self, table, index):
+        raise NotImplementedError
 
 class TextColumn(Column):
     """
@@ -328,6 +335,13 @@ class TextColumn(Column):
 
     def max_length(self):
         return max([len(d) for d in self._data_without_nulls()])
+
+class TextType(ColumnType):
+    """
+    Column type for :class:`TextColumn`.
+    """
+    def create(self, table, index):
+        return TextColumn(table, index)
 
 class BooleanColumn(Column):
     """
@@ -347,7 +361,14 @@ class BooleanColumn(Column):
         Returns :code:`True` if all values are :code:`True`.
         """
         return all(self._data())
-  
+
+class BooleanType(ColumnType):
+    """
+    Column type for :class:`BooleanColumn`.
+    """
+    def create(self, table, index):
+        return BooleanColumn(table, index)
+
 class NumberColumn(Column):
     """
     A column containing numeric data.
@@ -454,6 +475,13 @@ class NumberColumn(Column):
 
         return median(tuple(abs(n - m) for n in data))
 
+class NumberType(ColumnType):
+    """
+    Column type for :class:`NumberColumn`.
+    """
+    def create(self, table, index):
+        return NumberColumn(table, index)
+
 class DateColumn(Column):
     """
     A column containing :func:`datetime.date` data.
@@ -476,6 +504,16 @@ class DateColumn(Column):
         :returns: :class:`datetime.date`.
         """
         return max(self._data_without_nulls())
+
+class DateType(ColumnType):
+    """
+    Column type for :class:`DateColumn`.
+    """
+    def __init__(self, date_format=None):
+        self.date_format = date_format
+
+    def create(self, table, index):
+        return DateColumn(table, index)
 
 class ColumnIterator(six.Iterator):
     """

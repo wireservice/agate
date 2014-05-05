@@ -5,7 +5,9 @@ try:
 except ImportError:
     import unittest
 
-import journalism
+from journalism import Table
+from journalism.columns import TextType, NumberType
+from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError 
 
 class TestRows(unittest.TestCase):
     def setUp(self):
@@ -15,9 +17,11 @@ class TestRows(unittest.TestCase):
             (None, 4, 'c')
         )
         self.column_names = ('one', 'two', 'three')
-        self.column_types = (journalism.NumberColumn, journalism.NumberColumn, journalism.TextColumn)
+        self.number_type = NumberType()
+        self.text_type = TextType()
+        self.column_types = (self.number_type, self.number_type, self.text_type)
         
-        self.table = journalism.Table(self.rows, self.column_types, self.column_names)
+        self.table = Table(self.rows, self.column_types, self.column_names)
 
     def test_stringify(self):
         self.assertEqual(str(self.table.rows[0]), "<journalism.rows.Row: (1, 2, a)>")
@@ -27,10 +31,10 @@ class TestRows(unittest.TestCase):
             (1, 2, 'a', 'b', 'c', 'd'),
         )
         
-        column_types = (journalism.NumberColumn, journalism.NumberColumn, journalism.TextColumn, journalism.TextColumn, journalism.TextColumn, journalism.TextColumn)
+        column_types = (self.number_type, self.number_type, self.text_type, self.text_type, self.text_type, self.text_type)
         column_names = ('one', 'two', 'three', 'four', 'five', 'six')
 
-        self.table = journalism.Table(rows, column_types, column_names)
+        self.table = Table(rows, column_types, column_names)
 
         self.assertEqual(str(self.table.rows[0]), "<journalism.rows.Row: (1, 2, a, b, c, ...)>")
 
@@ -50,7 +54,7 @@ class TestRows(unittest.TestCase):
         self.assertIsNot(r, r3)
 
     def test_get_invalid_column(self):
-        with self.assertRaises(journalism.RowDoesNotExistError):
+        with self.assertRaises(RowDoesNotExistError):
             self.table.rows[3]
 
     def test_row_length(self):
@@ -99,8 +103,8 @@ class TestRows(unittest.TestCase):
     def test_column_in_row_invalid(self):
         row = self.table.rows[0]
 
-        with self.assertRaises(journalism.ColumnDoesNotExistError):
+        with self.assertRaises(ColumnDoesNotExistError):
             row['four']
 
-        with self.assertRaises(journalism.ColumnDoesNotExistError):
+        with self.assertRaises(ColumnDoesNotExistError):
             row[3]

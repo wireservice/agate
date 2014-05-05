@@ -14,10 +14,13 @@ If your file does not have headers:
 
 .. code-block:: python
 
-    from journalism import Table, TextColumn, NumberColumn
+    from journalism import Table, TextType, NumberType
+
+    text_type = TextType()
+    number_type = NumberType()
 
     column_names = ('city', 'area', 'population')
-    column_types = (TextColumn, NumberColumn, NumberColumn)
+    column_types = (text_type, number_type, number_type)
 
     with open('population.csv') as f:
         rows = list(csv.reader(f) 
@@ -28,7 +31,7 @@ If your file does have headers:
 
 .. code-block:: python
 
-    column_types = (TextColumn, NumberColumn, NumberColumn)
+    column_types = (text_type, number_type, number_type)
 
     with open('population.csv') as f:
         rows = list(csv.reader(f))
@@ -46,7 +49,7 @@ Of course, cool kids use `csvkit <http://csvkit.rtfd.org/>`_. (Hint: it supports
 
     import csvkit
 
-    column_types = (TextColumn, NumberColumn, NumberColumn)
+    column_types = (text_type, number_type, number_type)
 
     with open('population.csv') as f:
         rows = list(csvkit.reader(f))
@@ -434,21 +437,21 @@ TRIM
 
 .. code-block:: python
 
-    new_table = table.compute('name_stripped', TextColumn, lambda row: row['name'].strip())
+    new_table = table.compute('name_stripped', TextType(), lambda row: row['name'].strip())
 
 CONCATENATE
 -----------
 
 .. code-block:: python
 
-    new_table = table.compute('full_name', TextColumn, lambda row '%(first_name)s %(middle_name)s %(last_name)s' % row) 
+    new_table = table.compute('full_name', TextType(), lambda row '%(first_name)s %(middle_name)s %(last_name)s' % row) 
 
 IF
 --
 
 .. code-block:: python
 
-    new_table = table.compute('mvp_candidate', TextColumn, lambda row: 'Yes' if row['batting_average'] > 0.3 else 'No'
+    new_table = table.compute('mvp_candidate', TextType(), lambda row: 'Yes' if row['batting_average'] > 0.3 else 'No'
 
 VLOOKUP
 -------
@@ -462,7 +465,7 @@ VLOOKUP
         ...
     }
 
-    new_table = table.compute('state_name', TextColumn, lambda row: states[row['state_abbr']]) 
+    new_table = table.compute('state_name', TextType(), lambda row: states[row['state_abbr']]) 
 
 Pivot tables
 ------------

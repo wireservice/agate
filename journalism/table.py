@@ -8,7 +8,7 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-from journalism.columns import ColumnMapping, NumberColumn
+from journalism.columns import ColumnMapping, NumberType 
 from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
 from journalism.rows import RowSequence, Row
 
@@ -17,7 +17,7 @@ class Table(object):
     A dataset consisting of rows and columns.
 
     :param rows: The data as a sequence of any sequences: tuples, lists, etc.
-    :param column_types: A sequence of :class:`.Column` subclasses (not instances),
+    :param column_types: A sequence of instances of:class:`.ColumnType`,
         one per column of data.
     :param column_names: A sequence of strings that are names for the columns.
 
@@ -69,7 +69,7 @@ class Table(object):
         if i not in self._cached_columns:
             column_type = self._column_types[i]
 
-            self._cached_columns[i] = column_type(self, i)
+            self._cached_columns[i] = column_type.create(self, i)
 
         return self._cached_columns[i]
 
@@ -442,7 +442,7 @@ class Table(object):
 
         :param group_by: The name of a column to group by. 
         :param operations: A :class:`dict: where the keys are column names
-            and the values are the names of :class:`Column` methods, such
+            and the values are the names of :class:`.Column` methods, such
             as "sum" or "max_length".
         :returns: A new :class:`Table`.
         :raises: :exc:`.ColumnDoesNotExistError`, :exc:`.UnsupportedOperationError`
@@ -464,7 +464,7 @@ class Table(object):
 
         output = []
 
-        column_types = [self._column_types[i], NumberColumn]
+        column_types = [self._column_types[i], NumberType()]
         column_names = [group_by, '%s_count' % group_by]
 
         for op_column, operation in operations:
@@ -501,7 +501,7 @@ class Table(object):
         Compute a new column by passing each row to a function.
         
         :param column_name: A name of the new column. 
-        :param column_type: A subclass of :class:`.Column`.
+        :param column_type: An instance of :class:`.ColumnType`.
         :param func: A :class:`function` that will be passed a :class:`.Row`
             and should return the computed value for the new column.
         :returns: A new :class:`Table`.
@@ -531,7 +531,7 @@ class Table(object):
         def calc(row):
             return (row[after_column_name] - row[before_column_name]) / row[before_column_name] * 100
 
-        return self.compute(new_column_name, NumberColumn, calc) 
+        return self.compute(new_column_name, NumberType(), calc) 
 
     def rank(self, key, new_column_name):
         """
@@ -561,7 +561,7 @@ class Table(object):
 
         rank_column = sorted(values, key=null_handler)
 
-        return self.compute(new_column_name, NumberColumn, compute_func)
+        return self.compute(new_column_name, NumberType(), compute_func)
 
 class NullOrder(object):
     """
