@@ -45,7 +45,7 @@ class Table(object):
 
         cast_data = []
 
-        cast_funcs = [c._get_cast_func() for c in self.columns]
+        cast_funcs = [c.cast for c in self.columns]
 
         for i, row in enumerate(rows):
             if len(row) != len_column_types:

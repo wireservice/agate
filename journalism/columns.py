@@ -42,96 +42,7 @@ def no_null_computations(func):
 
     return check
 
-def cast_text(d):
-    """
-    Cast a single value to :func:`unicode` (:func:`str` in Python 3)
-    for :class:`TextColumn`.
-
-    :param d: A value to cast.
-    :returns: :func:`unicode` (:func:`str` in Python 3) or :code:`None`
-    """
-    if d is None:
-        return d
-
-    if isinstance(d, six.string_types):
-        d = d.strip()
-
-        if d.lower() in NULL_VALUES:
-            return None 
-
-    return six.text_type(d)
-
-def cast_boolean(d):
-    """
-    Cast a single value to :func:`bool` for :class:`BooleanColumn`.
-
-    :param d: A value to cast.
-    :returns: :func:`bool` or :code:`None`.
-    """
-    if isinstance(d, bool) or d is None:
-        return d
-
-    if isinstance(d, six.string_types):
-        d = d.replace(',' ,'').strip()
-
-        d_lower = d.lower()
-
-        if d_lower in NULL_VALUES:
-            return None
-        
-        if d_lower in TRUE_VALUES:
-            return True
-
-        if d_lower in FALSE_VALUES:
-            return False
-
-    raise CastError('Can not convert value %s to bool for BooleanColumn.' % d) 
-
-def cast_number(d):
-    """
-    Cast a single value to a :class:`decimal.Decimal` for
-    :class:`NumberColumn`.
-
-    :returns: :class:`decimal.Decimal` or :code:`None`.
-    :raises: :exc:`.CastError`
-    """
-    if isinstance(d, Decimal) or d is None:
-        return d
-
-    if isinstance(d, six.string_types):
-        d = d.replace(',' ,'').strip()
-
-        if d.lower() in NULL_VALUES:
-            return None
-    
-    if isinstance(d, float):
-        raise CastError('Can not convert float to Decimal for NumberColumn. Convert data to string first!')
-
-    try:
-        return Decimal(d)
-    except InvalidOperation:
-        raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d) 
-
-def cast_date(d):
-    """
-    Cast a single value to a :class:`datetime.date` for
-    :class:`DateColumn`.
-
-    :returns: :class`datetime.date` or :code:`None`.
-    :raises: :exc:`.CastError`
-    """
-    if isinstance(d, datetime.date) or d is None:
-        return d
-
-    if isinstance(d, six.string_types):
-        d = d.strip()
-
-        if d.lower() in NULL_VALUES:
-            return None
-
-    return parse(d).date()
-
-def median(data_sorted):
+def _median(data_sorted):
     """
     Compute the median value of a sequence of values.
 
@@ -240,20 +151,6 @@ class Column(Sequence):
         """
         return not self.__eq__(other)
 
-    def _get_cast_func(self):
-        """
-        Return the function used to cast values in this column.
-        """
-        raise NotImplementedError   # pragma: no cover
-
-    def _cast(self):
-        """
-        Cast values in this column to an appropriate type, if possible.
-        """
-        cast_func = self._get_cast_func()
-
-        return tuple(cast_func(d) for d in self._data())
-
     def has_nulls(self):
         """
         Returns True if this column contains null values.
@@ -330,8 +227,24 @@ class TextColumn(Column):
     """
     A column containing unicode/string data.
     """
-    def _get_cast_func(self):
-        return cast_text 
+    @staticmethod
+    def cast(d):
+        """
+        Cast a single value to :func:`unicode` (:func:`str` in Python 3).
+
+        :param d: A value to cast.
+        :returns: :func:`unicode` (:func:`str` in Python 3) or :code:`None`
+        """
+        if d is None:
+            return d
+
+        if isinstance(d, six.string_types):
+            d = d.strip()
+
+            if d.lower() in NULL_VALUES:
+                return None 
+
+        return six.text_type(d)
 
     def max_length(self):
         return max([len(d) for d in self._data_without_nulls()])
@@ -347,8 +260,32 @@ class BooleanColumn(Column):
     """
     A column containing :func:`bool` data.
     """
-    def _get_cast_func(self):
-        return cast_boolean
+    @staticmethod
+    def cast(d):
+        """
+        Cast a single value to :func:`bool`.
+
+        :param d: A value to cast.
+        :returns: :func:`bool` or :code:`None`.
+        """
+        if isinstance(d, bool) or d is None:
+            return d
+
+        if isinstance(d, six.string_types):
+            d = d.replace(',' ,'').strip()
+
+            d_lower = d.lower()
+
+            if d_lower in NULL_VALUES:
+                return None
+            
+            if d_lower in TRUE_VALUES:
+                return True
+
+            if d_lower in FALSE_VALUES:
+                return False
+
+        raise CastError('Can not convert value %s to bool for BooleanColumn.' % d) 
 
     def any(self):
         """
@@ -375,8 +312,30 @@ class NumberColumn(Column):
     
     All data is represented by the :class:`decimal.Decimal` class.' 
     """
-    def _get_cast_func(self):
-        return cast_number
+    @staticmethod
+    def cast(d):
+        """
+        Cast a single value to a :class:`decimal.Decimal`.
+
+        :returns: :class:`decimal.Decimal` or :code:`None`.
+        :raises: :exc:`.CastError`
+        """
+        if isinstance(d, Decimal) or d is None:
+            return d
+
+        if isinstance(d, six.string_types):
+            d = d.replace(',' ,'').strip()
+
+            if d.lower() in NULL_VALUES:
+                return None
+        
+        if isinstance(d, float):
+            raise CastError('Can not convert float to Decimal for NumberColumn. Convert data to string first!')
+
+        try:
+            return Decimal(d)
+        except InvalidOperation:
+            raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d) 
 
     def sum(self):
         """
@@ -420,7 +379,7 @@ class NumberColumn(Column):
         :returns: :class:`decimal.Decimal`.
         :raises: :exc:`.NullComputationError`
         """
-        return median(self._data_sorted())
+        return _median(self._data_sorted())
 
     @no_null_computations
     def mode(self):
@@ -471,9 +430,9 @@ class NumberColumn(Column):
         :raises: :exc:`.NullComputationError`
         """
         data = self._data_sorted()
-        m = median(data)
+        m = _median(data)
 
-        return median(tuple(abs(n - m) for n in data))
+        return _median(tuple(abs(n - m) for n in data))
 
 class NumberType(ColumnType):
     """
@@ -486,8 +445,24 @@ class DateColumn(Column):
     """
     A column containing :func:`datetime.date` data.
     """
-    def _get_cast_func(self):
-        return cast_date
+    @staticmethod
+    def cast(d):
+        """
+        Cast a single value to a :class:`datetime.date`.
+
+        :returns: :class`datetime.date` or :code:`None`.
+        :raises: :exc:`.CastError`
+        """
+        if isinstance(d, datetime.date) or d is None:
+            return d
+
+        if isinstance(d, six.string_types):
+            d = d.strip()
+
+            if d.lower() in NULL_VALUES:
+                return None
+
+        return parse(d).date()
     
     def min(self):
         """

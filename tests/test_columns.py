@@ -170,9 +170,9 @@ class TestColumns(unittest.TestCase):
 
 class TestTextColumn(unittest.TestCase):
     def test_cast(self):
-        column = TextColumn(None, 'one')
-        column._data = lambda: ('a', 1, None, Decimal('2.7'), 'n/a')
-        self.assertSequenceEqual(column._cast(), ('a', '1', None, '2.7', None))
+        values = ('a', 1, None, Decimal('2.7'), 'n/a')
+        casted = tuple(TextColumn.cast(v) for v in values)
+        self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None))
 
     def test_max_length(self):
         column = TextColumn(None, 'one')
@@ -181,9 +181,9 @@ class TestTextColumn(unittest.TestCase):
 
 class TestBooleanColumn(unittest.TestCase):
     def test_cast(self):
-        column = BooleanColumn(None, 'one')
-        column._data = lambda: (True, 'yes', None, False, 'no', 'n/a')
-        self.assertSequenceEqual(column._cast(), (True, True, None, False, False, None))
+        values = (True, 'yes', None, False, 'no', 'n/a')
+        casted = tuple(BooleanColumn.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (True, True, None, False, False, None))
 
     def test_any(self):
         column = BooleanColumn(None, 'one')
@@ -217,23 +217,17 @@ class TestNumberColumn(unittest.TestCase):
         self.table = Table(self.rows, self.column_types, self.column_names)
 
     def test_cast(self):
-        column = NumberColumn(None, 'one')
-        column._data = lambda: (2, 1, None, Decimal('2.7'), 'n/a')
-        self.assertSequenceEqual(column._cast(), (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None))
+        values = (2, 1, None, Decimal('2.7'), 'n/a')
+        casted = tuple(NumberColumn.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None))
 
     def test_cast_text(self):
-        column = NumberColumn(None, 'one')
-        column._data = lambda: ('a', 1.1, None, Decimal('2.7'), 'n/a')
-
         with self.assertRaises(CastError):
-            column._cast()
+            NumberColumn.cast('a')
 
     def test_cast_float(self):
-        column = NumberColumn(None, 'one')
-        column._data = lambda: (2, 1.1, None, Decimal('2.7'), 'n/a')
-
         with self.assertRaises(CastError):
-            column._cast()
+            NumberColumn.cast(1.1)
 
     def test_sum(self):
         self.assertEqual(self.table.columns['one'].sum(), Decimal('6.5'))
@@ -279,13 +273,14 @@ class TestNumberColumn(unittest.TestCase):
 
 class TestDateColumn(unittest.TestCase):
     def test_cast(self):
-        column = DateColumn(None, 'one')
-        column._data = lambda: ('3-1-1994', '2/17/1011', None, 'January 5th, 1984')
-        self.assertSequenceEqual(column._cast(), (
+        values = ('3-1-1994', '2/17/1011', None, 'January 5th, 1984', 'n/a')
+        casted = tuple(DateColumn.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
             datetime.date(1994, 3, 1),
             datetime.date(1011, 2, 17),
             None,
-            datetime.date(1984, 1, 5)
+            datetime.date(1984, 1, 5),
+            None
         ))
 
     def test_min(self):
