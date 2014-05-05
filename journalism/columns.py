@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from collections import Mapping, Sequence, defaultdict
+import datetime
 from functools import wraps
 
 try:
@@ -13,6 +14,7 @@ try:
 except ImportError: #pragma: no cover
     from ordereddict import OrderedDict
 
+from dateutil.parser import parse
 import six
 
 from journalism.exceptions import ColumnDoesNotExistError, NullComputationError, CastError
@@ -109,6 +111,25 @@ def cast_number(d):
         return Decimal(d)
     except InvalidOperation:
         raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d) 
+
+def cast_date(d):
+    """
+    Cast a single value to a :class:`datetime.date` for
+    :class:`DateColumn`.
+
+    :returns: :class`datetime.date` or :code:`None`.
+    :raises: :exc:`.CastError`
+    """
+    if isinstance(d, datetime.date) or d is None:
+        return d
+
+    if isinstance(d, six.string_types):
+        d = d.strip()
+
+        if d.lower() in NULL_VALUES:
+            return None
+
+    return parse(d).date()
 
 def median(data_sorted):
     """
@@ -432,6 +453,13 @@ class NumberColumn(Column):
         m = median(data)
 
         return median(tuple(abs(n - m) for n in data))
+
+class DateColumn(Column):
+    """
+    A column containing :func:`datetime.date` data.
+    """
+    def _get_cast_func(self):
+        return cast_date
 
 class ColumnIterator(six.Iterator):
     """

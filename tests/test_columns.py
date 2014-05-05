@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import datetime
+
 try:
     from cdecimal import Decimal
 except ImportError: #pragma: no cover
@@ -256,4 +258,14 @@ class TestNumberColumn(unittest.TestCase):
 
         self.assertAlmostEqual(self.table.columns['two'].mad(), Decimal('0'))
 
+class TestDateColumn(unittest.TestCase):
+    def test_cast(self):
+        column = journalism.DateColumn(None, 'one')
+        column._data = lambda: ('3-1-1994', '2/17/1011', None, 'January 5th, 1984')
+        self.assertSequenceEqual(column._cast(), (
+            datetime.date(1994, 3, 1),
+            datetime.date(1011, 2, 17),
+            None,
+            datetime.date(1984, 1, 5)
+        ))
 
