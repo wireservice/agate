@@ -269,3 +269,23 @@ class TestDateColumn(unittest.TestCase):
             datetime.date(1984, 1, 5)
         ))
 
+    def test_min(self):
+        column = journalism.DateColumn(None, 'one')
+        column._data_without_nulls = lambda: (
+            datetime.date(1994, 3, 1),
+            datetime.date(1011, 2, 17),
+            datetime.date(1984, 1, 5)
+        )
+
+        self.assertEqual(column.min(), datetime.date(1011, 2, 17)) 
+
+    def test_max(self):
+        column = journalism.DateColumn(None, 'one')
+        column._data_without_nulls = lambda: (
+            datetime.date(1994, 3, 1),
+            datetime.date(1011, 2, 17),
+            datetime.date(1984, 1, 5)
+        )
+
+        self.assertEqual(column.max(), datetime.date(1994, 3, 1)) 
+

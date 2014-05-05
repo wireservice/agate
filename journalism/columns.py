@@ -460,6 +460,22 @@ class DateColumn(Column):
     """
     def _get_cast_func(self):
         return cast_date
+    
+    def min(self):
+        """
+        Compute the earliest date in this column.
+
+        :returns: :class:`datetime.date`.
+        """
+        return min(self._data_without_nulls())
+
+    def max(self):
+        """
+        Compute the latest date in this column.
+
+        :returns: :class:`datetime.date`.
+        """
+        return max(self._data_without_nulls())
 
 class ColumnIterator(six.Iterator):
     """
