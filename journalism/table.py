@@ -45,7 +45,7 @@ class Table(object):
 
         cast_data = []
 
-        cast_funcs = [c.cast for c in self.columns]
+        cast_funcs = [c.cast for c in self._column_types]
 
         for i, row in enumerate(rows):
             if len(row) != len_column_types:
@@ -69,7 +69,7 @@ class Table(object):
         if i not in self._cached_columns:
             column_type = self._column_types[i]
 
-            self._cached_columns[i] = column_type.create(self, i)
+            self._cached_columns[i] = column_type.create_column(self, i)
 
         return self._cached_columns[i]
 

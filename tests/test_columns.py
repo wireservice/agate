@@ -18,16 +18,50 @@ from journalism.exceptions import CastError, ColumnDoesNotExistError, NullComput
 
 class TestColumnTypes(unittest.TestCase):
     def test_text(self):
-        self.assertIsInstance(TextType().create(None, 1), TextColumn)
+        self.assertIsInstance(TextType().create_column(None, 1), TextColumn)
+
+    def test_text_cast(self):
+        values = ('a', 1, None, Decimal('2.7'), 'n/a')
+        casted = tuple(TextType().cast(v) for v in values)
+        self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None))
 
     def test_boolean(self):
-        self.assertIsInstance(BooleanType().create(None, 1), BooleanColumn)
+        self.assertIsInstance(BooleanType().create_column(None, 1), BooleanColumn)
+
+    def test_boolean_cast(self):
+        values = (True, 'yes', None, False, 'no', 'n/a')
+        casted = tuple(BooleanType().cast(v) for v in values)
+        self.assertSequenceEqual(casted, (True, True, None, False, False, None))
 
     def test_number(self):
-        self.assertIsInstance(NumberType().create(None, 1), NumberColumn)
+        self.assertIsInstance(NumberType().create_column(None, 1), NumberColumn)
+
+    def test_number_cast(self):
+        values = (2, 1, None, Decimal('2.7'), 'n/a')
+        casted = tuple(NumberType().cast(v) for v in values)
+        self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None))
+
+    def test_number_cast_text(self):
+        with self.assertRaises(CastError):
+            NumberType().cast('a')
+
+    def test_number_cast_float(self):
+        with self.assertRaises(CastError):
+            NumberType().cast(1.1)
 
     def test_date(self):
-        self.assertIsInstance(DateType().create(None, 1), DateColumn)
+        self.assertIsInstance(DateType().create_column(None, 1), DateColumn)
+
+    def test_cast(self):
+        values = ('3-1-1994', '2/17/1011', None, 'January 5th, 1984', 'n/a')
+        casted = tuple(DateType().cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.date(1994, 3, 1),
+            datetime.date(1011, 2, 17),
+            None,
+            datetime.date(1984, 1, 5),
+            None
+        ))
 
 class TestColumns(unittest.TestCase):
     def setUp(self):
@@ -169,22 +203,12 @@ class TestColumns(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['count'], (3, 1, 1))
 
 class TestTextColumn(unittest.TestCase):
-    def test_cast(self):
-        values = ('a', 1, None, Decimal('2.7'), 'n/a')
-        casted = tuple(TextColumn.cast(v) for v in values)
-        self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None))
-
     def test_max_length(self):
         column = TextColumn(None, 'one')
         column._data = lambda: ('a', 'gobble', 'wow')
         self.assertEqual(column.max_length(), 6)
 
 class TestBooleanColumn(unittest.TestCase):
-    def test_cast(self):
-        values = (True, 'yes', None, False, 'no', 'n/a')
-        casted = tuple(BooleanColumn.cast(v) for v in values)
-        self.assertSequenceEqual(casted, (True, True, None, False, False, None))
-
     def test_any(self):
         column = BooleanColumn(None, 'one')
         column._data = lambda: (True, False, None)
@@ -215,19 +239,6 @@ class TestNumberColumn(unittest.TestCase):
         self.column_types = (self.number_type, self.number_type, self.text_type)
 
         self.table = Table(self.rows, self.column_types, self.column_names)
-
-    def test_cast(self):
-        values = (2, 1, None, Decimal('2.7'), 'n/a')
-        casted = tuple(NumberColumn.cast(v) for v in values)
-        self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None))
-
-    def test_cast_text(self):
-        with self.assertRaises(CastError):
-            NumberColumn.cast('a')
-
-    def test_cast_float(self):
-        with self.assertRaises(CastError):
-            NumberColumn.cast(1.1)
 
     def test_sum(self):
         self.assertEqual(self.table.columns['one'].sum(), Decimal('6.5'))
@@ -272,17 +283,6 @@ class TestNumberColumn(unittest.TestCase):
         self.assertAlmostEqual(self.table.columns['two'].mad(), Decimal('0'))
 
 class TestDateColumn(unittest.TestCase):
-    def test_cast(self):
-        values = ('3-1-1994', '2/17/1011', None, 'January 5th, 1984', 'n/a')
-        casted = tuple(DateColumn.cast(v) for v in values)
-        self.assertSequenceEqual(casted, (
-            datetime.date(1994, 3, 1),
-            datetime.date(1011, 2, 17),
-            None,
-            datetime.date(1984, 1, 5),
-            None
-        ))
-
     def test_min(self):
         column = DateColumn(None, 'one')
         column._data_without_nulls = lambda: (

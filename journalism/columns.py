@@ -220,15 +220,21 @@ class ColumnType(object):
     """
     Base class for column data types.
     """
-    def create(self, table, index):
+    def create_column(self, table, index):
         raise NotImplementedError
 
 class TextColumn(Column):
     """
     A column containing unicode/string data.
     """
-    @staticmethod
-    def cast(d):
+    def max_length(self):
+        return max([len(d) for d in self._data_without_nulls()])
+
+class TextType(ColumnType):
+    """
+    Column type for :class:`TextColumn`.
+    """
+    def cast(self, d):
         """
         Cast a single value to :func:`unicode` (:func:`str` in Python 3).
 
@@ -246,22 +252,30 @@ class TextColumn(Column):
 
         return six.text_type(d)
 
-    def max_length(self):
-        return max([len(d) for d in self._data_without_nulls()])
-
-class TextType(ColumnType):
-    """
-    Column type for :class:`TextColumn`.
-    """
-    def create(self, table, index):
+    def create_column(self, table, index):
         return TextColumn(table, index)
 
 class BooleanColumn(Column):
     """
     A column containing :func:`bool` data.
     """
-    @staticmethod
-    def cast(d):
+    def any(self):
+        """
+        Returns :code:`True` if any value is :code:`True`.
+        """
+        return any(self._data())
+
+    def all(self):
+        """
+        Returns :code:`True` if all values are :code:`True`.
+        """
+        return all(self._data())
+
+class BooleanType(ColumnType):
+    """
+    Column type for :class:`BooleanColumn`.
+    """
+    def cast(self, d):
         """
         Cast a single value to :func:`bool`.
 
@@ -287,23 +301,7 @@ class BooleanColumn(Column):
 
         raise CastError('Can not convert value %s to bool for BooleanColumn.' % d) 
 
-    def any(self):
-        """
-        Returns :code:`True` if any value is :code:`True`.
-        """
-        return any(self._data())
-
-    def all(self):
-        """
-        Returns :code:`True` if all values are :code:`True`.
-        """
-        return all(self._data())
-
-class BooleanType(ColumnType):
-    """
-    Column type for :class:`BooleanColumn`.
-    """
-    def create(self, table, index):
+    def create_column(self, table, index):
         return BooleanColumn(table, index)
 
 class NumberColumn(Column):
@@ -312,31 +310,6 @@ class NumberColumn(Column):
     
     All data is represented by the :class:`decimal.Decimal` class.' 
     """
-    @staticmethod
-    def cast(d):
-        """
-        Cast a single value to a :class:`decimal.Decimal`.
-
-        :returns: :class:`decimal.Decimal` or :code:`None`.
-        :raises: :exc:`.CastError`
-        """
-        if isinstance(d, Decimal) or d is None:
-            return d
-
-        if isinstance(d, six.string_types):
-            d = d.replace(',' ,'').strip()
-
-            if d.lower() in NULL_VALUES:
-                return None
-        
-        if isinstance(d, float):
-            raise CastError('Can not convert float to Decimal for NumberColumn. Convert data to string first!')
-
-        try:
-            return Decimal(d)
-        except InvalidOperation:
-            raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d) 
-
     def sum(self):
         """
         Compute the sum of this column.
@@ -438,32 +411,37 @@ class NumberType(ColumnType):
     """
     Column type for :class:`NumberColumn`.
     """
-    def create(self, table, index):
+    def cast(self, d):
+        """
+        Cast a single value to a :class:`decimal.Decimal`.
+
+        :returns: :class:`decimal.Decimal` or :code:`None`.
+        :raises: :exc:`.CastError`
+        """
+        if isinstance(d, Decimal) or d is None:
+            return d
+
+        if isinstance(d, six.string_types):
+            d = d.replace(',' ,'').strip()
+
+            if d.lower() in NULL_VALUES:
+                return None
+        
+        if isinstance(d, float):
+            raise CastError('Can not convert float to Decimal for NumberColumn. Convert data to string first!')
+
+        try:
+            return Decimal(d)
+        except InvalidOperation:
+            raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d) 
+
+    def create_column(self, table, index):
         return NumberColumn(table, index)
 
 class DateColumn(Column):
     """
     A column containing :func:`datetime.date` data.
     """
-    @staticmethod
-    def cast(d):
-        """
-        Cast a single value to a :class:`datetime.date`.
-
-        :returns: :class`datetime.date` or :code:`None`.
-        :raises: :exc:`.CastError`
-        """
-        if isinstance(d, datetime.date) or d is None:
-            return d
-
-        if isinstance(d, six.string_types):
-            d = d.strip()
-
-            if d.lower() in NULL_VALUES:
-                return None
-
-        return parse(d).date()
-    
     def min(self):
         """
         Compute the earliest date in this column.
@@ -487,7 +465,31 @@ class DateType(ColumnType):
     def __init__(self, date_format=None):
         self.date_format = date_format
 
-    def create(self, table, index):
+    def cast(self, d):
+        """
+        Cast a single value to a :class:`datetime.date`.
+
+        :param date_format: An optional :func:`datetime.strptime`
+            format string for parsing dates in this column.
+        :returns: :class`datetime.date` or :code:`None`.
+        :raises: :exc:`.CastError`
+        """
+        if isinstance(d, datetime.date) or d is None:
+            return d
+
+        if isinstance(d, six.string_types):
+            d = d.strip()
+
+            if d.lower() in NULL_VALUES:
+                return None
+
+        # TODO
+        if self.date_format:
+            pass
+
+        return parse(d).date()
+
+    def create_column(self, table, index):
         return DateColumn(table, index)
 
 class ColumnIterator(six.Iterator):
