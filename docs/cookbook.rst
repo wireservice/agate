@@ -224,7 +224,7 @@ By specifying :code:`reject=True` you can instead return a table including only 
 
     not_outliers = table.stdev_outliers('salary', deviations=3, reject=True)
 
-The second method, more robust, method for outlier identification isby identifying values which are more than some number of "median absolute deviations" from the median (typically 3).
+The second, more robust, method for identifying outliers is by identifying values which are more than some number of "median absolute deviations" from the median (typically 3).
 
 .. code-block:: python
 
