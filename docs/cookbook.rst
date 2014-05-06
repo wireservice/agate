@@ -238,7 +238,7 @@ Modifying data
 Computing percent change
 ------------------------
 
-You could use :meth:`.Table.compute` to calculate percent change, however, for your convenience journalism has a builtin shorthand:
+You could use :meth:`.Table.compute` to calculate percent change, however, for your convenience journalism has a builtin shortcut 
 
 .. code-block:: python
 
@@ -316,7 +316,7 @@ journalism:
 
 .. code-block:: python
 
-    new_table = table.where(lambda row: row['total'], reverse=True)
+    new_table = table.order_by(lambda row: row['total'], reverse=True)
 
 DISTINCT
 --------
