@@ -68,6 +68,7 @@ class ColumnMapping(Mapping):
     """
     def __init__(self, table):
         self._table = table
+        self._cached_len = None
 
     def __getitem__(self, k):
         try:
@@ -81,7 +82,12 @@ class ColumnMapping(Mapping):
         return ColumnIterator(self._table)
 
     def __len__(self):
-        return len(self._table._column_names)
+        if self._cached_len is not None:
+            return self._cached_len
+
+        self._cached_len = len(self._table._column_names)
+
+        return self._cached_len 
 
 class Column(Sequence):
     """
@@ -99,6 +105,7 @@ class Column(Sequence):
         self._cached_data = None
         self._cached_data_without_nulls = None
         self._cached_data_sorted = None
+        self._cached_len = None
 
     def __unicode__(self):
         data = self._data()
@@ -137,7 +144,12 @@ class Column(Sequence):
         return self._data()[j]
 
     def __len__(self):
-        return len(self._data())
+        if self._cached_len is not None:
+            return self._cached_len
+
+        self._cached_len = len(self._data())
+
+        return self._cached_len
 
     def __eq__(self, other):
         """
