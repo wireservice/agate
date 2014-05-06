@@ -1,6 +1,22 @@
+0.4.0
+-----
+
+
+
 0.3.0
 -----
 
+* DateType.date_format implemented. (#112)
+* Create ColumnType classes to simplify data parsing.
+* DateColumn implemented. (#7)
+* Cookbook: Excel pivot tables. (#41)
+* Cookbook: statistics, including outlier detection. (#82)
+* Cookbook: emulating Underscore's any and all. (#107)
+* Parameter documention for method parameters. (#108)
+* Table.rank now accepts a column name or key function. 
+* Optionally use cdecimal for improved performance. (#106)
+* Smart naming of aggregate columns.
+* Duplicate columns names are now an error. (#92)
 * BooleanColumn implemented. (#6)
 * TextColumn.max_length implemented. (#95)
 * Table.find implemented. (#14)

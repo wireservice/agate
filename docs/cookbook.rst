@@ -14,10 +14,13 @@ If your file does not have headers:
 
 .. code-block:: python
 
-    from journalism import Table, TextColumn, NumberColumn
+    from journalism import Table, TextType, NumberType
+
+    text_type = TextType()
+    number_type = NumberType()
 
     column_names = ('city', 'area', 'population')
-    column_types = (TextColumn, NumberColumn, NumberColumn)
+    column_types = (text_type, number_type, number_type)
 
     with open('population.csv') as f:
         rows = list(csv.reader(f) 
@@ -28,7 +31,7 @@ If your file does have headers:
 
 .. code-block:: python
 
-    column_types = (TextColumn, NumberColumn, NumberColumn)
+    column_types = (text_type, number_type, number_type)
 
     with open('population.csv') as f:
         rows = list(csv.reader(f))
@@ -46,7 +49,7 @@ Of course, cool kids use `csvkit <http://csvkit.rtfd.org/>`_. (Hint: it supports
 
     import csvkit
 
-    column_types = (TextColumn, NumberColumn, NumberColumn)
+    column_types = (text_type, number_type, number_type)
 
     with open('population.csv') as f:
         rows = list(csvkit.reader(f))
@@ -173,13 +176,69 @@ Randomizing order
 
     new_table = table.order_by(lambda row: random.random())
 
+Statistics
+==========
+
+Descriptive statistics
+----------------------
+
+journalism includes a full set of standard descriptive statistics that can be applied to any :class:`.NumberColumn`.
+
+.. code-block:: python
+
+    column = table.columns['salary']
+
+    column.sum()
+    column.min()
+    column.max()
+    column.mean()
+    column.median()
+    column.mode()
+    column.variance()
+    column.stdev()
+    column.mad()
+
+Aggregate statistics
+--------------------
+
+You can also generate aggregate statistics for subsets of data (sometimes colloquially referred to as "rolling up".
+
+.. code-block:: python
+
+    summary = table.aggregate('profession', { 'salary': 'mean', 'salary': 'median' }) 
+
+A "count" column is always return in the results. The :code:`summary` table in this example would have these columns: :code:`('profession', 'profession_count', 'salary_mean', 'salary_median')`.
+
+Identifying outliers
+--------------------
+
+journalism includes two builtin methods for identifying outliers. The first, and most widely known, is by identifying values which are more than some number of standard deviations from the mean (typically 3).
+
+.. code-block:: python
+
+    outliers = table.stdev_outliers('salary', deviations=3, reject=False)
+
+By specifying :code:`reject=True` you can instead return a table including only those values **not** identified as outliers.
+
+.. code-block:: python
+
+    not_outliers = table.stdev_outliers('salary', deviations=3, reject=True)
+
+The second, more robust, method for identifying outliers is by identifying values which are more than some number of "median absolute deviations" from the median (typically 3).
+
+.. code-block:: python
+
+    outliers = table.mad_outliers('salary', deviations=3, reject=False)
+
+As with the first example, you can specify :code:`reject=True` to exclude outliers in the resulting table.
+
 Modifying data
 ==============
 
 Computing percent change
 ------------------------
 
-You could use :meth:`.Table.compute` to calculate percent change, however, for your convenience journalism has a builtin shorthand:
+You could use :meth:`.Table.compute` to calculate percent change, however, for your convenience journalism has a builtin shortcut 
 
 .. code-block:: python
 
@@ -257,29 +316,7 @@ journalism:
 
 .. code-block:: python
 
-    new_table = table.where(lambda row: row['total'], reverse=True)
-
-Chaining commands together
---------------------------
-
-SQL:
-
-.. code-block:: postgres
-
-    SELECT state, total FROM table WHERE LOWER(state) = 'california' ORDER BY total DESC;
-
-journalism:
-
-.. code-block:: python
-
-    new_table = table \
-        .select(('state', 'total')) \
-        .where(lambda row: row['state'].lower() == 'california') \
-        .order_by('total', reverse=True)
-
-.. note::
-
-    I don't advise chaining commands like this. Being explicit about each step is usually better.
+    new_table = table.order_by(lambda row: row['total'], reverse=True)
 
 DISTINCT
 --------
@@ -341,6 +378,28 @@ journalism's :meth:`.Table.group_by` works slightly different than SQLs. It does
 
     groups = patients.group_by('doctor')
 
+Chaining commands together
+--------------------------
+
+SQL:
+
+.. code-block:: postgres
+
+    SELECT state, total FROM table WHERE LOWER(state) = 'california' ORDER BY total DESC;
+
+journalism:
+
+.. code-block:: python
+
+    new_table = table \
+        .select(('state', 'total')) \
+        .where(lambda row: row['state'].lower() == 'california') \
+        .order_by('total', reverse=True)
+
+.. note::
+
+    I don't advise chaining commands like this. Being explicit about each step is usually better.
+
 Aggregate functions
 -------------------
 
@@ -378,21 +437,21 @@ TRIM
 
 .. code-block:: python
 
-    new_table = table.compute('name_stripped', TextColumn, lambda row: row['name'].strip())
+    new_table = table.compute('name_stripped', TextType(), lambda row: row['name'].strip())
 
 CONCATENATE
 -----------
 
 .. code-block:: python
 
-    new_table = table.compute('full_name', TextColumn, lambda row '%(first_name)s %(middle_name)s %(last_name)s' % row) 
+    new_table = table.compute('full_name', TextType(), lambda row '%(first_name)s %(middle_name)s %(last_name)s' % row) 
 
 IF
 --
 
 .. code-block:: python
 
-    new_table = table.compute('mvp_candidate', TextColumn, lambda row: 'Yes' if row['batting_average'] > 0.3 else 'No'
+    new_table = table.compute('mvp_candidate', TextType(), lambda row: 'Yes' if row['batting_average'] > 0.3 else 'No'
 
 VLOOKUP
 -------
@@ -406,12 +465,18 @@ VLOOKUP
         ...
     }
 
-    new_table = table.compute('state_name', TextColumn, lambda row: states[row['state_abbr']]) 
+    new_table = table.compute('state_name', TextType(), lambda row: states[row['state_abbr']]) 
 
 Pivot tables
 ------------
 
-TODO
+You can emulate most of the functionality of Excel's pivot tables using the :meth:`.Table.aggregate` method.
+
+.. code-block:: python
+
+    summary = table.aggregate('profession', { 'salary': 'mean', 'salary': 'median' }) 
+
+A "count" column is always return in the results. The :code:`summary` table in this example would have these columns: :code:`('profession', 'profession_count', 'salary_mean', 'salary_median')`.
 
 Emulating R
 ===========
@@ -437,7 +502,7 @@ Emulating Underscore.js
 filter
 ------
 
-journalism's :meth:`.Table.where` functions exactly like Underscore's `filter`.
+journalism's :meth:`.Table.where` functions exactly like Underscore's :code:`filter`.
 
 .. code-block:: python
 
@@ -446,7 +511,7 @@ journalism's :meth:`.Table.where` functions exactly like Underscore's `filter`.
 reject
 ------
 
-To simulate Underscore's `reject`, simply negate the return value of the function you pass into journalism's :meth:`.Table.where`.
+To simulate Underscore's :code:`reject`, simply negate the return value of the function you pass into journalism's :meth:`.Table.where`.
 
 .. code-block:: python
 
@@ -455,11 +520,33 @@ To simulate Underscore's `reject`, simply negate the return value of the functio
 find
 ----
 
-journalism's:meth:`..Table.find` works exactly like Undrescore's `find`.
+journalism's :meth:`.Table.find` works exactly like Undrescore's :code:`find`.
 
 .. code-block:: python
 
     row = table.find(lambda row: row['state'].startswith('T'))
+
+any
+---
+
+journalism's columns have an :meth:`.Column.any` method that functions like Underscore's :code:`any`.
+
+.. code-block:: python
+
+    true_or_false = table.columns['salaries'].any(lambda d: d > 100000)
+
+You can also use :meth:`.Table.where` to filter to columns that pass the truth test.
+
+all
+---
+
+journalism's columns have an :meth:`.Column.all` method that functions like Underscore's :code:`all`.
+
+.. code-block:: python
+
+    true_or_false = table.columns['salaries'].all(lambda d: d > 100000)
+
+You can also use :meth:`.Table.where` to filter to columns that pass the truth test.
 
 Plotting with matplotlib
 ========================

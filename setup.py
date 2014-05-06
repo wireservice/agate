@@ -10,9 +10,14 @@ install_requires = [
 if sys.version_info == (2, 6):
     install_requires.append('ordereddict>=1.1')
 
+if sys.version_info[0] == 2:
+    install_requires.append('python-dateutil==1.5')
+else:
+    install_requires.append('python-dateutil>=2.0')
+
 setup(
     name='journalism',
-    version='0.3.0',
+    version='0.4.0',
     description='',
     long_description=open('README').read(),
     author='Christopher Groskopf',
