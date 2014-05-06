@@ -539,7 +539,11 @@ class ColumnIterator(six.Iterator):
         """
         data_sorted = sorted(self._data_without_nulls())
         one_pct = one_pct
- 
+        if one_pct % 1 != 0:
+            raise ValueError('Percentile needs to be a whole number.')
+        if not 100 >= one_pct >= 1:
+            raise ValueError('Percentile must be between 100 and 1, inclusive.')
+
         def percentiler(data_sorted, percent, key=lambda x:x):
             if not data_sorted: # Yoda logic!
                 return None
