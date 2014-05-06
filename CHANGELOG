@@ -1,6 +1,9 @@
 0.3.0
 -----
 
+* DateType.date_format implemented. (#112)
+* Create ColumnType classes to simplify data parsing.
+* DateColumn implemented. (#7)
 * Cookbook: Excel pivot tables. (#41)
 * Cookbook: statistics, including outlier detection. (#82)
 * Cookbook: emulating Underscore's any and all. (#107)

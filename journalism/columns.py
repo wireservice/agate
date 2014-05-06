@@ -483,9 +483,8 @@ class DateType(ColumnType):
             if d.lower() in NULL_VALUES:
                 return None
 
-        # TODO
         if self.date_format:
-            pass
+            return datetime.datetime.strptime(d, self.date_format).date() 
 
         return parse(d).date()
 
