@@ -22,7 +22,7 @@ setup(
     long_description=open('README').read(),
     author='Christopher Groskopf',
     author_email='staringmonkey@gmail.com',
-    url='journalism takes the horror out of basic data analysis and manipulation.',
+    url='http://journalism.readthedocs.org/',
     license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',
