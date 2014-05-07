@@ -9,7 +9,7 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 from journalism.columns import ColumnMapping, NumberType 
-from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
+from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError, NullComputationError
 from journalism.rows import RowSequence, Row
 
 class Table(object):
@@ -222,6 +222,42 @@ class Table(object):
             f = lambda row: lower_bound <= row[column_name] <= upper_bound
 
         return self.where(f)
+
+    def pearson_correlation(self, column_one, column_two):
+        """
+        Calculates the `Pearson correlation coefficient <http://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient>`_
+        for :code:`column_one` and :code:`column_two`.
+
+        Returns a number between -1 and 1 with 0 implying no correlation. A correlation close to 1 implies a high positive correlation i.e. as x increases so does y. A correlation close to -1 implies a high negative correlation i.e. as x increases, y decreases.
+
+        :param column_one: The name of a column.
+        :param column_two: The name of a column.
+        :returns: :class:`decimal.Decimal`.
+        """
+        x = self.columns[column_one]
+        y = self.columns[column_two]
+
+        if x.has_nulls() or y.has_nulls():
+            raise NullComputationError
+
+        n = len(x)
+
+        sum_x = x.sum()
+        sum_y = y.sum()
+
+        square = lambda x: pow(x,2)
+        sum_x_sq = sum(map(square, x))
+        sum_y_sq = sum(map(square, y))
+
+        product_sum = sum((x_val*y_val for x_val,y_val in zip(x, y)))
+
+        pearson_numerator = product_sum - (sum_x * sum_y / n)
+        pearson_denominator = ((sum_x_sq - pow(sum_x, 2) / n) * (sum_y_sq - pow(sum_y, 2) / n)).sqrt()
+
+        if pearson_denominator == 0:
+            return 0
+
+        return pearson_numerator/pearson_denominator
 
     def order_by(self, key, reverse=False):
         """

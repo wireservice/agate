@@ -166,6 +166,29 @@ class TestTable(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 1)
         self.assertSequenceEqual(new_table.columns['one'], (200,))
 
+    def test_pearson_correlation(self):
+        rows = (
+            (-1, 0, 'a'),
+            (0, 0, 'b'),
+            (1, 3, 'c')
+        )
+
+        table = Table(rows, self.column_types, self.column_names)
+
+        self.assertEqual(table.pearson_correlation('one', 'one'), Decimal('1'))
+        self.assertAlmostEqual(table.pearson_correlation('one', 'two'), Decimal('3').sqrt() * Decimal('0.5'))
+
+    def test_pearson_correlation_zero(self):
+        rows = (
+            (-1, 3, 'a'),
+            (0, 3, 'b'),
+            (1, 3, 'c')
+        )
+
+        table = Table(rows, self.column_types, self.column_names)
+
+        self.assertEqual(table.pearson_correlation('one', 'two'), Decimal('0'))
+
     def test_order_by(self):
         table = Table(self.rows, self.column_types, self.column_names)
 
