@@ -230,6 +230,8 @@ class Table(object):
 
         Returns a number between -1 and 1 with 0 implying no correlation. A correlation close to 1 implies a high positive correlation i.e. as x increases so does y. A correlation close to -1 implies a high negative correlation i.e. as x increases, y decreases.
 
+        Note: this implementation is borrowed from the MIT licensed `latimes-calculate <https://github.com/datadesk/latimes-calculate/blob/master/calculate/pearson.py>`_. Thanks, LAT!
+
         :param column_one: The name of a column.
         :param column_two: The name of a column.
         :returns: :class:`decimal.Decimal`.
@@ -249,7 +251,7 @@ class Table(object):
         sum_x_sq = sum(map(square, x))
         sum_y_sq = sum(map(square, y))
 
-        product_sum = sum((x_val*y_val for x_val,y_val in zip(x, y)))
+        product_sum = sum((x_val * y_val for x_val, y_val in zip(x, y)))
 
         pearson_numerator = product_sum - (sum_x * sum_y / n)
         pearson_denominator = ((sum_x_sq - pow(sum_x, 2) / n) * (sum_y_sq - pow(sum_y, 2) / n)).sqrt()
@@ -257,7 +259,7 @@ class Table(object):
         if pearson_denominator == 0:
             return 0
 
-        return pearson_numerator/pearson_denominator
+        return pearson_numerator / pearson_denominator
 
     def order_by(self, key, reverse=False):
         """
