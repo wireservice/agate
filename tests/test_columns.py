@@ -13,7 +13,7 @@ except ImportError:
     import unittest
 
 from journalism import Table
-from journalism.columns import TextType, BooleanType, NumberType, DateType, TextColumn, BooleanColumn, NumberColumn, DateColumn
+from journalism.columns import TextType, BooleanType, NumberType, DateType, DateTimeType, TextColumn, BooleanColumn, NumberColumn, DateColumn, DateTimeColumn
 from journalism.exceptions import CastError, ColumnDoesNotExistError, NullComputationError
 
 class TestColumnTypes(unittest.TestCase):
@@ -64,7 +64,6 @@ class TestColumnTypes(unittest.TestCase):
             datetime.date(1984, 1, 5),
             None
         ))
-   
 
     def test_date_cast_parser(self):
         values = ('3-1-1994', '2/17/1011', None, 'January 5th, 1984', 'n/a')
@@ -74,6 +73,33 @@ class TestColumnTypes(unittest.TestCase):
             datetime.date(1011, 2, 17),
             None,
             datetime.date(1984, 1, 5),
+            None
+        ))
+
+    def test_datetime(self):
+        self.assertIsInstance(DateTimeType()._create_column(None, 1), DateTimeColumn)
+
+    def test_datetime_cast_format(self):
+        datetime_type = DateTimeType(datetime_format='%m-%d-%Y %I:%M %p')
+
+        values = ('03-01-1994 12:30 PM', '02-17-1011 06:30 AM', None, '01-05-1984 06:30 PM', 'n/a')
+        casted = tuple(datetime_type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.datetime(1994, 3, 1, 12, 30, 0),
+            datetime.datetime(1011, 2, 17, 6, 30, 0),
+            None,
+            datetime.datetime(1984, 1, 5, 18, 30, 0),
+            None
+        ))
+
+    def test_datetime_cast_parser(self):
+        values = ('3-1-1994 12:30 PM', '2/17/1011 06:30', None, 'January 5th, 1984 22:37', 'n/a')
+        casted = tuple(DateTimeType().cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.datetime(1994, 3, 1, 12, 30, 0),
+            datetime.datetime(1011, 2, 17, 6, 30, 0),
+            None,
+            datetime.datetime(1984, 1, 5, 22, 37, 0),
             None
         ))
 
@@ -311,4 +337,25 @@ class TestDateColumn(unittest.TestCase):
         )
 
         self.assertEqual(column.max(), datetime.date(1994, 3, 1)) 
+
+class TestDateTimeColumn(unittest.TestCase):
+    def test_min(self):
+        column = DateTimeColumn(None, 'one')
+        column._data_without_nulls = lambda: (
+            datetime.datetime(1994, 3, 3, 6, 31),
+            datetime.datetime(1994, 3, 3, 6, 30, 30),
+            datetime.datetime(1994, 3, 3, 6, 30)
+        )
+
+        self.assertEqual(column.min(), datetime.datetime(1994, 3, 3, 6, 30)) 
+
+    def test_max(self):
+        column = DateTimeColumn(None, 'one')
+        column._data_without_nulls = lambda: (
+            datetime.datetime(1994, 3, 3, 6, 31),
+            datetime.datetime(1994, 3, 3, 6, 30, 30),
+            datetime.datetime(1994, 3, 3, 6, 30)
+        )
+
+        self.assertEqual(column.max(), datetime.datetime(1994, 3, 3, 6, 31)) 
 

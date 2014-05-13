@@ -1,6 +1,7 @@
 0.4.0
 -----
 
+* DateTimeColumn implemented. (#23)
 * Column.counts now returns dict instead of Table. (#109)
 * ColumnType.create_column renamed _create_column. (#118)
 * Pearson correlation implemented. (#103)
