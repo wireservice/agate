@@ -203,18 +203,13 @@ class TestColumns(unittest.TestCase):
 
         table = Table(rows, self.column_types, self.column_names)
 
-        new_table = table.columns['one'].counts()
+        counts = table.columns['one'].counts()
 
-        self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.columns), 2)
-        self.assertEqual(len(new_table.rows), 3) 
+        self.assertEqual(len(counts), 3)
 
-        self.assertSequenceEqual(new_table.rows[0], (1, 3))
-        self.assertSequenceEqual(new_table.rows[1], (2, 1))
-        self.assertSequenceEqual(new_table.rows[2], (None, 1))
-
-        self.assertSequenceEqual(new_table.columns['one'], (1, 2, None))
-        self.assertSequenceEqual(new_table.columns['count'], (3, 1, 1))
+        self.assertEqual(counts[1], 3)
+        self.assertEqual(counts[2], 1)
+        self.assertEqual(counts[None], 1)
 
 class TestTextColumn(unittest.TestCase):
     def test_max_length(self):

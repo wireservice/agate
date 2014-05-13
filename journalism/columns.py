@@ -206,11 +206,8 @@ class Column(Sequence):
         Compute the number of instances of each unique value in this
         column.
 
-        Returns a new :class:`.Table`, with two columns,
-        one containing the values and a a second, :class:`NumberColumn`
-        containing the counts.
-
-        Resulting table will be sorted by descending count.
+        :returns: :class:`collections.OrderedDict` wth unique values
+            as keys and counts as values.
         """
         counts = OrderedDict()
 
@@ -220,13 +217,7 @@ class Column(Sequence):
 
             counts[d] += 1
 
-        column_names = (self._table._column_names[self._index], 'count')
-        column_types = (self._table._column_types[self._index], NumberType())
-        data = (tuple(i) for i in counts.items())
-
-        rows = sorted(data, key=lambda r: r[1], reverse=True)
-
-        return self._table._fork(rows, column_types, column_names)
+        return counts 
 
 class ColumnType(object):
     """
