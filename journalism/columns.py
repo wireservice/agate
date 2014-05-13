@@ -412,6 +412,47 @@ class NumberColumn(Column):
 
         return _median(tuple(abs(n - m) for n in data))
 
+#     @no_null_computations
+    def percentile(self, one_pct):
+        """
+        Compute the `percentile <http://stackoverflow.com/questions/2374640/how-do-i-calculate-percentiles-with-python-numpy/2753343#2753343>`_
+        of this column or of one row.
+
+        Returns a list of the percentiles.
+
+        Will raise :exc:`>.NullComputationError` if this column contains nulls.
+        """
+        data_sorted = sorted(self._data_without_nulls())
+        one_pct = one_pct
+        if one_pct % 1 != 0:
+            raise ValueError('Percentile needs to be a whole number.')
+        if not 100 >= one_pct >= 1:
+            raise ValueError('Percentile must be an integer less than or equal to 100 and greater than or equal to 1.')
+
+        def percentiler(data_sorted, percent, key=lambda x:x):
+            if not data_sorted: # Yoda logic!
+                return None
+            k = (len(data_sorted)-1) * percent
+            k = Decimal(k)
+            f = math.floor(k)
+            f = Decimal(f)
+            c = math.ceil(k)
+            c = Decimal(c)
+            if f == c:
+                return key(data_sorted[int(k)])
+            d0 = key(data_sorted[int(f)]) * (c-k)
+            d1 = key(data_sorted[int(c)]) * (k-f)
+            return d0+d1
+
+        if one_pct:
+            return [percentiler(data_sorted, (one_pct * .01), key=lambda x:x)]
+        else:
+            percentile_list = []
+            for each_pct in range(1, 101):
+                percent = each_pct * .01
+                percentile_list.append(percentiler(data_sorted, percent))
+            return percentile_list
+
 class NumberType(ColumnType):
     """
     Column type for :class:`NumberColumn`.
@@ -570,45 +611,4 @@ class ColumnIterator(six.Iterator):
         self._i += 1
 
         return column 
-
-#     @no_null_computations
-    def percentile(self, one_pct):
-        """
-        Compute the `percentile <http://stackoverflow.com/questions/2374640/how-do-i-calculate-percentiles-with-python-numpy/2753343#2753343>`_
-        of this column or of one row.
-
-        Returns a list of the percentiles.
-
-        Will raise :exc:`>.NullComputationError` if this column contains nulls.
-        """
-        data_sorted = sorted(self._data_without_nulls())
-        one_pct = one_pct
-        if one_pct % 1 != 0:
-            raise ValueError('Percentile needs to be a whole number.')
-        if not 100 >= one_pct >= 1:
-            raise ValueError('Percentile must be between 100 and 1, inclusive.')
-
-        def percentiler(data_sorted, percent, key=lambda x:x):
-            if not data_sorted: # Yoda logic!
-                return None
-            k = (len(data_sorted)-1) * percent
-            k = Decimal(k)
-            f = math.floor(k)
-            f = Decimal(f)
-            c = math.ceil(k)
-            c = Decimal(c)
-            if f == c:
-                return key(data_sorted[int(k)])
-            d0 = key(data_sorted[int(f)]) * (c-k)
-            d1 = key(data_sorted[int(c)]) * (k-f)
-            return d0+d1
-
-        if one_pct:
-            return [percentiler(data_sorted, (one_pct * .01), key=lambda x:x)]
-        else:
-            percentile_list = []
-            for each_pct in range(1, 101):
-                percent = each_pct * .01
-                percentile_list.append(percentiler(data_sorted, percent))
-            return percentile_list
 
