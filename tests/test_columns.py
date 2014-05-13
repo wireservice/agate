@@ -18,7 +18,7 @@ from journalism.exceptions import CastError, ColumnDoesNotExistError, NullComput
 
 class TestColumnTypes(unittest.TestCase):
     def test_text(self):
-        self.assertIsInstance(TextType().create_column(None, 1), TextColumn)
+        self.assertIsInstance(TextType()._create_column(None, 1), TextColumn)
 
     def test_text_cast(self):
         values = ('a', 1, None, Decimal('2.7'), 'n/a')
@@ -26,7 +26,7 @@ class TestColumnTypes(unittest.TestCase):
         self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None))
 
     def test_boolean(self):
-        self.assertIsInstance(BooleanType().create_column(None, 1), BooleanColumn)
+        self.assertIsInstance(BooleanType()._create_column(None, 1), BooleanColumn)
 
     def test_boolean_cast(self):
         values = (True, 'yes', None, False, 'no', 'n/a')
@@ -34,7 +34,7 @@ class TestColumnTypes(unittest.TestCase):
         self.assertSequenceEqual(casted, (True, True, None, False, False, None))
 
     def test_number(self):
-        self.assertIsInstance(NumberType().create_column(None, 1), NumberColumn)
+        self.assertIsInstance(NumberType()._create_column(None, 1), NumberColumn)
 
     def test_number_cast(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a')
@@ -50,7 +50,7 @@ class TestColumnTypes(unittest.TestCase):
             NumberType().cast(1.1)
 
     def test_date(self):
-        self.assertIsInstance(DateType().create_column(None, 1), DateColumn)
+        self.assertIsInstance(DateType()._create_column(None, 1), DateColumn)
 
     def test_date_cast_format(self):
         date_type = DateType(date_format='%m-%d-%Y')

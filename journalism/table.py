@@ -69,7 +69,7 @@ class Table(object):
         if i not in self._cached_columns:
             column_type = self._column_types[i]
 
-            self._cached_columns[i] = column_type.create_column(self, i)
+            self._cached_columns[i] = column_type._create_column(self, i)
 
         return self._cached_columns[i]
 

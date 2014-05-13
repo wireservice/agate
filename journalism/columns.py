@@ -232,7 +232,7 @@ class ColumnType(object):
     """
     Base class for column data types.
     """
-    def create_column(self, table, index):
+    def _create_column(self, table, index):
         raise NotImplementedError
 
 class TextColumn(Column):
@@ -264,7 +264,7 @@ class TextType(ColumnType):
 
         return six.text_type(d)
 
-    def create_column(self, table, index):
+    def _create_column(self, table, index):
         return TextColumn(table, index)
 
 class BooleanColumn(Column):
@@ -313,7 +313,7 @@ class BooleanType(ColumnType):
 
         raise CastError('Can not convert value %s to bool for BooleanColumn.' % d) 
 
-    def create_column(self, table, index):
+    def _create_column(self, table, index):
         return BooleanColumn(table, index)
 
 class NumberColumn(Column):
@@ -447,7 +447,7 @@ class NumberType(ColumnType):
         except InvalidOperation:
             raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d) 
 
-    def create_column(self, table, index):
+    def _create_column(self, table, index):
         return NumberColumn(table, index)
 
 class DateColumn(Column):
@@ -500,7 +500,7 @@ class DateType(ColumnType):
 
         return parse(d).date()
 
-    def create_column(self, table, index):
+    def _create_column(self, table, index):
         return DateColumn(table, index)
 
 class ColumnIterator(six.Iterator):
