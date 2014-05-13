@@ -208,11 +208,8 @@ class Column(Sequence):
         Compute the number of instances of each unique value in this
         column.
 
-        Returns a new :class:`.Table`, with two columns,
-        one containing the values and a a second, :class:`NumberColumn`
-        containing the counts.
-
-        Resulting table will be sorted by descending count.
+        :returns: :class:`collections.OrderedDict` wth unique values
+            as keys and counts as values.
         """
         counts = OrderedDict()
 
@@ -222,19 +219,13 @@ class Column(Sequence):
 
             counts[d] += 1
 
-        column_names = (self._table._column_names[self._index], 'count')
-        column_types = (self._table._column_types[self._index], NumberType())
-        data = (tuple(i) for i in counts.items())
-
-        rows = sorted(data, key=lambda r: r[1], reverse=True)
-
-        return self._table._fork(rows, column_types, column_names)
+        return counts 
 
 class ColumnType(object):
     """
     Base class for column data types.
     """
-    def create_column(self, table, index):
+    def _create_column(self, table, index):
         raise NotImplementedError
 
 class TextColumn(Column):
@@ -266,7 +257,7 @@ class TextType(ColumnType):
 
         return six.text_type(d)
 
-    def create_column(self, table, index):
+    def _create_column(self, table, index):
         return TextColumn(table, index)
 
 class BooleanColumn(Column):
@@ -315,7 +306,7 @@ class BooleanType(ColumnType):
 
         raise CastError('Can not convert value %s to bool for BooleanColumn.' % d) 
 
-    def create_column(self, table, index):
+    def _create_column(self, table, index):
         return BooleanColumn(table, index)
 
 class NumberColumn(Column):
@@ -449,7 +440,7 @@ class NumberType(ColumnType):
         except InvalidOperation:
             raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d) 
 
-    def create_column(self, table, index):
+    def _create_column(self, table, index):
         return NumberColumn(table, index)
 
 class DateColumn(Column):
@@ -502,8 +493,61 @@ class DateType(ColumnType):
 
         return parse(d).date()
 
-    def create_column(self, table, index):
+    def _create_column(self, table, index):
         return DateColumn(table, index)
+
+class DateTimeColumn(Column):
+    """
+    A column containing :func:`datetime.datetime` data.
+    """
+    def min(self):
+        """
+        Compute the earliest datetime in this column.
+
+        :returns: :class:`datetime.datetime`.
+        """
+        return min(self._data_without_nulls())
+
+    def max(self):
+        """
+        Compute the latest datetime in this column.
+
+        :returns: :class:`datetime.datetime`.
+        """
+        return max(self._data_without_nulls())
+
+class DateTimeType(ColumnType):
+    """
+    Column type for :class:`DateTimeColumn`.
+    """
+    def __init__(self, datetime_format=None):
+        self.datetime_format = datetime_format
+
+    def cast(self, d):
+        """
+        Cast a single value to a :class:`datetime.datetime`.
+
+        :param date_format: An optional :func:`datetime.strptime`
+            format string for parsing datetimes in this column.
+        :returns: :class`datetime.datetime` or :code:`None`.
+        :raises: :exc:`.CastError`
+        """
+        if isinstance(d, datetime.datetime) or d is None:
+            return d
+
+        if isinstance(d, six.string_types):
+            d = d.strip()
+
+            if d.lower() in NULL_VALUES:
+                return None
+
+        if self.datetime_format:
+            return datetime.datetime.strptime(d, self.datetime_format) 
+
+        return parse(d)
+
+    def _create_column(self, table, index):
+        return DateTimeColumn(table, index)
 
 class ColumnIterator(six.Iterator):
     """
