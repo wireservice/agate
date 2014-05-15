@@ -601,6 +601,23 @@ class Table(object):
 
         return self.compute(new_column_name, NumberType(), compute_func)
 
+    def z_scores(self,column_name,new_column_name):
+        """ Returns a new column that is the z-score or standard score of 
+        each value returned by the row function.
+        
+        :param column_name: The name of the column for z-scores to be based
+        off of.
+        :param new_column_name: The name of the resulting column.
+        :returns: A new :class:`Table`.
+        """
+        mean = self.columns[column_name].mean()
+        sd = self.columns[column_name].stdev()
+        compute_func = lambda row: (row[column_name]-mean)/sd
+
+        return self.compute(new_column_name, NumberType(), compute_func)
+
+
+
 class NullOrder(object):
     """
     Dummy object used for sorting in place of None.
