@@ -612,7 +612,6 @@ class Table(object):
         """
         mean = self.columns[column_name].mean()
         sd = self.columns[column_name].stdev()
-
         compute_func = lambda row: (row[column_name]-mean)/sd
 
         return self.compute(new_column_name, NumberType(), compute_func)
