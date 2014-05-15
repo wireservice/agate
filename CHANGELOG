@@ -1,6 +1,8 @@
 0.4.0
 -----
 
+* no_null_computations now accepts args. (#122)
+* Table.z_scores implemented. (#123)
 * DateTimeColumn implemented. (#23)
 * Column.counts now returns dict instead of Table. (#109)
 * ColumnType.create_column renamed _create_column. (#118)
