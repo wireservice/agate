@@ -616,8 +616,6 @@ class Table(object):
 
         return self.compute(new_column_name, NumberType(), compute_func)
 
-
-
 class NullOrder(object):
     """
     Dummy object used for sorting in place of None.

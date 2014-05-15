@@ -544,8 +544,6 @@ class TestTableCompute(unittest.TestCase):
 
         self.assertSequenceEqual(new_table.columns['z-scores'],(-1,1,-1,1))
 
-
-
 class TestTableJoin(unittest.TestCase):
     def setUp(self):
         self.left_rows = (
