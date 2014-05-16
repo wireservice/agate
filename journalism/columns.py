@@ -412,8 +412,8 @@ class NumberColumn(Column):
 
         return _median(tuple(abs(n - m) for n in data))
 
-#     @no_null_computations
-    def percentile(self, one_pct):
+    @no_null_computations
+    def percentile(self, one_pct=None):
         """
         Compute the `percentile <http://stackoverflow.com/questions/2374640/how-do-i-calculate-percentiles-with-python-numpy/2753343#2753343>`_
         of this column or of one row.
@@ -423,10 +423,9 @@ class NumberColumn(Column):
         Will raise :exc:`>.NullComputationError` if this column contains nulls.
         """
         data_sorted = sorted(self._data_without_nulls())
-        one_pct = one_pct
-        if one_pct % 1 != 0:
+        if one_pct and one_pct % 1 != 0:
             raise ValueError('Percentile needs to be a whole number.')
-        if not 100 >= one_pct >= 1:
+        if one_pct and not 100 >= one_pct >= 1:
             raise ValueError('Percentile must be an integer less than or equal to 100 and greater than or equal to 1.')
 
         def percentiler(data_sorted, percent, key=lambda x:x):
