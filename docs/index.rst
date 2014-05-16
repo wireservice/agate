@@ -127,7 +127,7 @@ Here is an example of how to use journalism, using financial aid data from data.
     # Create the table
     table = Table(rows, COLUMN_TYPES, COLUMN_NAMES)
 
-    # Remove Phillipines and Puerto Rico
+    # Remove Philippines and Puerto Rico
     states = table.where(lambda r: r['state_abbr'] not in ('PR', 'PH'))
 
     # Sum total of all states
