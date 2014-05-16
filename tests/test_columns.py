@@ -237,6 +237,25 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(counts[2], 1)
         self.assertEqual(counts[None], 1)
 
+    def test_percentile(self):
+        rows = (
+            (1, 2, 'a'),
+            (2, 3, 'b'),
+            (None, 4, 'c'),
+            (1, 2, 'a'),
+            (1, 2, 'a')
+        )
+
+        table = Table(rows, self.column_types, self.column_names)
+
+        counts = table.columns['one'].percentile()
+
+        self.assertEqual(len(percentile), 3)
+
+        self.assertEqual(percentile[1], 3)
+        self.assertEqual(percentile[2], 1)
+        self.assertEqual(percentile[None], 1)
+
 class TestTextColumn(unittest.TestCase):
     def test_max_length(self):
         column = TextColumn(None, 'one')
