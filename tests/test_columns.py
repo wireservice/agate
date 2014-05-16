@@ -248,8 +248,9 @@ class TestColumns(unittest.TestCase):
 
         table = Table(rows, self.column_types, self.column_names)
 
-        self.assertEqual(table.columns['two'].percentile(25), Decimal(2))
-        self.assertEqual(table.columns['two'].percentile(50), Decimal(3))
+        self.assertEqual(table.columns['two'].percentile(25), [Decimal(2)])
+        self.assertEqual(table.columns['two'].percentile(50), [Decimal(2)])
+        self.assertEqual(table.columns['two'].percentile(75), [Decimal(3)])
 #        self.assertEqual(table.columns['two'].percentile(), 1)
 
 class TestTextColumn(unittest.TestCase):
