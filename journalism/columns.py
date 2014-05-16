@@ -40,7 +40,7 @@ def no_null_computations(func):
         if c.has_nulls():
             raise NullComputationError
 
-        return func(c)
+        return func(c, *args, **kwargs)
 
     return check
 

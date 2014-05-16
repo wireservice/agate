@@ -531,6 +531,19 @@ class TestTableCompute(unittest.TestCase):
 
         self.assertSequenceEqual(new_table.columns['rank'], (1, 3, 1, 3))
 
+    def test_z_scores(self):
+        new_table = self.table.z_scores('two','z-scores')
+
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, -1))
+        self.assertSequenceEqual(new_table.rows[1], (None, 3, 5, None, 1))
+        self.assertSequenceEqual(new_table.rows[2], ('a', 2, 4, None, -1))
+        self.assertSequenceEqual(new_table.rows[3], ('b', 3, 4, None, 1))
+
+        self.assertSequenceEqual(new_table.columns['z-scores'],(-1,1,-1,1))
+
 class TestTableJoin(unittest.TestCase):
     def setUp(self):
         self.left_rows = (
