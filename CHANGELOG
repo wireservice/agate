@@ -1,6 +1,7 @@
 0.4.0
 -----
 
+* Implement percentile. (#35)
 * no_null_computations now accepts args. (#122)
 * Table.z_scores implemented. (#123)
 * DateTimeColumn implemented. (#23)
