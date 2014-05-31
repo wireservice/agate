@@ -428,31 +428,30 @@ class NumberColumn(Column):
         if one_pct and not 100 >= one_pct >= 1:
             raise ValueError('Percentile must be an integer less than or equal to 100 and greater than or equal to 1.')
 
-        def percentiler(data, percent, key=lambda x:x):
+        def percentiler(data, percent):
             if not data:
                 return None
 
-            k = (len(data)-1) * percent
-            k = Decimal(k)
+            i = Decimal(len(data) - 1) * percent
 
-            f = Decimal(math.floor(k))
-            c = Decimal(math.ceil(k))
+            if i % 1 == 0:
+                return data[int(i)]
 
-            if f == c:
-                return key(data[int(k)])
-            
-            d0 = key(data[int(f)]) * (c - k)
-            d1 = key(data[int(c)]) * (k - f)
+            f = i.quantize('0.0')
+            c = f + 1 
+
+            d0 = data[int(f)] * Decimal(c - i)
+            d1 = data[int(c)] * Decimal(i - f)
             
             return d0 + d1
 
         if one_pct:
-            return percentiler(data, (one_pct * .01), key=lambda x:x)
+            return percentiler(data, Decimal(one_pct) * Decimal('.01'))
         else:
             percentile_list = []
 
             for each_pct in range(1, 101):
-                percent = each_pct * .01
+                percent = Decimal(each_pct) * Decimal('.01')
                 percentile_list.append(percentiler(data, percent))
             
             return percentile_list

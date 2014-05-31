@@ -257,7 +257,18 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(table.columns['ints'].percentile()[74], Decimal(75))
         self.assertEqual(table.columns['ints'].percentile()[99], Decimal(100))
 
-    def test_percentile_invalid(self):
+    def test_percentile_not_valid(self):
+        rows = [(n,) for n in range(0, 101)]
+
+        table = Table(rows, (self.number_type,), ('ints',))
+
+        with self.assertRaises(ValueError):
+            table.columns['ints'].percentile(1.1)
+
+        with self.assertRaises(ValueError):
+            table.columns['ints'].percentile(103)
+
+    def test_percentile_no_data(self):
         rows = (())
 
         table = Table(rows, (self.number_type,), ('ints',))
