@@ -4,7 +4,6 @@ from collections import Mapping, Sequence, defaultdict
 import datetime
 from functools import wraps
 import math
-import warnings
 
 try:
     from cdecimal import Decimal, InvalidOperation
@@ -422,34 +421,40 @@ class NumberColumn(Column):
 
         Will raise :exc:`>.NullComputationError` if this column contains nulls.
         """
-        data_sorted = sorted(self._data_without_nulls())
+        data = self._data_sorted()
+
         if one_pct and one_pct % 1 != 0:
             raise ValueError('Percentile needs to be a whole number.')
         if one_pct and not 100 >= one_pct >= 1:
             raise ValueError('Percentile must be an integer less than or equal to 100 and greater than or equal to 1.')
 
-        def percentiler(data_sorted, percent, key=lambda x:x):
-            if not data_sorted: # Yoda logic!
+        def percentiler(data, percent, key=lambda x:x):
+            if not data:
                 return None
-            k = (len(data_sorted)-1) * percent
+
+            k = (len(data)-1) * percent
             k = Decimal(k)
-            f = math.floor(k)
-            f = Decimal(f)
-            c = math.ceil(k)
-            c = Decimal(c)
+
+            f = Decimal(math.floor(k))
+            c = Decimal(math.ceil(k))
+
             if f == c:
-                return key(data_sorted[int(k)])
-            d0 = key(data_sorted[int(f)]) * (c-k)
-            d1 = key(data_sorted[int(c)]) * (k-f)
-            return d0+d1
+                return key(data[int(k)])
+            
+            d0 = key(data[int(f)]) * (c - k)
+            d1 = key(data[int(c)]) * (k - f)
+            
+            return d0 + d1
 
         if one_pct:
-            return [percentiler(data_sorted, (one_pct * .01), key=lambda x:x)]
+            return percentiler(data, (one_pct * .01), key=lambda x:x)
         else:
             percentile_list = []
+
             for each_pct in range(1, 101):
                 percent = each_pct * .01
-                percentile_list.append(percentiler(data_sorted, percent))
+                percentile_list.append(percentiler(data, percent))
+            
             return percentile_list
 
 class NumberType(ColumnType):

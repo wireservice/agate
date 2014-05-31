@@ -238,20 +238,31 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(counts[None], 1)
 
     def test_percentile(self):
-        rows = (
-            (1, 2, 'a'),
-            (2, 3, 'b'),
-            (None, 4, 'c'),
-            (1, 2, 'a'),
-            (1, 2, 'a')
-        )
+        rows = [(n,) for n in range(0, 101)]
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, (self.number_type,), ('ints',))
 
-        self.assertEqual(table.columns['two'].percentile(25), [Decimal(2)])
-        self.assertEqual(table.columns['two'].percentile(50), [Decimal(2)])
-        self.assertEqual(table.columns['two'].percentile(75), [Decimal(3)])
-#        self.assertEqual(table.columns['two'].percentile(), 1)
+        self.assertEqual(table.columns['ints'].percentile(25), Decimal(25))
+        self.assertEqual(table.columns['ints'].percentile(50), Decimal(50))
+        self.assertEqual(table.columns['ints'].percentile(75), Decimal(75))
+        self.assertEqual(table.columns['ints'].percentile(100), Decimal(100))
+
+    def test_percentile_range(self):
+        rows = [(n,) for n in range(0, 101)]
+
+        table = Table(rows, (self.number_type,), ('ints',))
+
+        self.assertEqual(table.columns['ints'].percentile()[24], Decimal(25))
+        self.assertEqual(table.columns['ints'].percentile()[49], Decimal(50))
+        self.assertEqual(table.columns['ints'].percentile()[74], Decimal(75))
+        self.assertEqual(table.columns['ints'].percentile()[99], Decimal(100))
+
+    def test_percentile_invalid(self):
+        rows = (())
+
+        table = Table(rows, (self.number_type,), ('ints',))
+
+        self.assertEqual(table.columns['ints'].percentile(7), None)
 
 class TestTextColumn(unittest.TestCase):
     def test_max_length(self):
