@@ -419,7 +419,7 @@ class NumberColumn(Column):
 
         Returns a list of the percentiles.
 
-        Will raise :exc:`>.NullComputationError` if this column contains nulls.
+        Will raise :exc:`.NullComputationError` if this column contains nulls.
         """
         data = self._data_sorted()
 
