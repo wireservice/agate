@@ -1,6 +1,8 @@
 0.4.0
 -----
 
+* Wrote introductory tutorial.
+* Reorganize documentation (#132) 
 * Add John Heasly to AUTHORS.
 * Implement percentile. (#35)
 * no_null_computations now accepts args. (#122)
