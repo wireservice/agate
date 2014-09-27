@@ -7,8 +7,8 @@ About
 
 .. include:: ../README
 
-Features
-========
+Why journalism?
+===============
 
 Why use journalism?
 
@@ -22,72 +22,8 @@ Why use journalism?
 * Extensive user documentation.
 * Access to the full power of Python in every command.
 
-Principles
-==========
-
-journalism is a intended to fill a very particular programming niche, that of non-professional data analysts who need to get shit done quickly. These are the principles of its development: 
-
-* Humans have less time than computers. Always optimize for humans.
-* Most datasets are simple and small. Never optimize for quants.
-* Text is data. It must be a first-class citizen.
-* Python gets it right. Make it work like Python does. 
-* Humans are busy, stupid, lazy, etc. It must be easy.
-* Mutability is confusion. Processes that alter data must create new copies.
-
-But why not...
-
-* numpy: It's hard.
-* pandas: It's hard.
-* R: Don't even get me started.
-* SAS: You have that kind of money?
-* SQL: It's not code.
-* An ORM: Have you actually tried this?
-
-I'm not reinventing the wheel, I'm just putting on the right size tires.
-
-Installation
-============
-
-Users
------
-
-If you only want to use journalism, install it this way::
-
-    pip install journalism 
-
-.. note::
-
-    Need more speed? If you're running Python 2.6, 2.7 or 3.2, you can :code:`pip install cdecimal` for a significant speed boost. This isn't installed automatically because it can create additional complications.
-
-Developers
-----------
-
-If you are a developer that also wants to hack on journalism, install it this way::
-
-    git clone git://github.com/onyxfish/journalism.git
-    cd journalism
-    mkvirtualenv --no-site-packages journalism
-    pip install -r requirements.txt
-    python setup.py develop
-    nosetests --with-coverage --cover-package=journalism
-
-.. note::
-
-    `requirements.txt` assumes you are using Python 2 as your primary development environment. If you are developing on Python 3, you'll need to `pip install python-dateutil>=2.0` to upgrade to a the correct version.
-
-Supported platforms
--------------------
-
-journalism supports the following versions of Python:
-
-* Python 2.6+
-* Python 3.2+
-* Latest `PyPy <http://pypy.org/>`_
-
-It is tested on OSX, but due to it's minimal dependencies should work fine on both Linux and Windows.
-
-Usage
-=====
+Example usage
+=============
 
 Here is an example of how to use journalism, using financial aid data from data.gov:
 
@@ -162,35 +98,16 @@ Here is an example of how to use journalism, using financial aid data from data.
 
     print('Standard deviation of totals: %.2f' % stdev)
 
-Cookbook
-========
 
-Need some more specific examples? Try these out:
+Table of contents
+=================
 
 .. toctree::
     :maxdepth: 3 
-
+    
+    install
+    api 
     cookbook
-
-API
-===
-
-.. toctree::
-    :maxdepth: 2
-
-    api/columns
-    api/exceptions
-    api/rows
-    api/table
-
-Contributing
-============
-
-Want to hack on journalism? Here's how:
-
-.. toctree::
-    :maxdepth: 2
-
     contributing
 
 Authors

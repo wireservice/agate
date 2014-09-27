@@ -2,10 +2,28 @@
 Contributing to journalism 
 ==========================
 
-Welcome!
-========
+Principles
+==========
 
-Thanks for your interest in contributing to journalism. There is work be done by developers of all skill levels.
+journalism is a intended to fill a very particular programming niche, that of non-professional data analysts who need to get shit done quickly. These are the principles of its development: 
+
+* Humans have less time than computers. Always optimize for humans.
+* Most datasets are simple and small. Never optimize for quants.
+* Text is data. It must be a first-class citizen.
+* Python gets it right. Make it work like Python does. 
+* Humans are busy, stupid, lazy, etc. It must be easy.
+* Mutability is confusion. Processes that alter data must create new copies.
+
+But why not...
+
+* numpy: It's hard.
+* pandas: It's hard.
+* R: Don't even get me started.
+* SAS: You have that kind of money?
+* SQL: It's not code.
+* An ORM: Have you actually tried this?
+
+I'm not reinventing the wheel, I'm just putting on the right size tires.
 
 Process for contributing code
 =============================
