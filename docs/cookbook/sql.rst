@@ -148,6 +148,6 @@ journalism:
 
 .. code-block:: python
 
-    new_table = patient.aggregate('doctor', { 'age': 'mean' })
+    new_table = patient.aggregate('doctor', (('age', 'mean'), ))
 
 

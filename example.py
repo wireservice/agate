@@ -2,67 +2,76 @@
 
 import csv
 
-from journalism import Table, TextType, NumberType
+from journalism import Table, DateType, NumberType, TextType
 
 text_type = TextType()
 number_type = NumberType()
+date_type = DateType()
 
 COLUMNS = ( 
     ('state', text_type),
-    ('state_abbr', text_type),
-    ('9_11_gi_bill1', number_type),
-    ('montogomery_gi_bill_active', number_type),
-    ('montgomery_gi_bill_reserve', number_type),
-    ('dependants', number_type),
-    ('reserve', number_type),
-    ('vietnam', number_type),
-    ('total', number_type)
+    ('county', text_type),
+    ('fips', text_type),
+    ('nsn', text_type),
+    ('item_name', text_type),
+    ('quantity', number_type),
+    ('ui', text_type),
+    ('acquisition_cost', number_type),
+    ('total_cost', number_type),
+    ('ship_date', date_type),
+    ('federal_supply_category', text_type),
+    ('federal_supply_category_name', text_type),
+    ('federal_supply_class', text_type),
+    ('federal_supply_class_name', text_type),
 )
 
-COLUMN_NAMES = tuple(c[0] for c in COLUMNS)
-COLUMN_TYPES = tuple(c[1] for c in COLUMNS)
+COLUMN_NAMES = [c[0] for c in COLUMNS]
+COLUMN_TYPES = [c[1] for c in COLUMNS]
 
-with open('examples/realdata/Datagov_FY10_EDU_recp_by_State.csv') as f:
-    # Skip headers
+with open('examples/realdata/ks_1033_data.csv') as f:
+    # Create a csv reader
+    reader = csv.reader(f)
+
+    # Skip header
     next(f)
-    next(f)
-    next(f)
 
-    rows = list(csv.reader(f))
+    # Create the table
+    table = Table(reader, COLUMN_TYPES, COLUMN_NAMES)
 
-# Trim cruft off end
-rows = rows[:-2]
+# Filter to counties containing Kansas City
+kansas_city = table.where(lambda r: r['county'] in ('JACKSON', 'CLAY', 'CASS', 'PLATTE'))
 
-# Create the table
-table = Table(rows, COLUMN_TYPES, COLUMN_NAMES)
+# Sum total_cost of four counties
+print('Total for Kansas City area: %i' % kansas_city.columns['total_cost'].sum())
 
-# Remove Phillipines and Puerto Rico
-states = table.where(lambda r: r['state_abbr'] not in ('PR', 'PH'))
+# Aggregate totals for all counties
+totals = table.aggregate('county', (( 'total_cost', 'sum' ),)).order_by('total_cost_sum', reverse=True).rows[:5]
 
-# Sum total of all states
-print('Total of all states: %i' % states.columns['total'].sum())
+print('Five most spendy counties:')
 
-# Sort state total, descending
-order_by_total_desc = states.order_by('total', reverse=True)
+for i, row in enumerate(totals):
+    text = '# {}: {}, ${:,}'.format(i + 1, row['county'], row['total_cost_sum'])
+    print(text)
 
-# Grab just the top 5 states
-top_five = order_by_total_desc.rows[:5]
+# Get the five most recent purchases 
+recent_five = table.order_by('ship_date', reverse=True).rows[:5]
 
-for i, row in enumerate(top_five):
-    print('# %i: %s %i' % (i, row['state'], row['total']))
+print type(recent_five)
+print recent_five
 
-with open('sorted.csv', 'w') as f:
-    writer = csv.writer(f)
+print('Five most recent purchases:')
 
-    writer.writerow(order_by_total_desc.get_column_names())
-    writer.writerows(order_by_total_desc.rows)
+for row in recent_five:
+    text = '{}: {} {}, ${:,}'.format(row['ship_date'], row['quantity'], row['item_name'], row['total_cost'])
+    print(text)
 
-# Grab just the bottom state
-last_place = order_by_total_desc.rows[-1]
+# Calculate the standard of deviation for the total_costs 
+stdev = table.columns['total_cost'].stdev()
 
-print('Lowest state: %(state)s %(total)i' % last_place)
+print('Standard deviation of total_cost: %.2f' % stdev)
 
-# Calculate the standard of deviation for the state totals
-stdev = states.columns['total'].stdev()
+# How many roborts were purchased?
+robots = table.where(lambda r: 'ROBOT' in (r['item_name'] or [])).columns['quantity'].sum()
 
-print('Standard deviation of totals: %.2f' % stdev)
+print('Number of robots purchased: %i' % robots)
+

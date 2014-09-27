@@ -28,7 +28,7 @@ You can also generate aggregate statistics for subsets of data (sometimes colloq
 
 .. code-block:: python
 
-    summary = table.aggregate('profession', { 'salary': 'mean', 'salary': 'median' }) 
+    summary = table.aggregate('profession', (('salary', 'mean'), ('salary': 'median'))) 
 
 A "count" column is always return in the results. The :code:`summary` table in this example would have these columns: :code:`('profession', 'profession_count', 'salary_mean', 'salary_median')`.
 

@@ -479,9 +479,8 @@ class Table(object):
         'group_by_count', 'column_one_operation', ...)`.
 
         :param group_by: The name of a column to group by. 
-        :param operations: A :class:`dict: where the keys are column names
-            and the values are the names of :class:`.Column` methods, such
-            as "sum" or "max_length".
+        :param operations: An iterable of pairs of column names and the 
+            names of :class:`.Column` methods, such as "sum" or "max_length".
         :returns: A new :class:`Table`.
         :raises: :exc:`.ColumnDoesNotExistError`, :exc:`.UnsupportedOperationError`
         """
