@@ -27,10 +27,6 @@ If you are a developer that also wants to hack on journalism, install it this wa
 
 .. note::
 
-    `requirements.txt` assumes you are using Python 2 as your primary development environment. If you are developing on Python 3, you'll need to `pip install python-dateutil>=2.0` to upgrade to a the correct version.
-
-.. note::
-
     journalism also supports running tests with coverage:: 
 
         nosetests --with-coverage --cover-package=journalism

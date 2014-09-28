@@ -1,6 +1,7 @@
 0.4.0
 -----
 
+* Upgrade to python-dateutil 2.2. (#134)
 * Wrote introductory tutorial. (#133)
 * Reorganize documentation (#132) 
 * Add John Heasly to AUTHORS.

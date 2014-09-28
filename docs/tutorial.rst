@@ -55,7 +55,7 @@ Now let's import our dependencies:
 Defining the columns
 ====================
 
-For every column in our dataset journalism requires us to define a type. Because journalism is focused on specific analysis of data (rather than casual viewing), no effort is made to determine these types for you. However, :py:class:`journalism.columns.TextType` is always a safe choice if you aren't sure what is in a column.
+journalism requires us to define a type for each column in our dataset. No effort is made to determine these types automatically, however, :py:class:`journalism.columns.TextType` is always a safe choice if you aren't sure what is in a column.
 
 First we create instances of the column types we will be using:
 
@@ -103,7 +103,7 @@ Now let's read the data in the CSV file and use it to create the table.
 .. code-block:: python
 
     # Open the file
-    f = open('examples/realdata/ks_1033_data.csv')
+    f = open('ks_1033_data.csv')
 
     # Create a CSV reader
     reader = csv.reader(f)
@@ -117,7 +117,7 @@ Now let's read the data in the CSV file and use it to create the table.
     # Close the file
     f.close()
 
-:py:class:`journalism.table.Table` will accept any iterable (array) of iterables (rows)  as it's first argument. In this case we're using a CSV reader. Note that the data is copied when the table is constructed so it safe to close the file handler.
+:py:class:`journalism.table.Table` will accept any iterable (array) of iterables (rows)  as it's first argument. In this case we're using a CSV reader. Note that the data is copied when the table is constructed so it safe to close the file handler immediately.
 
 Filtering and column operations 
 ===============================
@@ -135,7 +135,7 @@ First, let's filter the data to just the four counties that contain Kansas city:
 
 You'll notice we provide a :py:obj:`lambda` (anonymous) function to the :py:meth:`journalism.table.Table.where`. This function is applied to each row and if it returns ``True``, the row is included in the output table.
 
-A crucial thing to understand about journalism is that **table methods return tables**. (If you're familiar with `jQuery <https://jquery.com/>`_, this is analogous to the way the methods of the $ object work.) ``table`` was a :py:class:`journalism.table.Table` instance and we applied the ``where`` method, so ``kansas_city`` is too. **Tables themselves are immutable. You can not modify the data of a table--only create new tables from them.**
+A crucial thing to understand about journalism is that **table methods return tables**. (If you're familiar with `jQuery <https://jquery.com/>`_, this is analogous to the way the methods of the $ object work.) ``table`` was a :py:class:`journalism.table.Table` instance and we applied the ``where`` method, so ``kansas_city`` is too. **Tables themselves are immutable. You can not modify the data of a table--only derive new tables.**
 
 You can access a dictionary of the columns of a table using the ``columns`` attribute. Each column is a subclass of :py:class:`journalism.columns.Column` and has a variety of aggregation functions that can be applied to it such as ``min``, ``max``, ``sum``, etc. Which aggregation functions are available depends on the type of the column.
 
@@ -160,6 +160,10 @@ To make sure this is clear, let's look at a second example. Question: **How many
 ::
 
     14 
+
+.. note::
+
+    The ``(r['item_name'] or '')`` clause prevents an exception if the ``item_name`` column was ``None`` (blank) for any rows.
 
 Sorting and slicing
 ===================
