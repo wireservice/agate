@@ -1,7 +1,7 @@
 0.4.0
 -----
 
-* Wrote introductory tutorial.
+* Wrote introductory tutorial. (#133)
 * Reorganize documentation (#132) 
 * Add John Heasly to AUTHORS.
 * Implement percentile. (#35)
