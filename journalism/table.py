@@ -8,9 +8,10 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-from journalism.columns import ColumnMapping, NumberType 
+from journalism.columns import ColumnMapping, NumberType, _pearson_correlation
 from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError, NullComputationError
 from journalism.rows import RowSequence, Row
+
 
 class Table(object):
     """
@@ -242,24 +243,8 @@ class Table(object):
         if x.has_nulls() or y.has_nulls():
             raise NullComputationError
 
-        n = len(x)
+        return _pearson_correlation(x, y)
 
-        sum_x = x.sum()
-        sum_y = y.sum()
-
-        square = lambda x: pow(x,2)
-        sum_x_sq = sum(map(square, x))
-        sum_y_sq = sum(map(square, y))
-
-        product_sum = sum((x_val * y_val for x_val, y_val in zip(x, y)))
-
-        pearson_numerator = product_sum - (sum_x * sum_y / n)
-        pearson_denominator = ((sum_x_sq - pow(sum_x, 2) / n) * (sum_y_sq - pow(sum_y, 2) / n)).sqrt()
-
-        if pearson_denominator == 0:
-            return 0
-
-        return pearson_numerator / pearson_denominator
 
     def order_by(self, key, reverse=False):
         """

@@ -19,6 +19,7 @@ from dateutil.parser import parse
 import six
 
 from journalism.exceptions import ColumnDoesNotExistError, NullComputationError, CastError
+from math import log10, floor
 
 #: String values which will be automatically cast to :code:`None`.
 NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
@@ -60,6 +61,35 @@ def _median(data_sorted):
         b = data_sorted[half]
 
     return (a + b) / 2
+
+def _pearson_correlation(x, y):
+    """
+    Calculates the `Pearson correlation coefficient <http://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient>`_
+    for :code:`x` and :code:`y`.
+
+    :param x: A list of values.
+    :param y: A list of values.
+    :returns: :class:`decimal.Decimal`.
+    """
+    n = len(x)
+
+    sum_x = sum(x)
+    sum_y = sum(y)
+
+    square = lambda x: pow(x, 2)
+    sum_x_sq = sum(map(square, x))
+    sum_y_sq = sum(map(square, y))
+
+    product_sum = sum((x_val*y_val for x_val, y_val in zip(x, y)))
+
+    pearson_numerator = product_sum - (sum_x * sum_y / n)
+    pearson_denominator = ((sum_x_sq - pow(sum_x, 2) / n) * (sum_y_sq - pow(sum_y, 2) / n)).sqrt()
+
+    if pearson_denominator == 0:
+        return 0
+
+    return pearson_numerator/pearson_denominator
+
 
 class ColumnMapping(Mapping):
     """
@@ -412,6 +442,42 @@ class NumberColumn(Column):
         return _median(tuple(abs(n - m) for n in data))
 
     @no_null_computations
+    def benfords_law(self, sign='positive'):
+        """
+        Tests whether this column conforms to `Benford's Law <http://en.wikipedia.org/wiki/Benford's_law>'_.
+        Returns the Pearson correlation coefficient for the correlation between the observed proportion of 
+        first digits and the proportions predicted by Benford's Law. 
+        This is a number between -1 and 1. The closer the number is to 1, the more the column conforms to Benford's Law.
+
+        :param sign: The sign of the numbers to test. Can be :code:`positive`, :code:`negative` or :code:`both`. 
+        :returns: :class:`decimal.Decimal`.
+        :raises: :exc:`.NullComputationError`
+        """
+        sign_filter = {'positive': lambda x: x>0,
+                      'negative': lambda x: x<0,
+                      'both': lambda x: x!=0}
+
+        if sign not in sign_filter.keys():
+            raise ValueError('Sign must be one of %s' % ', '.join(sign_filter.keys()))
+
+        number_filter = sign_filter[sign]
+        data = [num for num in self._data() if number_filter(num)]
+
+        power_10 = lambda x: floor(log10(abs(x)))
+        first_significant_digit = lambda x: abs(int(float(x)*10**-(power_10(x))))
+        first_digits = [first_significant_digit(num) for num in data]
+
+        digit_counts = [0]*9
+        for digit in first_digits:
+            digit_counts[digit-1] += 1
+
+        len_data = len(data)
+        digit_proportions = [Decimal(x)/len_data for x in digit_counts]
+
+        benford_distribution = [Decimal(log10(1 + 1./x)) for x in range(1, 10)]
+
+        return _pearson_correlation(benford_distribution, digit_proportions)
+
     def percentile(self, one_pct=None):
         """
         Compute the `percentile <http://stackoverflow.com/questions/2374640/how-do-i-calculate-percentiles-with-python-numpy/2753343#2753343>`_

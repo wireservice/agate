@@ -355,6 +355,23 @@ class TestNumberColumn(unittest.TestCase):
 
         self.assertAlmostEqual(self.table.columns['two'].mad(), Decimal('0'))
 
+    def test_benfords_law(self):
+        self.rows = (
+            (Decimal('1.1'), Decimal('2.19'), 'a'),
+            (Decimal('2.7'), Decimal('3.42'), 'b'),
+            (None, Decimal('4.1'), 'c'),
+            (Decimal('2.7'), Decimal('3.42'), 'c'),
+            (Decimal('2.7'), Decimal('-2.42'), 'd')
+        )
+        self.table = Table(self.rows, self.column_types, self.column_names)
+
+        with self.assertRaises(NullComputationError):
+            self.table.columns['one'].benfords_law()
+
+        self.assertAlmostEqual(self.table.columns['two'].benfords_law().quantize(Decimal('0.001')), Decimal('0.164'))
+        self.assertAlmostEqual(self.table.columns['two'].benfords_law('negative').quantize(Decimal('0.001')), Decimal('0.296'))
+        self.assertAlmostEqual(self.table.columns['two'].benfords_law('both').quantize(Decimal('0.001')), Decimal('0.247'))
+
 class TestDateColumn(unittest.TestCase):
     def test_min(self):
         column = DateColumn(None, 'one')
