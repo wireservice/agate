@@ -23,11 +23,14 @@ We can use :meth:`.Table.compute` to apply the quantize to generate a rounded co
 .. code-block:: python
 
     from decimal import Decimal
+    from journalism import NumberType
+    
+    number_type = NumberType()
 
     def round_price(row):
         return row['price'].quantize(Decimal('0.01'))
 
-    new_table = table.compute('price_rounded', DecimalColumn, round_price)
+    new_table = table.compute('price_rounded', number_type, round_price)
 
 To round to one decimal place you would simply change :code:`0.01` to :code:`0.1`.
 
