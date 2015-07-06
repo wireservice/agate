@@ -254,7 +254,10 @@ class TextType(ColumnType):
             if d.lower() in NULL_VALUES:
                 return None 
 
-        return six.text_type(d)
+        try:
+            return six.text_type(d)
+        except UnicodeDecodeError:
+            return six.text_type(d.decode('utf-8'))
 
     def _create_column(self, table, index):
         return TextColumn(table, index)
