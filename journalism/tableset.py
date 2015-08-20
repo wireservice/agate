@@ -15,6 +15,23 @@ except ImportError: # pragma: no cover
 from journalism.columns import ColumnMapping
 from journalism.rows import RowSequence
 
+class TableMethodProxy(object):
+    """
+    A proxy for :class:`TableSet` methods that converts them to individual
+    calls on each :class:`Table` in the set.
+    """
+    def __init__(self, tableset, method_name):
+        self.tableset = tableset
+        self.method_name = method_name
+
+    def __call__(self, *args, **kwargs):
+        groups = OrderedDict()
+
+        for name, table in self.tableset._tables.items():
+            groups[name] = getattr(table, self.method_name)(*args, **kwargs)
+
+        return TableSet(groups)
+
 class TableSet(Mapping):
     """
     An group of named tables with identical column definitions. Supports
@@ -48,6 +65,10 @@ class TableSet(Mapping):
         self.columns = ColumnMapping(self)
         self.rows = RowSequence(self)
 
+        self.select = TableMethodProxy(self, 'select')
+        self.where = TableMethodProxy(self, 'where')
+        self.order_by = TableMethodProxy(self, 'order_by')
+
     def __getitem__(self, k):
         return self._tables.__getitem__(k)
 
@@ -75,18 +96,6 @@ class TableSet(Mapping):
         # TODO: return virtual row
         raise NotImplementedError()
 
-    def _proxy(self, method_name, *args, **kwargs):
-        """
-        Proxy data processing methods over the full set of tables and return
-        a new :class:`TableSet`.
-        """
-        groups = OrderedDict()
-
-        for name, table in self._tables.items():
-            groups[name] = getattr(table, method_name)(*args, **kwargs)
-
-        return TableSet(groups)
-
     def get_column_types(self):
         """
         Get an ordered list of this :class:`.TableSet`'s column types.
@@ -102,12 +111,3 @@ class TableSet(Mapping):
         :returns: A :class:`tuple` of strings.
         """
         return self._column_names
-
-    def select(self, column_names):
-        return self._proxy('select', column_names)
-
-    def where(self, test):
-        return self._proxy('where', test)
-
-    def order_by(self, key, reverse=False):
-        return self._proxy('order_by', key, reverse=reverse)

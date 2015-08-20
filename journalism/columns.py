@@ -220,6 +220,23 @@ class Column(Sequence):
 
         return counts
 
+class ColumnMethodProxy(object):
+    """
+    A proxy for :class:`ColumnSet` methods that converts them to individual
+    calls on the ':class:`Column`'s of each :class:`Table` in the set.
+    """
+    def __init__(self, columnset, method_name):
+        self.columnset = columnset
+        self.method_name = method_name
+
+    def __call__(self, *args, **kwargs):
+        output = OrderedDict()
+
+        for key, table in self.columnset._tableset.items():
+            output[key] = getattr(table._get_column(self.columnset._index), self.method_name)(*args, **kwargs)
+
+        return output
+
 class ColumnSet(object):
     """
     A 'virtual' column that proxies :class:`.TableSet` column operations across
@@ -228,6 +245,18 @@ class ColumnSet(object):
     def __init__(self, tableset, index):
         self._tableset = tableset
         self._index = index
+
+        self.__unicode__ = ColumnMethodProxy(self, '__unicode__')
+        self.__str__ = ColumnMethodProxy(self, '__str__')
+        self.__getitem__ = ColumnMethodProxy(self, '__getitem__')
+        self.__len__ = ColumnMethodProxy(self, '__len__')
+        self.__eq__ = ColumnMethodProxy(self, '__eq__')
+        self.__ne__ = ColumnMethodProxy(self, '__ne__')
+        self.has_nulls = ColumnMethodProxy(self, 'has_nulls')
+        self.any = ColumnMethodProxy(self, 'any')
+        self.all = ColumnMethodProxy(self, 'all')
+        self.count = ColumnMethodProxy(self, 'count')
+        self.counts = ColumnMethodProxy(self, 'counts')
 
     def _proxy(self, method_name, *args, **kwargs):
         """
@@ -240,39 +269,6 @@ class ColumnSet(object):
             output[key] = getattr(table._get_column(self._index), method_name)(*args, **kwargs)
 
         return output
-
-    def __unicode__(self):
-        return self._proxy('__unicode__')
-
-    def __str__(self):
-        return self._proxy('__str__')
-
-    def __getitem__(self, j):
-        return self._proxy('__getitem__', j)
-
-    def __len__(self):
-        return self._proxy('__len__')
-
-    def __eq__(self, other):
-        return self._proxy('__eq__', other)
-
-    def __ne__(self, other):
-        return self._proxy('__ne__', other)
-
-    def has_nulls(self):
-        return self._proxy('has_nulls')
-
-    def any(self, test):
-        return self._proxy('any', test)
-
-    def all(self, test):
-        return self._proxy('all', test)
-
-    def count(self, value):
-        return self._proxy('count', value)
-
-    def counts(self):
-        return self._proxy('counts')
 
 class ColumnType(object):
     """
@@ -295,8 +291,10 @@ class TextColumnSet(ColumnSet):
     """
     See :class:`ColumnSet` and :class:`TextColumn`.
     """
-    def max_length(self):
-        return self._proxy('max_length')
+    def __init__(self, *args, **kwargs):
+        super(TextColumnSet, self).__init__(*args, **kwargs)
+
+        self.max_length = ColumnMethodProxy(self, 'max_length')
 
 class TextType(ColumnType):
     """
@@ -346,11 +344,7 @@ class BooleanColumnSet(ColumnSet):
     """
     See :class:`ColumnSet` and :class:`BooleanColumn`.
     """
-    def any(self):
-        return _proxy('any')
-
-    def all(self):
-        return _proxy('all')
+    pass
 
 class BooleanType(ColumnType):
     """
@@ -540,35 +534,19 @@ class NumberColumnSet(ColumnSet):
     """
     See :class:`ColumnSet` and :class:`NumberColumn`.
     """
-    def sum(self):
-        return self._proxy('sum')
+    def __init__(self, *args, **kwargs):
+        super(NumberColumnSet, self).__init__(*args, **kwargs)
 
-    def min(self):
-        return self._proxy('min')
-
-    def max(self):
-        return self._proxy('max')
-
-    def mean(self):
-        return self._proxy('mean')
-
-    def median(self):
-        return self._proxy('median')
-
-    def mode(self):
-        return self._proxy('mode')
-
-    def variance(self):
-        return self._proxy('variance')
-
-    def stdev(self):
-        return self._proxy('stdev')
-
-    def mad(self):
-        return self._proxy('mad')
-
-    def percentile(self, one_pct=None):
-        return self._proxy('percentile', one_pct=one_pct)
+        self.sum = ColumnMethodProxy(self, 'sum')
+        self.min = ColumnMethodProxy(self, 'min')
+        self.max = ColumnMethodProxy(self, 'max')
+        self.mean = ColumnMethodProxy(self, 'mean')
+        self.median = ColumnMethodProxy(self, 'median')
+        self.mode = ColumnMethodProxy(self, 'mode')
+        self.variance = ColumnMethodProxy(self, 'variance')
+        self.stdev = ColumnMethodProxy(self, 'stdev')
+        self.mad = ColumnMethodProxy(self, 'mad')
+        self.percentile = ColumnMethodProxy(self, 'percentile')
 
 class NumberType(ColumnType):
     """
@@ -628,11 +606,11 @@ class DateColumnSet(ColumnSet):
     """
     See :class:`ColumnSet` and :class:`DateColumn`.
     """
-    def min(self):
-        return self._proxy('min')
+    def __init__(self, *args, **kwargs):
+        super(DateColumnSet, self).__init__(*args, **kwargs)
 
-    def max(self):
-        return self._proxy('max')
+        self.min = ColumnMethodProxy(self, 'min')
+        self.max = ColumnMethodProxy(self, 'max')
 
 class DateType(ColumnType):
     """
@@ -694,11 +672,11 @@ class DateTimeColumnSet(ColumnSet):
     """
     See :class:`ColumnSet` and :class:`DateTimeColumn`.
     """
-    def min(self):
-        return self._proxy('min')
+    def __init__(self, *args, **kwargs):
+        super(DateTimeColumnSet, self).__init__(*args, **kwargs)
 
-    def max(self):
-        return self._proxy('max')
+        self.min = ColumnMethodProxy(self, 'min')
+        self.max = ColumnMethodProxy(self, 'max')
 
 class DateTimeType(ColumnType):
     """
