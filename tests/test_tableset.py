@@ -65,6 +65,17 @@ class TestTable(unittest.TestCase):
             self.assertSequenceEqual(new_table._column_types, (self.number_type,))
             self.assertSequenceEqual(new_table._column_names, ('number',))
 
+    def test_column_any(self):
+        tableset = TableSet(self.tables)
+
+        max_lengths = tableset.columns['letter'].any(lambda d: d == 'b')
+
+        self.assertEqual(max_lengths, {
+            'table1': True,
+            'table2': True,
+            'table3': False
+        })
+
     def test_column_max_length(self):
         tableset = TableSet(self.tables)
 
