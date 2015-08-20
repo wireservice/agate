@@ -38,11 +38,11 @@ class ColumnDoesNotExistError(Exception):  # pragma: no cover
     Exception raised when trying to access a column that does
     not exist.
 
-    :param k: The key used to access the non-existaent :class:`.Column`.
+    :param k: The key used to access the non-existent :class:`.Column`.
     """
     def __init__(self, k):
         self.k = k
-    
+
     def __unicode__(self):
         return 'Column `%s` does not exist.' % (self.k)
 
@@ -58,7 +58,7 @@ class RowDoesNotExistError(Exception):  # pragma: no cover
     """
     def __init__(self, i):
         self.i = i
-    
+
     def __unicode__(self):
         return 'Row `%i` does not exist.' % (self.i)
 
