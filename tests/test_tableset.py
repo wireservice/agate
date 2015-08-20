@@ -57,6 +57,37 @@ class TestTable(unittest.TestCase):
     def test_select(self):
         tableset = TableSet(self.tables)
 
+        def joiner(r):
+            return '%(letter)s-%(number)i' % r
+
+        new_tableset = tableset.compute('new_column', self.text_type, joiner)
+
+        new_table = new_tableset['table1']
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 3)
+        self.assertSequenceEqual(new_table._column_types, (self.text_type, self.number_type, self.text_type,))
+        self.assertSequenceEqual(new_table._column_names, ('letter', 'number', 'new_column',))
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 1, 'a-1'))
+        self.assertSequenceEqual(new_table.rows[1], ('a', 3, 'a-3'))
+        self.assertSequenceEqual(new_table.rows[2], ('b', 2, 'b-2'))
+
+        new_table = new_tableset['table2']
+
+        self.assertSequenceEqual(new_table.rows[0], ('b', 0, 'b-0'))
+        self.assertSequenceEqual(new_table.rows[1], ('a', 2, 'a-2'))
+        self.assertSequenceEqual(new_table.rows[2], ('c', 5, 'c-5'))
+
+        new_table = new_tableset['table3']
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 1, 'a-1'))
+        self.assertSequenceEqual(new_table.rows[1], ('a', 2, 'a-2'))
+        self.assertSequenceEqual(new_table.rows[2], ('c', 3, 'c-3'))
+
+    def test_compute(self):
+        tableset = TableSet(self.tables)
+
         new_tableset = tableset.select(['number'])
 
         for name, new_table in new_tableset.items():
