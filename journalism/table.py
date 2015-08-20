@@ -11,13 +11,14 @@ except ImportError: # pragma: no cover
 from journalism.columns import ColumnMapping, NumberType
 from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError, NullComputationError
 from journalism.rows import RowSequence, Row
+from journalism.tableset import TableSet
 
 class Table(object):
     """
     A dataset consisting of rows and columns.
 
     :param rows: The data as a sequence of any sequences: tuples, lists, etc.
-    :param column_types: A sequence of instances of:class:`.ColumnType`,
+    :param column_types: A sequence of instances of :class:`.ColumnType`,
         one per column of data.
     :param column_names: A sequence of strings that are names for the columns.
 
@@ -463,7 +464,7 @@ class Table(object):
         for group, rows in groups.items():
             output[group] = self._fork(rows)
 
-        return output
+        return TableSet(output)
 
     def aggregate(self, group_by, operations):
         """
@@ -577,7 +578,7 @@ class Table(object):
 
         :param key: Either the name of a column from the this table
             to rank by, or a :class:`function` that takes a row and returns
-            a value to rank by. 
+            a value to rank by.
         :param after_column_name: The name of the column containing the
             *after* values.
         :param new_column_name: The name of the resulting column.

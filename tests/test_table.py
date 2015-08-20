@@ -10,7 +10,7 @@ try:
 except ImportError:
     import unittest
 
-from journalism import Table
+from journalism import Table, TableSet
 from journalism.columns import TextType, NumberType
 from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
 
@@ -52,7 +52,7 @@ class TestTable(unittest.TestCase):
 
     def test_column_names_immutable(self):
         column_names = ['one', 'two', 'three']
-        
+
         table = Table(self.rows, self.column_types, column_names)
 
         column_names[0] = 'five'
@@ -75,12 +75,12 @@ class TestTable(unittest.TestCase):
         new_table = table.select(('three',))
 
         self.assertIsNot(new_table, table)
-        
+
         self.assertEqual(len(new_table.rows), 3)
         self.assertSequenceEqual(new_table.rows[0], ('a',))
         self.assertSequenceEqual(new_table.rows[1], ('b',))
         self.assertSequenceEqual(new_table.rows[2], ('c',))
-        
+
         self.assertEqual(len(new_table.columns), 1)
         self.assertSequenceEqual(new_table._column_types, (self.text_type,))
         self.assertSequenceEqual(new_table._column_names, ('three',))
@@ -111,12 +111,12 @@ class TestTable(unittest.TestCase):
         self.assertIs(row, None)
 
     def test_stdev_outliers(self):
-        rows = [ 
+        rows = [
             (50, 4, 'a'),
         ] * 10
-            
+
         rows.append((200, 1, 'b'))
-        
+
         table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.stdev_outliers('one')
@@ -125,12 +125,12 @@ class TestTable(unittest.TestCase):
         self.assertNotIn(200, new_table.columns['one'])
 
     def test_stdev_outliers_reject(self):
-        rows = [ 
+        rows = [
             (50, 4, 'a'),
         ] * 10
-            
+
         rows.append((200, 1, 'b'))
-        
+
         table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.stdev_outliers('one', reject=True)
@@ -139,12 +139,12 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['one'], (200,))
 
     def test_mad_outliers(self):
-        rows = [ 
+        rows = [
             (50, 4, 'a'),
         ] * 10
-            
+
         rows.append((200, 1, 'b'))
-        
+
         table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.mad_outliers('one')
@@ -153,12 +153,12 @@ class TestTable(unittest.TestCase):
         self.assertNotIn(200, new_table.columns['one'])
 
     def test_mad_outliers_reject(self):
-        rows = [ 
+        rows = [
             (50, 4, 'a'),
         ] * 10
-            
+
         rows.append((200, 1, 'b'))
-        
+
         table = Table(rows, self.column_types, self.column_names)
 
         new_table = table.mad_outliers('one', reject=True)
@@ -356,7 +356,7 @@ class TestTable(unittest.TestCase):
 
         self.assertEqual(len(new_table.rows), 1)
         self.assertSequenceEqual(new_table.rows[0], (2, 3))
-        
+
         self.assertEqual(len(new_table.columns), 2)
         self.assertSequenceEqual(new_table._column_types, (self.number_type, self.number_type))
         self.assertEqual(new_table._column_names, ('one', 'two'))
@@ -381,6 +381,7 @@ class TestTableGrouping(unittest.TestCase):
 
         new_tables = table.group_by('one')
 
+        self.assertIsInstance(new_tables, TableSet)
         self.assertEqual(len(new_tables), 3)
 
         self.assertIn('a', new_tables.keys())
@@ -471,8 +472,8 @@ class TestTableCompute(unittest.TestCase):
         new_table = self.table.compute('test', self.number_type, lambda r: r['two'] + r['three'])
 
         self.assertIsNot(new_table, self.table)
-        self.assertEqual(len(new_table.rows), 4) 
-        self.assertEqual(len(new_table.columns), 5) 
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
 
         self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 5))
         self.assertSequenceEqual(new_table.columns['test'], (5, 8, 6, 7))
@@ -481,8 +482,8 @@ class TestTableCompute(unittest.TestCase):
         new_table = self.table.percent_change('two', 'three', 'test')
 
         self.assertIsNot(new_table, self.table)
-        self.assertEqual(len(new_table.rows), 4) 
-        self.assertEqual(len(new_table.columns), 5) 
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
 
         to_one_place = lambda d: d.quantize(Decimal('0.1'))
 
@@ -629,7 +630,7 @@ class TestTableJoin(unittest.TestCase):
 
 class TestTableData(unittest.TestCase):
     def setUp(self):
-        self.rows = ( 
+        self.rows = (
             (1, 4, 'a'),
             (2, 3, 'b'),
             (None, 2, 'c')
@@ -641,7 +642,7 @@ class TestTableData(unittest.TestCase):
         self.column_types = [self.number_type, self.number_type, self.text_type]
 
     def test_data_immutable(self):
-        rows = [ 
+        rows = [
             [1, 4, 'a'],
             [2, 3, 'b'],
             [None, 2, 'c']
@@ -697,4 +698,3 @@ class TestTableData(unittest.TestCase):
         self.assertIsNot(table2._data[0], table3._data[0])
         self.assertNotEqual(table2._data[0], table3._data[0])
         self.assertSequenceEqual(table._data[0], (1, 4, 'a'))
-
