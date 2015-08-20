@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-This module contains the TableGroup object.
+This module contains the TableSet object.
 """
 
 from collections import Mapping
@@ -45,7 +45,6 @@ class TableSet(Mapping):
 
     :var columns: A :class:`.ColumnMapping` for accessing the
         :class:`.ColumnSet`s in this table.
-    :var rows: A :class:`.RowSequence` for accessing the rows in this table.
     """
     def __init__(self, group):
         self._column_types = group.values()[0].get_column_types()
@@ -63,11 +62,24 @@ class TableSet(Mapping):
         self._tables = copy(group)
 
         self.columns = ColumnMapping(self)
-        self.rows = RowSequence(self)
 
         self.select = TableMethodProxy(self, 'select')
         self.where = TableMethodProxy(self, 'where')
+        self.find = TableMethodProxy(self, 'find')
+        self.stdev_outliers = TableMethodProxy(self, 'stdev_outliers')
+        self.mad_outliers = TableMethodProxy(self, 'mad_outliers')
+        self.pearson_correlation = TableMethodProxy(self, 'pearson_correlation')
         self.order_by = TableMethodProxy(self, 'order_by')
+        self.limit = TableMethodProxy(self, 'limit')
+        self.distinct = TableMethodProxy(self, 'distinct')
+        self.inner_join = TableMethodProxy(self, 'inner_join')
+        self.left_outer_join = TableMethodProxy(self, 'left_outer_join')
+        # self.group_by = TableMethodProxy(self, 'group_by')
+        self.aggregate = TableMethodProxy(self, 'aggregate')
+        self.compute = TableMethodProxy(self, 'compute')
+        self.percent_change = TableMethodProxy(self, 'percent_change')
+        self.rank = TableMethodProxy(self, 'rank')
+        self.z_scores = TableMethodProxy(self, 'z_scores')
 
     def __getitem__(self, k):
         return self._tables.__getitem__(k)
@@ -88,13 +100,6 @@ class TableSet(Mapping):
             self._cached_columns[i] = column_type._create_column_set(self, i)
 
         return self._cached_columns[i]
-
-    def _get_row(self, i):
-        """
-        Get a Row of data, caching a copy for the next request.
-        """
-        # TODO: return virtual row
-        raise NotImplementedError()
 
     def get_column_types(self):
         """

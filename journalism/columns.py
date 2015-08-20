@@ -63,30 +63,31 @@ def _median(data_sorted):
 
 class ColumnMapping(Mapping):
     """
-    Proxy access to :class:`Column` instances by name.
+    Proxy access to :class:`Column` instances (for :class:`.Table`) or
+    :class:`ColumnSet` instances (for :class:`.TableSet`).
 
-    :param table: The :class:`.Table` containing the columns.
+    :param parent: The parent :class:`.Table` or :class:`.TableSet`.
     """
-    def __init__(self, table):
-        self._table = table
+    def __init__(self, parent):
+        self._parent = parent
         self._cached_len = None
 
     def __getitem__(self, k):
         try:
-            i = self._table._column_names.index(k)
+            i = self._parent._column_names.index(k)
         except ValueError:
             raise ColumnDoesNotExistError(k)
 
-        return self._table._get_column(i)
+        return self._parent._get_column(i)
 
     def __iter__(self):
-        return ColumnIterator(self._table)
+        return ColumnIterator(self._parent)
 
     def __len__(self):
         if self._cached_len is not None:
             return self._cached_len
 
-        self._cached_len = len(self._table._column_names)
+        self._cached_len = len(self._parent._column_names)
 
         return self._cached_len
 
@@ -269,6 +270,29 @@ class ColumnSet(object):
             output[key] = getattr(table._get_column(self._index), method_name)(*args, **kwargs)
 
         return output
+
+class ColumnIterator(six.Iterator):
+    """
+    Iterator over :class:`Column` instances (for :class:`.Table`) or
+    :class:`ColumnSet` instances (for :class:`.TableSet`).
+
+    :param parent: The parent :class:`.Table` or :class:`.TableSet`.
+    """
+    def __init__(self, parent):
+        self._parent = parent
+        self._i = 0
+
+    def __next__(self):
+        try:
+            self._parent._column_names[self._i]
+        except IndexError:
+            raise StopIteration
+
+        column = self._parent._get_column(self._i)
+
+        self._i += 1
+
+        return column
 
 class ColumnType(object):
     """
@@ -713,25 +737,3 @@ class DateTimeType(ColumnType):
 
     def _create_column_set(self, tableset, index):
         return DateTimeColumnSet(tableset, index)
-
-class ColumnIterator(six.Iterator):
-    """
-    Iterator over :class:`Column` instances.
-
-    :param table: The :class:`.Table` containing the columns.
-    """
-    def __init__(self, table):
-        self._table = table
-        self._i = 0
-
-    def __next__(self):
-        try:
-            self._table._column_names[self._i]
-        except IndexError:
-            raise StopIteration
-
-        column = self._table._get_column(self._i)
-
-        self._i += 1
-
-        return column
