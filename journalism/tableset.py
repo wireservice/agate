@@ -12,11 +12,18 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
+from journalism.columns import ColumnMapping
+from journalism.rows import RowSequence
+
 class TableSet(Mapping):
     """
     An group of named tables with identical column definitions.
 
     :param tables: A dictionary of string keys and :class:`Table` values.
+
+    :var columns: A :class:`.ColumnMapping` for accessing the columns in this
+        table.
+    :var rows: A :class:`.RowSequence` for accessing the rows in this table.
     """
     def __init__(self, group):
         self._column_types = group.values()[0].get_column_types()
@@ -29,7 +36,12 @@ class TableSet(Mapping):
             if table._column_names != self._column_names:
                 raise ValueError('Table %i has different column names from the initial table.' % i)
 
+        self._cached_columns = {}
+        self._cached_rows = {}
         self._tables = copy(group)
+
+        self.columns = ColumnMapping(self)
+        self.rows = RowSequence(self)
 
     def __getitem__(self, k):
         return self._tables.__getitem__(k)
@@ -39,6 +51,24 @@ class TableSet(Mapping):
 
     def __len__(self):
         return self._tables.__len__()
+
+    def _get_column(self, i):
+        """
+        Get a Column of data, caching a copy for next request.
+        """
+        if i not in self._cached_columns:
+            column_type = self._column_types[i]
+
+            self._cached_columns[i] = column_type._create_column_set(self, i)
+
+        return self._cached_columns[i]
+
+    def _get_row(self, i):
+        """
+        Get a Row of data, caching a copy for the next request.
+        """
+        # TODO: return virtual row
+        raise NotImplementedError()
 
     def get_column_types(self):
         """

@@ -12,7 +12,7 @@ class RowSequence(Sequence):
     """
     Proxy access to rows by index.
 
-    :param table: The :class:`.Table` that contains the rows. 
+    :param table: The :class:`.Table` that contains the rows.
     """
     def __init__(self, table):
         self._table = table
@@ -25,13 +25,10 @@ class RowSequence(Sequence):
 
             return tuple(self._table._get_row(row) for row in indices)
 
-        # Verify the row exists
         try:
-            self._table._data[i]
+            return self._table._get_row(i)
         except IndexError:
             raise RowDoesNotExistError(i)
-
-        return self._table._get_row(i) 
 
     def __iter__(self):
         return RowIterator(self._table)
@@ -40,7 +37,7 @@ class RowSequence(Sequence):
         if self._cached_len is not None:
             return self._cached_len
 
-        self._cached_len = len(self._table._data)
+        self._cached_len = self._table._get_row_count()
 
         return self._cached_len
 
@@ -70,7 +67,7 @@ class Row(Mapping):
 
         sample = '(%s)' % sample
 
-        return '<journalism.rows.Row: %s>' % sample 
+        return '<journalism.rows.Row: %s>' % sample
 
     def __str__(self):
         return str(self.__unicode__())
@@ -115,11 +112,9 @@ class RowIterator(six.Iterator):
 
     def __next__(self):
         try:
-            self._table._data[self._i]
+            row = self._table._get_row(self._i)
         except IndexError:
             raise StopIteration
-        
-        row = self._table._get_row(self._i)
 
         self._i += 1
 
@@ -140,8 +135,7 @@ class CellIterator(six.Iterator):
             v = self._row._table._data[self._row._i][self._i]
         except IndexError:
             raise StopIteration
-        
+
         self._i += 1
 
-        return v 
-
+        return v

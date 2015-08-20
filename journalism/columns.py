@@ -65,7 +65,7 @@ class ColumnMapping(Mapping):
     """
     Proxy access to :class:`Column` instances by name.
 
-    :param table: The :class:`.Table` containing the columns. 
+    :param table: The :class:`.Table` containing the columns.
     """
     def __init__(self, table):
         self._table = table
@@ -77,7 +77,7 @@ class ColumnMapping(Mapping):
         except ValueError:
             raise ColumnDoesNotExistError(k)
 
-        return self._table._get_column(i) 
+        return self._table._get_column(i)
 
     def __iter__(self):
         return ColumnIterator(self._table)
@@ -88,7 +88,7 @@ class ColumnMapping(Mapping):
 
         self._cached_len = len(self._table._column_names)
 
-        return self._cached_len 
+        return self._cached_len
 
 class Column(Sequence):
     """
@@ -173,7 +173,7 @@ class Column(Sequence):
     def any(self, test):
         """
         Returns :code:`True` if any value passes a truth test.
-        
+
         :param test: A function that takes a value and returns :code:`True`
             or :code:`False`.
         """
@@ -182,7 +182,7 @@ class Column(Sequence):
     def all(self, test):
         """
         Returns :code:`True` if all values pass a truth test.
-        
+
         :param test: A function that takes a value and returns :code:`True`
             or :code:`False`.
         """
@@ -218,7 +218,61 @@ class Column(Sequence):
 
             counts[d] += 1
 
-        return counts 
+        return counts
+
+class ColumnSet(object):
+    """
+    A 'virtual' column that proxies :class:`.TableSet` column operations across
+    all the identically named columns for each :class:`.Table` in the set.
+    """
+    def __init__(self, tableset, index):
+        self._tableset = tableset
+        self._index = index
+
+    def _proxy(self, method_name, *args, **kwargs):
+        """
+        Primary implementation of the method proxying. Returns a dict of
+        results instead of a single value.
+        """
+        output = OrderedDict()
+
+        for key, table in self._tableset.items():
+            output[key] = getattr(table._get_column(self._index), method_name)(*args, **kwargs)
+
+        return output
+
+    def __unicode__(self):
+        return self._proxy('__unicode__')
+
+    def __str__(self):
+        return self._proxy('__str__')
+
+    def __getitem__(self, j):
+        return self._proxy('__getitem__', j)
+
+    def __len__(self):
+        return self._proxy('__len__')
+
+    def __eq__(self, other):
+        return self._proxy('__eq__', other)
+
+    def __ne__(self, other):
+        return self._proxy('__ne__', other)
+
+    def has_nulls(self):
+        return self._proxy('has_nulls')
+
+    def any(self, test):
+        return self._proxy('any', test)
+
+    def all(self, test):
+        return self._proxy('all', test)
+
+    def count(self, value):
+        return self._proxy('count', value)
+
+    def counts(self):
+        return self._proxy('counts')
 
 class ColumnType(object):
     """
@@ -227,12 +281,22 @@ class ColumnType(object):
     def _create_column(self, table, index):
         raise NotImplementedError
 
+    def _create_column_set(self, tableset, index):
+        raise NotImplementedError
+
 class TextColumn(Column):
     """
     A column containing unicode/string data.
     """
     def max_length(self):
         return max([len(d) for d in self._data_without_nulls()])
+
+class TextColumnSet(ColumnSet):
+    """
+    See :class:`ColumnSet` and :class:`TextColumn`.
+    """
+    def max_length(self):
+        return self._proxy('max_length')
 
 class TextType(ColumnType):
     """
@@ -252,12 +316,15 @@ class TextType(ColumnType):
             d = d.strip()
 
             if d.lower() in NULL_VALUES:
-                return None 
+                return None
 
         return six.text_type(d)
 
     def _create_column(self, table, index):
         return TextColumn(table, index)
+
+    def _create_column_set(self, tableset, index):
+        return TextColumnSet(tableset, index)
 
 class BooleanColumn(Column):
     """
@@ -274,6 +341,16 @@ class BooleanColumn(Column):
         Returns :code:`True` if all values are :code:`True`.
         """
         return all(self._data())
+
+class BooleanColumnSet(ColumnSet):
+    """
+    See :class:`ColumnSet` and :class:`BooleanColumn`.
+    """
+    def any(self):
+        return _proxy('any')
+
+    def all(self):
+        return _proxy('all')
 
 class BooleanType(ColumnType):
     """
@@ -296,23 +373,26 @@ class BooleanType(ColumnType):
 
             if d_lower in NULL_VALUES:
                 return None
-            
+
             if d_lower in TRUE_VALUES:
                 return True
 
             if d_lower in FALSE_VALUES:
                 return False
 
-        raise CastError('Can not convert value %s to bool for BooleanColumn.' % d) 
+        raise CastError('Can not convert value %s to bool for BooleanColumn.' % d)
 
     def _create_column(self, table, index):
         return BooleanColumn(table, index)
 
+    def _create_column_set(self, tableset, index):
+        return BooleanColumnSet(tableset, index)
+
 class NumberColumn(Column):
     """
     A column containing numeric data.
-    
-    All data is represented by the :class:`decimal.Decimal` class.' 
+
+    All data is represented by the :class:`decimal.Decimal` class.'
     """
     def sum(self):
         """
@@ -385,7 +465,7 @@ class NumberColumn(Column):
         data = self._data()
         mean = self.mean()
 
-        return sum((n - mean) ** 2 for n in data) / len(data)   
+        return sum((n - mean) ** 2 for n in data) / len(data)
 
     @no_null_computations
     def stdev(self):
@@ -438,11 +518,11 @@ class NumberColumn(Column):
                 return data[int(i)]
 
             f = i.quantize('0.0')
-            c = f + 1 
+            c = f + 1
 
             d0 = data[int(f)] * Decimal(c - i)
             d1 = data[int(c)] * Decimal(i - f)
-            
+
             return d0 + d1
 
         if one_pct:
@@ -453,8 +533,42 @@ class NumberColumn(Column):
             for each_pct in range(1, 101):
                 percent = Decimal(each_pct) * Decimal('.01')
                 percentile_list.append(percentiler(data, percent))
-            
+
             return percentile_list
+
+class NumberColumnSet(ColumnSet):
+    """
+    See :class:`ColumnSet` and :class:`NumberColumn`.
+    """
+    def sum(self):
+        return self._proxy('sum')
+
+    def min(self):
+        return self._proxy('min')
+
+    def max(self):
+        return self._proxy('max')
+
+    def mean(self):
+        return self._proxy('mean')
+
+    def median(self):
+        return self._proxy('median')
+
+    def mode(self):
+        return self._proxy('mode')
+
+    def variance(self):
+        return self._proxy('variance')
+
+    def stdev(self):
+        return self._proxy('stdev')
+
+    def mad(self):
+        return self._proxy('mad')
+
+    def percentile(self, one_pct=None):
+        return self._proxy('percentile', one_pct=one_pct)
 
 class NumberType(ColumnType):
     """
@@ -475,17 +589,20 @@ class NumberType(ColumnType):
 
             if d.lower() in NULL_VALUES:
                 return None
-        
+
         if isinstance(d, float):
             raise CastError('Can not convert float to Decimal for NumberColumn. Convert data to string first!')
 
         try:
             return Decimal(d)
         except InvalidOperation:
-            raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d) 
+            raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d)
 
     def _create_column(self, table, index):
         return NumberColumn(table, index)
+
+    def _create_column_set(self, tableset, index):
+        return NumberColumnSet(tableset, index)
 
 class DateColumn(Column):
     """
@@ -506,6 +623,16 @@ class DateColumn(Column):
         :returns: :class:`datetime.date`.
         """
         return max(self._data_without_nulls())
+
+class DateColumnSet(ColumnSet):
+    """
+    See :class:`ColumnSet` and :class:`DateColumn`.
+    """
+    def min(self):
+        return self._proxy('min')
+
+    def max(self):
+        return self._proxy('max')
 
 class DateType(ColumnType):
     """
@@ -533,12 +660,15 @@ class DateType(ColumnType):
                 return None
 
         if self.date_format:
-            return datetime.datetime.strptime(d, self.date_format).date() 
+            return datetime.datetime.strptime(d, self.date_format).date()
 
         return parse(d).date()
 
     def _create_column(self, table, index):
         return DateColumn(table, index)
+
+    def _create_column_set(self, tableset, index):
+        return DateColumnSet(tableset, index)
 
 class DateTimeColumn(Column):
     """
@@ -559,6 +689,16 @@ class DateTimeColumn(Column):
         :returns: :class:`datetime.datetime`.
         """
         return max(self._data_without_nulls())
+
+class DateTimeColumnSet(ColumnSet):
+    """
+    See :class:`ColumnSet` and :class:`DateTimeColumn`.
+    """
+    def min(self):
+        return self._proxy('min')
+
+    def max(self):
+        return self._proxy('max')
 
 class DateTimeType(ColumnType):
     """
@@ -586,12 +726,15 @@ class DateTimeType(ColumnType):
                 return None
 
         if self.datetime_format:
-            return datetime.datetime.strptime(d, self.datetime_format) 
+            return datetime.datetime.strptime(d, self.datetime_format)
 
         return parse(d)
 
     def _create_column(self, table, index):
         return DateTimeColumn(table, index)
+
+    def _create_column_set(self, tableset, index):
+        return DateTimeColumnSet(tableset, index)
 
 class ColumnIterator(six.Iterator):
     """
@@ -613,5 +756,4 @@ class ColumnIterator(six.Iterator):
 
         self._i += 1
 
-        return column 
-
+        return column

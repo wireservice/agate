@@ -9,7 +9,7 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 from journalism.columns import ColumnMapping, NumberType
-from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError, NullComputationError
+from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError, UnsupportedOperationError, NullComputationError
 from journalism.rows import RowSequence, Row
 from journalism.tableset import TableSet
 
@@ -86,6 +86,9 @@ class Table(object):
                 self._cached_rows[i] = Row(self, i)
 
         return self._cached_rows[i]
+
+    def _get_row_count(self):
+        return len(self._data)
 
     def _fork(self, rows, column_types=[], column_names=[]):
         """
@@ -433,26 +436,34 @@ class Table(object):
 
         return self._fork(rows, column_types, column_names)
 
-    def group_by(self, group_by):
+    def group_by(self, key):
         """
         Create a new :class:`Table` for **each** unique value in the
-        :code:`group_by` column and return them as a dict.
+        :code:`group_by` column and return them as a :class:`.TableSet`.
 
-        :param group_by: The name of a column to group by.
-        :returns: A :class:`dict` where the keys are unique values from
-            the :code:`group_by` column and the values are new :class:`Table`
+        :param key: Either the name of a column from the this table
+            to group by, or a :class:`function` that takes a row and returns
+            a value to group by.
+        :returns: A :class:`.TableSet` mapping where the keys are unique
+            values from the :code:`key` and the values are new :class:`Table`
             instances.
         :raises: :exc:`.ColumnDoesNotExistError`
         """
-        try:
-            i = self._column_names.index(group_by)
-        except ValueError:
-            raise ColumnDoesNotExistError(group_by)
+        key_is_row_function = hasattr(key, '__call__')
+
+        if not key_is_row_function:
+            try:
+                i = self._column_names.index(key)
+            except ValueError:
+                raise ColumnDoesNotExistError(key)
 
         groups = OrderedDict()
 
         for row in self._data:
-            group_name = row[i]
+            if key_is_row_function:
+                group_name = key(row)
+            else:
+                group_name = row[i]
 
             if group_name not in groups:
                 groups[group_name] = []
