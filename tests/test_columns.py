@@ -13,7 +13,11 @@ except ImportError:
     import unittest
 
 from journalism import Table
-from journalism.columns import TextType, BooleanType, NumberType, DateType, DateTimeType, TextColumn, BooleanColumn, NumberColumn, DateColumn, DateTimeColumn
+from journalism.columns.text import TextType, TextColumn
+from journalism.columns.boolean import BooleanType, BooleanColumn
+from journalism.columns.number import NumberType, NumberColumn
+from journalism.columns.date import DateType, DateColumn
+from journalism.columns.date_time import DateTimeType, DateTimeColumn
 from journalism.exceptions import CastError, ColumnDoesNotExistError, NullComputationError
 
 class TestColumnTypes(unittest.TestCase):
@@ -129,7 +133,7 @@ class TestColumns(unittest.TestCase):
             (2, 3, 'b'),
             (None, 4, 'c')
         )
-        
+
         self.table = Table(rows, self.column_types, self.column_names)
 
         self.assertEqual(str(self.table.columns['one']), "<journalism.columns.NumberColumn: (1, 2, None, 1, 2, ...)>")
@@ -148,7 +152,7 @@ class TestColumns(unittest.TestCase):
         data = c._data()
 
         self.assertSequenceEqual(c._cached_data, (1, 2, None))
-        
+
         data2 = c._data()
 
         self.assertIs(data, data2)
@@ -237,43 +241,59 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(counts[2], 1)
         self.assertEqual(counts[None], 1)
 
-    def test_percentile(self):
-        rows = [(n,) for n in range(0, 101)]
+    def test_quartiles(self):
+        rows = [(n,) for n in range(1, 11)]
+        print rows
 
         table = Table(rows, (self.number_type,), ('ints',))
 
-        self.assertEqual(table.columns['ints'].percentile(25), Decimal(25))
-        self.assertEqual(table.columns['ints'].percentile(50), Decimal(50))
-        self.assertEqual(table.columns['ints'].percentile(75), Decimal(75))
-        self.assertEqual(table.columns['ints'].percentile(100), Decimal(100))
+        qauntiles = table.columns['ints'].quantiles(4)
+
+        print qauntiles
+
+        self.assertEqual(qauntiles[0], Decimal(2.5))
+        self.assertEqual(qauntiles[1], Decimal(5.5))
+        self.assertEqual(qauntiles[2], Decimal(7.5))
+        self.assertEqual(qauntiles[3], Decimal(10))
+
+        quartiles = table.columns['ints'].quartiles()
+
+        self.assertEqual(quartiles[0], Decimal(260))
+        self.assertEqual(quartiles[1], Decimal(510))
+        self.assertEqual(quartiles[2], Decimal(760))
+        self.assertEqual(quartiles[3], Decimal(1000))
+
+    def test_percentile(self):
+        rows = [(n,) for n in range(0, 1001)]
+
+        table = Table(rows, (self.number_type,), ('ints',))
+
+        percentiles = table.columns['ints'].percentiles()
+
+        self.assertEqual(percentiles[25], Decimal(260))
+        self.assertEqual(percentiles[50], Decimal(510))
+        self.assertEqual(percentiles[75], Decimal(760))
+        self.assertEqual(percentiles[99], Decimal(1000))
 
     def test_percentile_range(self):
         rows = [(n,) for n in range(0, 101)]
 
         table = Table(rows, (self.number_type,), ('ints',))
 
-        self.assertEqual(table.columns['ints'].percentile()[24], Decimal(25))
-        self.assertEqual(table.columns['ints'].percentile()[49], Decimal(50))
-        self.assertEqual(table.columns['ints'].percentile()[74], Decimal(75))
-        self.assertEqual(table.columns['ints'].percentile()[99], Decimal(100))
+        percentiles = table.columns['ints'].percentiles()
 
-    def test_percentile_not_valid(self):
-        rows = [(n,) for n in range(0, 101)]
-
-        table = Table(rows, (self.number_type,), ('ints',))
-
-        with self.assertRaises(ValueError):
-            table.columns['ints'].percentile(1.1)
-
-        with self.assertRaises(ValueError):
-            table.columns['ints'].percentile(103)
+        self.assertEqual(percentiles[24], Decimal(25))
+        self.assertEqual(percentiles[49], Decimal(50))
+        self.assertEqual(percentiles[74], Decimal(75))
+        self.assertEqual(percentiles[99], Decimal(100))
 
     def test_percentile_no_data(self):
         rows = (())
 
         table = Table(rows, (self.number_type,), ('ints',))
 
-        self.assertEqual(table.columns['ints'].percentile(7), None)
+        with self.assertRaises(ValueError):
+            table.columns['ints'].quartiles()
 
 class TestTextColumn(unittest.TestCase):
     def test_max_length(self):
@@ -340,7 +360,7 @@ class TestNumberColumn(unittest.TestCase):
     def test_variance(self):
         with self.assertRaises(NullComputationError):
             self.table.columns['one'].variance()
-        
+
         self.assertEqual(self.table.columns['two'].variance().quantize(Decimal('0.01')), Decimal('0.47'))
 
     def test_stdev(self):
@@ -364,7 +384,7 @@ class TestDateColumn(unittest.TestCase):
             datetime.date(1984, 1, 5)
         )
 
-        self.assertEqual(column.min(), datetime.date(1011, 2, 17)) 
+        self.assertEqual(column.min(), datetime.date(1011, 2, 17))
 
     def test_max(self):
         column = DateColumn(None, 'one')
@@ -374,7 +394,7 @@ class TestDateColumn(unittest.TestCase):
             datetime.date(1984, 1, 5)
         )
 
-        self.assertEqual(column.max(), datetime.date(1994, 3, 1)) 
+        self.assertEqual(column.max(), datetime.date(1994, 3, 1))
 
 class TestDateTimeColumn(unittest.TestCase):
     def test_min(self):
@@ -385,7 +405,7 @@ class TestDateTimeColumn(unittest.TestCase):
             datetime.datetime(1994, 3, 3, 6, 30)
         )
 
-        self.assertEqual(column.min(), datetime.datetime(1994, 3, 3, 6, 30)) 
+        self.assertEqual(column.min(), datetime.datetime(1994, 3, 3, 6, 30))
 
     def test_max(self):
         column = DateTimeColumn(None, 'one')
@@ -395,5 +415,4 @@ class TestDateTimeColumn(unittest.TestCase):
             datetime.datetime(1994, 3, 3, 6, 30)
         )
 
-        self.assertEqual(column.max(), datetime.datetime(1994, 3, 3, 6, 31)) 
-
+        self.assertEqual(column.max(), datetime.datetime(1994, 3, 3, 6, 31))
