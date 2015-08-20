@@ -17,12 +17,17 @@ from journalism.rows import RowSequence
 
 class TableSet(Mapping):
     """
-    An group of named tables with identical column definitions.
+    An group of named tables with identical column definitions. Supports
+    (almost) all the same operations as :class:`.Table`. When executed on a
+    :class:`TableSet`, any operation that would have returned a new
+    :class:`.Table` instead returns a new :class:`TableSet`. Any operation
+    that would have returned a single value instead returns a dictionary of
+    values.
 
     :param tables: A dictionary of string keys and :class:`Table` values.
 
-    :var columns: A :class:`.ColumnMapping` for accessing the columns in this
-        table.
+    :var columns: A :class:`.ColumnMapping` for accessing the
+        :class:`.ColumnSet`s in this table.
     :var rows: A :class:`.RowSequence` for accessing the rows in this table.
     """
     def __init__(self, group):
@@ -70,6 +75,18 @@ class TableSet(Mapping):
         # TODO: return virtual row
         raise NotImplementedError()
 
+    def _proxy(self, method_name, *args, **kwargs):
+        """
+        Proxy data processing methods over the full set of tables and return
+        a new :class:`TableSet`.
+        """
+        groups = OrderedDict()
+
+        for name, table in self._tables.items():
+            groups[name] = getattr(table, method_name)(*args, **kwargs)
+
+        return TableSet(groups)
+
     def get_column_types(self):
         """
         Get an ordered list of this :class:`.TableSet`'s column types.
@@ -87,49 +104,10 @@ class TableSet(Mapping):
         return self._column_names
 
     def select(self, column_names):
-        """
-        Reduce each table in this set to only the specified columns.
-
-        :param column_names: A sequence of names of columns to include in the new tables.
-        :returns: A new :class:`TableSet`.
-        """
-        groups = OrderedDict()
-
-        for name, table in self._tables.items():
-            groups[name] = table.select(column_names)
-
-        return TableSet(groups)
+        return self._proxy('select', column_names)
 
     def where(self, test):
-        """
-        Filter each table to only those rows where the row passes a truth test.
-
-        :param test: A function that takes a :class:`.Row` and returns
-            :code:`True` if it should be included.
-        :type test: :class:`function`
-        :returns: A new :class:`TableSet`.
-        """
-        groups = OrderedDict()
-
-        for name, table in self._tables.items():
-            groups[name] = table.where(test)
-
-        return TableSet(groups)
+        return self._proxy('where', test)
 
     def order_by(self, key, reverse=False):
-        """
-        Sort each table by the :code:`key`. This can be either a
-        column_name or callable that returns a value to sort by.
-
-        :param key: Either the name of a column to sort by or a :class:`function`
-            that takes a row and returns a value to sort by.
-        :param reverse: If :code:`True` then sort in reverse (typically,
-            descending) order.
-        :returns: A new :class:`TableSet`.
-        """
-        groups = OrderedDict()
-
-        for name, table in self._tables.items():
-            groups[name] = table.order_by(key, reverse=reverse)
-
-        return TableSet(groups)
+        return self._proxy('order_by', key, reverse=reverse)
