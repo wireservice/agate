@@ -48,10 +48,10 @@ print('Total for Kansas City area: %i' % kansas_city.columns['total_cost'].sum()
 counties = table.group_by('county')
 
 # Order each county by recent purchases
-counties.order_by('ship_date', reverse=True)
+totals = counties.columns['total_cost'].sum()
 
-for county, table in counties.items():
-    print '%s, %s' % (county, table.rows[0]['item_name'])
+for county, total in totals.items():
+    print '%s, %i' % (county, total)
 
 # Aggregate totals for all counties
 totals = table.aggregate('county', (( 'total_cost', 'sum' ),)).order_by('total_cost_sum', reverse=True).rows[:5]
