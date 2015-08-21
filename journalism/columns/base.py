@@ -29,6 +29,16 @@ def no_null_computations(func):
 
     return check
 
+class ColumnType(object):
+    """
+    Base class for column data types.
+    """
+    def _create_column(self, table, index):
+        raise NotImplementedError
+
+    def _create_column_set(self, tableset, index):
+        raise NotImplementedError
+
 class ColumnMapping(Mapping):
     """
     Proxy access to :class:`Column` instances (for :class:`.Table`) or
@@ -59,6 +69,29 @@ class ColumnMapping(Mapping):
 
         return self._cached_len
 
+class ColumnIterator(six.Iterator):
+    """
+    Iterator over :class:`Column` instances (for :class:`.Table`) or
+    :class:`ColumnSet` instances (for :class:`.TableSet`).
+
+    :param parent: The parent :class:`.Table` or :class:`.TableSet`.
+    """
+    def __init__(self, parent):
+        self._parent = parent
+        self._i = 0
+
+    def __next__(self):
+        try:
+            self._parent._column_names[self._i]
+        except IndexError:
+            raise StopIteration
+
+        column = self._parent._get_column(self._i)
+
+        self._i += 1
+
+        return column
+        
 class Column(Sequence):
     """
     Proxy access to column data. Instances of :class:`Column` should
@@ -238,36 +271,3 @@ class ColumnSet(object):
             output[key] = getattr(table._get_column(self._index), method_name)(*args, **kwargs)
 
         return output
-
-class ColumnIterator(six.Iterator):
-    """
-    Iterator over :class:`Column` instances (for :class:`.Table`) or
-    :class:`ColumnSet` instances (for :class:`.TableSet`).
-
-    :param parent: The parent :class:`.Table` or :class:`.TableSet`.
-    """
-    def __init__(self, parent):
-        self._parent = parent
-        self._i = 0
-
-    def __next__(self):
-        try:
-            self._parent._column_names[self._i]
-        except IndexError:
-            raise StopIteration
-
-        column = self._parent._get_column(self._i)
-
-        self._i += 1
-
-        return column
-
-class ColumnType(object):
-    """
-    Base class for column data types.
-    """
-    def _create_column(self, table, index):
-        raise NotImplementedError
-
-    def _create_column_set(self, tableset, index):
-        raise NotImplementedError
