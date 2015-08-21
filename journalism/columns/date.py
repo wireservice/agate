@@ -6,36 +6,6 @@ from dateutil.parser import parse
 
 from journalism.columns.base import *
 
-class DateColumn(Column):
-    """
-    A column containing :func:`datetime.date` data.
-    """
-    def min(self):
-        """
-        Compute the earliest date in this column.
-
-        :returns: :class:`datetime.date`.
-        """
-        return min(self._data_without_nulls())
-
-    def max(self):
-        """
-        Compute the latest date in this column.
-
-        :returns: :class:`datetime.date`.
-        """
-        return max(self._data_without_nulls())
-
-class DateColumnSet(ColumnSet):
-    """
-    See :class:`ColumnSet` and :class:`DateColumn`.
-    """
-    def __init__(self, *args, **kwargs):
-        super(DateColumnSet, self).__init__(*args, **kwargs)
-
-        self.min = ColumnMethodProxy(self, 'min')
-        self.max = ColumnMethodProxy(self, 'max')
-
 class DateType(ColumnType):
     """
     Column type for :class:`DateColumn`.
@@ -70,3 +40,33 @@ class DateType(ColumnType):
 
     def _create_column_set(self, tableset, index):
         return DateColumnSet(tableset, index)
+
+class DateColumn(Column):
+    """
+    A column containing :func:`datetime.date` data.
+    """
+    def min(self):
+        """
+        Compute the earliest date in this column.
+
+        :returns: :class:`datetime.date`.
+        """
+        return min(self._data_without_nulls())
+
+    def max(self):
+        """
+        Compute the latest date in this column.
+
+        :returns: :class:`datetime.date`.
+        """
+        return max(self._data_without_nulls())
+
+class DateColumnSet(ColumnSet):
+    """
+    See :class:`ColumnSet` and :class:`DateColumn`.
+    """
+    def __init__(self, *args, **kwargs):
+        super(DateColumnSet, self).__init__(*args, **kwargs)
+
+        self.min = ColumnMethodProxy(self, 'min')
+        self.max = ColumnMethodProxy(self, 'max')

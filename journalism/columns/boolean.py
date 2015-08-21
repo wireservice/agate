@@ -9,28 +9,6 @@ TRUE_VALUES = ('yes', 'y', 'true', 't')
 #: String values which will be automatically cast to :code:`False`.
 FALSE_VALUES = ('no', 'n', 'false', 'f')
 
-class BooleanColumn(Column):
-    """
-    A column containing :func:`bool` data.
-    """
-    def any(self):
-        """
-        Returns :code:`True` if any value is :code:`True`.
-        """
-        return any(self._data())
-
-    def all(self):
-        """
-        Returns :code:`True` if all values are :code:`True`.
-        """
-        return all(self._data())
-
-class BooleanColumnSet(ColumnSet):
-    """
-    See :class:`ColumnSet` and :class:`BooleanColumn`.
-    """
-    pass
-
 class BooleanType(ColumnType):
     """
     Column type for :class:`BooleanColumn`.
@@ -66,3 +44,25 @@ class BooleanType(ColumnType):
 
     def _create_column_set(self, tableset, index):
         return BooleanColumnSet(tableset, index)
+        
+class BooleanColumn(Column):
+    """
+    A column containing :func:`bool` data.
+    """
+    def any(self):
+        """
+        Returns :code:`True` if any value is :code:`True`.
+        """
+        return any(self._data())
+
+    def all(self):
+        """
+        Returns :code:`True` if all values are :code:`True`.
+        """
+        return all(self._data())
+
+class BooleanColumnSet(ColumnSet):
+    """
+    See :class:`ColumnSet` and :class:`BooleanColumn`.
+    """
+    pass

@@ -4,22 +4,6 @@ import six
 
 from journalism.columns.base import *
 
-class TextColumn(Column):
-    """
-    A column containing unicode/string data.
-    """
-    def max_length(self):
-        return max([len(d) for d in self._data_without_nulls()])
-
-class TextColumnSet(ColumnSet):
-    """
-    See :class:`ColumnSet` and :class:`TextColumn`.
-    """
-    def __init__(self, *args, **kwargs):
-        super(TextColumnSet, self).__init__(*args, **kwargs)
-
-        self.max_length = ColumnMethodProxy(self, 'max_length')
-
 class TextType(ColumnType):
     """
     Column type for :class:`TextColumn`.
@@ -47,3 +31,19 @@ class TextType(ColumnType):
 
     def _create_column_set(self, tableset, index):
         return TextColumnSet(tableset, index)
+        
+class TextColumn(Column):
+    """
+    A column containing unicode/string data.
+    """
+    def max_length(self):
+        return max([len(d) for d in self._data_without_nulls()])
+
+class TextColumnSet(ColumnSet):
+    """
+    See :class:`ColumnSet` and :class:`TextColumn`.
+    """
+    def __init__(self, *args, **kwargs):
+        super(TextColumnSet, self).__init__(*args, **kwargs)
+
+        self.max_length = ColumnMethodProxy(self, 'max_length')

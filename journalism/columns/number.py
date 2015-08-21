@@ -30,7 +30,41 @@ def _median(data_sorted):
         b = data_sorted[half]
 
     return (a + b) / 2
-    
+
+class NumberType(ColumnType):
+    """
+    Column type for :class:`NumberColumn`.
+    """
+    def cast(self, d):
+        """
+        Cast a single value to a :class:`decimal.Decimal`.
+
+        :returns: :class:`decimal.Decimal` or :code:`None`.
+        :raises: :exc:`.CastError`
+        """
+        if isinstance(d, Decimal) or d is None:
+            return d
+
+        if isinstance(d, six.string_types):
+            d = d.replace(',' ,'').strip()
+
+            if d.lower() in NULL_VALUES:
+                return None
+
+        if isinstance(d, float):
+            raise CastError('Can not convert float to Decimal for NumberColumn. Convert data to string first!')
+
+        try:
+            return Decimal(d)
+        except InvalidOperation:
+            raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d)
+
+    def _create_column(self, table, index):
+        return NumberColumn(table, index)
+
+    def _create_column_set(self, tableset, index):
+        return NumberColumnSet(tableset, index)    
+
 class NumberColumn(Column):
     """
     A column containing numeric data.
@@ -217,37 +251,3 @@ class ColumnQuantiles(object):
 
 class ColumnQuartiles(ColumnQuantiles):
     pass
-
-class NumberType(ColumnType):
-    """
-    Column type for :class:`NumberColumn`.
-    """
-    def cast(self, d):
-        """
-        Cast a single value to a :class:`decimal.Decimal`.
-
-        :returns: :class:`decimal.Decimal` or :code:`None`.
-        :raises: :exc:`.CastError`
-        """
-        if isinstance(d, Decimal) or d is None:
-            return d
-
-        if isinstance(d, six.string_types):
-            d = d.replace(',' ,'').strip()
-
-            if d.lower() in NULL_VALUES:
-                return None
-
-        if isinstance(d, float):
-            raise CastError('Can not convert float to Decimal for NumberColumn. Convert data to string first!')
-
-        try:
-            return Decimal(d)
-        except InvalidOperation:
-            raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d)
-
-    def _create_column(self, table, index):
-        return NumberColumn(table, index)
-
-    def _create_column_set(self, tableset, index):
-        return NumberColumnSet(tableset, index)
