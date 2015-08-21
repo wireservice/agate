@@ -253,9 +253,8 @@ class TestColumns(unittest.TestCase):
 
         quartiles = table.columns['ints'].quartiles()
 
-        self.assertEqual(quartiles.point(1), Decimal(1.5))
-        self.assertEqual(quartiles.point(2), Decimal(2.5))
-        self.assertEqual(quartiles.point(3), Decimal(3.5))
+        for i, v in enumerate([1, 1.5, 2.5, 3.5, 4]):
+            self.assertEqual(quartiles[i], Decimal(v))
 
         # N = 5
         rows = [(n,) for n in [1, 2, 3, 4, 5]]
@@ -264,9 +263,8 @@ class TestColumns(unittest.TestCase):
 
         quartiles = table.columns['ints'].quartiles()
 
-        self.assertEqual(quartiles.point(1), Decimal(2))
-        self.assertEqual(quartiles.point(2), Decimal(3))
-        self.assertEqual(quartiles.point(3), Decimal(4))
+        for i, v in enumerate([1, 2, 3, 4, 5]):
+            self.assertEqual(quartiles[i], Decimal(v))
 
         # N = 6
         rows = [(n,) for n in [1, 2, 3, 4, 5, 6]]
@@ -275,9 +273,8 @@ class TestColumns(unittest.TestCase):
 
         quartiles = table.columns['ints'].quartiles()
 
-        self.assertEqual(quartiles.point(1), Decimal(2))
-        self.assertEqual(quartiles.point(2), Decimal(3.5))
-        self.assertEqual(quartiles.point(3), Decimal(5))
+        for i, v in enumerate([1, 2, 3.5, 5, 6]):
+            self.assertEqual(quartiles[i], Decimal(v))
 
         # N = 7
         rows = [(n,) for n in [1, 2, 3, 4, 5, 6, 7]]
@@ -286,9 +283,8 @@ class TestColumns(unittest.TestCase):
 
         quartiles = table.columns['ints'].quartiles()
 
-        self.assertEqual(quartiles.point(1), Decimal(2))
-        self.assertEqual(quartiles.point(2), Decimal(4))
-        self.assertEqual(quartiles.point(3), Decimal(6))
+        for i, v in enumerate([1, 2, 4, 6, 7]):
+            self.assertEqual(quartiles[i], Decimal(v))
 
         # N = 8 (doubled)
         rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4]]
@@ -297,9 +293,8 @@ class TestColumns(unittest.TestCase):
 
         quartiles = table.columns['ints'].quartiles()
 
-        self.assertEqual(quartiles.point(1), Decimal(1.5))
-        self.assertEqual(quartiles.point(2), Decimal(2.5))
-        self.assertEqual(quartiles.point(3), Decimal(3.5))
+        for i, v in enumerate([1, 1.5, 2.5, 3.5, 4]):
+            self.assertEqual(quartiles[i], Decimal(v))
 
         # N = 10 (doubled)
         rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]]
@@ -308,9 +303,8 @@ class TestColumns(unittest.TestCase):
 
         quartiles = table.columns['ints'].quartiles()
 
-        self.assertEqual(quartiles.point(1), Decimal(2))
-        self.assertEqual(quartiles.point(2), Decimal(3))
-        self.assertEqual(quartiles.point(3), Decimal(4))
+        for i, v in enumerate([1, 2, 3, 4, 5]):
+            self.assertEqual(quartiles[i], Decimal(v))
 
         # N = 12 (doubled)
         rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6]]
@@ -319,9 +313,8 @@ class TestColumns(unittest.TestCase):
 
         quartiles = table.columns['ints'].quartiles()
 
-        self.assertEqual(quartiles.point(1), Decimal(2))
-        self.assertEqual(quartiles.point(2), Decimal(3.5))
-        self.assertEqual(quartiles.point(3), Decimal(5))
+        for i, v in enumerate([1, 2, 3.5, 5, 6]):
+            self.assertEqual(quartiles[i], Decimal(v))
 
         # N = 14 (doubled)
         rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7]]
@@ -330,9 +323,25 @@ class TestColumns(unittest.TestCase):
 
         quartiles = table.columns['ints'].quartiles()
 
-        self.assertEqual(quartiles.point(1), Decimal(2))
-        self.assertEqual(quartiles.point(2), Decimal(4))
-        self.assertEqual(quartiles.point(3), Decimal(6))
+        for i, v in enumerate([1, 2, 4, 6, 7]):
+            self.assertEqual(quartiles[i], Decimal(v))
+
+    def test_quartiles_at(self):
+        """
+        CDF quartile tests from:
+        http://www.amstat.org/publications/jse/v14n3/langford.html#Parzen1979
+        """
+        # N = 4
+        rows = [(n,) for n in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]
+
+        table = Table(rows, (self.number_type,), ('ints',))
+
+        quartiles = table.columns['ints'].quartiles()
+
+        self.assertEqual(quartiles.at(2), Decimal(0))
+        self.assertEqual(quartiles.at(4), Decimal(1))
+        self.assertEqual(quartiles.at(6), Decimal(2))
+        self.assertEqual(quartiles.at(8), Decimal(3))
 
     def test_percentiles(self):
         rows = [(n,) for n in range(1, 1001)]
@@ -341,10 +350,12 @@ class TestColumns(unittest.TestCase):
 
         percentiles = table.columns['ints'].percentiles()
 
-        self.assertEqual(percentiles.point(25), Decimal(250.5))
-        self.assertEqual(percentiles.point(50), Decimal(500.5))
-        self.assertEqual(percentiles.point(75), Decimal(750.5))
-        self.assertEqual(percentiles.point(99), Decimal(990.5))
+        self.assertEqual(percentiles[0], Decimal(1))
+        self.assertEqual(percentiles[25], Decimal(250.5))
+        self.assertEqual(percentiles[50], Decimal(500.5))
+        self.assertEqual(percentiles[75], Decimal(750.5))
+        self.assertEqual(percentiles[99], Decimal(990.5))
+        self.assertEqual(percentiles[100], Decimal(1000))
 
     def test_percentile_no_data(self):
         rows = (())

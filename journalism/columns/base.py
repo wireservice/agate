@@ -91,7 +91,7 @@ class ColumnIterator(six.Iterator):
         self._i += 1
 
         return column
-        
+
 class Column(Sequence):
     """
     Proxy access to column data. Instances of :class:`Column` should
