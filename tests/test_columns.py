@@ -246,8 +246,8 @@ class TestColumns(unittest.TestCase):
         CDF quartile tests from:
         http://www.amstat.org/publications/jse/v14n3/langford.html#Parzen1979
         """
-        # 1, 2, 3, 4
-        rows = [(n,) for n in range(1, 5)]
+        # N = 4
+        rows = [(n,) for n in [1, 2, 3, 4]]
 
         table = Table(rows, (self.number_type,), ('ints',))
 
@@ -257,8 +257,8 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(quartiles.point(2), Decimal(2.5))
         self.assertEqual(quartiles.point(3), Decimal(3.5))
 
-        # 1, 2, 3, 4, 5
-        rows = [(n,) for n in range(1, 6)]
+        # N = 5
+        rows = [(n,) for n in [1, 2, 3, 4, 5]]
 
         table = Table(rows, (self.number_type,), ('ints',))
 
@@ -268,8 +268,8 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(quartiles.point(2), Decimal(3))
         self.assertEqual(quartiles.point(3), Decimal(4))
 
-        # 1, 2, 3, 4, 5, 6
-        rows = [(n,) for n in range(1, 7)]
+        # N = 6
+        rows = [(n,) for n in [1, 2, 3, 4, 5, 6]]
 
         table = Table(rows, (self.number_type,), ('ints',))
 
@@ -279,8 +279,52 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(quartiles.point(2), Decimal(3.5))
         self.assertEqual(quartiles.point(3), Decimal(5))
 
-        # 1, 2, 3, 4, 5, 6, 7
-        rows = [(n,) for n in range(1, 8)]
+        # N = 7
+        rows = [(n,) for n in [1, 2, 3, 4, 5, 6, 7]]
+
+        table = Table(rows, (self.number_type,), ('ints',))
+
+        quartiles = table.columns['ints'].quartiles()
+
+        self.assertEqual(quartiles.point(1), Decimal(2))
+        self.assertEqual(quartiles.point(2), Decimal(4))
+        self.assertEqual(quartiles.point(3), Decimal(6))
+
+        # N = 8 (doubled)
+        rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4]]
+
+        table = Table(rows, (self.number_type,), ('ints',))
+
+        quartiles = table.columns['ints'].quartiles()
+
+        self.assertEqual(quartiles.point(1), Decimal(1.5))
+        self.assertEqual(quartiles.point(2), Decimal(2.5))
+        self.assertEqual(quartiles.point(3), Decimal(3.5))
+
+        # N = 10 (doubled)
+        rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]]
+
+        table = Table(rows, (self.number_type,), ('ints',))
+
+        quartiles = table.columns['ints'].quartiles()
+
+        self.assertEqual(quartiles.point(1), Decimal(2))
+        self.assertEqual(quartiles.point(2), Decimal(3))
+        self.assertEqual(quartiles.point(3), Decimal(4))
+
+        # N = 12 (doubled)
+        rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6]]
+
+        table = Table(rows, (self.number_type,), ('ints',))
+
+        quartiles = table.columns['ints'].quartiles()
+
+        self.assertEqual(quartiles.point(1), Decimal(2))
+        self.assertEqual(quartiles.point(2), Decimal(3.5))
+        self.assertEqual(quartiles.point(3), Decimal(5))
+
+        # N = 14 (doubled)
+        rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7]]
 
         table = Table(rows, (self.number_type,), ('ints',))
 
