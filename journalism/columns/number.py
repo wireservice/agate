@@ -24,10 +24,10 @@ def _median(data_sorted):
 
     if length % 2 == 1:
         return data_sorted[((length + 1) // 2) - 1]
-    else:
-        half = length // 2
-        a = data_sorted[half - 1]
-        b = data_sorted[half]
+
+    half = length // 2
+    a = data_sorted[half - 1]
+    b = data_sorted[half]
 
     return (a + b) / 2
 
@@ -63,7 +63,7 @@ class NumberType(ColumnType):
         return NumberColumn(table, index)
 
     def _create_column_set(self, tableset, index):
-        return NumberColumnSet(tableset, index)    
+        return NumberColumnSet(tableset, index)
 
 class NumberColumn(Column):
     """
@@ -169,44 +169,6 @@ class NumberColumn(Column):
         return _median(tuple(abs(n - m) for n in data))
 
     @no_null_computations
-    def quantiles(self, count):
-        """
-        Compute a list of values which divide the column data in some number
-        of equal sized groups.
-
-        :param count: The number of quantiles to generate.
-        :returns: A list of `count` quantile values.
-        :raises: :exc:`.NullComputationError`
-        """
-        data = self._data_sorted()
-
-        if len(data) < count:
-            raise ValueError('Column must contain at least as many rows as the number of quantiles you wish to generate.')
-
-        breaks = []
-
-        for i in range(1, count + 1):
-            k = (len(data) - 1) * (Decimal(i) / count)
-
-            # Determine if this break falls precisely on a value
-            f = int(math.floor(k))
-            c = int(math.ceil(k))
-
-            print i, data[int(k)], data[f], data[c]
-
-            if f == c:
-                breaks.append(data[int(k)])
-                continue
-
-            # Otherwise split the difference
-            d0 = data[f] * (c - k)
-            d1 = data[c] * (k - f)
-
-            breaks.append(d0 + d1)
-
-        return breaks
-
-    @no_null_computations
     def quartiles(self):
         """
         Compute quartiles for this column of data.
@@ -215,7 +177,7 @@ class NumberColumn(Column):
 
         :raises: :exc:`.NullComputationError`
         """
-        return self.quantiles(4)
+        return Quartiles(self)
 
     @no_null_computations
     def percentiles(self):
@@ -226,7 +188,7 @@ class NumberColumn(Column):
 
         :raises: :exc:`.NullComputationError`
         """
-        return self.quantiles(100)
+        return Percentiles(self)
 
 class NumberColumnSet(ColumnSet):
     """
@@ -246,8 +208,71 @@ class NumberColumnSet(ColumnSet):
         self.mad = ColumnMethodProxy(self, 'mad')
         self.percentile = ColumnMethodProxy(self, 'percentile')
 
-class ColumnQuantiles(object):
-    pass
+class Percentiles(object):
+    """
+    Divides column data into 100 equal-size groups using the "CDF" method.
 
-class ColumnQuartiles(ColumnQuantiles):
-    pass
+    See `this explanation <http://www.amstat.org/publications/jse/v14n3/langford.html>`_
+    of the various methods for computing percentiles.
+
+    Additional help came from `pycalcstats <https://code.google.com/p/pycalcstats/>`_.
+    """
+    def __init__(self, column):
+        data = column._data_sorted()
+
+        self._percentiles = [None, ]
+
+        # if len(data) < count:
+        #     raise ValueError('Column must contain at least as many rows as the number of quantiles you wish to generate.')
+
+        for percentile in range(1, 100):
+            k = len(data) * (float(percentile) / 100)
+
+            low = max(1, int(math.ceil(k)))
+            high = min(len(data), int(math.floor(k + 1)))
+
+            # No remainder
+            if low == high:
+                value = data[low - 1]
+            # Remainder
+            else:
+                value = (data[low - 1] + data[high - 1]) / 2
+
+            self._percentiles.append(value)
+
+    def point(self, percentile):
+        return self._percentiles[percentile]
+
+    def points(self):
+        """
+        Return the specific values that demarcate each quantile.
+        """
+        raise NotImplementedError()
+
+    def locate(self, value):
+        """
+        Identify which quantile a given value is located in.
+        """
+        raise NotImplementedError()
+
+class Quartiles(Percentiles):
+    def point(self, quartile):
+        for i, v in enumerate(self._percentiles):
+            print i, v
+
+        if quartile == 1:
+            percentile = 25
+        elif quartile == 2:
+            percentile = 50
+        elif quartile == 3:
+            percentile = 75
+        else:
+            raise ValueError('Quantile must be between 1 and 3')
+
+        return self._percentiles[percentile]
+
+    def points(self):
+        return []
+
+    def locate(self, value):
+        pass
