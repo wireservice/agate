@@ -222,8 +222,8 @@ class Percentiles(object):
 
         self._percentiles = [None, ]
 
-        # if len(data) < count:
-        #     raise ValueError('Column must contain at least as many rows as the number of quantiles you wish to generate.')
+        if len(data) == 0:
+            raise ValueError('Column does not contain data.')
 
         for percentile in range(1, 100):
             k = len(data) * (float(percentile) / 100)
@@ -257,9 +257,6 @@ class Percentiles(object):
 
 class Quartiles(Percentiles):
     def point(self, quartile):
-        for i, v in enumerate(self._percentiles):
-            print i, v
-
         if quartile == 1:
             percentile = 25
         elif quartile == 2:

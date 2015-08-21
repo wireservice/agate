@@ -334,29 +334,17 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(quartiles.point(2), Decimal(4))
         self.assertEqual(quartiles.point(3), Decimal(6))
 
-    def test_percentile(self):
-        rows = [(n,) for n in range(0, 1001)]
+    def test_percentiles(self):
+        rows = [(n,) for n in range(1, 1001)]
 
         table = Table(rows, (self.number_type,), ('ints',))
 
         percentiles = table.columns['ints'].percentiles()
 
-        self.assertEqual(percentiles[25], Decimal(260))
-        self.assertEqual(percentiles[50], Decimal(510))
-        self.assertEqual(percentiles[75], Decimal(760))
-        self.assertEqual(percentiles[99], Decimal(1000))
-
-    def test_percentile_range(self):
-        rows = [(n,) for n in range(0, 101)]
-
-        table = Table(rows, (self.number_type,), ('ints',))
-
-        percentiles = table.columns['ints'].percentiles()
-
-        self.assertEqual(percentiles[24], Decimal(25))
-        self.assertEqual(percentiles[49], Decimal(50))
-        self.assertEqual(percentiles[74], Decimal(75))
-        self.assertEqual(percentiles[99], Decimal(100))
+        self.assertEqual(percentiles.point(25), Decimal(250.5))
+        self.assertEqual(percentiles.point(50), Decimal(500.5))
+        self.assertEqual(percentiles.point(75), Decimal(750.5))
+        self.assertEqual(percentiles.point(99), Decimal(990.5))
 
     def test_percentile_no_data(self):
         rows = (())
