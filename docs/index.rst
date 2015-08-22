@@ -21,17 +21,18 @@ Why use journalism?
 * 100% test coverage.
 * Extensive user documentation.
 * Access to the full power of Python in every command.
+* Thoroughly documented implementations of common analytical techniques.
 
 Table of contents
 =================
 
 .. toctree::
-    :maxdepth: 2 
-    
+    :maxdepth: 2
+
     install
     tutorial
     cookbook
-    api 
+    api
     contributing
 
 Authors
@@ -55,4 +56,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
