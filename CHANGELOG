@@ -1,9 +1,19 @@
+0.5.0
+-----
+
+* NumberColumn.deciles implemented.
+* NumberColumn.quintiles implemented. (#46)
+* NumberColumn.quartiles implemented. (#45)
+* NumberColumn.percentiles reimplemented using new method.
+* Reorganized and modularized column implementations.
+* Implement TableSet object. (#141)
+
 0.4.0
 -----
 
 * Upgrade to python-dateutil 2.2. (#134)
 * Wrote introductory tutorial. (#133)
-* Reorganize documentation (#132) 
+* Reorganize documentation (#132)
 * Add John Heasly to AUTHORS.
 * Implement percentile. (#35)
 * no_null_computations now accepts args. (#122)
@@ -24,7 +34,7 @@
 * Cookbook: statistics, including outlier detection. (#82)
 * Cookbook: emulating Underscore's any and all. (#107)
 * Parameter documention for method parameters. (#108)
-* Table.rank now accepts a column name or key function. 
+* Table.rank now accepts a column name or key function.
 * Optionally use cdecimal for improved performance. (#106)
 * Smart naming of aggregate columns.
 * Duplicate columns names are now an error. (#92)

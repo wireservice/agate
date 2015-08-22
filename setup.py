@@ -13,7 +13,7 @@ if sys.version_info == (2, 6):
 
 setup(
     name='journalism',
-    version='0.4.0',
+    version='0.5.0',
     description='',
     long_description=open('README').read(),
     author='Christopher Groskopf',

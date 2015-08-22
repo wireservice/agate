@@ -255,8 +255,7 @@ class Quantiles(Sequence):
 
     def locate(self, value):
         """
-        Identify which lowest percentile value that a given observation
-        exceeds.
+        Identify which percentile a given value is part of.
         """
         i = 1
 
