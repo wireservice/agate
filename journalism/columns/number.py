@@ -179,8 +179,7 @@ class NumberColumn(Column):
         """
         Compute percentiles for this column of data.
 
-        This method is equivalent to ``NumberColumn.quantiles(100)``.
-
+        :returns: :class:`Percentiles`.
         :raises: :exc:`.NullComputationError`
         """
         if self._cached_percentiles:
@@ -195,16 +194,30 @@ class NumberColumn(Column):
         """
         Compute quartiles for this column of data.
 
-        This method is equivalent to ``NumberColumn.quantiles(4)``.
-
+        :returns: :class:`Quartiles`.
         :raises: :exc:`.NullComputationError`
         """
-        if self._cached_quartiles:
-            return self._cached_quartiles
+        return Quartiles(self.percentiles())
 
-        percentiles = self.percentiles()
+    @no_null_computations
+    def quintiles(self):
+        """
+        Compute quintiles for this column of data.
 
-        return Quartiles(percentiles)
+        :returns: :class:`Quintiles`.
+        :raises: :exc:`.NullComputationError`
+        """
+        return Quintiles(self.percentiles())
+
+    @no_null_computations
+    def deciles(self):
+        """
+        Compute deciles for this column of data.
+
+        :returns: :class:`Deciles`.
+        :raises: :exc:`.NullComputationError`
+        """
+        return Deciles(self.percentiles())
 
 class NumberColumnSet(ColumnSet):
     """
@@ -228,20 +241,29 @@ class Quantiles(Sequence):
     """
     Base class defining the interface for various quantile implementations.
     """
-    def __getitem__(self, k):
-        raise NotImplementedError()
+    def __init__(self):
+        self._quantiles = []
+
+    def __getitem__(self, i):
+        return self._quantiles.__getitem__(i)
 
     def __iter__(self):
-        raise NotImplementedError()
+        return self._quantiles.__iter__()
 
     def __len__(self):
-        raise NotImplementedError()
+        return self._quantiles.__len__()
 
     def at(self, value):
         """
-        Identify which quantile a given value is located in.
+        Identify which lowest percentile value that a given observation
+        exceeds.
         """
-        raise NotImplementedError()
+        i = 1
+
+        while value >= self._quantiles[i]:
+            i += 1
+
+        return i - 1
 
 class Percentiles(Quantiles):
     """
@@ -250,18 +272,22 @@ class Percentiles(Quantiles):
     See `this explanation <http://www.amstat.org/publications/jse/v14n3/langford.html>`_
     of the various methods for computing percentiles.
 
-    This is equivalent to method 5 in SAS.
+    "Zeroth" (min value) and "Hundredth" (max value) percentiles are included
+    for reference and intuitive indexing.
 
-    Implementation help came from `pycalcstats <https://code.google.com/p/pycalcstats/>`_.
+    A reference implementation was provided by 
+    `pycalcstats <https://code.google.com/p/pycalcstats/>`_.
     """
     def __init__(self, column):
+        super(Percentiles, self).__init__()
+
         data = column._data_sorted()
 
         if len(data) == 0:
             raise ValueError('Column does not contain data.')
 
         # Zeroth percentile is first datum
-        self._percentiles = [data[0]]
+        self._quantiles = [data[0]]
 
         for percentile in range(1, 100):
             k = len(data) * (float(percentile) / 100)
@@ -276,61 +302,44 @@ class Percentiles(Quantiles):
             else:
                 value = (data[low - 1] + data[high - 1]) / 2
 
-            self._percentiles.append(value)
+            self._quantiles.append(value)
 
         # Hundredth percentile is final datum
-        self._percentiles.append(data[-1])
-
-    def __getitem__(self, i):
-        return self._percentiles.__getitem__(i)
-
-    def __iter__(self):
-        return self._percentiles.__iter__()
-
-    def __len__(self):
-        return self._percentiles.__len__()
-
-    def at(self, value):
-        """
-        Identify which lowest percentile value that a given observation
-        exceeds.
-        """
-        i = 1
-
-        while value >= self._percentiles[i]:
-            i += 1
-
-        return i - 1
+        self._quantiles.append(data[-1])
 
 class Quartiles(Quantiles):
+    """
+    The quartiles of a column based on the 25th, 50th and 75th percentiles.
+
+    "Zeroth" (min value) and "Fourth" (max value) quartiles are included for
+    reference and intuitive indexing.
+
+    See :class:`Percentiles` for implementation details.
+    """
     def __init__(self, percentiles):
-        self._quartiles = [
-            percentiles[0],
-            percentiles[25],
-            percentiles[50],
-            percentiles[75],
-            percentiles[100]
-        ]
+        self._quantiles = [percentiles[i] for i in range(0, 101, 25)]
 
-    def __unicode__(self):
-        return unicode(self._quartiles)
+class Quintiles(Quantiles):
+    """
+    The quintiles of a column based on the 20th, 40th, 60th and 80th
+    percentiles.
 
-    def __str__(self):
-        return str(self.__unicode__())
+    "Zeroth" (min value) and "Fifth" (max value) quintiles are included for
+    reference and intuitive indexing.
 
-    def __getitem__(self, i):
-        return self._quartiles.__getitem__(i)
+    See :class:`Percentiles` for implementation details.
+    """
+    def __init__(self, percentiles):
+        self._quantiles = [percentiles[i] for i in range(0, 101, 20)]
 
-    def __iter__(self):
-        return self._quartiles.__iter__()
+class Deciles(Quantiles):
+    """
+    The deciles of a column based on the 10th, 20th ... 90th percentiles.
 
-    def __len__(self):
-        return self._quartiles.__len__()
+    "Zeroth" (min value) and "Tenth" (max value) deciles are included for
+    reference and intuitive indexing.
 
-    def at(self, value):
-        i = 1
-
-        while value >= self._quartiles[i]:
-            i += 1
-
-        return i - 1
+    See :class:`Percentiles` for implementation details.
+    """
+    def __init__(self, percentiles):
+        self._quantiles = [percentiles[i] for i in range(0, 101, 10)]

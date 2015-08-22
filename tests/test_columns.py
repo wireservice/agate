@@ -241,6 +241,31 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(counts[2], 1)
         self.assertEqual(counts[None], 1)
 
+    def test_percentiles(self):
+        rows = [(n,) for n in range(1, 1001)]
+
+        table = Table(rows, (self.number_type,), ('ints',))
+
+        percentiles = table.columns['ints'].percentiles()
+
+        self.assertEqual(percentiles[0], Decimal(1))
+        self.assertEqual(percentiles[25], Decimal(250.5))
+        self.assertEqual(percentiles[50], Decimal(500.5))
+        self.assertEqual(percentiles[75], Decimal(750.5))
+        self.assertEqual(percentiles[99], Decimal(990.5))
+        self.assertEqual(percentiles[100], Decimal(1000))
+
+    def test_percentiles_at(self):
+        rows = [(n,) for n in range(1, 1001)]
+
+        table = Table(rows, (self.number_type,), ('ints',))
+
+        percentiles = table.columns['ints'].percentiles()
+
+        self.assertEqual(percentiles.at(251), Decimal(25))
+        self.assertEqual(percentiles.at(260), Decimal(25))
+        self.assertEqual(percentiles.at(261), Decimal(26))
+
     def test_quartiles(self):
         """
         CDF quartile tests from:
@@ -342,20 +367,6 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(quartiles.at(4), Decimal(1))
         self.assertEqual(quartiles.at(6), Decimal(2))
         self.assertEqual(quartiles.at(8), Decimal(3))
-
-    def test_percentiles(self):
-        rows = [(n,) for n in range(1, 1001)]
-
-        table = Table(rows, (self.number_type,), ('ints',))
-
-        percentiles = table.columns['ints'].percentiles()
-
-        self.assertEqual(percentiles[0], Decimal(1))
-        self.assertEqual(percentiles[25], Decimal(250.5))
-        self.assertEqual(percentiles[50], Decimal(500.5))
-        self.assertEqual(percentiles[75], Decimal(750.5))
-        self.assertEqual(percentiles[99], Decimal(990.5))
-        self.assertEqual(percentiles[100], Decimal(1000))
 
     def test_percentile_no_data(self):
         rows = (())
