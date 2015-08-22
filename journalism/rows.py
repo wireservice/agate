@@ -72,6 +72,9 @@ class Row(Mapping):
     def __str__(self):
         return str(self.__unicode__())
 
+    def __repr__(self):
+        return str(self)
+
     def __getitem__(self, k):
         if isinstance(k, int):
             try:

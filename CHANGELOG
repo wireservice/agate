@@ -1,6 +1,7 @@
 0.5.0
 -----
 
+* Table.aggregate migrated to TableSet.aggregate.
 * Table.group_by now supports grouping by a key function. (#140)
 * NumberColumn.deciles implemented.
 * NumberColumn.quintiles implemented. (#46)

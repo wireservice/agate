@@ -12,7 +12,8 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-from journalism.columns import ColumnMapping
+from journalism.columns import ColumnMapping, TextType, NumberType
+from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
 from journalism.rows import RowSequence
 
 class TableMethodProxy(object):
@@ -47,8 +48,9 @@ class TableSet(Mapping):
         :class:`.ColumnSet`s in this table.
     """
     def __init__(self, group):
-        self._column_types = group.values()[0].get_column_types()
-        self._column_names = group.values()[0].get_column_names()
+        self._first_table = group.values()[0]
+        self._column_types = self._first_table.get_column_types()
+        self._column_names = self._first_table.get_column_names()
 
         for name, table in group.items():
             if table._column_types != self._column_types:
@@ -75,7 +77,7 @@ class TableSet(Mapping):
         self.inner_join = TableMethodProxy(self, 'inner_join')
         self.left_outer_join = TableMethodProxy(self, 'left_outer_join')
         # self.group_by = TableMethodProxy(self, 'group_by')
-        self.aggregate = TableMethodProxy(self, 'aggregate')
+        # self.aggregate = TableMethodProxy(self, 'aggregate')
         self.compute = TableMethodProxy(self, 'compute')
         self.percent_change = TableMethodProxy(self, 'percent_change')
         self.rank = TableMethodProxy(self, 'rank')
@@ -116,3 +118,52 @@ class TableSet(Mapping):
         :returns: A :class:`tuple` of strings.
         """
         return self._column_names
+
+    def aggregate(self, operations):
+        """
+        Aggregate data from the tables in this set by performing some
+        set of column operations on the groups and coalescing the results into
+        a new :class:`.Table`.
+
+        :class:`group` and :class:`count` columns will always be included as at
+        the beginning of the output table. The rest of the columns will be
+        named :code:`originalname_operation`. For instance
+        :code:`salaries_median`.
+
+        :param operations: An iterable of pairs of column names and the
+            names of :class:`.Column` methods, such as "sum" or "max_length".
+        :returns: A new :class:`Table`.
+        :raises: :exc:`.ColumnDoesNotExistError`, :exc:`.UnsupportedOperationError`
+        """
+        output = []
+
+        column_types = [TextType(), NumberType()]
+        column_names = ['group', 'count']
+
+        for op_column, operation in operations:
+            try:
+                j = self._column_names.index(op_column)
+            except ValueError:
+                raise ColumnDoesNotExistError(op_column)
+
+            column_type = self._column_types[j]
+
+            column_types.append(column_type)
+            column_names.append('%s_%s' % (op_column, operation))
+
+        for name, table in self._tables.items():
+            new_row = [name, len(table.rows)]
+
+            for op_column, operation in operations:
+                c = table.columns[op_column]
+
+                try:
+                    op = getattr(c, operation)
+                except AttributeError:
+                    raise UnsupportedOperationError(operation, c)
+
+                new_row.append(op())
+
+            output.append(tuple(new_row))
+
+        return self._first_table._fork(output, column_types, column_names)

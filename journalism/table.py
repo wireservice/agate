@@ -438,15 +438,19 @@ class Table(object):
 
     def group_by(self, key):
         """
-        Create a new :class:`Table` for **each** unique value in the
-        :code:`group_by` column and return them as a :class:`.TableSet`.
+        Create a new :class:`Table` for unique value and return them as a
+        :class:`.TableSet`. The :code:`key` can be either a column name
+        or a function that returns a value to group by.
+
+        Note that when group names will always be coerced to a string,
+        regardless of the format of the input column.
 
         :param key: Either the name of a column from the this table
             to group by, or a :class:`function` that takes a row and returns
             a value to group by.
         :returns: A :class:`.TableSet` mapping where the keys are unique
             values from the :code:`key` and the values are new :class:`Table`
-            instances.
+            instances containing the grouped rows.
         :raises: :exc:`.ColumnDoesNotExistError`
         """
         key_is_row_function = hasattr(key, '__call__')
@@ -461,9 +465,9 @@ class Table(object):
 
         for row in self.rows:
             if key_is_row_function:
-                group_name = key(row)
+                group_name = unicode(key(row))
             else:
-                group_name = row[i]
+                group_name = unicode(row[i])
 
             if group_name not in groups:
                 groups[group_name] = []
@@ -476,74 +480,6 @@ class Table(object):
             output[group] = self._fork(rows)
 
         return TableSet(output)
-
-    def aggregate(self, group_by, operations):
-        """
-        Aggregate data by grouping values together and performing some
-        set of column operations on the groups.
-
-        The columns of the output table (except for the :code:`group_by`
-        column, will be named :code:`originalname_operation`. For instance
-        :code:`salaries_median`.
-
-        A :code:`group_by_count` column will always be added to the output.
-        The order of the output columns will be :code:`('group_by',
-        'group_by_count', 'column_one_operation', ...)`.
-
-        :param group_by: The name of a column to group by.
-        :param operations: An iterable of pairs of column names and the
-            names of :class:`.Column` methods, such as "sum" or "max_length".
-        :returns: A new :class:`Table`.
-        :raises: :exc:`.ColumnDoesNotExistError`, :exc:`.UnsupportedOperationError`
-        """
-        try:
-            i = self._column_names.index(group_by)
-        except ValueError:
-            raise ColumnDoesNotExistError(group_by)
-
-        groups = OrderedDict()
-
-        for row in self._data:
-            group_name = row[i]
-
-            if group_name not in groups:
-                groups[group_name] = []
-
-            groups[group_name].append(row)
-
-        output = []
-
-        column_types = [self._column_types[i], NumberType()]
-        column_names = [group_by, '%s_count' % group_by]
-
-        for op_column, operation in operations:
-            try:
-                j = self._column_names.index(op_column)
-            except ValueError:
-                raise ColumnDoesNotExistError(op_column)
-
-            column_type = self._column_types[j]
-
-            column_types.append(column_type)
-            column_names.append('%s_%s' % (op_column, operation))
-
-        for name, group_rows in groups.items():
-            group_table = Table(group_rows, self._column_types, self._column_names)
-            new_row = [name, len(group_table.rows)]
-
-            for op_column, operation in operations:
-                c = group_table.columns[op_column]
-
-                try:
-                    op = getattr(c, operation)
-                except AttributeError:
-                    raise UnsupportedOperationError(operation, c)
-
-                new_row.append(op())
-
-            output.append(tuple(new_row))
-
-        return self._fork(output, column_types, column_names)
 
     def compute(self, column_name, column_type, func):
         """

@@ -386,11 +386,11 @@ class TestTableGrouping(unittest.TestCase):
 
         self.assertIn('a', new_tables.keys())
         self.assertIn('b', new_tables.keys())
-        self.assertIn(None, new_tables.keys())
+        self.assertIn('None', new_tables.keys())
 
         self.assertSequenceEqual(new_tables['a'].columns['one'], ('a', 'a'))
         self.assertSequenceEqual(new_tables['b'].columns['one'], ('b',))
-        self.assertSequenceEqual(new_tables[None].columns['one'], (None,))
+        self.assertSequenceEqual(new_tables['None'].columns['one'], (None,))
 
     def test_group_by_function(self):
         table = Table(self.rows, self.column_types, self.column_names)
@@ -400,71 +400,17 @@ class TestTableGrouping(unittest.TestCase):
         self.assertIsInstance(new_tables, TableSet)
         self.assertEqual(len(new_tables), 2)
 
-        self.assertIn(True, new_tables.keys())
-        self.assertIn(False, new_tables.keys())
+        self.assertIn('True', new_tables.keys())
+        self.assertIn('False', new_tables.keys())
 
-        self.assertSequenceEqual(new_tables[True].columns['one'], ('a', 'a', 'b'))
-        self.assertSequenceEqual(new_tables[False].columns['one'], (None,))
+        self.assertSequenceEqual(new_tables['True'].columns['one'], ('a', 'a', 'b'))
+        self.assertSequenceEqual(new_tables['False'].columns['one'], (None,))
 
     def test_group_by_bad_column(self):
         table = Table(self.rows, self.column_types, self.column_names)
 
         with self.assertRaises(ColumnDoesNotExistError):
             table.group_by('bad')
-
-    def test_aggregate_sum(self):
-        table = Table(self.rows, self.column_types, self.column_names)
-
-        new_table = table.aggregate('one', (('two', 'sum'), ))
-
-        self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 3)
-        self.assertSequenceEqual(new_table._column_names, ('one', 'one_count', 'two_sum'))
-        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 4))
-        self.assertSequenceEqual(new_table.rows[1], (None, 1, 3))
-        self.assertSequenceEqual(new_table.rows[2], ('b', 1, 3))
-
-    def test_aggregate_sum_two_columns(self):
-        table = Table(self.rows, self.column_types, self.column_names)
-
-        new_table = table.aggregate('one', (('two', 'sum'), ('four', 'sum')))
-
-        self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 4)
-        self.assertSequenceEqual(new_table._column_names, ('one', 'one_count', 'two_sum', 'four_sum'))
-        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 4, 4))
-        self.assertSequenceEqual(new_table.rows[1], (None, 1, 3, 0))
-        self.assertSequenceEqual(new_table.rows[2], ('b', 1, 3, 0))
-
-    def test_aggregate_two_ops(self):
-        table = Table(self.rows, self.column_types, self.column_names)
-
-        new_table = table.aggregate('one', (('two', 'sum'), ('two', 'mean')))
-
-        self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 4)
-        self.assertSequenceEqual(new_table._column_names, ('one', 'one_count', 'two_sum', 'two_mean'))
-        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 4, 2))
-        self.assertSequenceEqual(new_table.rows[1], (None, 1, 3, 3))
-        self.assertSequenceEqual(new_table.rows[2], ('b', 1, 3, 3))
-
-    def test_aggregate_sum_invalid(self):
-        table = Table(self.rows, self.column_types, self.column_names)
-
-        with self.assertRaises(UnsupportedOperationError):
-            table.aggregate('two', (('one', 'sum'), ))
-
-    def test_aggregeate_bad_column(self):
-        table = Table(self.rows, self.column_types, self.column_names)
-
-        with self.assertRaises(ColumnDoesNotExistError):
-            table.aggregate('bad', (('one', 'sum'), ))
-
-        with self.assertRaises(ColumnDoesNotExistError):
-            table.aggregate('two', (('bad', 'sum'), ))
 
 class TestTableCompute(unittest.TestCase):
     def setUp(self):
