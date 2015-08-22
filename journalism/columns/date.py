@@ -58,7 +58,7 @@ class MinOperation(ColumnOperation):
     :returns: :class:`datetime.date`.
     """
     def get_aggregate_column_type(self):
-        return DateType
+        return DateType()
 
     def __call__(self):
         return min(self._column._data_without_nulls())
@@ -70,7 +70,7 @@ class MaxOperation(ColumnOperation):
     :returns: :class:`datetime.date`.
     """
     def get_aggregate_column_type(self):
-        return DateType
+        return DateType()
 
     def __call__(self):
         return max(self._column._data_without_nulls())

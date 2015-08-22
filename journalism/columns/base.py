@@ -174,7 +174,7 @@ class HasNullsOperation(ColumnOperation):
     Returns :code:`True` if this column contains null values.
     """
     def get_aggregate_column_type(self):
-        return BooleanType
+        return BooleanType()
 
     def __call__(self):
         return None in self._column._data()
@@ -187,7 +187,7 @@ class AnyOperation(ColumnOperation):
         or :code:`False`.
     """
     def get_aggregate_column_type(self):
-        return BooleanType
+        return BooleanType()
 
     def __call__(self, test):
         return any(test(d) for d in self._column._data())
@@ -200,7 +200,7 @@ class AllOperation(ColumnOperation):
         or :code:`False`.
     """
     def get_aggregate_column_type(self):
-        return BooleanType
+        return BooleanType()
 
     def __call__(self, test):
         return all(test(d) for d in self._column._data())
@@ -212,7 +212,7 @@ class CountOperation(ColumnOperation):
     :param value: The value to be counted.
     """
     def get_aggregate_column_type(self):
-        return NumberType
+        return NumberType()
 
     def __call__(self, value):
         count = 0

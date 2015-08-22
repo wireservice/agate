@@ -152,7 +152,7 @@ class SumOperation(ColumnOperation):
     :returns: :class:`decimal.Decimal`.
     """
     def get_aggregate_column_type(self):
-        return NumberType
+        return NumberType()
 
     def __call__(self):
         return sum(self._column._data_without_nulls())
@@ -164,7 +164,7 @@ class MinOperation(ColumnOperation):
     :returns: :class:`decimal.Decimal`.
     """
     def get_aggregate_column_type(self):
-        return NumberType
+        return NumberType()
 
     def __call__(self):
         return min(self._column._data_without_nulls())
@@ -176,7 +176,7 @@ class MaxOperation(ColumnOperation):
     :returns: :class:`decimal.Decimal`.
     """
     def get_aggregate_column_type(self):
-        return NumberType
+        return NumberType()
 
     def __call__(self):
         return max(self._column._data_without_nulls())
@@ -189,7 +189,7 @@ class MeanOperation(ColumnOperation):
     :raises: :exc:`.NullComputationError`
     """
     def get_aggregate_column_type(self):
-        return NumberType
+        return NumberType()
 
     @no_null_computations
     def __call__(self):
@@ -203,7 +203,7 @@ class MedianOperation(ColumnOperation):
     :raises: :exc:`.NullComputationError`
     """
     def get_aggregate_column_type(self):
-        return NumberType
+        return NumberType()
 
     @no_null_computations
     def __call__(self):
@@ -217,7 +217,7 @@ class ModeOperation(ColumnOperation):
     :raises: :exc:`.NullComputationError`
     """
     def get_aggregate_column_type(self):
-        return NumberType
+        return NumberType()
 
     @no_null_computations
     def __call__(self):
@@ -237,7 +237,7 @@ class VarianceOperation(ColumnOperation):
     :raises: :exc:`.NullComputationError`
     """
     def get_aggregate_column_type(self):
-        return NumberType
+        return NumberType()
 
     @no_null_computations
     def __call__(self):
@@ -254,7 +254,7 @@ class StdevOperation(ColumnOperation):
     :raises: :exc:`.NullComputationError`
     """
     def get_aggregate_column_type(self):
-        return NumberType
+        return NumberType()
 
     @no_null_computations
     def __call__(self):
@@ -269,7 +269,7 @@ class MadOperation(ColumnOperation):
     :raises: :exc:`.NullComputationError`
     """
     def get_aggregate_column_type(self):
-        return NumberType
+        return NumberType()
 
     @no_null_computations
     def __call__(self):

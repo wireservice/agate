@@ -3,6 +3,7 @@
 import six
 
 from journalism.columns.base import *
+from journalism.columns.number import NumberType
 
 class TextType(ColumnType):
     """
@@ -46,7 +47,7 @@ class MaxLengthOperation(ColumnOperation):
     Calculates the longest string in this column.
     """
     def get_aggregate_column_type(self):
-        return NumberType
+        return NumberType()
 
     def __call__(self):
         return max([len(d) for d in self._column._data_without_nulls()])

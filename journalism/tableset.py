@@ -12,7 +12,7 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-from journalism.columns import ColumnMapping, TextType, NumberType
+from journalism.columns import ColumnOperation, TextType, NumberType
 from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
 from journalism.rows import RowSequence
 
@@ -126,14 +126,17 @@ class TableSet(Mapping):
         column_names = ['group', 'count']
 
         for op_column, op_name in operations:
+            c = self._first_table.columns[op_column]
+
             try:
-                j = self._column_names.index(op_column)
-            except ValueError:
-                raise ColumnDoesNotExistError(op_column)
+                op = getattr(c, op_name)
+            except AttributeError:
+                raise UnsupportedOperationError(op_name, c)
 
-            column_type = self._column_types[j]
+            if not isinstance(op, ColumnOperation):
+                raise UnsupportedOperationError(op_name, c)
 
-            column_types.append(column_type)
+            column_types.append(op.get_aggregate_column_type())
             column_names.append('%s_%s' % (op_column, op_name))
 
         for name, table in self._tables.items():
@@ -141,15 +144,8 @@ class TableSet(Mapping):
 
             for op_column, op_name in operations:
                 c = table.columns[op_column]
+                op = getattr(c, op_name)
 
-                try:
-                    op = getattr(c, op_name)
-                except AttributeError:
-                    raise UnsupportedOperationError(operation, c)
-
-                if not isinstance(op, ColumnOperation):
-                    raise UnsupportedOperationError(operation, c)
-                    
                 new_row.append(op())
 
             output.append(tuple(new_row))
