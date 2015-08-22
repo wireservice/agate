@@ -5,7 +5,8 @@
 * NumberColumn.deciles implemented.
 * NumberColumn.quintiles implemented. (#46)
 * NumberColumn.quartiles implemented. (#45)
-* NumberColumn.percentiles reimplemented using new method.
+* Added robust test case for NumberColumn.percentiles. (#129)
+* NumberColumn.percentiles reimplemented using new method. (#130)
 * Reorganized and modularized column implementations.
 * Table.group_by now returns a TableSet.
 * Implement TableSet object. (#141)
