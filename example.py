@@ -47,19 +47,17 @@ print('Total for Kansas City area: %i' % kansas_city.columns['total_cost'].sum()
 # Group by county
 counties = table.group_by('county')
 
-# Order each county by recent purchases
-totals = counties.columns['total_cost'].sum()
-
-for county, total in totals.items():
-    print '%s, %i' % (county, total)
-
 # Aggregate totals for all counties
-totals = table.aggregate('county', (( 'total_cost', 'sum' ),)).order_by('total_cost_sum', reverse=True).rows[:5]
+totals = counties.aggregate([
+    ('total_cost', 'sum')
+])
+
+totals = totals.order_by('total_cost_sum', reverse=True).rows[:5]
 
 print('Five most spendy counties:')
 
 for i, row in enumerate(totals):
-    text = '# {}: {}, ${:,}'.format(i + 1, row['county'], row['total_cost_sum'])
+    text = '# {}: {}, ${:,}'.format(i + 1, row['group'], row['total_cost_sum'])
     print(text)
 
 # Get the five most recent purchases
