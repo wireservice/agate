@@ -459,7 +459,7 @@ class Table(object):
 
         groups = OrderedDict()
 
-        for row in self._data:
+        for row in self.rows:
             if key_is_row_function:
                 group_name = key(row)
             else:

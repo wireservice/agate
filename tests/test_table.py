@@ -392,6 +392,20 @@ class TestTableGrouping(unittest.TestCase):
         self.assertSequenceEqual(new_tables['b'].columns['one'], ('b',))
         self.assertSequenceEqual(new_tables[None].columns['one'], (None,))
 
+    def test_group_by_function(self):
+        table = Table(self.rows, self.column_types, self.column_names)
+
+        new_tables = table.group_by(lambda r: r['three'] < 5)
+
+        self.assertIsInstance(new_tables, TableSet)
+        self.assertEqual(len(new_tables), 2)
+
+        self.assertIn(True, new_tables.keys())
+        self.assertIn(False, new_tables.keys())
+
+        self.assertSequenceEqual(new_tables[True].columns['one'], ('a', 'a', 'b'))
+        self.assertSequenceEqual(new_tables[False].columns['one'], (None,))
+
     def test_group_by_bad_column(self):
         table = Table(self.rows, self.column_types, self.column_names)
 
