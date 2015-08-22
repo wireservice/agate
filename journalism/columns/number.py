@@ -253,7 +253,7 @@ class Quantiles(Sequence):
     def __len__(self):
         return self._quantiles.__len__()
 
-    def at(self, value):
+    def locate(self, value):
         """
         Identify which lowest percentile value that a given observation
         exceeds.
@@ -275,7 +275,7 @@ class Percentiles(Quantiles):
     "Zeroth" (min value) and "Hundredth" (max value) percentiles are included
     for reference and intuitive indexing.
 
-    A reference implementation was provided by 
+    A reference implementation was provided by
     `pycalcstats <https://code.google.com/p/pycalcstats/>`_.
     """
     def __init__(self, column):

@@ -262,9 +262,9 @@ class TestColumns(unittest.TestCase):
 
         percentiles = table.columns['ints'].percentiles()
 
-        self.assertEqual(percentiles.at(251), Decimal(25))
-        self.assertEqual(percentiles.at(260), Decimal(25))
-        self.assertEqual(percentiles.at(261), Decimal(26))
+        self.assertEqual(percentiles.locate(251), Decimal(25))
+        self.assertEqual(percentiles.locate(260), Decimal(25))
+        self.assertEqual(percentiles.locate(261), Decimal(26))
 
     def test_quartiles(self):
         """
@@ -363,10 +363,10 @@ class TestColumns(unittest.TestCase):
 
         quartiles = table.columns['ints'].quartiles()
 
-        self.assertEqual(quartiles.at(2), Decimal(0))
-        self.assertEqual(quartiles.at(4), Decimal(1))
-        self.assertEqual(quartiles.at(6), Decimal(2))
-        self.assertEqual(quartiles.at(8), Decimal(3))
+        self.assertEqual(quartiles.locate(2), Decimal(0))
+        self.assertEqual(quartiles.locate(4), Decimal(1))
+        self.assertEqual(quartiles.locate(6), Decimal(2))
+        self.assertEqual(quartiles.locate(8), Decimal(3))
 
     def test_percentile_no_data(self):
         rows = (())
