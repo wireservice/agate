@@ -125,7 +125,7 @@ class TableSet(Mapping):
         column_types = [TextType(), NumberType()]
         column_names = ['group', 'count']
 
-        for op_column, operation in operations:
+        for op_column, op_name in operations:
             try:
                 j = self._column_names.index(op_column)
             except ValueError:
@@ -134,19 +134,22 @@ class TableSet(Mapping):
             column_type = self._column_types[j]
 
             column_types.append(column_type)
-            column_names.append('%s_%s' % (op_column, operation))
+            column_names.append('%s_%s' % (op_column, op_name))
 
         for name, table in self._tables.items():
             new_row = [name, len(table.rows)]
 
-            for op_column, operation in operations:
+            for op_column, op_name in operations:
                 c = table.columns[op_column]
 
                 try:
-                    op = getattr(c, operation)
+                    op = getattr(c, op_name)
                 except AttributeError:
                     raise UnsupportedOperationError(operation, c)
 
+                if not isinstance(op, ColumnOperation):
+                    raise UnsupportedOperationError(operation, c)
+                    
                 new_row.append(op())
 
             output.append(tuple(new_row))
