@@ -15,20 +15,6 @@ from journalism.exceptions import ColumnDoesNotExistError, NullComputationError
 #: String values which will be automatically cast to :code:`None`.
 NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
 
-def no_null_computations(func):
-    """
-    Function decorator that prevents illogical computations
-    on columns containing nulls.
-    """
-    @wraps(func)
-    def check(c, *args, **kwargs):
-        if c.has_nulls():
-            raise NullComputationError
-
-        return func(c, *args, **kwargs)
-
-    return check
-
 class ColumnType(object):
     """
     Base class for column data types.
@@ -41,52 +27,50 @@ class ColumnType(object):
 
 class ColumnMapping(Mapping):
     """
-    Proxy access to :class:`Column` instances (for :class:`.Table`) or
-    :class:`ColumnSet` instances (for :class:`.TableSet`).
+    Proxy access to :class:`Column` instances for :class:`.Table`.
 
-    :param parent: The parent :class:`.Table` or :class:`.TableSet`.
+    :param table: :class:`.Table`.
     """
-    def __init__(self, parent):
-        self._parent = parent
+    def __init__(self, table):
+        self._table = table
         self._cached_len = None
 
     def __getitem__(self, k):
         try:
-            i = self._parent._column_names.index(k)
+            i = self._table._column_names.index(k)
         except ValueError:
             raise ColumnDoesNotExistError(k)
 
-        return self._parent._get_column(i)
+        return self._table._get_column(i)
 
     def __iter__(self):
-        return ColumnIterator(self._parent)
+        return ColumnIterator(self._table)
 
     def __len__(self):
         if self._cached_len is not None:
             return self._cached_len
 
-        self._cached_len = len(self._parent._column_names)
+        self._cached_len = len(self._table._column_names)
 
         return self._cached_len
 
 class ColumnIterator(six.Iterator):
     """
-    Iterator over :class:`Column` instances (for :class:`.Table`) or
-    :class:`ColumnSet` instances (for :class:`.TableSet`).
+    Iterator over :class:`Column` instances within a :class:`.Table`.
 
-    :param parent: The parent :class:`.Table` or :class:`.TableSet`.
+    :param table: :class:`.Table`.
     """
-    def __init__(self, parent):
-        self._parent = parent
+    def __init__(self, table):
+        self._table = table
         self._i = 0
 
     def __next__(self):
         try:
-            self._parent._column_names[self._i]
+            self._table._column_names[self._i]
         except IndexError:
             raise StopIteration
 
-        column = self._parent._get_column(self._i)
+        column = self._table._get_column(self._i)
 
         self._i += 1
 
@@ -109,6 +93,11 @@ class Column(Sequence):
         self._cached_data_without_nulls = None
         self._cached_data_sorted = None
         self._cached_len = None
+
+        self.has_nulls = HasNullsOperation(self)
+        self.any = AnyOperation(self)
+        self.all = AllOperation(self)
+        self.count = CountOperation(self)
 
     def __unicode__(self):
         data = self._data()
@@ -166,108 +155,70 @@ class Column(Sequence):
         """
         return not self.__eq__(other)
 
-    def has_nulls(self):
-        """
-        Returns True if this column contains null values.
-        """
-        return None in self._data()
+class ColumnOperation(object):
+    """
+    Base class defining an operation that can be performed on a column either
+    to yield an individual value or as part of a :class:`.TableSet` aggregate.
+    """
+    def __init__(self, column):
+        self._column = column
 
-    def any(self, test):
-        """
-        Returns :code:`True` if any value passes a truth test.
+    def get_aggregate_column_type(self):
+        raise NotImplementedError()
 
-        :param test: A function that takes a value and returns :code:`True`
-            or :code:`False`.
-        """
-        return any(test(d) for d in self._data())
+    def __call__(self):
+        raise NotImplementedError()
 
-    def all(self, test):
-        """
-        Returns :code:`True` if all values pass a truth test.
+class HasNullsOperation(ColumnOperation):
+    """
+    Returns :code:`True` if this column contains null values.
+    """
+    def get_aggregate_column_type(self):
+        return BooleanType
 
-        :param test: A function that takes a value and returns :code:`True`
-            or :code:`False`.
-        """
-        return all(test(d) for d in self._data())
+    def __call__(self):
+        return None in self._column._data()
 
-    def count(self, value):
-        """
-        Count the number of times a specific value occurs in this column.
+class AnyOperation(ColumnOperation):
+    """
+    Returns :code:`True` if any value passes a truth test.
 
-        :param value: The value to be counted.
-        """
+    :param test: A function that takes a value and returns :code:`True`
+        or :code:`False`.
+    """
+    def get_aggregate_column_type(self):
+        return BooleanType
+
+    def __call__(self, test):
+        return any(test(d) for d in self._column._data())
+
+class AllOperation(ColumnOperation):
+    """
+    Returns :code:`True` if all values pass a truth test.
+
+    :param test: A function that takes a value and returns :code:`True`
+        or :code:`False`.
+    """
+    def get_aggregate_column_type(self):
+        return BooleanType
+
+    def __call__(self, test):
+        return all(test(d) for d in self._column._data())
+
+class CountOperation(ColumnOperation):
+    """
+    Count the number of times a specific value occurs in this column.
+
+    :param value: The value to be counted.
+    """
+    def get_aggregate_column_type(self):
+        return NumberType
+
+    def __call__(self, value):
         count = 0
 
-        for d in self._data():
+        for d in self._column._data():
             if d == value:
                 count += 1
 
         return count
-
-    def counts(self):
-        """
-        Compute the number of instances of each unique value in this
-        column.
-
-        :returns: :class:`collections.OrderedDict` wth unique values
-            as keys and counts as values.
-        """
-        counts = OrderedDict()
-
-        for d in self._data():
-            if d not in counts:
-                counts[d] = 0
-
-            counts[d] += 1
-
-        return counts
-
-class ColumnMethodProxy(object):
-    """
-    A proxy for :class:`ColumnSet` methods that converts them to individual
-    calls on the ':class:`Column`'s of each :class:`Table` in the set.
-    """
-    def __init__(self, columnset, method_name):
-        self.columnset = columnset
-        self.method_name = method_name
-
-    def __call__(self, *args, **kwargs):
-        output = OrderedDict()
-
-        for key, table in self.columnset._tableset.items():
-            output[key] = getattr(table._get_column(self.columnset._index), self.method_name)(*args, **kwargs)
-
-        return output
-
-class ColumnSet(object):
-    """
-    A 'virtual' column that proxies :class:`.TableSet` column operations across
-    all the identically named columns for each :class:`.Table` in the set.
-    """
-    def __init__(self, tableset, index):
-        self._tableset = tableset
-        self._index = index
-
-        self.__unicode__ = ColumnMethodProxy(self, '__unicode__')
-        self.__str__ = ColumnMethodProxy(self, '__str__')
-        self.__getitem__ = ColumnMethodProxy(self, '__getitem__')
-        self.__len__ = ColumnMethodProxy(self, '__len__')
-        self.__eq__ = ColumnMethodProxy(self, '__eq__')
-        self.__ne__ = ColumnMethodProxy(self, '__ne__')
-        self.has_nulls = ColumnMethodProxy(self, 'has_nulls')
-        self.any = ColumnMethodProxy(self, 'any')
-        self.all = ColumnMethodProxy(self, 'all')
-        self.count = ColumnMethodProxy(self, 'count')
-        self.counts = ColumnMethodProxy(self, 'counts')
-
-    def _proxy(self, method_name, *args, **kwargs):
-        """
-        Primary implementation of the method proxying. Returns a dict of
-        results instead of a single value.
-        """
-        output = OrderedDict()
-
-        for key, table in self._tableset.items():
-            output[key] = getattr(table._get_column(self._index), method_name)(*args, **kwargs)
-
-        return output

@@ -31,19 +31,22 @@ class TextType(ColumnType):
 
     def _create_column_set(self, tableset, index):
         return TextColumnSet(tableset, index)
-        
+
 class TextColumn(Column):
     """
     A column containing unicode/string data.
     """
-    def max_length(self):
-        return max([len(d) for d in self._data_without_nulls()])
-
-class TextColumnSet(ColumnSet):
-    """
-    See :class:`ColumnSet` and :class:`TextColumn`.
-    """
     def __init__(self, *args, **kwargs):
-        super(TextColumnSet, self).__init__(*args, **kwargs)
+        super(TextColumn, self).__init__(*args, **kwargs)
 
-        self.max_length = ColumnMethodProxy(self, 'max_length')
+        self.max_length = MaxLengthOperation(self)
+
+class MaxLengthOperation(ColumnOperation):
+    """
+    Calculates the longest string in this column.
+    """
+    def get_aggregate_column_type(self):
+        return NumberType
+
+    def __call__(self):
+        return max([len(d) for d in self._column._data_without_nulls()])

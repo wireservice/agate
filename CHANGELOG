@@ -1,6 +1,8 @@
 0.5.0
 -----
 
+* Remove Column.counts as it is not the best way.
+* Implement ColumnOperation and subclasses.
 * Table.aggregate migrated to TableSet.aggregate.
 * Table.group_by now supports grouping by a key function. (#140)
 * NumberColumn.deciles implemented.

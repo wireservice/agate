@@ -40,33 +40,37 @@ class DateTimeType(ColumnType):
 
     def _create_column_set(self, tableset, index):
         return DateTimeColumnSet(tableset, index)
-        
+
 class DateTimeColumn(Column):
     """
     A column containing :func:`datetime.datetime` data.
     """
-    def min(self):
-        """
-        Compute the earliest datetime in this column.
-
-        :returns: :class:`datetime.datetime`.
-        """
-        return min(self._data_without_nulls())
-
-    def max(self):
-        """
-        Compute the latest datetime in this column.
-
-        :returns: :class:`datetime.datetime`.
-        """
-        return max(self._data_without_nulls())
-
-class DateTimeColumnSet(ColumnSet):
-    """
-    See :class:`ColumnSet` and :class:`DateTimeColumn`.
-    """
     def __init__(self, *args, **kwargs):
-        super(DateTimeColumnSet, self).__init__(*args, **kwargs)
+        super(DateTimeColumn, self).__init__(*args, **kwargs)
 
-        self.min = ColumnMethodProxy(self, 'min')
-        self.max = ColumnMethodProxy(self, 'max')
+        self.min = MinOperation(self)
+        self.max = MaxOperation(self)
+
+class MinOperation(ColumnOperation):
+    """
+    Compute the earliest datetime in this column.
+
+    :returns: :class:`datetime.datetime`.
+    """
+    def get_aggregate_column_type(self):
+        return DateTimeType
+
+    def __call__(self):
+        return min(self._column._data_without_nulls())
+
+class MaxOperation(ColumnOperation):
+    """
+    Compute the latest datetime in this column.
+
+    :returns: :class:`datetime.datetime`.
+    """
+    def get_aggregate_column_type(self):
+        return DateTimeType
+
+    def __call__(self):
+        return max(self._column._data_without_nulls())

@@ -222,25 +222,6 @@ class TestColumns(unittest.TestCase):
         self.assertEqual(table.columns['one'].count(4), 0)
         self.assertEqual(table.columns['one'].count(None), 1)
 
-    def test_counts(self):
-        rows = (
-            (1, 2, 'a'),
-            (2, 3, 'b'),
-            (None, 4, 'c'),
-            (1, 2, 'a'),
-            (1, 2, 'a')
-        )
-
-        table = Table(rows, self.column_types, self.column_names)
-
-        counts = table.columns['one'].counts()
-
-        self.assertEqual(len(counts), 3)
-
-        self.assertEqual(counts[1], 3)
-        self.assertEqual(counts[2], 1)
-        self.assertEqual(counts[None], 1)
-
     def test_percentiles(self):
         rows = [(n,) for n in range(1, 1001)]
 
@@ -425,6 +406,12 @@ class TestNumberColumn(unittest.TestCase):
     def test_max(self):
         self.assertEqual(self.table.columns['one'].max(), Decimal('2.7'))
         self.assertEqual(self.table.columns['two'].max(), Decimal('4.1'))
+
+    def test_mean(self):
+        with self.assertRaises(NullComputationError):
+            self.table.columns['one'].mean()
+
+        self.assertEqual(self.table.columns['two'].mean(), Decimal('3.2825'))
 
     def test_median(self):
         with self.assertRaises(NullComputationError):

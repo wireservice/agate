@@ -44,25 +44,33 @@ class BooleanType(ColumnType):
 
     def _create_column_set(self, tableset, index):
         return BooleanColumnSet(tableset, index)
-        
+
 class BooleanColumn(Column):
     """
     A column containing :func:`bool` data.
     """
-    def any(self):
-        """
-        Returns :code:`True` if any value is :code:`True`.
-        """
-        return any(self._data())
+    def __init__(self, *args, **kwargs):
+        super(BooleanColumn, self).__init__(*args, **kwargs)
 
-    def all(self):
-        """
-        Returns :code:`True` if all values are :code:`True`.
-        """
-        return all(self._data())
+        self.any = BooleanAnyOperation(self)
+        self.all = BooleanAllOperation(self)
 
-class BooleanColumnSet(ColumnSet):
+class BooleanAnyOperation(ColumnOperation):
     """
-    See :class:`ColumnSet` and :class:`BooleanColumn`.
+    Returns :code:`True` if any value is :code:`True`.
     """
-    pass
+    def get_aggregate_column_type(self):
+        return BooleanType
+
+    def __call__(self):
+        return any(self._column._data())
+
+class BooleanAllOperation(ColumnOperation):
+    """
+    Returns :code:`True` if all values are :code:`True`.
+    """
+    def get_aggregate_column_type(self):
+        return BooleanType
+
+    def __call__(self):
+        return all(self._column._data())

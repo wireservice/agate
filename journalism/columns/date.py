@@ -45,28 +45,32 @@ class DateColumn(Column):
     """
     A column containing :func:`datetime.date` data.
     """
-    def min(self):
-        """
-        Compute the earliest date in this column.
-
-        :returns: :class:`datetime.date`.
-        """
-        return min(self._data_without_nulls())
-
-    def max(self):
-        """
-        Compute the latest date in this column.
-
-        :returns: :class:`datetime.date`.
-        """
-        return max(self._data_without_nulls())
-
-class DateColumnSet(ColumnSet):
-    """
-    See :class:`ColumnSet` and :class:`DateColumn`.
-    """
     def __init__(self, *args, **kwargs):
-        super(DateColumnSet, self).__init__(*args, **kwargs)
+        super(DateColumn, self).__init__(*args, **kwargs)
 
-        self.min = ColumnMethodProxy(self, 'min')
-        self.max = ColumnMethodProxy(self, 'max')
+        self.min = MinOperation(self)
+        self.max = MaxOperation(self)
+
+class MinOperation(ColumnOperation):
+    """
+    Compute the earliest date in this column.
+
+    :returns: :class:`datetime.date`.
+    """
+    def get_aggregate_column_type(self):
+        return DateType
+
+    def __call__(self):
+        return min(self._column._data_without_nulls())
+
+class MaxOperation(ColumnOperation):
+    """
+    Compute the latest date in this column.
+
+    :returns: :class:`datetime.date`.
+    """
+    def get_aggregate_column_type(self):
+        return DateType
+
+    def __call__(self):
+        return max(self._column._data_without_nulls())

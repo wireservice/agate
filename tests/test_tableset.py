@@ -107,39 +107,6 @@ class TestTableSet(unittest.TestCase):
             self.assertSequenceEqual(new_table._column_types, (self.number_type,))
             self.assertSequenceEqual(new_table._column_names, ('number',))
 
-    def test_column_any(self):
-        tableset = TableSet(self.tables)
-
-        max_lengths = tableset.columns['letter'].any(lambda d: d == 'b')
-
-        self.assertEqual(max_lengths, {
-            'table1': True,
-            'table2': True,
-            'table3': False
-        })
-
-    def test_column_max_length(self):
-        tableset = TableSet(self.tables)
-
-        max_lengths = tableset.columns['letter'].max_length()
-
-        self.assertEqual(max_lengths, {
-            'table1': 1,
-            'table2': 1,
-            'table3': 1
-        })
-
-    def test_column_sum(self):
-        tableset = TableSet(self.tables)
-
-        max_lengths = tableset.columns['number'].sum()
-
-        self.assertEqual(max_lengths, {
-            'table1': 6,
-            'table2': 7,
-            'table3': 6
-        })
-
     def test_aggregate_sum(self):
         tableset = TableSet(self.tables)
 

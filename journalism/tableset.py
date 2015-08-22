@@ -59,11 +59,7 @@ class TableSet(Mapping):
             if table._column_names != self._column_names:
                 raise ValueError('Table %i has different column names from the initial table.' % i)
 
-        self._cached_columns = {}
-        self._cached_rows = {}
         self._tables = copy(group)
-
-        self.columns = ColumnMapping(self)
 
         self.select = TableMethodProxy(self, 'select')
         self.where = TableMethodProxy(self, 'where')
@@ -91,17 +87,6 @@ class TableSet(Mapping):
 
     def __len__(self):
         return self._tables.__len__()
-
-    def _get_column(self, i):
-        """
-        Get a Column of data, caching a copy for next request.
-        """
-        if i not in self._cached_columns:
-            column_type = self._column_types[i]
-
-            self._cached_columns[i] = column_type._create_column_set(self, i)
-
-        return self._cached_columns[i]
 
     def get_column_types(self):
         """
