@@ -12,7 +12,7 @@ except ImportError:
 
 from journalism import Table
 from journalism.column_types import NumberType, TextType
-from journalism.computers import PercentChange, Rank, ZScores
+from journalism.computers import Change, PercentChange, Rank, ZScores
 from journalism.exceptions import UnsupportedComputationError
 
 class TestTableCompute(unittest.TestCase):
@@ -30,6 +30,23 @@ class TestTableCompute(unittest.TestCase):
         self.column_names = ('one', 'two', 'three', 'four')
 
         self.table = Table(self.rows, self.column_types, self.column_names)
+
+    def test_change(self):
+        new_table = self.table.compute([
+            ('test', Change('two', 'three'))
+        ])
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+
+        to_one_place = lambda d: d.quantize(Decimal('0.1'))
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', Decimal('2'), Decimal('3'), Decimal('4'), Decimal('1')))
+        self.assertEqual(new_table.columns['test'][0], Decimal('1'))
+        self.assertEqual(new_table.columns['test'][1], Decimal('2'))
+        self.assertEqual(new_table.columns['test'][2], Decimal('2'))
+        self.assertEqual(new_table.columns['test'][3], Decimal('1'))
 
     def test_percent_change(self):
         new_table = self.table.compute([

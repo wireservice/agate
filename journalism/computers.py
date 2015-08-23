@@ -49,9 +49,9 @@ class Formula(Computer):
     def __call__(self, row):
         return self._func(row)
 
-class PercentChange(Computer):
+class Change(Computer):
     """
-    Computes percent change between two columns.
+    Computes change between two columns.
     """
     def __init__(self, before_column, after_column):
         self._before_column = before_column
@@ -71,6 +71,13 @@ class PercentChange(Computer):
         if not isinstance(after_column, NumberColumn):
             raise UnsupportedComputationError(self, after_column)
 
+    def __call__(self, row):
+        return row[self._after_column] - row[self._before_column]
+
+class PercentChange(Change):
+    """
+    Computes percent change between two columns.
+    """
     def __call__(self, row):
         return (row[self._after_column] - row[self._before_column]) / row[self._before_column] * 100
 
