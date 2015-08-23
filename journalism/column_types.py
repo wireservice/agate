@@ -34,10 +34,10 @@ class BooleanType(ColumnType):
     """
     def cast(self, d):
         """
-        Cast a single value to :func:`bool`.
+        Cast a single value to :class:`bool`.
 
         :param d: A value to cast.
-        :returns: :func:`bool` or :code:`None`.
+        :returns: :class:`bool` or :code:`None`.
         """
         if isinstance(d, bool) or d is None:
             return d
@@ -76,7 +76,7 @@ class DateType(ColumnType):
 
         :param date_format: An optional :func:`datetime.strptime`
             format string for parsing dates in this column.
-        :returns: :class`datetime.date` or :code:`None`.
+        :returns: :class:`datetime.date` or :code:`None`.
         """
         if isinstance(d, datetime.date) or d is None:
             return d
@@ -110,7 +110,7 @@ class DateTimeType(ColumnType):
 
         :param date_format: An optional :func:`datetime.strptime`
             format string for parsing datetimes in this column.
-        :returns: :class`datetime.datetime` or :code:`None`.
+        :returns: :class:`datetime.datetime` or :code:`None`.
         """
         if isinstance(d, datetime.datetime) or d is None:
             return d

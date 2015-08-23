@@ -7,7 +7,7 @@ from journalism.columns.operations.date import MinDate, MaxDate
 
 class DateColumn(Column):
     """
-    A column containing :func:`datetime.date` data.
+    A column containing :class:`datetime.date` data.
     """
     def __init__(self, *args, **kwargs):
         super(DateColumn, self).__init__(*args, **kwargs)

@@ -5,7 +5,7 @@ from journalism.columns.operations.boolean import AnyBoolean, AllBoolean
 
 class BooleanColumn(Column):
     """
-    A column containing :func:`bool` data.
+    A column containing :class:`bool` data.
     """
     def __init__(self, *args, **kwargs):
         super(BooleanColumn, self).__init__(*args, **kwargs)

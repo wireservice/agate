@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 """
-This module contains the TableSet object.
+This module contains the TableSet object for working with sets of related
+tables such as are created when grouping data.
 """
 
 from collections import Mapping

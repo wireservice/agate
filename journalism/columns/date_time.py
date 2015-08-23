@@ -9,7 +9,7 @@ from journalism.columns.operations.date_time import MinDateTime, MaxDateTime
 
 class DateTimeColumn(Column):
     """
-    A column containing :func:`datetime.datetime` data.
+    A column containing :class:`datetime.datetime` data.
     """
     def __init__(self, *args, **kwargs):
         super(DateTimeColumn, self).__init__(*args, **kwargs)

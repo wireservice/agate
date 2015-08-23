@@ -12,7 +12,7 @@ class NumberColumn(Column):
     """
     A column containing numeric data.
 
-    All data is represented by the :class:`decimal.Decimal` class.'
+    All data is represented by the :class:`decimal.Decimal` class.
     """
     def __init__(self, *args, **kwargs):
         super(NumberColumn, self).__init__(*args, **kwargs)
