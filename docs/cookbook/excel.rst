@@ -18,7 +18,7 @@ SUM
 
         return sum(tuple(row[c] for c in columns)]
 
-    new_table = table.compute('five_year_total', number_type, five_year_total)  
+    new_table = table.compute('five_year_total', number_type, five_year_total)
 
 TRIM
 ====
@@ -32,7 +32,7 @@ CONCATENATE
 
 .. code-block:: python
 
-    new_table = table.compute('full_name', TextType(), lambda row '%(first_name)s %(middle_name)s %(last_name)s' % row) 
+    new_table = table.compute('full_name', TextType(), lambda row '%(first_name)s %(middle_name)s %(last_name)s' % row)
 
 IF
 ==
@@ -53,16 +53,19 @@ VLOOKUP
         ...
     }
 
-    new_table = table.compute('state_name', TextType(), lambda row: states[row['state_abbr']]) 
+    new_table = table.compute('state_name', TextType(), lambda row: states[row['state_abbr']])
 
 Pivot tables
 ============
 
-You can emulate most of the functionality of Excel's pivot tables using the :meth:`.Table.aggregate` method.
+You can emulate most of the functionality of Excel's pivot tables using the :py:meth:`journalism.tableset.TableSet.aggregate` method.
 
 .. code-block:: python
 
-    summary = table.aggregate('profession', (('salary', 'mean'), ('salary', 'median')) 
+    professions = data.group_by('profession')
+    summary = professions.aggregate([
+        ('salary', 'mean'),
+        ('salary', 'median')
+    ])
 
-A "count" column is always return in the results. The :code:`summary` table in this example would have these columns: :code:`('profession', 'profession_count', 'salary_mean', 'salary_median')`.
-
+The ``summary`` table will have four columns: ``group`` (the profession), ``count`` (the number of grouped rows), ``salary_mean`` and ``salary_median`` (the aggregates).

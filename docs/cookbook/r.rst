@@ -15,5 +15,7 @@ journalism:
 
 .. code-block:: python
 
-    aggregates = employees..aggregate('job', (( 'salary', 'mean'), ))
-
+    jobs = employees.group_by('job')
+    aggregates = jobs.aggregate([
+        ( 'salary', 'mean')
+    ])

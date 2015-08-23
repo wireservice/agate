@@ -43,7 +43,7 @@ ORDER BY
 
 SQL:
 
-.. code-block:: postgres 
+.. code-block:: postgres
 
     SELECT * FROM table ORDER BY total DESC;
 
@@ -107,11 +107,11 @@ journalism:
 GROUP BY
 ========
 
-journalism's :meth:`.Table.group_by` works slightly different than SQLs. It does not require an aggregate function. Instead it returns a dictionary of :code:`group`, :meth:`.Table` pairs. To see how to perform the equivalent of a SQL aggregate, see the next example.
+journalism's :meth:`.Table.group_by` works slightly different than SQLs. It does not require an aggregate function. Instead it returns :py:class:`journalism.tableset.TableSet`. To see how to perform the equivalent of a SQL aggregate, see below.
 
 .. code-block:: python
 
-    groups = patients.group_by('doctor')
+    doctors = patients.group_by('doctor')
 
 Chaining commands together
 ==========================
@@ -148,6 +148,10 @@ journalism:
 
 .. code-block:: python
 
-    new_table = patient.aggregate('doctor', (('age', 'mean'), ))
+    doctors = patients.group_by('doctor')
+    patient_ages = patient.aggregate([
+        ('age', 'mean'),
+        ('age', 'median')
+    ])
 
-
+The resulting table will have four columns: ``group`` (the doctor), ``count`` (the number of patients), ``age_mean`` and ``age_median`` (the aggregates).

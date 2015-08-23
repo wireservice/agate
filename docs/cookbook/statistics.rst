@@ -28,9 +28,13 @@ You can also generate aggregate statistics for subsets of data (sometimes colloq
 
 .. code-block:: python
 
-    summary = table.aggregate('profession', (('salary', 'mean'), ('salary': 'median'))) 
+    professions = data.group_by('profession')
+    summary = professions.aggregate([
+        ('salary', 'mean'),
+        ('salary', 'median')
+    ])
 
-A "count" column is always return in the results. The :code:`summary` table in this example would have these columns: :code:`('profession', 'profession_count', 'salary_mean', 'salary_median')`.
+The ``summary`` table will have four columns: ``group`` (the profession), ``count`` (the number of grouped rows), ``salary_mean`` and ``salary_median`` (the aggregates).
 
 Identifying outliers
 ====================
@@ -54,5 +58,3 @@ The second, more robust, method for identifying outliers is by identifying value
     outliers = table.mad_outliers('salary', deviations=3, reject=False)
 
 As with the first example, you can specify :code:`reject=True` to exclude outliers in the resulting table.
-
-
