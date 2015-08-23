@@ -17,6 +17,7 @@ except ImportError:
 
 from journalism import Table, TableSet
 from journalism.columns import TextType, NumberType
+from journalism.computers import Formula
 from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
 
 class TestTableSet(unittest.TestCase):
@@ -68,10 +69,9 @@ class TestTableSet(unittest.TestCase):
     def test_select(self):
         tableset = TableSet(self.tables)
 
-        def joiner(r):
-            return '%(letter)s-%(number)i' % r
-
-        new_tableset = tableset.compute('new_column', self.text_type, joiner)
+        new_tableset = tableset.compute([
+            ('new_column', Formula(self.text_type, lambda r: '%(letter)s-%(number)i' % r))
+        ])
 
         new_table = new_tableset['table1']
 

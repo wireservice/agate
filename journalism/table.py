@@ -3,15 +3,20 @@
 """
 This module contains the Table object.
 """
+
+from copy import copy
+
 try:
     from collections import OrderedDict
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 from journalism.columns import ColumnMapping, NumberType
+from journalism.computers import Computer
 from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError, UnsupportedOperationError, NullComputationError
 from journalism.rows import RowSequence, Row
 from journalism.tableset import TableSet
+from journalism.utils import NullOrder
 
 class Table(object):
     """
@@ -481,101 +486,30 @@ class Table(object):
 
         return TableSet(output)
 
-    def compute(self, column_name, column_type, func):
+    def compute(self, computers):
         """
-        Compute a new column by passing each row to a function.
+        Compute a new column applying a :class:`Computer` to each row.
 
-        :param column_name: A name of the new column.
-        :param column_type: An instance of :class:`.ColumnType`.
-        :param func: A :class:`function` that will be passed a :class:`.Row`
-            and should return the computed value for the new column.
+        :param computers: An iterable of pairs of new column names and
+            :class:`Computer` instances.
         :returns: A new :class:`Table`.
         """
-        column_types = self._column_types + (column_type,)
-        column_names = self._column_names + (column_name,)
+        column_names = list(copy(self._column_names))
+        column_types = list(copy(self._column_types))
+
+        for name, computer in computers:
+            if not isinstance(computer, Computer):
+                raise ValueError('The second element in pair must be a Computer instance.')
+
+            column_names.append(name)
+            column_types.append(computer.get_compute_column_type())
+
+            computer._prepare(self)
 
         new_rows = []
 
         for row in self.rows:
-            new_rows.append(tuple(row) + (func(row),))
+            new_columns = tuple(c(row) for n, c in computers)
+            new_rows.append(tuple(row) + new_columns)
 
         return self._fork(new_rows, column_types, column_names)
-
-    def percent_change(self, before_column_name, after_column_name, new_column_name):
-        """
-        A wrapper around :meth:`compute` for quickly computing
-        percent change between two columns.
-
-        :param before_column_name: The name of the column containing the
-            *before* values.
-        :param after_column_name: The name of the column containing the
-            *after* values.
-        :param new_column_name: The name of the resulting column.
-        :returns: A new :class:`Table`.
-        """
-        def calc(row):
-            return (row[after_column_name] - row[before_column_name]) / row[before_column_name] * 100
-
-        return self.compute(new_column_name, NumberType(), calc)
-
-    def rank(self, key, new_column_name):
-        """
-        Creates a new column that is the rank order of the values
-        returned by the row function.
-
-        :param key: Either the name of a column from the this table
-            to rank by, or a :class:`function` that takes a row and returns
-            a value to rank by.
-        :param after_column_name: The name of the column containing the
-            *after* values.
-        :param new_column_name: The name of the resulting column.
-        :returns: A new :class:`Table`.
-        """
-        key_is_row_function = hasattr(key, '__call__')
-
-        def null_handler(k):
-            if k is None:
-                return NullOrder()
-
-            return k
-
-        if key_is_row_function:
-            values = [key(row) for row in self.rows]
-            compute_func = lambda row: rank_column.index(key(row)) + 1
-        else:
-            values = [row[key] for row in self.rows]
-            compute_func = lambda row: rank_column.index(row[key]) + 1
-
-        rank_column = sorted(values, key=null_handler)
-
-        return self.compute(new_column_name, NumberType(), compute_func)
-
-    def z_scores(self,column_name,new_column_name):
-        """ Returns a new column that is the z-score or standard score of
-        each value returned by the row function.
-
-        :param column_name: The name of the column for z-scores to be based
-        off of.
-        :param new_column_name: The name of the resulting column.
-        :returns: A new :class:`Table`.
-        """
-        mean = self.columns[column_name].mean()
-        sd = self.columns[column_name].stdev()
-        compute_func = lambda row: (row[column_name]-mean)/sd
-
-        return self.compute(new_column_name, NumberType(), compute_func)
-
-class NullOrder(object):
-    """
-    Dummy object used for sorting in place of None.
-
-    Sorts as "greater than everything but other nulls."
-    """
-    def __lt__(self, other):
-        return False
-
-    def __gt__(self, other):
-        if other is None:
-            return False
-
-        return True
