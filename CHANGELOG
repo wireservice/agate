@@ -1,6 +1,8 @@
 0.5.0
 -----
 
+* Table.percent_change, Table.rank and Table.zscores reimplemented as Computers.
+* Computer implemented. Table.compute reimplemented.
 * NumberColumn.iqr (inter-quartile range) implemented. (#102)
 * Remove Column.counts as it is not the best way.
 * Implement ColumnOperation and subclasses.
