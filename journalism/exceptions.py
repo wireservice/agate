@@ -26,6 +26,24 @@ class UnsupportedOperationError(Exception):  # pragma: no cover
     def __str__(self):
         return str(self.__unicode__())
 
+class UnsupportedComputationError(Exception):
+    """
+    Exception raised when an computation is applied to a column type that does
+    not support it.
+
+    :param computer: The name of the computation.
+    :param column: The :class:`.Column` it was applied to.
+    """
+    def __init__(self, computer, column):
+        self.computer = computer
+        self.column = column
+
+    def __unicode__(self):
+        return '`%s` is not a supported computation for %s' % (type(self.computer), type(self.column))
+
+    def __str__(self):
+        return str(self.__unicode__())
+
 class CastError(Exception):   #pragma: no cover
     """
     Exception raised when a column value can not be cast to

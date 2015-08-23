@@ -13,6 +13,7 @@ except ImportError:
 from journalism import Table
 from journalism.column_types import NumberType, TextType
 from journalism.computers import PercentChange, Rank, ZScores
+from journalism.exceptions import UnsupportedComputationError
 
 class TestTableCompute(unittest.TestCase):
     def setUp(self):
@@ -35,7 +36,6 @@ class TestTableCompute(unittest.TestCase):
             ('test', PercentChange('two', 'three'))
         ])
 
-
         self.assertIsNot(new_table, self.table)
         self.assertEqual(len(new_table.rows), 4)
         self.assertEqual(len(new_table.columns), 5)
@@ -48,7 +48,13 @@ class TestTableCompute(unittest.TestCase):
         self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('100.0'))
         self.assertEqual(to_one_place(new_table.columns['test'][3]), Decimal('33.3'))
 
-    def test_rank(self):
+    def test_percent_change_invalid_columns(self):
+        with self.assertRaises(UnsupportedComputationError):
+            new_table = self.table.compute([
+                ('test', PercentChange('one', 'three'))
+            ])
+
+    def test_rank_number(self):
         new_table = self.table.compute([
             ('rank', Rank('two'))
         ])
@@ -63,7 +69,7 @@ class TestTableCompute(unittest.TestCase):
 
         self.assertSequenceEqual(new_table.columns['rank'], (1, 3, 1, 3))
 
-    def test_rank2(self):
+    def test_rank_text(self):
         new_table = self.table.compute([
             ('rank', Rank('one'))
         ])
@@ -107,3 +113,9 @@ class TestTableCompute(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[3], ('b', 3, 4, None, 1))
 
         self.assertSequenceEqual(new_table.columns['z-scores'],(-1,1,-1,1))
+
+    def test_zscores_invalid_column(self):
+        with self.assertRaises(UnsupportedComputationError):
+            new_table = self.table.compute([
+                ('test', ZScores('one'))
+            ])

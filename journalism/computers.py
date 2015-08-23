@@ -5,7 +5,9 @@ This module contains re-usable functions for computing new :class:`.Table`
 columns.
 """
 
+from journalism.columns import NumberColumn
 from journalism.column_types import NumberType
+from journalism.exceptions import UnsupportedComputationError
 from journalism.utils import NullOrder
 
 class Computer(object): #pragma: no cover
@@ -22,7 +24,8 @@ class Computer(object): #pragma: no cover
     def _prepare(self, table):
         """
         Called with the table immediately prior to invoking the computer with
-        rows.
+        rows. Can be used to compute column-level statistics for computations.
+        By default, this does nothing.
         """
         pass
 
@@ -56,6 +59,17 @@ class PercentChange(Computer):
 
     def get_compute_column_type(self):
         return NumberType()
+
+    def _prepare(self, table):
+        before_column = table.columns[self._before_column]
+
+        if not isinstance(before_column, NumberColumn):
+            raise UnsupportedComputationError(self, before_column)
+
+        after_column = table.columns[self._before_column]
+
+        if not isinstance(after_column, NumberColumn):
+            raise UnsupportedComputationError(self, after_column)
 
     def __call__(self, row):
         return (row[self._after_column] - row[self._before_column]) / row[self._before_column] * 100
@@ -97,6 +111,11 @@ class ZScores(Computer):
         return NumberType()
 
     def _prepare(self, table):
+        column = table.columns[self._column_name]
+
+        if not isinstance(column, NumberColumn):
+            raise UnsupportedComputationError(self, column)
+
         self._mean = table.columns[self._column_name].mean()
         self._sd = table.columns[self._column_name].stdev()
 
