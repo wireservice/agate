@@ -14,7 +14,7 @@ Installing journalism
 
 Installing journalism is easy::
 
-    sudo pip install journalism 
+    sudo pip install journalism
 
 .. note::
 
@@ -25,7 +25,7 @@ Getting the data
 
 Let's start by creating a clean workspace::
 
-    mkdir journalism_tutorial 
+    mkdir journalism_tutorial
     cd journalism_tutorial
 
 Now let's fetch the data::
@@ -45,7 +45,7 @@ Now let's import our dependencies:
 
 .. code-block:: python
 
-    import csv 
+    import csv
     import journalism
 
 .. note::
@@ -69,7 +69,7 @@ Then we define the names and types of the columns that are in our dataset:
 
 .. code-block:: python
 
-    COLUMNS = ( 
+    COLUMNS = (
         ('state', text_type),
         ('county', text_type),
         ('fips', text_type),
@@ -110,7 +110,7 @@ Now let's read the data in the CSV file and use it to create the table.
 
     # Skip header
     next(reader)
-    
+
     # Create the table
     table = journalism.Table(reader, COLUMN_TYPES, COLUMN_NAMES)
 
@@ -119,7 +119,7 @@ Now let's read the data in the CSV file and use it to create the table.
 
 :py:class:`journalism.table.Table` will accept any iterable (array) of iterables (rows)  as it's first argument. In this case we're using a CSV reader. Note that the data is copied when the table is constructed so it safe to close the file handler immediately.
 
-Filtering and column operations 
+Filtering and column operations
 ===============================
 
 Now let's use journalism to answer our first question about this dataset: **What was the total cost of all shipments delivered to the Kansas City area?**
@@ -159,7 +159,7 @@ To make sure this is clear, let's look at a second example. Question: **How many
 
 ::
 
-    14 
+    14
 
 .. note::
 
@@ -176,7 +176,7 @@ Remembering that methods of tables return tables, let's use the :py:meth:`journa
 
     recent_five = table.order_by('ship_date', reverse=True).rows[:5]
 
-The variable ``recent_five`` now contains a list of :py:class:`journalism.rows.Row` objects. (Slicing the ``rows`` class attribute does not return a table. If you want get a subset of rows as a table use :py:meth:`journalism.table.Table.where` or construct a new ``Table`` from the resulting list of rows. 
+The variable ``recent_five`` now contains a list of :py:class:`journalism.rows.Row` objects. (Slicing the ``rows`` class attribute does not return a table. If you want get a subset of rows as a table use :py:meth:`journalism.table.Table.where` or construct a new ``Table`` from the resulting list of rows.
 
 Now let's print some information about the resulting rows:
 
@@ -199,17 +199,29 @@ Aggregation
 
 Question: **Which five counties acquired the most items?**
 
-This question can't be answered by operating on a single column. What we need is the equivalent of SQL's ``GROUP BY``. journalism supports a full set of SQL-like operations on tables. The one we want in this case is :py:meth:`journalism.table.Table.aggregate`:
+This question can't be answered by operating on a single column. What we need is the equivalent of SQL's ``GROUP BY``. journalism supports a full set of SQL-like operations on tables. Unlike SQL, we'll break grouping and aggregation into two distinct steps.
 
 .. code-block:: python
 
-    totals = table.aggregate('county', (( 'total_cost', 'sum' ),)).order_by('total_cost_sum', reverse=True).rows[:5]
+    counties = table.group_by('county')
 
-The first argument to :py:meth:`journalism.table.Table.aggregate` is a column to group by. The second argument is a list (or, in this case, tuple) of pairs of columns and operations to be applied. Any aggregate method that can be applied to a column can also be applied in an aggregate, simply specify the method name as a string. The output of ``aggregate`` is, naturally, a table, which can be ordered like any other table. Note that the output table includes an aggregate column which is named using the name of the input column plus an underscore and then the name of the operation that was applied. This allows multiple aggregations to be applied to the same column without confusion.
-
-Let's print the details of the rows we've found:
+This command takes our original :py:class:`journalism.table.Table` and groups it into a :py:class:`journalism.tableset.TableSet`, which contains one table per county. Now we'll aggregate the totals for each group.
 
 .. code-block:: python
+
+    totals = counties.aggregate([
+        ('total_cost', 'sum')
+    ])
+
+This takes our grouped ``TableSet``, computes the sum of the ``total_cost`` column for each ``Table`` in the set and then builds a new table containing the aggregate results. The new table will have the columns ``group``, ``count`` and ``total_sum_cost``. The first two columns always have the same names and the last one is generated based on the name of the column and the operation being applied.
+
+The :py:meth:`journalism.tableset.TableSet.aggregate`: function takes a list of operations to perform. You can aggregate as many columns as you like in a single step and they will all appear in the output table.
+
+Lastly, we'll sort our new table and print the results.
+
+.. code-block:: python
+
+    totals = totals.order_by('total_cost_sum', reverse=True).rows[:5]
 
     for i, row in enumerate(totals):
         text = '#{}: {}, ${:,}'.format(i + 1, row['county'], row['total_cost_sum'])
@@ -227,4 +239,3 @@ Where to go next
 ================
 
 This tutorial only scratches the surface of journalism's features. For many more ideas on how to apply journalism, check out the :doc:`cookbook`, which includes dozens of examples showing how to substitute journalism for common operations used in Excel, SQL, R and more.
-
