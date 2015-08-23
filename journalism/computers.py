@@ -8,7 +8,7 @@ columns.
 from journalism.column_types import NumberType
 from journalism.utils import NullOrder
 
-class Computer(object):
+class Computer(object): #pragma: no cover
     """
     Base class for computer function classes.
     """

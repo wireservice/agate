@@ -21,7 +21,7 @@ TRUE_VALUES = ('yes', 'y', 'true', 't')
 #: String values which will be automatically cast to :code:`False`.
 FALSE_VALUES = ('no', 'n', 'false', 'f')
 
-class ColumnType(object):
+class ColumnType(object): #pragma: no cover
     """
     Base class for column data types.
     """

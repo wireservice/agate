@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-class ColumnOperation(object):
+class ColumnOperation(object): #pragma: no cover
     """
     Base class defining an operation that can be performed on a column either
     to yield an individual value or as part of a :class:`.TableSet` aggregate.
