@@ -13,24 +13,6 @@ import six
 from journalism.columns.base import *
 from journalism.exceptions import CastError
 
-def _median(data_sorted):
-    """
-    Compute the median value of a sequence of values.
-
-    :param data_sorted: A sorted sequence of :class:`decimal.Decimal`.
-    :returns: :class:`decimal.Decimal`.
-    """
-    length = len(data_sorted)
-
-    if length % 2 == 1:
-        return data_sorted[((length + 1) // 2) - 1]
-
-    half = length // 2
-    a = data_sorted[half - 1]
-    b = data_sorted[half]
-
-    return (a + b) / 2
-
 def no_null_computations(func):
     """
     Decorator for :class:`.ColumnOperation` functions that prevents illogical
@@ -89,7 +71,6 @@ class NumberColumn(Column):
         super(NumberColumn, self).__init__(*args, **kwargs)
 
         self._cached_percentiles = None
-        self._cached_quartiles = None
 
         self.sum = SumOperation(self)
         self.min = MinOperation(self)
@@ -108,13 +89,11 @@ class NumberColumn(Column):
         :returns: :class:`Percentiles`.
         :raises: :exc:`.NullComputationError`
         """
-        if self.has_nulls():
-            raise NullComputationError
+        if self._cached_percentiles is None:
+            if self.has_nulls():
+                raise NullComputationError
 
-        if self._cached_percentiles:
-            return self._cached_percentiles
-
-        self._cached_percentiles = Percentiles(self)
+            self._cached_percentiles = Percentiles(self)
 
         return self._cached_percentiles
 
@@ -207,7 +186,7 @@ class MedianOperation(ColumnOperation):
 
     @no_null_computations
     def __call__(self):
-        return _median(self._column._data_sorted())
+        return self._column.percentiles()[50]
 
 class ModeOperation(ColumnOperation):
     """
@@ -271,12 +250,24 @@ class MadOperation(ColumnOperation):
     def get_aggregate_column_type(self):
         return NumberType()
 
+    def _median(self, data_sorted):
+        length = len(data_sorted)
+
+        if length % 2 == 1:
+            return data_sorted[((length + 1) // 2) - 1]
+
+        half = length // 2
+        a = data_sorted[half - 1]
+        b = data_sorted[half]
+
+        return (a + b) / 2
+
     @no_null_computations
     def __call__(self):
         data = self._column._data_sorted()
-        m = _median(data)
+        m = self._column.percentiles()[50]
 
-        return _median(tuple(abs(n - m) for n in data))
+        return self._median(tuple(abs(n - m) for n in data))
 
 class Quantiles(Sequence):
     """
@@ -298,12 +289,12 @@ class Quantiles(Sequence):
         """
         Identify which percentile a given value is part of.
         """
-        i = 1
+        i = 0
 
-        while value >= self._quantiles[i]:
+        while value >= self._quantiles[i + 1]:
             i += 1
 
-        return i - 1
+        return i
 
 class Percentiles(Quantiles):
     """
