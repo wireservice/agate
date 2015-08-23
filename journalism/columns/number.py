@@ -78,6 +78,7 @@ class NumberColumn(Column):
         self.mean = MeanOperation(self)
         self.median = MedianOperation(self)
         self.mode = ModeOperation(self)
+        self.iqr = IQROperation(self)
         self.variance = VarianceOperation(self)
         self.stdev = StdevOperation(self)
         self.mad = MadOperation(self)
@@ -178,6 +179,9 @@ class MedianOperation(ColumnOperation):
     """
     Compute the median value of this column.
 
+    This is the 50th percentile. See :class:`Percentiles` for implementation
+    details.
+
     :returns: :class:`decimal.Decimal`.
     :raises: :exc:`.NullComputationError`
     """
@@ -207,6 +211,22 @@ class ModeOperation(ColumnOperation):
             state[n] += 1
 
         return max(state.keys(), key=lambda x: state[x])
+
+class IQROperation(ColumnOperation):
+    """
+    Compute the inter-quartile range of this column.
+
+    :returns: :class:`decimal.Decimal`.
+    :raises: :exc:`.NullComputationError`
+    """
+    def get_aggregate_column_type(self):
+        return NumberType()
+
+    @no_null_computations
+    def __call__(self):
+        percentiles = self._column.percentiles()
+
+        return percentiles[75] - percentiles[25]
 
 class VarianceOperation(ColumnOperation):
     """
@@ -284,6 +304,9 @@ class Quantiles(Sequence):
 
     def __len__(self):
         return self._quantiles.__len__()
+
+    def __repr__(self):
+        return repr(self._quantiles)
 
     def locate(self, value):
         """

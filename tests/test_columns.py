@@ -425,6 +425,14 @@ class TestNumberColumn(unittest.TestCase):
 
         self.assertEqual(self.table.columns['two'].mode(), Decimal('3.42'))
 
+    def test_iqr(self):
+        with self.assertRaises(NullComputationError):
+            self.table.columns['one'].iqr()
+
+        print self.table.columns['two'].quartiles()
+
+        self.assertEqual(self.table.columns['two'].iqr(), Decimal('0.955'))
+
     def test_variance(self):
         with self.assertRaises(NullComputationError):
             self.table.columns['one'].variance()

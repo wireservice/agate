@@ -1,6 +1,7 @@
 0.5.0
 -----
 
+* NumberColumn.iqr (inter-quartile range) implemented. (#102)
 * Remove Column.counts as it is not the best way.
 * Implement ColumnOperation and subclasses.
 * Table.aggregate migrated to TableSet.aggregate.
