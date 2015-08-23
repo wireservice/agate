@@ -97,6 +97,12 @@ class Quantiles(Sequence):
         """
         i = 0
 
+        if value < self._quantiles[0]:
+            raise ValueError('Value is less than minimum percentile value.')
+
+        if value > self._quantiles[-1]:
+            raise ValueError('Value is greater than maximum percentile value.')
+
         while value >= self._quantiles[i + 1]:
             i += 1
 
