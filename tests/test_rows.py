@@ -6,8 +6,8 @@ except ImportError:
     import unittest
 
 from journalism import Table
-from journalism.columns import TextType, NumberType
-from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError 
+from journalism.column_types import TextType, NumberType
+from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 
 class TestRows(unittest.TestCase):
     def setUp(self):
@@ -20,7 +20,7 @@ class TestRows(unittest.TestCase):
         self.number_type = NumberType()
         self.text_type = TextType()
         self.column_types = (self.number_type, self.number_type, self.text_type)
-        
+
         self.table = Table(self.rows, self.column_types, self.column_names)
 
     def test_stringify(self):
@@ -30,7 +30,7 @@ class TestRows(unittest.TestCase):
         rows = (
             (1, 2, 'a', 'b', 'c', 'd'),
         )
-        
+
         column_types = (self.number_type, self.number_type, self.text_type, self.text_type, self.text_type, self.text_type)
         column_names = ('one', 'two', 'three', 'four', 'five', 'six')
 
@@ -62,7 +62,7 @@ class TestRows(unittest.TestCase):
 
     def test_iterate_rows(self):
         it = iter(self.table.rows)
-        
+
         self.assertSequenceEqual(next(it), (1, 2, 'a'))
         self.assertSequenceEqual(next(it), (2, 3, 'b'))
         self.assertSequenceEqual(next(it), (None, 4, 'c'))

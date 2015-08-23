@@ -13,11 +13,8 @@ except ImportError:
     import unittest
 
 from journalism import Table
-from journalism.columns.text import TextType, TextColumn
-from journalism.columns.boolean import BooleanType, BooleanColumn
-from journalism.columns.number import NumberType, NumberColumn
-from journalism.columns.date import DateType, DateColumn
-from journalism.columns.date_time import DateTimeType, DateTimeColumn
+from journalism.column_types import BooleanType, DateType, DateTimeType, NumberType, TextType
+from journalism.columns import BooleanColumn, DateColumn, DateTimeColumn, NumberColumn, TextColumn
 from journalism.exceptions import CastError, ColumnDoesNotExistError, NullComputationError
 
 class TestColumnTypes(unittest.TestCase):

@@ -1,65 +1,12 @@
 #!/usr/bin/env python
 
-from collections import defaultdict, Sequence
+from collections import Sequence
 import math
-
-try:
-    from cdecimal import Decimal, InvalidOperation
-except ImportError: #pragma: no cover
-    from decimal import Decimal, InvalidOperation
 
 import six
 
-from journalism.columns.base import *
-from journalism.exceptions import CastError
-
-def no_null_computations(func):
-    """
-    Decorator for :class:`.ColumnOperation` functions that prevents illogical
-    computations on columns containing nulls.
-    """
-    @wraps(func)
-    def check(op, *args, **kwargs):
-        if op._column.has_nulls():
-            raise NullComputationError
-
-        return func(op, *args, **kwargs)
-
-    return check
-
-class NumberType(ColumnType):
-    """
-    Column type for :class:`NumberColumn`.
-    """
-    def cast(self, d):
-        """
-        Cast a single value to a :class:`decimal.Decimal`.
-
-        :returns: :class:`decimal.Decimal` or :code:`None`.
-        :raises: :exc:`.CastError`
-        """
-        if isinstance(d, Decimal) or d is None:
-            return d
-
-        if isinstance(d, six.string_types):
-            d = d.replace(',' ,'').strip()
-
-            if d.lower() in NULL_VALUES:
-                return None
-
-        if isinstance(d, float):
-            raise CastError('Can not convert float to Decimal for NumberColumn. Convert data to string first!')
-
-        try:
-            return Decimal(d)
-        except InvalidOperation:
-            raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d)
-
-    def _create_column(self, table, index):
-        return NumberColumn(table, index)
-
-    def _create_column_set(self, tableset, index):
-        return NumberColumnSet(tableset, index)
+from journalism.columns.base import Column
+from journalism.columns.operations.number import *
 
 class NumberColumn(Column):
     """
@@ -72,16 +19,16 @@ class NumberColumn(Column):
 
         self._cached_percentiles = None
 
-        self.sum = SumOperation(self)
-        self.min = MinOperation(self)
-        self.max = MaxOperation(self)
-        self.mean = MeanOperation(self)
-        self.median = MedianOperation(self)
-        self.mode = ModeOperation(self)
-        self.iqr = IQROperation(self)
-        self.variance = VarianceOperation(self)
-        self.stdev = StdevOperation(self)
-        self.mad = MadOperation(self)
+        self.sum = Sum(self)
+        self.min = Min(self)
+        self.max = Max(self)
+        self.mean = Mean(self)
+        self.median = Median(self)
+        self.mode = Mode(self)
+        self.iqr = IQR(self)
+        self.variance = Variance(self)
+        self.stdev = Stdev(self)
+        self.mad = MAD(self)
 
     def percentiles(self):
         """
@@ -124,170 +71,6 @@ class NumberColumn(Column):
         :raises: :exc:`.NullComputationError`
         """
         return Deciles(self.percentiles())
-
-class SumOperation(ColumnOperation):
-    """
-    Compute the sum of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    """
-    def get_aggregate_column_type(self):
-        return NumberType()
-
-    def __call__(self):
-        return sum(self._column._data_without_nulls())
-
-class MinOperation(ColumnOperation):
-    """
-    Compute the minimum value of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    """
-    def get_aggregate_column_type(self):
-        return NumberType()
-
-    def __call__(self):
-        return min(self._column._data_without_nulls())
-
-class MaxOperation(ColumnOperation):
-    """
-    Compute the maximum value of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    """
-    def get_aggregate_column_type(self):
-        return NumberType()
-
-    def __call__(self):
-        return max(self._column._data_without_nulls())
-
-class MeanOperation(ColumnOperation):
-    """
-    Compute the mean value of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
-    """
-    def get_aggregate_column_type(self):
-        return NumberType()
-
-    @no_null_computations
-    def __call__(self):
-        return self._column.sum() / len(self._column)
-
-class MedianOperation(ColumnOperation):
-    """
-    Compute the median value of this column.
-
-    This is the 50th percentile. See :class:`Percentiles` for implementation
-    details.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
-    """
-    def get_aggregate_column_type(self):
-        return NumberType()
-
-    @no_null_computations
-    def __call__(self):
-        return self._column.percentiles()[50]
-
-class ModeOperation(ColumnOperation):
-    """
-    Compute the mode value of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
-    """
-    def get_aggregate_column_type(self):
-        return NumberType()
-
-    @no_null_computations
-    def __call__(self):
-        data = self._column._data()
-        state = defaultdict(int)
-
-        for n in data:
-            state[n] += 1
-
-        return max(state.keys(), key=lambda x: state[x])
-
-class IQROperation(ColumnOperation):
-    """
-    Compute the inter-quartile range of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
-    """
-    def get_aggregate_column_type(self):
-        return NumberType()
-
-    @no_null_computations
-    def __call__(self):
-        percentiles = self._column.percentiles()
-
-        return percentiles[75] - percentiles[25]
-
-class VarianceOperation(ColumnOperation):
-    """
-    Compute the variance of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
-    """
-    def get_aggregate_column_type(self):
-        return NumberType()
-
-    @no_null_computations
-    def __call__(self):
-        data = self._column._data()
-        mean = self._column.mean()
-
-        return sum((n - mean) ** 2 for n in data) / len(data)
-
-class StdevOperation(ColumnOperation):
-    """
-    Compute the standard of deviation of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
-    """
-    def get_aggregate_column_type(self):
-        return NumberType()
-
-    @no_null_computations
-    def __call__(self):
-        return self._column.variance().sqrt()
-
-class MadOperation(ColumnOperation):
-    """
-    Compute the `median absolute deviation <http://en.wikipedia.org/wiki/Median_absolute_deviation>`_
-    of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
-    """
-    def get_aggregate_column_type(self):
-        return NumberType()
-
-    def _median(self, data_sorted):
-        length = len(data_sorted)
-
-        if length % 2 == 1:
-            return data_sorted[((length + 1) // 2) - 1]
-
-        half = length // 2
-        a = data_sorted[half - 1]
-        b = data_sorted[half]
-
-        return (a + b) / 2
-
-    @no_null_computations
-    def __call__(self):
-        data = self._column._data_sorted()
-        m = self._column.percentiles()[50]
-
-        return self._median(tuple(abs(n - m) for n in data))
 
 class Quantiles(Sequence):
     """

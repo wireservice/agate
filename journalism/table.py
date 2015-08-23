@@ -11,7 +11,7 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-from journalism.columns import ColumnMapping, NumberType
+from journalism.columns.base import ColumnMapping
 from journalism.computers import Computer
 from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError, UnsupportedOperationError, NullComputationError
 from journalism.rows import RowSequence, Row

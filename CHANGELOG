@@ -1,6 +1,7 @@
 0.5.0
 -----
 
+* Move ColumnType subclasses and ColumnOperation subclasses into new modules.
 * Table.percent_change, Table.rank and Table.zscores reimplemented as Computers.
 * Computer implemented. Table.compute reimplemented.
 * NumberColumn.iqr (inter-quartile range) implemented. (#102)

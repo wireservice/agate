@@ -11,7 +11,7 @@ except ImportError:
     import unittest
 
 from journalism import Table, TableSet
-from journalism.columns import TextType, NumberType
+from journalism.column_types import TextType, NumberType
 from journalism.computers import Formula
 from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
 

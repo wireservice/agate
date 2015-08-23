@@ -11,7 +11,7 @@ except ImportError:
     import unittest
 
 from journalism import Table
-from journalism.columns import NumberType, TextType
+from journalism.column_types import NumberType, TextType
 from journalism.computers import PercentChange, Rank, ZScores
 
 class TestTableCompute(unittest.TestCase):

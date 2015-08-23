@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from collections import Mapping, Sequence
-from functools import wraps
 
 try:
     from collections import OrderedDict
@@ -11,19 +10,7 @@ except ImportError: #pragma: no cover
 import six
 
 from journalism.exceptions import ColumnDoesNotExistError, NullComputationError
-
-#: String values which will be automatically cast to :code:`None`.
-NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
-
-class ColumnType(object):
-    """
-    Base class for column data types.
-    """
-    def _create_column(self, table, index):
-        raise NotImplementedError
-
-    def _create_column_set(self, tableset, index):
-        raise NotImplementedError
+from journalism.columns.operations.base import HasNulls, Any, All, Count
 
 class ColumnMapping(Mapping):
     """
@@ -94,10 +81,10 @@ class Column(Sequence):
         self._cached_data_sorted = None
         self._cached_len = None
 
-        self.has_nulls = HasNullsOperation(self)
-        self.any = AnyOperation(self)
-        self.all = AllOperation(self)
-        self.count = CountOperation(self)
+        self.has_nulls = HasNulls(self)
+        self.any = Any(self)
+        self.all = All(self)
+        self.count = Count(self)
 
     def __unicode__(self):
         data = self._data()
@@ -154,71 +141,3 @@ class Column(Sequence):
         Ensure inequality test with lists works.
         """
         return not self.__eq__(other)
-
-class ColumnOperation(object):
-    """
-    Base class defining an operation that can be performed on a column either
-    to yield an individual value or as part of a :class:`.TableSet` aggregate.
-    """
-    def __init__(self, column):
-        self._column = column
-
-    def get_aggregate_column_type(self):
-        raise NotImplementedError()
-
-    def __call__(self):
-        raise NotImplementedError()
-
-class HasNullsOperation(ColumnOperation):
-    """
-    Returns :code:`True` if this column contains null values.
-    """
-    def get_aggregate_column_type(self):
-        return BooleanType()
-
-    def __call__(self):
-        return None in self._column._data()
-
-class AnyOperation(ColumnOperation):
-    """
-    Returns :code:`True` if any value passes a truth test.
-
-    :param test: A function that takes a value and returns :code:`True`
-        or :code:`False`.
-    """
-    def get_aggregate_column_type(self):
-        return BooleanType()
-
-    def __call__(self, test):
-        return any(test(d) for d in self._column._data())
-
-class AllOperation(ColumnOperation):
-    """
-    Returns :code:`True` if all values pass a truth test.
-
-    :param test: A function that takes a value and returns :code:`True`
-        or :code:`False`.
-    """
-    def get_aggregate_column_type(self):
-        return BooleanType()
-
-    def __call__(self, test):
-        return all(test(d) for d in self._column._data())
-
-class CountOperation(ColumnOperation):
-    """
-    Count the number of times a specific value occurs in this column.
-
-    :param value: The value to be counted.
-    """
-    def get_aggregate_column_type(self):
-        return NumberType()
-
-    def __call__(self, value):
-        count = 0
-
-        for d in self._column._data():
-            if d == value:
-                count += 1
-
-        return count

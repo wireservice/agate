@@ -5,7 +5,7 @@ This module contains re-usable functions for computing new :class:`.Table`
 columns.
 """
 
-from journalism.columns import NumberType
+from journalism.column_types import NumberType
 from journalism.utils import NullOrder
 
 class Computer(object):

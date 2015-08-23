@@ -12,7 +12,8 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-from journalism.columns import ColumnOperation, TextType, NumberType
+from journalism.column_types import TextType, NumberType
+from journalism.columns.operations.base import ColumnOperation
 from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
 from journalism.rows import RowSequence
 
