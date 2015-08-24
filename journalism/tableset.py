@@ -117,8 +117,8 @@ class TableSet(Mapping):
         named :code:`originalname_operation`. For instance
         :code:`salaries_median`.
 
-        :param operations: An iterable of pairs of column names and the
-            names of :class:`.Column` methods, such as "sum" or "max_length".
+        :param operations: An list of triples in the format
+            :code:`(column_name, aggregator, new_column_name)`.
         :returns: A new :class:`Table`.
         :raises: :exc:`.ColumnDoesNotExistError`
         """
@@ -126,22 +126,20 @@ class TableSet(Mapping):
 
         column_types = [TextType(), NumberType()]
         column_names = ['group', 'count']
-        aggregators = []
 
-        for column_name, aggregator in aggregations:
+        for column_name, aggregator, new_column_name in aggregations:
             c = self._first_table.columns[column_name]
 
             column_types.append(aggregator.get_aggregate_column_type())
-            column_names.append('%s_%s' % (column_name, op_name))
+            column_names.append(new_column_name)
 
         for name, table in self._tables.items():
             new_row = [name, len(table.rows)]
 
-            for op_column, op_name in operations:
-                c = table.columns[op_column]
-                op = getattr(c, op_name)
+            for column_name, aggregator, new_column_name in aggregations:
+                c = table.columns[column_name]
 
-                new_row.append(op())
+                new_row.append(c.summarize(aggregator))
 
             output.append(tuple(new_row))
 

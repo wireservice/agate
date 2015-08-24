@@ -3,6 +3,7 @@
 from collections import defaultdict
 import datetime
 
+from journalism.column_types import BooleanType, NumberType
 from journalism.columns import BooleanColumn, DateColumn, DateTimeColumn, NumberColumn, TextColumn
 from journalism.exceptions import NullComputationError, UnsupportedAggregationError
 
@@ -162,7 +163,7 @@ class Sum(Aggregation):
 
     def run(self, column):
         if not isinstance(column, NumberColumn):
-            raise NullComputationError
+            raise UnsupportedAggregationError(self, column)
 
         return sum(column._data_without_nulls())
 

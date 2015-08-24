@@ -11,6 +11,7 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
+from journalism.aggregators import Mean, Median, StDev, MAD
 from journalism.columns.base import ColumnMapping
 from journalism.computers import Computer
 from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
@@ -189,8 +190,8 @@ class Table(object):
             everything *except* the outliers.
         :returns: A new :class:`Table`.
         """
-        mean = self.columns[column_name].mean()
-        sd = self.columns[column_name].stdev()
+        mean = self.columns[column_name].summarize(Mean())
+        sd = self.columns[column_name].summarize(StDev())
 
         lower_bound = mean - (sd * deviations)
         upper_bound = mean + (sd * deviations)
@@ -219,8 +220,8 @@ class Table(object):
             everything *except* the outliers.
         :returns: A new :class:`Table`.
         """
-        median = self.columns[column_name].median()
-        mad = self.columns[column_name].mad()
+        median = self.columns[column_name].summarize(Median())
+        mad = self.columns[column_name].summarize(MAD())
 
         lower_bound = median - (mad * deviations)
         upper_bound = median + (mad * deviations)

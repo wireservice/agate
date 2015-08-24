@@ -16,9 +16,10 @@ except ImportError:
     import unittest
 
 from journalism import Table, TableSet
+from journalism.aggregators import *
 from journalism.column_types import TextType, NumberType
 from journalism.computers import Formula
-from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
+from journalism.exceptions import ColumnDoesNotExistError
 
 class TestTableSet(unittest.TestCase):
     def setUp(self):
@@ -111,7 +112,7 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables)
 
         new_table = tableset.aggregate([
-            ('number', 'sum')
+            ('number', Sum(), 'number_sum')
         ])
 
         self.assertIsInstance(new_table, Table)
@@ -126,8 +127,8 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables)
 
         new_table = tableset.aggregate([
-            ('number', 'sum'),
-            ('number', 'mean')
+            ('number', Sum(), 'number_sum'),
+            ('number', Mean(), 'number_mean')
         ])
 
         self.assertIsInstance(new_table, Table)
@@ -142,7 +143,7 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables)
 
         new_table = tableset.aggregate([
-            ('letter', 'max_length')
+            ('letter', MaxLength(), 'letter_max_length')
         ])
 
         self.assertIsInstance(new_table, Table)
@@ -156,14 +157,14 @@ class TestTableSet(unittest.TestCase):
     def test_aggregate_sum_invalid(self):
         tableset = TableSet(self.tables)
 
-        with self.assertRaises(UnsupportedOperationError):
-            tableset.aggregate([('letter', 'sum')])
+        with self.assertRaises(UnsupportedAggregationError):
+            tableset.aggregate([('letter', Sum(), 'letter_sum')])
 
     def test_aggregeate_bad_column(self):
         tableset = TableSet(self.tables)
 
         with self.assertRaises(ColumnDoesNotExistError):
-            tableset.aggregate([('one', 'sum')])
+            tableset.aggregate([('one', Sum(), 'one_sum')])
 
         with self.assertRaises(ColumnDoesNotExistError):
-            tableset.aggregate([('bad', 'sum')])
+            tableset.aggregate([('bad', Sum(), 'bad_sum')])

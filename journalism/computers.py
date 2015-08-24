@@ -5,6 +5,7 @@ This module contains re-usable functions for computing new :class:`.Table`
 columns.
 """
 
+from journalism.aggregators import Mean, StDev
 from journalism.columns import NumberColumn
 from journalism.column_types import NumberType
 from journalism.exceptions import UnsupportedComputationError
@@ -123,8 +124,8 @@ class ZScores(Computer):
         if not isinstance(column, NumberColumn):
             raise UnsupportedComputationError(self, column)
 
-        self._mean = table.columns[self._column_name].mean()
-        self._sd = table.columns[self._column_name].stdev()
+        self._mean = table.columns[self._column_name].summarize(Mean())
+        self._sd = table.columns[self._column_name].summarize(StDev())
 
     def __call__(self, row):
         return (row[self._column_name] - self._mean) / self._sd
