@@ -7,7 +7,7 @@ class NullComputationError(Exception):  # pragma: no cover
     nulls.
     """
     pass
-    
+
 class UnsupportedAggregationError(Exception):  # pragma: no cover
     """
     Exception raised if an computation is applied to a column where it is not
@@ -25,18 +25,18 @@ class UnsupportedAggregationError(Exception):  # pragma: no cover
 
 class UnsupportedComputationError(Exception):  # pragma: no cover
     """
-    Exception raised when an computation is applied to a column type that does
-    not support it.
+    Exception raised when a :class:`.Computation` is applied to a column type
+    that does not support it.
 
-    :param computer: The name of the computation.
+    :param computation: The :class:`.Computation` being applied.
     :param column: The :class:`.Column` it was applied to.
     """
-    def __init__(self, computer, column):
-        self.computer = computer
+    def __init__(self, computation, column):
+        self.computation = computation
         self.column = column
 
     def __unicode__(self):
-        return '`%s` is not a supported computation for %s' % (type(self.computer), type(self.column))
+        return '`%s` is not a supported computation for %s' % (type(self.computation), type(self.column))
 
     def __str__(self):
         return str(self.__unicode__())

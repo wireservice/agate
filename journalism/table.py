@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 """
-This module contains the Table object.
+This module contains the :class:`Table` object, which is the central data
+structure in :code:`journalism`.
 """
 
 from copy import copy
@@ -13,7 +14,7 @@ except ImportError: # pragma: no cover
 
 from journalism.aggregators import Sum, Mean, Median, StDev, MAD
 from journalism.columns.base import ColumnMapping
-from journalism.computers import Computer
+from journalism.computations import Computation
 from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 from journalism.rows import RowSequence, Row
 from journalism.tableset import TableSet
@@ -487,30 +488,30 @@ class Table(object):
 
         return TableSet(output)
 
-    def compute(self, computers):
+    def compute(self, computations):
         """
-        Compute a new column applying a :class:`.Computer` to each row.
+        Compute a new column applying a :class:`.Computation` to each row.
 
-        :param computers: An iterable of pairs of new column names and
-            :class:`.Computer` instances.
+        :param computations: An iterable of pairs of new column names and
+            :class:`.Computation` instances.
         :returns: A new :class:`Table`.
         """
         column_names = list(copy(self._column_names))
         column_types = list(copy(self._column_types))
 
-        for name, computer in computers:
-            if not isinstance(computer, Computer):
-                raise ValueError('The second element in pair must be a Computer instance.')
+        for name, computation in computations:
+            if not isinstance(computation, Computation):
+                raise ValueError('The second element in pair must be a Computation instance.')
 
             column_names.append(name)
-            column_types.append(computer.get_compute_column_type())
+            column_types.append(computation.get_computed_column_type())
 
-            computer.prepare(self)
+            computation.prepare(self)
 
         new_rows = []
 
         for row in self.rows:
-            new_columns = tuple(computer.run(row) for n, c in computers)
+            new_columns = tuple(computation.run(row) for n, c in computations)
             new_rows.append(tuple(row) + new_columns)
 
         return self._fork(new_rows, column_types, column_names)

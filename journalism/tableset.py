@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This module contains the TableSet object for working with sets of related
-tables such as are created when grouping data.
+This module contains the :class:`TableSet` class for working with sets of
+related tables such as are created when using :meth:`.Table.group_by`.
 """
 
 from collections import Mapping
@@ -118,7 +118,7 @@ class TableSet(Mapping):
 
         :param aggregations: An list of triples in the format
             :code:`(column_name, aggregator, new_column_name)`.
-        :returns: A new :class:`Table`.
+        :returns: A new :class:`.Table`.
         """
         output = []
 

@@ -12,7 +12,7 @@ except ImportError:
 
 from journalism import Table, TableSet
 from journalism.column_types import TextType, NumberType
-from journalism.computers import Formula
+from journalism.computations import Formula
 from journalism.exceptions import ColumnDoesNotExistError
 
 class TestTable(unittest.TestCase):

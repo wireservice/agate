@@ -12,10 +12,10 @@ except ImportError:
 
 from journalism import Table
 from journalism.column_types import NumberType, TextType
-from journalism.computers import Change, PercentChange, Rank, ZScores
+from journalism.computations import Change, PercentChange, Rank, ZScores
 from journalism.exceptions import UnsupportedComputationError
 
-class TestTableCompute(unittest.TestCase):
+class TestTableComputation(unittest.TestCase):
     def setUp(self):
         self.rows = (
             ('a', 2, 3, 4),

@@ -11,11 +11,11 @@ from journalism.column_types import NumberType
 from journalism.exceptions import UnsupportedComputationError
 from journalism.utils import NullOrder
 
-class Computer(object): #pragma: no cover
+class Computation(object): #pragma: no cover
     """
-    Base class for computer function classes.
+    Base class for row-wise computations on :class:`.Table`s.
     """
-    def get_compute_column_type(self):
+    def get_computed_column_type(self):
         """
         Returns an instantiated :class:`.ColumnType` which will be appended to
         the table.
@@ -24,7 +24,7 @@ class Computer(object): #pragma: no cover
 
     def prepare(self, table):
         """
-        Called with the table immediately prior to invoking the computer with
+        Called with the table immediately prior to invoking the computation with
         rows. Can be used to compute column-level statistics for computations.
         By default, this does nothing.
         """
@@ -36,21 +36,21 @@ class Computer(object): #pragma: no cover
         """
         raise NotImplementedError()
 
-class Formula(Computer):
+class Formula(Computation):
     """
-    A simple drop-in computer that can apply any function to rows.
+    A simple drop-in computation that can apply any function to rows.
     """
     def __init__(self, column_type, func):
         self._column_type = column_type
         self._func = func
 
-    def get_compute_column_type(self):
+    def get_computed_column_type(self):
         return self._column_type
 
     def run(self, row):
         return self._func(row)
 
-class Change(Computer):
+class Change(Computation):
     """
     Computes change between two columns.
     """
@@ -58,7 +58,7 @@ class Change(Computer):
         self._before_column = before_column
         self._after_column = after_column
 
-    def get_compute_column_type(self):
+    def get_computed_column_type(self):
         return NumberType()
 
     def prepare(self, table):
@@ -82,7 +82,7 @@ class PercentChange(Change):
     def run(self, row):
         return (row[self._after_column] - row[self._before_column]) / row[self._before_column] * 100
 
-class Rank(Computer):
+class Rank(Computation):
     """
     Computes rank order of the values in a column.
 
@@ -92,7 +92,7 @@ class Rank(Computer):
     def __init__(self, column_name):
         self._column_name = column_name
 
-    def get_compute_column_type(self):
+    def get_computed_column_type(self):
         return NumberType()
 
     def _null_handler(self, k):
@@ -108,14 +108,14 @@ class Rank(Computer):
     def run(self, row):
         return self._rank_column.index(row[self._column_name]) + 1
 
-class ZScores(Computer):
+class ZScores(Computation):
     """
     Computes the z-scores (standard scores) of a given column.
     """
     def __init__(self, column_name):
         self._column_name = column_name
 
-    def get_compute_column_type(self):
+    def get_computed_column_type(self):
         return NumberType()
 
     def prepare(self, table):
