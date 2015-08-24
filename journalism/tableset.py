@@ -110,14 +110,15 @@ class TableSet(Mapping):
         a new :class:`.Table`.
 
         :class:`group` and :class:`count` columns will always be included as at
-        the beginning of the output table. The rest of the columns will be
-        named :code:`originalname_operation`. For instance
-        :code:`salaries_median`.
+        the beginning of the output table, before the aggregated columns.
 
-        :param operations: An list of triples in the format
+        :code:`aggregations` must be a list of tuples, where each has three
+        parts: a :code:`column_name`, a :class:`.Aggregation` instance and a
+        :code:`new_column_name`.
+
+        :param aggregations: An list of triples in the format
             :code:`(column_name, aggregator, new_column_name)`.
         :returns: A new :class:`Table`.
-        :raises: :exc:`.ColumnDoesNotExistError`
         """
         output = []
 

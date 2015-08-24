@@ -489,10 +489,10 @@ class Table(object):
 
     def compute(self, computers):
         """
-        Compute a new column applying a :class:`Computer` to each row.
+        Compute a new column applying a :class:`.Computer` to each row.
 
         :param computers: An iterable of pairs of new column names and
-            :class:`Computer` instances.
+            :class:`.Computer` instances.
         :returns: A new :class:`Table`.
         """
         column_names = list(copy(self._column_names))
