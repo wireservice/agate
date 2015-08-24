@@ -69,7 +69,6 @@ class TestBooleanAggregation(unittest.TestCase):
         column._data = lambda: (True, True, True)
         self.assertEqual(column.summarize(All()), True)
 
-
 class TestDateAggregation(unittest.TestCase):
     def test_min(self):
         column = DateColumn(None, 'one')

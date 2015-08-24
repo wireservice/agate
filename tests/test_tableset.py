@@ -123,7 +123,23 @@ class TestTableSet(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[1], ('table2', 3, 7))
         self.assertSequenceEqual(new_table.rows[2], ('table3', 3, 6))
 
-    def test_aggregate_to_ops(self):
+    def test_aggregate_min(self):
+        tableset = TableSet(self.tables)
+
+        new_table = tableset.aggregate([
+            ('number', Min(), 'number_min')
+        ])
+
+        self.assertIsInstance(new_table, Table)
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 3)
+        self.assertSequenceEqual(new_table._column_names, ('group', 'count', 'number_min'))
+        self.assertIsInstance(new_table.columns['number_min'], NumberColumn)
+        self.assertSequenceEqual(new_table.rows[0], ('table1', 3, 1))
+        self.assertSequenceEqual(new_table.rows[1], ('table2', 3, 0))
+        self.assertSequenceEqual(new_table.rows[2], ('table3', 3, 1))
+
+    def test_aggregate_two_ops(self):
         tableset = TableSet(self.tables)
 
         new_table = tableset.aggregate([

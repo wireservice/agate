@@ -130,7 +130,7 @@ class TableSet(Mapping):
         for column_name, aggregator, new_column_name in aggregations:
             c = self._first_table.columns[column_name]
 
-            column_types.append(aggregator.get_aggregate_column_type())
+            column_types.append(aggregator.get_aggregate_column_type(c))
             column_names.append(new_column_name)
 
         for name, table in self._tables.items():

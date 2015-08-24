@@ -12,7 +12,7 @@ class Aggregation(object): #pragma: no cover
     Base class defining an operation that can be performed on a column either
     to yield an individual value or as part of a :class:`.TableSet` aggregate.
     """
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         raise NotImplementedError()
 
     def run(self, column):
@@ -31,7 +31,7 @@ class HasNulls(Aggregation):
     """
     Returns :code:`True` if this column contains null values.
     """
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return BooleanType()
 
     def run(self, column):
@@ -48,7 +48,7 @@ class Any(Aggregation):
     def __init__(self, test=None):
         self._test = test
 
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return BooleanType()
 
     def run(self, column):
@@ -72,7 +72,7 @@ class All(Aggregation):
     def __init__(self, test=None):
         self._test = test
 
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return BooleanType()
 
     def run(self, column):
@@ -94,7 +94,7 @@ class Count(Aggregation):
     def __init__(self, value):
         self._value = value
 
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
@@ -113,12 +113,12 @@ class Min(Aggregation):
 
     :returns: :class:`datetime.date`.
     """
-    def get_aggregate_column_type(self):
-        if isinstance(self._column, DateColumn):
+    def get_aggregate_column_type(self, column):
+        if isinstance(column, DateColumn):
             return DateType()
-        elif isinstance(self._column, DateTimeColumn):
+        elif isinstance(column, DateTimeColumn):
             return DateTimeType()
-        elif isinstance(self._column, NumberColumn):
+        elif isinstance(column, NumberColumn):
             return NumberType()
 
     def run(self, column):
@@ -136,12 +136,12 @@ class Max(Aggregation):
 
     :returns: :class:`datetime.date`.
     """
-    def get_aggregate_column_type(self):
-        if isinstance(self._column, DateColumn):
+    def get_aggregate_column_type(self, column):
+        if isinstance(column, DateColumn):
             return DateType()
-        elif isinstance(self._column, DateTimeColumn):
+        elif isinstance(column, DateTimeColumn):
             return DateTimeType()
-        elif isinstance(self._column, NumberColumn):
+        elif isinstance(column, NumberColumn):
             return NumberType()
 
     def run(self, column):
@@ -158,7 +158,7 @@ class Sum(Aggregation):
 
     :returns: :class:`decimal.Decimal`.
     """
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
@@ -174,7 +174,7 @@ class Mean(NonNullAggregation):
     :returns: :class:`decimal.Decimal`.
     :raises: :exc:`.NullComputationError`
     """
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
@@ -195,7 +195,7 @@ class Median(NonNullAggregation):
     :returns: :class:`decimal.Decimal`.
     :raises: :exc:`.NullComputationError`
     """
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
@@ -213,7 +213,7 @@ class Mode(NonNullAggregation):
     :returns: :class:`decimal.Decimal`.
     :raises: :exc:`.NullComputationError`
     """
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
@@ -237,7 +237,7 @@ class IQR(NonNullAggregation):
     :returns: :class:`decimal.Decimal`.
     :raises: :exc:`.NullComputationError`
     """
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
@@ -257,7 +257,7 @@ class Variance(NonNullAggregation):
     :returns: :class:`decimal.Decimal`.
     :raises: :exc:`.NullComputationError`
     """
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
@@ -278,7 +278,7 @@ class StDev(NonNullAggregation):
     :returns: :class:`decimal.Decimal`.
     :raises: :exc:`.NullComputationError`
     """
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
@@ -297,7 +297,7 @@ class MAD(NonNullAggregation):
     :returns: :class:`decimal.Decimal`.
     :raises: :exc:`.NullComputationError`
     """
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return NumberType()
 
     def _median(self, data_sorted):
@@ -327,7 +327,7 @@ class MaxLength(Aggregation):
     """
     Calculates the longest string in this column.
     """
-    def get_aggregate_column_type(self):
+    def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
