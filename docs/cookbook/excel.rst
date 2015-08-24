@@ -4,61 +4,10 @@ Emulating Excel
 
 One of journalism's most powerful assets is that instead of a wimpy "formula" language, you have the entire Python language at your disposal. Here are examples of how to translate a few common Excel operations.
 
-SUM
-===
+Simple formulas
+===============
 
-.. code-block:: python
-
-    from journalism import NumberType
-
-    number_type = NumberType()
-
-    def five_year_total(row):
-        columns = ('2009', '2010', '2011', '2012', '2013')
-
-        return sum(tuple(row[c] for c in columns)]
-
-    new_table = table.compute('five_year_total', number_type, five_year_total)
-
-TRIM
-====
-
-.. code-block:: python
-
-    new_table = table.compute('name_stripped', TextType(), lambda row: row['name'].strip())
-
-CONCATENATE
-===========
-
-.. code-block:: python
-
-    new_table = table.compute('full_name', TextType(), lambda row '%(first_name)s %(middle_name)s %(last_name)s' % row)
-
-IF
-==
-
-.. code-block:: python
-
-    new_table = table.compute('mvp_candidate', TextType(), lambda row: 'Yes' if row['batting_average'] > 0.3 else 'No'
-
-VLOOKUP
-=======
-
-.. code-block:: python
-
-    states = {
-        'AL': 'Alabama',
-        'AK': 'Alaska',
-        'AZ': 'Arizona',
-        ...
-    }
-
-    new_table = table.compute('state_name', TextType(), lambda row: states[row['state_abbr']])
-
-Formulas
-========
-
-If you need to simulate an excel formula that isn't covered by the simple cases described above you can use the :class:`.Formula` class to apply an arbitrary function.
+If you need to simulate a simple Excel formula you can use the :class:`.Formula` class to apply an arbitrary function.
 
 Excel:
 
@@ -78,6 +27,70 @@ journalism:
     ])
 
 If this still isn't enough flexibility, you can also create your own subclass of :class:`.Computation`.
+
+SUM
+===
+
+.. code-block:: python
+
+    from journalism import NumberType, Formula
+
+    number_type = NumberType()
+
+    def five_year_total(row):
+        columns = ('2009', '2010', '2011', '2012', '2013')
+
+        return sum(tuple(row[c] for c in columns)]
+
+    formula = Formula(number_type, five_year_total)
+
+    new_table = table.compute([
+        ('five_year_total', formula)
+    ])
+
+TRIM
+====
+
+.. code-block:: python
+
+    new_table = table.compute([
+        ('name_stripped', Formula(text_type, lambda r: r['name'].strip()))
+    ])
+
+CONCATENATE
+===========
+
+.. code-block:: python
+
+    new_table = table.compute([
+        ('full_name', Formula(text_type, lambda r: '%(first_name)s %(middle_name)s %(last_name)s' % r))
+    ])
+
+IF
+==
+
+.. code-block:: python
+
+    new_table = table.compute([
+        ('mvp_candidate', Formula(boolean_type, lambda r: row['batting_average'] > 0.3))
+    ])
+
+
+VLOOKUP
+=======
+
+.. code-block:: python
+
+    states = {
+        'AL': 'Alabama',
+        'AK': 'Alaska',
+        'AZ': 'Arizona',
+        ...
+    }
+
+    new_table = table.compute([
+        ('mvp_candidate', Formula(text_type, lambda r: states[row['state_abbr']]))
+    ])
 
 Pivot tables
 ============

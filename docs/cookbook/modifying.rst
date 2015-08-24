@@ -5,13 +5,15 @@ Modifying data
 Computing percent change
 ========================
 
-You could use :meth:`.Table.compute` to calculate percent change, however, for your convenience journalism has a builtin shortcut 
+You could use a :class:`.Formula` to calculate percent change, however, for your convenience journalism has a builtin shortcut. For example, if your spreadsheet has a column with values for each month you could do:
 
 .. code-block:: python
 
-    new_table = table.percent_change('july', 'august', 'pct_change')
-
-This will compute the percent change between the :code:`july` and :code:`august` columns and put the result in a new :code:`pct_change` column in the resulting table.
+    new_table = table.compute([
+        ('july_change', PercentChange('july', 'august')
+        ('august_change', PercentChange('august', 'september')
+        ('september_change', PercentChange('september', 'october')
+    ])
 
 Rounding to two decimal places
 ==============================
@@ -24,13 +26,14 @@ We can use :meth:`.Table.compute` to apply the quantize to generate a rounded co
 
     from decimal import Decimal
     from journalism import NumberType
-    
+
     number_type = NumberType()
 
     def round_price(row):
         return row['price'].quantize(Decimal('0.01'))
 
-    new_table = table.compute('price_rounded', number_type, round_price)
+    new_table = table.compute([
+        ('price_rounded', Formula(number_type, round_price))
+    ])
 
 To round to one decimal place you would simply change :code:`0.01` to :code:`0.1`.
-

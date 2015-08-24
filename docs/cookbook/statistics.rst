@@ -11,15 +11,15 @@ journalism includes a full set of standard descriptive statistics that can be ap
 
     column = table.columns['salary']
 
-    column.sum()
-    column.min()
-    column.max()
-    column.mean()
-    column.median()
-    column.mode()
-    column.variance()
-    column.stdev()
-    column.mad()
+    column.summarize(Sum())
+    column.summarize(Min())
+    column.summarize(Max())
+    column.summarize(Mean())
+    column.summarize(Median())
+    column.summarize(Mode())
+    column.summarize(Variance())
+    column.summarize(StDev())
+    column.summarize(MAD())
 
 Aggregate statistics
 ====================
