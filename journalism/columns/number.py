@@ -6,7 +6,7 @@ import math
 import six
 
 from journalism.columns.base import Column
-from journalism.columns.operations.number import *
+from journalism.exceptions import NullComputationError
 
 class NumberColumn(Column):
     """
@@ -19,17 +19,6 @@ class NumberColumn(Column):
 
         self._cached_percentiles = None
 
-        self.sum = Sum(self)
-        self.min = Min(self)
-        self.max = Max(self)
-        self.mean = Mean(self)
-        self.median = Median(self)
-        self.mode = Mode(self)
-        self.iqr = IQR(self)
-        self.variance = Variance(self)
-        self.stdev = Stdev(self)
-        self.mad = MAD(self)
-
     def percentiles(self):
         """
         Compute percentiles for this column of data.
@@ -38,7 +27,7 @@ class NumberColumn(Column):
         :raises: :exc:`.NullComputationError`
         """
         if self._cached_percentiles is None:
-            if self.has_nulls():
+            if self._has_nulls():
                 raise NullComputationError
 
             self._cached_percentiles = Percentiles(self)

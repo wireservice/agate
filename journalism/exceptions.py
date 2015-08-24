@@ -7,26 +7,23 @@ class NullComputationError(Exception):  # pragma: no cover
     nulls.
     """
     pass
-
-class UnsupportedOperationError(Exception):  # pragma: no cover
+    
+class UnsupportedAggregationError(Exception):  # pragma: no cover
     """
-    Exception raised when an operation is applied
-    to a column type that does not support it.
-
-    :param operation: The name of the operation.
-    :param column: The :class:`.Column` it was applied to.
+    Exception raised if an computation is applied to a column where it is not
+    supported or it is not logically possible to complete it.
     """
-    def __init__(self, operation, column):
-        self.operation = operation
+    def __init__(self, aggregation, column):
+        self.aggregation = aggregation
         self.column = column
 
     def __unicode__(self):
-        return '`%s` is not a supported operation for %s' % (self.operation, type(self.column))
+        return '`%s` is not a supported operation for %s' % (type(self.aggregation), type(self.column))
 
     def __str__(self):
         return str(self.__unicode__())
 
-class UnsupportedComputationError(Exception):
+class UnsupportedComputationError(Exception):  # pragma: no cover
     """
     Exception raised when an computation is applied to a column type that does
     not support it.

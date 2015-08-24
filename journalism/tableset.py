@@ -13,9 +13,9 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
+from journalism.aggregators import Aggregation
 from journalism.column_types import TextType, NumberType
-from journalism.columns.operations.base import ColumnOperation
-from journalism.exceptions import ColumnDoesNotExistError, UnsupportedOperationError
+from journalism.exceptions import ColumnDoesNotExistError
 from journalism.rows import RowSequence
 
 class TableMethodProxy(object):
@@ -106,7 +106,7 @@ class TableSet(Mapping):
         """
         return self._column_names
 
-    def aggregate(self, operations):
+    def aggregate(self, aggregations):
         """
         Aggregate data from the tables in this set by performing some
         set of column operations on the groups and coalescing the results into
@@ -120,26 +120,19 @@ class TableSet(Mapping):
         :param operations: An iterable of pairs of column names and the
             names of :class:`.Column` methods, such as "sum" or "max_length".
         :returns: A new :class:`Table`.
-        :raises: :exc:`.ColumnDoesNotExistError`, :exc:`.UnsupportedOperationError`
+        :raises: :exc:`.ColumnDoesNotExistError`
         """
         output = []
 
         column_types = [TextType(), NumberType()]
         column_names = ['group', 'count']
+        aggregators = []
 
-        for op_column, op_name in operations:
-            c = self._first_table.columns[op_column]
+        for column_name, aggregator in aggregations:
+            c = self._first_table.columns[column_name]
 
-            try:
-                op = getattr(c, op_name)
-            except AttributeError:
-                raise UnsupportedOperationError(op_name, c)
-
-            if not isinstance(op, ColumnOperation):
-                raise UnsupportedOperationError(op_name, c)
-
-            column_types.append(op.get_aggregate_column_type())
-            column_names.append('%s_%s' % (op_column, op_name))
+            column_types.append(aggregator.get_aggregate_column_type())
+            column_names.append('%s_%s' % (column_name, op_name))
 
         for name, table in self._tables.items():
             new_row = [name, len(table.rows)]

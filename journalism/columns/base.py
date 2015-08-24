@@ -9,8 +9,7 @@ except ImportError: #pragma: no cover
 
 import six
 
-from journalism.exceptions import ColumnDoesNotExistError, NullComputationError
-from journalism.columns.operations.base import HasNulls, Any, All, Count
+from journalism.exceptions import ColumnDoesNotExistError
 
 class ColumnMapping(Mapping):
     """
@@ -80,11 +79,7 @@ class Column(Sequence):
         self._cached_data_without_nulls = None
         self._cached_data_sorted = None
         self._cached_len = None
-
-        self.has_nulls = HasNulls(self)
-        self.any = Any(self)
-        self.all = All(self)
-        self.count = Count(self)
+        self._cached_has_nulls = None
 
     def __unicode__(self):
         data = self._data()
@@ -119,6 +114,12 @@ class Column(Sequence):
 
         return self._cached_data_sorted
 
+    def _has_nulls(self):
+        if self._cached_has_nulls is None:
+            self._cached_has_nulls = None in self._data()
+
+        return self._cached_has_nulls
+
     def __getitem__(self, j):
         return self._data()[j]
 
@@ -141,3 +142,9 @@ class Column(Sequence):
         Ensure inequality test with lists works.
         """
         return not self.__eq__(other)
+
+    def summarize(self, aggregator):
+        """
+        Apply a :class:`.Aggregator` to this column and return the result.
+        """
+        return aggregator.run(self)
