@@ -55,10 +55,34 @@ VLOOKUP
 
     new_table = table.compute('state_name', TextType(), lambda row: states[row['state_abbr']])
 
+Formulas
+========
+
+If you need to simulate an excel formula that isn't covered by the simple cases described above you can use the :class:`.Formula` class to apply an arbitrary function.
+
+Excel:
+
+.. code::
+
+    =($A1 + $B1) / $C1
+
+journalism:
+
+.. code-block:: python
+
+    def f(row):
+        return (row['a'] + row['b']) / row['c']
+
+    new_table = table.compute([
+        ('new_column', Formula(f))
+    ])
+
+If this still isn't enough flexibility, you can also create your own subclass of :class:`.Computation`.
+
 Pivot tables
 ============
 
-You can emulate most of the functionality of Excel's pivot tables using the :py:meth:`journalism.tableset.TableSet.aggregate` method.
+You can emulate most of the functionality of Excel's pivot tables using the :meth:`.TableSet.aggregate` method.
 
 .. code-block:: python
 
