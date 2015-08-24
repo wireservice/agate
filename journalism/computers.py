@@ -110,7 +110,7 @@ class Rank(Computer):
 
 class ZScores(Computer):
     """
-    Computes the z-score (standard score) of a given column in each row.
+    Computes the z-scores (standard scores) of a given column.
     """
     def __init__(self, column_name):
         self._column_name = column_name

@@ -21,7 +21,7 @@ from journalism.rows import RowSequence
 class TableMethodProxy(object):
     """
     A proxy for :class:`TableSet` methods that converts them to individual
-    calls on each :class:`Table` in the set.
+    calls on each :class:`.Table` in the set.
     """
     def __init__(self, tableset, method_name):
         self.tableset = tableset
@@ -45,9 +45,6 @@ class TableSet(Mapping):
     values.
 
     :param tables: A dictionary of string keys and :class:`Table` values.
-
-    :var columns: A :class:`.ColumnMapping` for accessing the
-        :class:`.ColumnSet`s in this table.
     """
     def __init__(self, group):
         self._first_table = group.values()[0]

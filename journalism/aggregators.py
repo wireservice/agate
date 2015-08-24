@@ -13,15 +13,21 @@ class Aggregation(object): #pragma: no cover
     to yield an individual value or as part of a :class:`.TableSet` aggregate.
     """
     def get_aggregate_column_type(self, column):
+        """
+        Get the correct column type for an new column based on this aggregation.
+        """
         raise NotImplementedError()
 
     def run(self, column):
+        """
+        Execute this aggregation on a given column and return the result.
+        """
         raise NotImplementedError()
 
 class NonNullAggregation(Aggregation):
     """
-    Base class for aggregations that can only be applied to columns which do
-    not contain nulls.
+    Raise a :exc:`.NullComputationError` if the column this aggregation is
+    being applied to contains null values.
     """
     def run(self, column):
         if column.summarize(HasNulls()):
@@ -29,18 +35,21 @@ class NonNullAggregation(Aggregation):
 
 class HasNulls(Aggregation):
     """
-    Returns :code:`True` if this column contains null values.
+    Returns :code:`True` if the column contains null values.
     """
     def get_aggregate_column_type(self, column):
         return BooleanType()
 
     def run(self, column):
+        """
+        :returns: :class:`bool`
+        """
         return column._has_nulls()
 
 class Any(Aggregation):
     """
-    Returns :code:`True` if any value passes a truth test. The truth test may
-    be omitted when testing a :class:`.BooleanColumn`.
+    Returns :code:`True` if any value in a column passes a truth test. The
+    truth test may be omitted when testing a :class:`.BooleanColumn`.
 
     :param test: A function that takes a value and returns :code:`True`
         or :code:`False`.
@@ -52,6 +61,9 @@ class Any(Aggregation):
         return BooleanType()
 
     def run(self, column):
+        """
+        :returns: :class:`bool`
+        """
         data = column._data()
 
         if isinstance(column, BooleanColumn):
@@ -63,8 +75,8 @@ class Any(Aggregation):
 
 class All(Aggregation):
     """
-    Returns :code:`True` if all values pass a truth test. The truth test may
-    be omitted when testing a :class:`.BooleanColumn`.
+    Returns :code:`True` if all values in a column pass a truth test. The truth
+    test may be omitted when testing a :class:`.BooleanColumn`.
 
     :param test: A function that takes a value and returns :code:`True`
         or :code:`False`.
@@ -76,6 +88,9 @@ class All(Aggregation):
         return BooleanType()
 
     def run(self, column):
+        """
+        :returns: :class:`bool`
+        """
         data = column._data()
 
         if isinstance(column, BooleanColumn):
@@ -87,7 +102,7 @@ class All(Aggregation):
 
 class Count(Aggregation):
     """
-    Count the number of times a specific value occurs in this column.
+    Count the number of times a specific value occurs in a column.
 
     :param value: The value to be counted.
     """
@@ -98,6 +113,9 @@ class Count(Aggregation):
         return NumberType()
 
     def run(self, column):
+        """
+        :returns: :class:`int`
+        """
         count = 0
 
         for d in column._data():
@@ -108,10 +126,8 @@ class Count(Aggregation):
 
 class Min(Aggregation):
     """
-    Compute the minimum value in this column. May be applied to
+    Compute the minimum value in a column. May be applied to
     :class:`.DateColumn`, :class:`.DateTimeColumn` and :class:`.NumberColumn`.
-
-    :returns: :class:`datetime.date`.
     """
     def get_aggregate_column_type(self, column):
         if isinstance(column, DateColumn):
@@ -122,6 +138,9 @@ class Min(Aggregation):
             return NumberType()
 
     def run(self, column):
+        """
+        :returns: :class:`datetime.date`
+        """
         supported_columns = (DateColumn, DateTimeColumn, NumberColumn)
 
         if not any(isinstance(column, t) for t in supported_columns):
@@ -131,10 +150,8 @@ class Min(Aggregation):
 
 class Max(Aggregation):
     """
-    Compute the maximum value in this column. May be applied to
+    Compute the maximum value in a column. May be applied to
     :class:`.DateColumn`, :class:`.DateTimeColumn` and :class:`.NumberColumn`.
-
-    :returns: :class:`datetime.date`.
     """
     def get_aggregate_column_type(self, column):
         if isinstance(column, DateColumn):
@@ -145,6 +162,9 @@ class Max(Aggregation):
             return NumberType()
 
     def run(self, column):
+        """
+        :returns: :class:`datetime.date`
+        """
         supported_columns = (DateColumn, DateTimeColumn, NumberColumn)
 
         if not any(isinstance(column, t) for t in supported_columns):
@@ -154,14 +174,15 @@ class Max(Aggregation):
 
 class Sum(Aggregation):
     """
-    Compute the sum of this column.
-
-    :returns: :class:`decimal.Decimal`.
+    Compute the sum of a column.
     """
     def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
+        """
+        :returns: :class:`decimal.Decimal`.
+        """
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
@@ -169,15 +190,15 @@ class Sum(Aggregation):
 
 class Mean(NonNullAggregation):
     """
-    Compute the mean value of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
+    Compute the mean value of a column.
     """
     def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
+        """
+        :returns: :class:`decimal.Decimal`.
+        """
         super(Mean, self).run(column)
 
         if not isinstance(column, NumberColumn):
@@ -187,18 +208,18 @@ class Mean(NonNullAggregation):
 
 class Median(NonNullAggregation):
     """
-    Compute the median value of this column.
+    Compute the median value of a column.
 
     This is the 50th percentile. See :class:`Percentiles` for implementation
     details.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
     """
     def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
+        """
+        :returns: :class:`decimal.Decimal`.
+        """
         super(Median, self).run(column)
 
         if not isinstance(column, NumberColumn):
@@ -208,15 +229,15 @@ class Median(NonNullAggregation):
 
 class Mode(NonNullAggregation):
     """
-    Compute the mode value of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
+    Compute the mode value of a column.
     """
     def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
+        """
+        :returns: :class:`decimal.Decimal`.
+        """
         super(Mode, self).run(column)
 
         if not isinstance(column, NumberColumn):
@@ -232,15 +253,15 @@ class Mode(NonNullAggregation):
 
 class IQR(NonNullAggregation):
     """
-    Compute the inter-quartile range of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
+    Compute the inter-quartile range of a column.
     """
     def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
+        """
+        :returns: :class:`decimal.Decimal`.
+        """
         super(IQR, self).run(column)
 
         if not isinstance(column, NumberColumn):
@@ -252,15 +273,15 @@ class IQR(NonNullAggregation):
 
 class Variance(NonNullAggregation):
     """
-    Compute the variance of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
+    Compute the variance of a column.
     """
     def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
+        """
+        :returns: :class:`decimal.Decimal`.
+        """
         super(Variance, self).run(column)
 
         if not isinstance(column, NumberColumn):
@@ -273,15 +294,15 @@ class Variance(NonNullAggregation):
 
 class StDev(NonNullAggregation):
     """
-    Compute the standard of deviation of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
+    Compute the standard of deviation of a column.
     """
     def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
+        """
+        :returns: :class:`decimal.Decimal`.
+        """
         super(StDev, self).run(column)
 
         if not isinstance(column, NumberColumn):
@@ -292,10 +313,7 @@ class StDev(NonNullAggregation):
 class MAD(NonNullAggregation):
     """
     Compute the `median absolute deviation <http://en.wikipedia.org/wiki/Median_absolute_deviation>`_
-    of this column.
-
-    :returns: :class:`decimal.Decimal`.
-    :raises: :exc:`.NullComputationError`
+    of a column.
     """
     def get_aggregate_column_type(self, column):
         return NumberType()
@@ -313,6 +331,9 @@ class MAD(NonNullAggregation):
         return (a + b) / 2
 
     def run(self, column):
+        """
+        :returns: :class:`decimal.Decimal`.
+        """
         super(MAD, self).run(column)
 
         if not isinstance(column, NumberColumn):
@@ -325,12 +346,15 @@ class MAD(NonNullAggregation):
 
 class MaxLength(Aggregation):
     """
-    Calculates the longest string in this column.
+    Calculates the longest string in a column.
     """
     def get_aggregate_column_type(self, column):
         return NumberType()
 
     def run(self, column):
+        """
+        :returns: :class:`int`.
+        """
         if not isinstance(column, TextColumn):
             raise UnsupportedAggregationError(self, column)
 
