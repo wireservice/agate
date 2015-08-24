@@ -55,7 +55,7 @@ Now let's import our dependencies:
 Defining the columns
 ====================
 
-journalism requires us to define a type for each column in our dataset. No effort is made to determine these types automatically, however, :py:class:`journalism.columns.TextType` is always a safe choice if you aren't sure what is in a column.
+journalism requires us to define a type for each column in our dataset. No effort is made to determine these types automatically, however, :class:`journalism.columns.TextType` is always a safe choice if you aren't sure what is in a column.
 
 First we create instances of the column types we will be using:
 
@@ -117,45 +117,49 @@ Now let's read the data in the CSV file and use it to create the table.
     # Close the file
     f.close()
 
-:py:class:`journalism.table.Table` will accept any iterable (array) of iterables (rows)  as it's first argument. In this case we're using a CSV reader. Note that the data is copied when the table is constructed so it safe to close the file handler immediately.
+:class:`journalism.table.Table` will accept any iterable (array) of iterables (rows)  as it's first argument. In this case we're using a CSV reader. Note that the data is copied when the table is constructed so it safe to close the file handler immediately.
 
-Filtering and column operations
-===============================
+Selecting and filtering data
+============================
 
-Now let's use journalism to answer our first question about this dataset: **What was the total cost of all shipments delivered to the Kansas City area?**
+Now let's start to answer a first question about this dataset: **What was the total cost of all shipments delivered to the Kansas City area?**
 
-
-Answering this question will require two elements: first filtering the data to only those rows related to Kansas City and then summing the ``total_cost`` column of those rows.
-
-First, let's filter the data to just the four counties that contain Kansas city:
+Answering this question will require two parts: first filtering the data to only those rows related to Kansas City and then summing the ``total_cost`` column of those rows. Let's start by filtering the data to just the four counties that contain Kansas city:
 
 .. code-block:: python
 
     kansas_city = table.where(lambda r: r['county'] in ('JACKSON', 'CLAY', 'CASS', 'PLATTE'))
 
-You'll notice we provide a :py:obj:`lambda` (anonymous) function to the :py:meth:`journalism.table.Table.where`. This function is applied to each row and if it returns ``True``, the row is included in the output table.
+You'll notice we provide a :keyword:`lambda` (anonymous) function to the :meth:`.Table.where`. This function is applied to each row and if it returns ``True``, the row is included in the output table.
 
-A crucial thing to understand about journalism is that **table methods return tables**. (If you're familiar with `jQuery <https://jquery.com/>`_, this is analogous to the way the methods of the $ object work.) ``table`` was a :py:class:`journalism.table.Table` instance and we applied the ``where`` method, so ``kansas_city`` is too. **Tables themselves are immutable. You can not modify the data of a table--only derive new tables.**
+:class:`.Table` provides a full suite of these "SQL-like" operations, including :meth:`.Table.select` for grabbing specific columns, :meth:`.Table.where` for selecting particular rows and :meth:`.Table.group_by` for subsetting rows.
 
-You can access a dictionary of the columns of a table using the ``columns`` attribute. Each column is a subclass of :py:class:`journalism.columns.Column` and has a variety of aggregation functions that can be applied to it such as ``min``, ``max``, ``sum``, etc. Which aggregation functions are available depends on the type of the column.
+A crucial thing to understand about these methods is that they return **new tables**. In our example above ``table`` was a :class:`.Table` instance and we applied :meth:`.Table.where`, so ``kansas_city`` is a :class:`Table` too. The tables themselves are immutable. You can create new tables, but you can never modify them.
 
-Let's sum the values in the ``total_cost`` column for the ``kansas_city`` table:
+Summarizing column data
+=======================
+
+In order to answer our question about the total cost of shipments to Kansas City we need to sum the costs, which is a column-wise operation. To perform column operations in journalism we will use a subclass of :class:`.Aggregation`.
+
+An :class:`.Aggregation` is applied to a column of a table. You can access the columns of a table using the :attr:`.Table.columns` attribute. To sum the ``total_cost`` column we will summarize using an instance of the :class:`.Sum` aggregator:
 
 .. code-block:: python
 
-    total = kansas_city.columns['total_cost'].sum()
+    total = kansas_city.columns['total_cost'].summarize(Sum())
     print(total)
 
 ::
 
     3716
 
-To make sure this is clear, let's look at a second example. Question: **How many robots were purchased in Kansas?**
+Here is a second example. Question: **How many robots were purchased in Kansas?**
 
 .. code-block:: python
 
-    robots = table.where(lambda r: 'ROBOT' in (r['item_name'] or '')).columns['quantity'].sum()
-    print(robots)
+    robot_count = table.where(lambda r: 'ROBOT' in (r['item_name'] or '')).columns['quantity'].summarize(Sum())
+    print(robot_count)
+
+Answer:
 
 ::
 
@@ -165,18 +169,46 @@ To make sure this is clear, let's look at a second example. Question: **How many
 
     The ``(r['item_name'] or '')`` clause prevents an exception if the ``item_name`` column was ``None`` (blank) for any rows.
 
+Each column in :attr:`.Table.columns` is a subclass of :class:`.Column`, such as :class:`.NumberColumn` or :class:`.TextColumn`. Different aggregations can be applied depending on the column type. For instance, descriptive statistics such as :class:`.Mean`, :class:`.Median` and :class:`.Mode` can only be applied to instances of :class:`.NumberColumn`. If none of the provided aggregations suit your needs you can also create your own create your own by subclassing :class:`.Aggregation`. See the API documentation for :mod:`.aggregations` to see all of the supported types.
+
+Computing new columns
+=====================
+
+In addition to column-wise operations there are also many important row-wise data operations. These are operations which go through a :class:`.Table` row-by-row and compute a new column using the existing data. To perform row operations in journalism we use subclasses of :class:`.Computation`.
+
+A :class:`.Computation` is applied to a :class:`.Table` and yields an entirely new table.
+TKTK: question
+
+.. code-block:: python
+
+    # TODO: Computation example here
+
+For efficiencies sake, journalism allows you to perform several computations at once.
+
+.. code-block:: python
+
+    # TODO: Multi-computation example here
+
+Sometimes, the built-in computations won't suffice. In this case, you can use the generic :class:`.Formula` to compute a column based on an arbitrary function. This is somewhat analogous to Excel's cell formulas.
+
+.. code-block:: python
+
+    # TODO: Formula example
+
+If :class:`.Formula` still isn't flexible enough (for instance, if you need to compute a new row based on the distribution of data in a column) you can always implement your own subclass of :class:`.Computation`. See the API documentation for :mod:`.computations` to see all of the supported ways to compute new data.
+
 Sorting and slicing
 ===================
 
 Question: **What are the five most recent purchases made in Kansas?**
 
-Remembering that methods of tables return tables, let's use the :py:meth:`journalism.table.Table.order_by` method to sort our table and then grab the first five rows of the resulting table.
+Remembering that methods of tables return tables, let's use the :meth:`journalism.table.Table.order_by` method to sort our table and then grab the first five rows of the resulting table.
 
 .. code-block:: python
 
     recent_five = table.order_by('ship_date', reverse=True).rows[:5]
 
-The variable ``recent_five`` now contains a list of :py:class:`journalism.rows.Row` objects. (Slicing the ``rows`` class attribute does not return a table. If you want get a subset of rows as a table use :py:meth:`journalism.table.Table.where` or construct a new ``Table`` from the resulting list of rows.
+The variable ``recent_five`` now contains a list of :class:`journalism.rows.Row` objects. (Slicing the ``rows`` class attribute does not return a table. If you want get a subset of rows as a table use :meth:`journalism.table.Table.where` or construct a new ``Table`` from the resulting list of rows.
 
 Now let's print some information about the resulting rows:
 
@@ -194,8 +226,8 @@ Now let's print some information about the resulting rows:
     2014-04-17: 1 HARDWARE KIT,ELECTRONIC EQUIPMENT, $13,999
     2014-03-25: 1 BICYCLE, EXERCISE, $0
 
-Aggregation
-===========
+Grouping and aggregating
+========================
 
 Question: **Which five counties acquired the most items?**
 
@@ -205,17 +237,17 @@ This question can't be answered by operating on a single column. What we need is
 
     counties = table.group_by('county')
 
-This command takes our original :py:class:`journalism.table.Table` and groups it into a :py:class:`journalism.tableset.TableSet`, which contains one table per county. Now we'll aggregate the totals for each group.
+This command takes our original :class:`journalism.table.Table` and groups it into a :class:`journalism.tableset.TableSet`, which contains one table per county. Now we'll aggregate the totals for each group.
 
 .. code-block:: python
 
     totals = counties.aggregate([
-        ('total_cost', 'sum')
+        ('total_cost', Sum(), 'total_cost_sum')
     ])
 
 This takes our grouped ``TableSet``, computes the sum of the ``total_cost`` column for each ``Table`` in the set and then builds a new table containing the aggregate results. The new table will have the columns ``group``, ``count`` and ``total_sum_cost``. The first two columns always have the same names and the last one is generated based on the name of the column and the operation being applied.
 
-The :py:meth:`journalism.tableset.TableSet.aggregate`: function takes a list of operations to perform. You can aggregate as many columns as you like in a single step and they will all appear in the output table.
+The :meth:`journalism.tableset.TableSet.aggregate`: function takes a list of operations to perform. You can aggregate as many columns as you like in a single step and they will all appear in the output table.
 
 Lastly, we'll sort our new table and print the results.
 

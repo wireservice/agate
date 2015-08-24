@@ -29,9 +29,9 @@ class Table(object):
         one per column of data.
     :param column_names: A sequence of strings that are names for the columns.
 
-    :var columns: A :class:`.ColumnMapping` for accessing the columns in this
+    :attr columns: A :class:`.ColumnMapping` for accessing the columns in this
         table.
-    :var rows: A :class:`.RowSequence` for accessing the rows in this table.
+    :attr rows: A :class:`.RowSequence` for accessing the rows in this table.
     """
     def __init__(self, rows, column_types, column_names):
         len_column_types = len(column_types)
