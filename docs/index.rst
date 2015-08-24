@@ -13,15 +13,16 @@ Why journalism?
 Why use journalism?
 
 * A clean, readable API.
-* Optimized for exploratory use in the shell.
+* Self-documenting code patterns.
 * A full set of SQL-like operations.
 * Full unicode support.
 * Decimal precision everywhere.
-* Pure Python. It works everywhere.
+* Pure Python. It runs everywhere.
 * 100% test coverage.
 * Extensive user documentation.
 * Access to the full power of Python in every command.
-* Thoroughly documented implementations of common analytical techniques.
+* Well-documented implementations of common analytical techniques.
+* Modular and extensible for custom analysis.
 
 Table of contents
 =================
