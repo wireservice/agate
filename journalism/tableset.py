@@ -139,7 +139,7 @@ class TableSet(Mapping):
             for column_name, aggregator, new_column_name in aggregations:
                 c = table.columns[column_name]
 
-                new_row.append(c.summarize(aggregator))
+                new_row.append(aggregator.run(c))
 
             output.append(tuple(new_row))
 

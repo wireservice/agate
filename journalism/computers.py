@@ -22,7 +22,7 @@ class Computer(object): #pragma: no cover
         """
         raise NotImplementedError()
 
-    def _prepare(self, table):
+    def prepare(self, table):
         """
         Called with the table immediately prior to invoking the computer with
         rows. Can be used to compute column-level statistics for computations.
@@ -30,7 +30,7 @@ class Computer(object): #pragma: no cover
         """
         pass
 
-    def __call__(self, row):
+    def run(self, row):
         """
         When invoked with a row, returns the computed new column value.
         """
@@ -47,7 +47,7 @@ class Formula(Computer):
     def get_compute_column_type(self):
         return self._column_type
 
-    def __call__(self, row):
+    def run(self, row):
         return self._func(row)
 
 class Change(Computer):
@@ -61,7 +61,7 @@ class Change(Computer):
     def get_compute_column_type(self):
         return NumberType()
 
-    def _prepare(self, table):
+    def prepare(self, table):
         before_column = table.columns[self._before_column]
 
         if not isinstance(before_column, NumberColumn):
@@ -72,14 +72,14 @@ class Change(Computer):
         if not isinstance(after_column, NumberColumn):
             raise UnsupportedComputationError(self, after_column)
 
-    def __call__(self, row):
+    def run(self, row):
         return row[self._after_column] - row[self._before_column]
 
 class PercentChange(Change):
     """
     Computes percent change between two columns.
     """
-    def __call__(self, row):
+    def run(self, row):
         return (row[self._after_column] - row[self._before_column]) / row[self._before_column] * 100
 
 class Rank(Computer):
@@ -101,11 +101,11 @@ class Rank(Computer):
 
         return k
 
-    def _prepare(self, table):
+    def prepare(self, table):
         values = [row[self._column_name] for row in table.rows]
         self._rank_column = sorted(values, key=self._null_handler)
 
-    def __call__(self, row):
+    def run(self, row):
         return self._rank_column.index(row[self._column_name]) + 1
 
 class ZScores(Computer):
@@ -118,7 +118,7 @@ class ZScores(Computer):
     def get_compute_column_type(self):
         return NumberType()
 
-    def _prepare(self, table):
+    def prepare(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column, NumberColumn):
@@ -127,5 +127,5 @@ class ZScores(Computer):
         self._mean = table.columns[self._column_name].summarize(Mean())
         self._sd = table.columns[self._column_name].summarize(StDev())
 
-    def __call__(self, row):
+    def run(self, row):
         return (row[self._column_name] - self._mean) / self._sd

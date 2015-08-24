@@ -505,12 +505,12 @@ class Table(object):
             column_names.append(name)
             column_types.append(computer.get_compute_column_type())
 
-            computer._prepare(self)
+            computer.prepare(self)
 
         new_rows = []
 
         for row in self.rows:
-            new_columns = tuple(c(row) for n, c in computers)
+            new_columns = tuple(computer.run(row) for n, c in computers)
             new_rows.append(tuple(row) + new_columns)
 
         return self._fork(new_rows, column_types, column_names)
