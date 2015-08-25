@@ -1,5 +1,5 @@
 ========
-Cookbook 
+Cookbook
 ========
 
 .. toctree::
@@ -9,11 +9,10 @@ Cookbook
     cookbook/filtering
     cookbook/sorting
     cookbook/statistics
-    cookbook/modifying
+    cookbook/calculations
     cookbook/sql
-    cookbook/excel 
+    cookbook/excel
     cookbook/r
     cookbook/underscore
     cookbook/matplotlib
     cookbook/pygal
-
