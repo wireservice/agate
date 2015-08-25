@@ -12,6 +12,8 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
+import six
+
 from journalism.aggregators import Sum, Mean, Median, StDev, MAD
 from journalism.columns.base import ColumnMapping
 from journalism.computations import Computation
@@ -472,9 +474,9 @@ class Table(object):
 
         for row in self.rows:
             if key_is_row_function:
-                group_name = unicode(key(row))
+                group_name = six.text_type(key(row))
             else:
-                group_name = unicode(row[i])
+                group_name = six.text_type(row[i])
 
             if group_name not in groups:
                 groups[group_name] = []

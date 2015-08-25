@@ -47,7 +47,7 @@ class TableSet(Mapping):
     :param tables: A dictionary of string keys and :class:`Table` values.
     """
     def __init__(self, group):
-        self._first_table = group.values()[0]
+        self._first_table = list(group.values())[0]
         self._column_types = self._first_table.get_column_types()
         self._column_names = self._first_table.get_column_names()
 

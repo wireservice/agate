@@ -1,6 +1,8 @@
 0.5.0
 -----
 
+* Deprecated support for Python version 3.2.
+* Added support for Python wheel packaging. (#127)
 * Add PercentileRank computation and usage example to cookbook. (#152)
 * Add indexed change example to cookbook. (#151)
 * Add annual change example to cookbook. (#150)

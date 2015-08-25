@@ -160,8 +160,6 @@ class TestNumberAggregation(unittest.TestCase):
         with self.assertRaises(NullComputationError):
             self.table.columns['one'].summarize(IQR())
 
-        print self.table.columns['two'].quartiles()
-
         self.assertEqual(self.table.columns['two'].summarize(IQR()), Decimal('0.955'))
 
     def test_variance(self):
