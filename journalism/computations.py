@@ -67,7 +67,7 @@ class Change(Computation):
         if not isinstance(before_column, NumberColumn):
             raise UnsupportedComputationError(self, before_column)
 
-        after_column = table.columns[self._before_column]
+        after_column = table.columns[self._after_column]
 
         if not isinstance(after_column, NumberColumn):
             raise UnsupportedComputationError(self, after_column)
@@ -81,6 +81,28 @@ class PercentChange(Change):
     """
     def run(self, row):
         return (row[self._after_column] - row[self._before_column]) / row[self._before_column] * 100
+
+class ZScores(Computation):
+    """
+    Computes the z-scores (standard scores) of a given column.
+    """
+    def __init__(self, column_name):
+        self._column_name = column_name
+
+    def get_computed_column_type(self):
+        return NumberType()
+
+    def prepare(self, table):
+        column = table.columns[self._column_name]
+
+        if not isinstance(column, NumberColumn):
+            raise UnsupportedComputationError(self, column)
+
+        self._mean = column.summarize(Mean())
+        self._sd = column.summarize(StDev())
+
+    def run(self, row):
+        return (row[self._column_name] - self._mean) / self._sd
 
 class Rank(Computation):
     """
@@ -107,25 +129,20 @@ class Rank(Computation):
 
     def run(self, row):
         return self._rank_column.index(row[self._column_name]) + 1
-
-class ZScores(Computation):
+        
+class PercentileRank(Rank):
     """
-    Computes the z-scores (standard scores) of a given column.
+    Assign each value in a column to the percentile into which it falls.
+
+    See :class:`.Percentiles` for implementation details.
     """
-    def __init__(self, column_name):
-        self._column_name = column_name
-
-    def get_computed_column_type(self):
-        return NumberType()
-
     def prepare(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column, NumberColumn):
             raise UnsupportedComputationError(self, column)
 
-        self._mean = table.columns[self._column_name].summarize(Mean())
-        self._sd = table.columns[self._column_name].summarize(StDev())
+        self._percentiles = column.percentiles()
 
     def run(self, row):
-        return (row[self._column_name] - self._mean) / self._sd
+        return self._percentiles.locate(row[self._column_name])

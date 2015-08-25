@@ -8,7 +8,7 @@ API
     api/aggregators
     api/column_types
     api/columns
-    api/computers
+    api/computations
     api/exceptions
     api/rows
     api/table

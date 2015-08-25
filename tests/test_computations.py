@@ -12,7 +12,7 @@ except ImportError:
 
 from journalism import Table
 from journalism.column_types import NumberType, TextType
-from journalism.computations import Change, PercentChange, Rank, ZScores
+from journalism.computations import Change, PercentChange, Rank, ZScores, PercentileRank
 from journalism.exceptions import UnsupportedComputationError
 
 class TestTableComputation(unittest.TestCase):
@@ -71,6 +71,27 @@ class TestTableComputation(unittest.TestCase):
                 ('test', PercentChange('one', 'three'))
             ])
 
+    def test_z_scores(self):
+        new_table = self.table.compute([
+            ('z-scores', ZScores('two'))
+        ])
+
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, -1))
+        self.assertSequenceEqual(new_table.rows[1], (None, 3, 5, None, 1))
+        self.assertSequenceEqual(new_table.rows[2], ('a', 2, 4, None, -1))
+        self.assertSequenceEqual(new_table.rows[3], ('b', 3, 4, None, 1))
+
+        self.assertSequenceEqual(new_table.columns['z-scores'],(-1,1,-1,1))
+
+    def test_zscores_invalid_column(self):
+        with self.assertRaises(UnsupportedComputationError):
+            new_table = self.table.compute([
+                ('test', ZScores('one'))
+            ])
+
     def test_rank_number(self):
         new_table = self.table.compute([
             ('rank', Rank('two'))
@@ -116,23 +137,20 @@ class TestTableComputation(unittest.TestCase):
 
         self.assertSequenceEqual(new_table.columns['rank'], (1, 3, 1, 3))
 
-    def test_z_scores(self):
-        new_table = self.table.compute([
-            ('z-scores', ZScores('two'))
+    def test_percentile_rank(self):
+        rows = [(n,) for n in range(1, 1001)]
+
+        table = Table(rows, (self.number_type,), ('ints',))
+        new_table = table.compute([
+            ('percentiles', PercentileRank('ints'))
         ])
 
-        self.assertEqual(len(new_table.rows), 4)
-        self.assertEqual(len(new_table.columns), 5)
+        self.assertEqual(len(new_table.rows), 1000)
+        self.assertEqual(len(new_table.columns), 2)
 
-        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, -1))
-        self.assertSequenceEqual(new_table.rows[1], (None, 3, 5, None, 1))
-        self.assertSequenceEqual(new_table.rows[2], ('a', 2, 4, None, -1))
-        self.assertSequenceEqual(new_table.rows[3], ('b', 3, 4, None, 1))
-
-        self.assertSequenceEqual(new_table.columns['z-scores'],(-1,1,-1,1))
-
-    def test_zscores_invalid_column(self):
-        with self.assertRaises(UnsupportedComputationError):
-            new_table = self.table.compute([
-                ('test', ZScores('one'))
-            ])
+        self.assertSequenceEqual(new_table.rows[0], (1, 0))
+        self.assertSequenceEqual(new_table.rows[50], (51, 5))
+        self.assertSequenceEqual(new_table.rows[499], (500, 49))
+        self.assertSequenceEqual(new_table.rows[500], (501, 50))
+        self.assertSequenceEqual(new_table.rows[998], (999, 99))
+        self.assertSequenceEqual(new_table.rows[999], (1000, 100))

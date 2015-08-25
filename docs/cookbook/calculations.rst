@@ -10,8 +10,8 @@ You could use a :class:`.Formula` to calculate percent change, however, for your
 .. code-block:: python
 
     new_table = table.compute([
-        ('2000_change', Change('2000', '2001')
-        ('2001_change', Change('2001', '2002')
+        ('2000_change', Change('2000', '2001'),
+        ('2001_change', Change('2001', '2002'),
         ('2002_change', Change('2002', '2003')
     ])
 
