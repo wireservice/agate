@@ -105,4 +105,4 @@ You can emulate most of the functionality of Excel's pivot tables using the :met
         ('salary', 'median')
     ])
 
-The ``summary`` table will have four columns: ``group`` (the profession), ``count`` (the number of grouped rows), ``salary_mean`` and ``salary_median`` (the aggregates).
+The resulting ``summary`` table will have four columns: ``group`` (the profession), ``count`` (the number of grouped rows), ``salary_mean`` and ``salary_median`` (the aggregates).

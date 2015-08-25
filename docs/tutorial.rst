@@ -55,7 +55,7 @@ Now let's import our dependencies:
 Defining the columns
 ====================
 
-journalism requires us to define a type for each column in our dataset. No effort is made to determine these types automatically, however, :class:`journalism.columns.TextType` is always a safe choice if you aren't sure what is in a column.
+journalism requires us to define a type for each column in our dataset. No effort is made to determine these types automatically, however, :class:`.TextType` is always a safe choice if you aren't sure what is in a column.
 
 First we create instances of the column types we will be using:
 
@@ -117,7 +117,7 @@ Now let's read the data in the CSV file and use it to create the table.
     # Close the file
     f.close()
 
-:class:`journalism.table.Table` will accept any iterable (array) of iterables (rows)  as it's first argument. In this case we're using a CSV reader. Note that the data is copied when the table is constructed so it safe to close the file handler immediately.
+:class:`.Table` will accept any iterable (array) of iterables (rows)  as it's first argument. In this case we're using a CSV reader. Note that the data is copied when the table is constructed so it safe to close the file handler immediately.
 
 Selecting and filtering data
 ============================
@@ -202,13 +202,13 @@ Sorting and slicing
 
 Question: **What are the five most recent purchases made in Kansas?**
 
-Remembering that methods of tables return tables, let's use the :meth:`journalism.table.Table.order_by` method to sort our table and then grab the first five rows of the resulting table.
+Remembering that methods of tables return tables, let's use the :meth:`.Table.order_by` method to sort our table and then grab the first five rows of the resulting table.
 
 .. code-block:: python
 
     recent_five = table.order_by('ship_date', reverse=True).rows[:5]
 
-The variable ``recent_five`` now contains a list of :class:`journalism.rows.Row` objects. (Slicing the ``rows`` class attribute does not return a table. If you want get a subset of rows as a table use :meth:`journalism.table.Table.where` or construct a new ``Table`` from the resulting list of rows.
+The variable ``recent_five`` now contains a list of :class:`.Row` objects. (Slicing the ``rows`` class attribute does not return a table. If you want get a subset of rows as a table use :meth:`.Table.where` or construct a new ``Table`` from the resulting list of rows.
 
 Now let's print some information about the resulting rows:
 
@@ -237,7 +237,7 @@ This question can't be answered by operating on a single column. What we need is
 
     counties = table.group_by('county')
 
-This command takes our original :class:`journalism.table.Table` and groups it into a :class:`journalism.tableset.TableSet`, which contains one table per county. Now we'll aggregate the totals for each group.
+This command takes our original :class:`.Table` and groups it into a :class:`.TableSet`, which contains one table per county. Now we'll aggregate the totals for each group.
 
 .. code-block:: python
 
@@ -247,7 +247,7 @@ This command takes our original :class:`journalism.table.Table` and groups it in
 
 This takes our grouped ``TableSet``, computes the sum of the ``total_cost`` column for each ``Table`` in the set and then builds a new table containing the aggregate results. The new table will have the columns ``group``, ``count`` and ``total_sum_cost``. The first two columns always have the same names and the last one is generated based on the name of the column and the operation being applied.
 
-The :meth:`journalism.tableset.TableSet.aggregate`: function takes a list of operations to perform. You can aggregate as many columns as you like in a single step and they will all appear in the output table.
+The :meth:`.TableSet.aggregate`: function takes a list of operations to perform. You can aggregate as many columns as you like in a single step and they will all appear in the output table.
 
 Lastly, we'll sort our new table and print the results.
 

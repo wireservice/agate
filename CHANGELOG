@@ -1,6 +1,8 @@
 0.5.0
 -----
 
+* Column.summarize now invokes Aggregations.
+* Column.any, NumberColumn.sum, etc. converted to Aggregations.
 * Implement Aggregation and subclasses. (#155)
 * Move ColumnType subclasses and ColumnOperation subclasses into new modules.
 * Table.percent_change, Table.rank and Table.zscores reimplemented as Computers.
