@@ -6,3 +6,4 @@
 docs/_build
 dist
 .coverage
+build
