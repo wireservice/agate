@@ -2,7 +2,7 @@
 
 import csv
 
-from journalism import Table, DateType, NumberType, TextType
+from journalism import Table, DateType, NumberType, TextType, Sum, StDev
 
 text_type = TextType()
 number_type = NumberType()
@@ -42,14 +42,14 @@ with open('examples/realdata/ks_1033_data.csv') as f:
 kansas_city = table.where(lambda r: r['county'] in ('JACKSON', 'CLAY', 'CASS', 'PLATTE'))
 
 # Sum total_cost of four counties
-print('Total for Kansas City area: %i' % kansas_city.columns['total_cost'].sum())
+print('Total for Kansas City area: %i' % kansas_city.columns['total_cost'].summarize(Sum()))
 
 # Group by county
 counties = table.group_by('county')
 
 # Aggregate totals for all counties
 totals = counties.aggregate([
-    ('total_cost', 'sum')
+    ('total_cost', Sum(), 'total_cost_sum')
 ])
 
 totals = totals.order_by('total_cost_sum', reverse=True).rows[:5]
@@ -70,11 +70,11 @@ for row in recent_five:
     print(text)
 
 # Calculate the standard of deviation for the total_costs
-stdev = table.columns['total_cost'].stdev()
+stdev = table.columns['total_cost'].summarize(StDev())
 
 print('Standard deviation of total_cost: %.2f' % stdev)
 
 # How many roborts were purchased?
-robots = table.where(lambda r: 'ROBOT' in (r['item_name'] or [])).columns['quantity'].sum()
+robots = table.where(lambda r: 'ROBOT' in (r['item_name'] or [])).columns['quantity'].summarize(Sum())
 
 print('Number of robots purchased: %i' % robots)
