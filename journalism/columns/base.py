@@ -143,7 +143,7 @@ class Column(Sequence):
         """
         return not self.__eq__(other)
 
-    def summarize(self, aggregator):
+    def aggregate(self, aggregator):
         """
         Apply a :class:`.Aggregator` to this column and return the result.
         """

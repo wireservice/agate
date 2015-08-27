@@ -72,7 +72,6 @@ class TableSet(Mapping):
         self.inner_join = TableMethodProxy(self, 'inner_join')
         self.left_outer_join = TableMethodProxy(self, 'left_outer_join')
         # self.group_by = TableMethodProxy(self, 'group_by')
-        # self.aggregate = TableMethodProxy(self, 'aggregate')
         self.compute = TableMethodProxy(self, 'compute')
         self.percent_change = TableMethodProxy(self, 'percent_change')
         self.rank = TableMethodProxy(self, 'rank')
@@ -137,7 +136,7 @@ class TableSet(Mapping):
             for column_name, aggregator, new_column_name in aggregations:
                 c = table.columns[column_name]
 
-                new_row.append(aggregator.run(c))
+                new_row.append(c.aggregate(aggregator))
 
             output.append(tuple(new_row))
 

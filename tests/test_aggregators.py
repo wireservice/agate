@@ -30,12 +30,12 @@ class TestSimpleAggregation(unittest.TestCase):
         self.table = Table(self.rows, self.column_types, self.column_names)
 
     def test_any(self):
-        self.assertEqual(self.table.columns['one'].summarize(Any(lambda d: d == 2)), True)
-        self.assertEqual(self.table.columns['one'].summarize(Any(lambda d: d == 5)), False)
+        self.assertEqual(self.table.columns['one'].aggregate(Any(lambda d: d == 2)), True)
+        self.assertEqual(self.table.columns['one'].aggregate(Any(lambda d: d == 5)), False)
 
     def test_all(self):
-        self.assertEqual(self.table.columns['one'].summarize(All(lambda d: d != 5)), True)
-        self.assertEqual(self.table.columns['one'].summarize(All(lambda d: d == 2)), False)
+        self.assertEqual(self.table.columns['one'].aggregate(All(lambda d: d != 5)), True)
+        self.assertEqual(self.table.columns['one'].aggregate(All(lambda d: d == 2)), False)
 
     def test_count(self):
         rows = (
@@ -48,26 +48,26 @@ class TestSimpleAggregation(unittest.TestCase):
 
         table = Table(rows, self.column_types, self.column_names)
 
-        self.assertEqual(table.columns['one'].summarize(Count(1)), 3)
-        self.assertEqual(table.columns['one'].summarize(Count(4)), 0)
-        self.assertEqual(table.columns['one'].summarize(Count(None)), 1)
+        self.assertEqual(table.columns['one'].aggregate(Count(1)), 3)
+        self.assertEqual(table.columns['one'].aggregate(Count(4)), 0)
+        self.assertEqual(table.columns['one'].aggregate(Count(None)), 1)
 
 class TestBooleanAggregation(unittest.TestCase):
     def test_any(self):
         column = BooleanColumn(None, 'one')
         column._data = lambda: (True, False, None)
-        self.assertEqual(column.summarize(Any()), True)
+        self.assertEqual(column.aggregate(Any()), True)
 
         column._data = lambda: (False, False, None)
-        self.assertEqual(column.summarize(Any()), False)
+        self.assertEqual(column.aggregate(Any()), False)
 
     def test_all(self):
         column = BooleanColumn(None, 'one')
         column._data = lambda: (True, True, None)
-        self.assertEqual(column.summarize(All()), False)
+        self.assertEqual(column.aggregate(All()), False)
 
         column._data = lambda: (True, True, True)
-        self.assertEqual(column.summarize(All()), True)
+        self.assertEqual(column.aggregate(All()), True)
 
 class TestDateAggregation(unittest.TestCase):
     def test_min(self):
@@ -78,7 +78,7 @@ class TestDateAggregation(unittest.TestCase):
             datetime.date(1984, 1, 5)
         )
 
-        self.assertEqual(column.summarize(Min()), datetime.date(1011, 2, 17))
+        self.assertEqual(column.aggregate(Min()), datetime.date(1011, 2, 17))
 
     def test_max(self):
         column = DateColumn(None, 'one')
@@ -88,7 +88,7 @@ class TestDateAggregation(unittest.TestCase):
             datetime.date(1984, 1, 5)
         )
 
-        self.assertEqual(column.summarize(Max()), datetime.date(1994, 3, 1))
+        self.assertEqual(column.aggregate(Max()), datetime.date(1994, 3, 1))
 
 class TestDateTimeAggregation(unittest.TestCase):
     def test_min(self):
@@ -99,7 +99,7 @@ class TestDateTimeAggregation(unittest.TestCase):
             datetime.datetime(1994, 3, 3, 6, 30)
         )
 
-        self.assertEqual(column.summarize(Min()), datetime.datetime(1994, 3, 3, 6, 30))
+        self.assertEqual(column.aggregate(Min()), datetime.datetime(1994, 3, 3, 6, 30))
 
     def test_max(self):
         column = DateTimeColumn(None, 'one')
@@ -109,7 +109,7 @@ class TestDateTimeAggregation(unittest.TestCase):
             datetime.datetime(1994, 3, 3, 6, 30)
         )
 
-        self.assertEqual(column.summarize(Max()), datetime.datetime(1994, 3, 3, 6, 31))
+        self.assertEqual(column.aggregate(Max()), datetime.datetime(1994, 3, 3, 6, 31))
 
 class TestNumberAggregation(unittest.TestCase):
     def setUp(self):
@@ -127,61 +127,61 @@ class TestNumberAggregation(unittest.TestCase):
         self.table = Table(self.rows, self.column_types, self.column_names)
 
     def test_sum(self):
-        self.assertEqual(self.table.columns['one'].summarize(Sum()), Decimal('6.5'))
-        self.assertEqual(self.table.columns['two'].summarize(Sum()), Decimal('13.13'))
+        self.assertEqual(self.table.columns['one'].aggregate(Sum()), Decimal('6.5'))
+        self.assertEqual(self.table.columns['two'].aggregate(Sum()), Decimal('13.13'))
 
     def test_min(self):
-        self.assertEqual(self.table.columns['one'].summarize(Min()), Decimal('1.1'))
-        self.assertEqual(self.table.columns['two'].summarize(Min()), Decimal('2.19'))
+        self.assertEqual(self.table.columns['one'].aggregate(Min()), Decimal('1.1'))
+        self.assertEqual(self.table.columns['two'].aggregate(Min()), Decimal('2.19'))
 
     def test_max(self):
-        self.assertEqual(self.table.columns['one'].summarize(Max()), Decimal('2.7'))
-        self.assertEqual(self.table.columns['two'].summarize(Max()), Decimal('4.1'))
+        self.assertEqual(self.table.columns['one'].aggregate(Max()), Decimal('2.7'))
+        self.assertEqual(self.table.columns['two'].aggregate(Max()), Decimal('4.1'))
 
     def test_mean(self):
         with self.assertRaises(NullComputationError):
-            self.table.columns['one'].summarize(Mean())
+            self.table.columns['one'].aggregate(Mean())
 
-        self.assertEqual(self.table.columns['two'].summarize(Mean()), Decimal('3.2825'))
+        self.assertEqual(self.table.columns['two'].aggregate(Mean()), Decimal('3.2825'))
 
     def test_median(self):
         with self.assertRaises(NullComputationError):
-            self.table.columns['one'].summarize(Median())
+            self.table.columns['one'].aggregate(Median())
 
-        self.assertEqual(self.table.columns['two'].summarize(Median()), Decimal('3.42'))
+        self.assertEqual(self.table.columns['two'].aggregate(Median()), Decimal('3.42'))
 
     def test_mode(self):
         with self.assertRaises(NullComputationError):
-            self.table.columns['one'].summarize(Mode())
+            self.table.columns['one'].aggregate(Mode())
 
-        self.assertEqual(self.table.columns['two'].summarize(Mode()), Decimal('3.42'))
+        self.assertEqual(self.table.columns['two'].aggregate(Mode()), Decimal('3.42'))
 
     def test_iqr(self):
         with self.assertRaises(NullComputationError):
-            self.table.columns['one'].summarize(IQR())
+            self.table.columns['one'].aggregate(IQR())
 
-        self.assertEqual(self.table.columns['two'].summarize(IQR()), Decimal('0.955'))
+        self.assertEqual(self.table.columns['two'].aggregate(IQR()), Decimal('0.955'))
 
     def test_variance(self):
         with self.assertRaises(NullComputationError):
-            self.table.columns['one'].summarize(Variance())
+            self.table.columns['one'].aggregate(Variance())
 
-        self.assertEqual(self.table.columns['two'].summarize(Variance()).quantize(Decimal('0.01')), Decimal('0.47'))
+        self.assertEqual(self.table.columns['two'].aggregate(Variance()).quantize(Decimal('0.01')), Decimal('0.47'))
 
     def test_stdev(self):
         with self.assertRaises(NullComputationError):
-            self.table.columns['one'].summarize(StDev())
+            self.table.columns['one'].aggregate(StDev())
 
-        self.assertAlmostEqual(self.table.columns['two'].summarize(StDev()).quantize(Decimal('0.01')), Decimal('0.69'))
+        self.assertAlmostEqual(self.table.columns['two'].aggregate(StDev()).quantize(Decimal('0.01')), Decimal('0.69'))
 
     def test_mad(self):
         with self.assertRaises(NullComputationError):
-            self.table.columns['one'].summarize(MAD())
+            self.table.columns['one'].aggregate(MAD())
 
-        self.assertAlmostEqual(self.table.columns['two'].summarize(MAD()), Decimal('0'))
+        self.assertAlmostEqual(self.table.columns['two'].aggregate(MAD()), Decimal('0'))
 
 class TestTextAggregation(unittest.TestCase):
     def test_max_length(self):
         column = TextColumn(None, 'one')
         column._data = lambda: ('a', 'gobble', 'wow')
-        self.assertEqual(column.summarize(MaxLength()), 6)
+        self.assertEqual(column.aggregate(MaxLength()), 6)

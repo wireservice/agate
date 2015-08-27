@@ -98,8 +98,8 @@ class ZScores(Computation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedComputationError(self, column)
 
-        self._mean = column.summarize(Mean())
-        self._sd = column.summarize(StDev())
+        self._mean = column.aggregate(Mean())
+        self._sd = column.aggregate(StDev())
 
     def run(self, row):
         return (row[self._column_name] - self._mean) / self._sd
@@ -129,7 +129,7 @@ class Rank(Computation):
 
     def run(self, row):
         return self._rank_column.index(row[self._column_name]) + 1
-        
+
 class PercentileRank(Rank):
     """
     Assign each value in a column to the percentile into which it falls.

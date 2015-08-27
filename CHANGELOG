@@ -6,7 +6,7 @@
 * Add PercentileRank computation and usage example to cookbook. (#152)
 * Add indexed change example to cookbook. (#151)
 * Add annual change example to cookbook. (#150)
-* Column.summarize now invokes Aggregations.
+* Column.aggregate now invokes Aggregations.
 * Column.any, NumberColumn.sum, etc. converted to Aggregations.
 * Implement Aggregation and subclasses. (#155)
 * Move ColumnType subclasses and ColumnOperation subclasses into new modules.

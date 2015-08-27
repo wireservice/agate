@@ -193,8 +193,8 @@ class Table(object):
             everything *except* the outliers.
         :returns: A new :class:`Table`.
         """
-        mean = self.columns[column_name].summarize(Mean())
-        sd = self.columns[column_name].summarize(StDev())
+        mean = self.columns[column_name].aggregate(Mean())
+        sd = self.columns[column_name].aggregate(StDev())
 
         lower_bound = mean - (sd * deviations)
         upper_bound = mean + (sd * deviations)
@@ -223,8 +223,8 @@ class Table(object):
             everything *except* the outliers.
         :returns: A new :class:`Table`.
         """
-        median = self.columns[column_name].summarize(Median())
-        mad = self.columns[column_name].summarize(MAD())
+        median = self.columns[column_name].aggregate(Median())
+        mad = self.columns[column_name].aggregate(MAD())
 
         lower_bound = median - (mad * deviations)
         upper_bound = median + (mad * deviations)
@@ -257,8 +257,8 @@ class Table(object):
 
         n = len(x)
 
-        sum_x = x.summarize(Sum())
-        sum_y = y.summarize(Sum())
+        sum_x = x.aggregate(Sum())
+        sum_y = y.aggregate(Sum())
 
         square = lambda x: pow(x,2)
         sum_x_sq = sum(map(square, x))
@@ -492,7 +492,8 @@ class Table(object):
 
     def compute(self, computations):
         """
-        Compute a new column applying a :class:`.Computation` to each row.
+        Compute new columns by applying one or more :class:`.Computation` to
+        each row.
 
         :param computations: An iterable of pairs of new column names and
             :class:`.Computation` instances.

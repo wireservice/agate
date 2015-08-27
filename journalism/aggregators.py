@@ -30,7 +30,7 @@ class NonNullAggregation(Aggregation):
     being applied to contains null values.
     """
     def run(self, column):
-        if column.summarize(HasNulls()):
+        if column.aggregate(HasNulls()):
             raise NullComputationError
 
 class HasNulls(Aggregation):
@@ -204,7 +204,7 @@ class Mean(NonNullAggregation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
-        return column.summarize(Sum()) / len(column)
+        return column.aggregate(Sum()) / len(column)
 
 class Median(NonNullAggregation):
     """
@@ -288,7 +288,7 @@ class Variance(NonNullAggregation):
             raise UnsupportedAggregationError(self, column)
 
         data = column._data()
-        mean = column.summarize(Mean())
+        mean = column.aggregate(Mean())
 
         return sum((n - mean) ** 2 for n in data) / len(data)
 
@@ -308,7 +308,7 @@ class StDev(NonNullAggregation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
-        return column.summarize(Variance()).sqrt()
+        return column.aggregate(Variance()).sqrt()
 
 class MAD(NonNullAggregation):
     """
