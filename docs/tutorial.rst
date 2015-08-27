@@ -141,11 +141,11 @@ Summarizing column data
 
 In order to answer our question about the total cost of shipments to Kansas City we need to sum the costs, which is a column-wise operation. To perform column operations in journalism we will use a subclass of :class:`.Aggregation`.
 
-An :class:`.Aggregation` is applied to a column of a table. You can access the columns of a table using the :attr:`.Table.columns` attribute. To sum the ``total_cost`` column we will summarize using an instance of the :class:`.Sum` aggregator:
+An :class:`.Aggregation` is applied to a column of a table. You can access the columns of a table using the :attr:`.Table.columns` attribute. To sum the ``total_cost`` column we will aggregate using an instance of the :class:`.Sum` aggregator:
 
 .. code-block:: python
 
-    total = kansas_city.columns['total_cost'].summarize(Sum())
+    total = kansas_city.columns['total_cost'].aggregate(Sum())
     print(total)
 
 ::
@@ -156,7 +156,7 @@ Here is a second example. Question: **How many robots were purchased in Kansas?*
 
 .. code-block:: python
 
-    robot_count = table.where(lambda r: 'ROBOT' in (r['item_name'] or '')).columns['quantity'].summarize(Sum())
+    robot_count = table.where(lambda r: 'ROBOT' in (r['item_name'] or '')).columns['quantity'].aggregate(Sum())
     print(robot_count)
 
 Answer:
