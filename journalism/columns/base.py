@@ -10,6 +10,7 @@ except ImportError: #pragma: no cover
 import six
 
 from journalism.exceptions import ColumnDoesNotExistError
+from journalism.utils import memoize
 
 class ColumnMapping(Mapping):
     """
@@ -19,7 +20,6 @@ class ColumnMapping(Mapping):
     """
     def __init__(self, table):
         self._table = table
-        self._cached_len = None
 
     def __getitem__(self, k):
         try:
@@ -32,13 +32,9 @@ class ColumnMapping(Mapping):
     def __iter__(self):
         return ColumnIterator(self._table)
 
+    @memoize
     def __len__(self):
-        if self._cached_len is not None:
-            return self._cached_len
-
-        self._cached_len = len(self._table._column_names)
-
-        return self._cached_len
+        return len(self._table._column_names)
 
 class ColumnIterator(six.Iterator):
     """
@@ -75,12 +71,6 @@ class Column(Sequence):
         self._table = table
         self._index = index
 
-        self._cached_data = None
-        self._cached_data_without_nulls = None
-        self._cached_data_sorted = None
-        self._cached_len = None
-        self._cached_has_nulls = None
-
     def __unicode__(self):
         data = self._data()
 
@@ -96,40 +86,28 @@ class Column(Sequence):
     def __str__(self):
         return str(self.__unicode__())
 
+    @memoize
     def _data(self):
-        if self._cached_data is None:
-            self._cached_data = tuple(r[self._index] for r in self._table._data)
+        return tuple(r[self._index] for r in self._table._data)
 
-        return self._cached_data
-
+    @memoize
     def _data_without_nulls(self):
-        if self._cached_data_without_nulls is None:
-            self._cached_data_without_nulls = tuple(d for d in self._data() if d is not None)
+        return tuple(d for d in self._data() if d is not None)
 
-        return self._cached_data_without_nulls
-
+    @memoize
     def _data_sorted(self):
-        if self._cached_data_sorted is None:
-            self._cached_data_sorted = sorted(self._data())
+        return sorted(self._data())
 
-        return self._cached_data_sorted
-
+    @memoize
     def _has_nulls(self):
-        if self._cached_has_nulls is None:
-            self._cached_has_nulls = None in self._data()
-
-        return self._cached_has_nulls
+        return None in self._data()
 
     def __getitem__(self, j):
         return self._data()[j]
 
+    @memoize
     def __len__(self):
-        if self._cached_len is not None:
-            return self._cached_len
-
-        self._cached_len = len(self._data())
-
-        return self._cached_len
+        return len(self._data())
 
     def __eq__(self, other):
         """

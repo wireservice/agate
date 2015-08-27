@@ -7,6 +7,7 @@ import six
 
 from journalism.columns.base import Column
 from journalism.exceptions import NullComputationError
+from journalism.utils import memoize
 
 class NumberColumn(Column):
     """
@@ -17,8 +18,46 @@ class NumberColumn(Column):
     def __init__(self, *args, **kwargs):
         super(NumberColumn, self).__init__(*args, **kwargs)
 
-        self._cached_percentiles = None
+    @memoize
+    def _sum(self):
+        """
+        Compute the values in this column.
 
+        Should be invoked via the :class:`.Sum` aggregator.
+        """
+        return sum(self._data_without_nulls())
+
+    @memoize
+    def _mean(self):
+        """
+        Compute the mean of the values in this column.
+
+        Should be invoked via the :class:`.Mean` aggregator.
+        """
+        return self._sum() / len(self)
+
+    @memoize
+    def _median(self):
+        """
+        Compute the median of the values in this column.
+
+        Should be invoked via the :class:`.Median` aggregator.
+        """
+        return self.percentiles()[50]
+
+    @memoize
+    def _variance(self):
+        """
+        Compute the median of the values in this column.
+
+        Should be invoked via the :class:`.Variance` aggregator.
+        """
+        data = self._data()
+        mean = self._mean()
+
+        return sum((n - mean) ** 2 for n in data) / len(self)
+
+    @memoize
     def percentiles(self):
         """
         Compute percentiles for this column of data.
@@ -26,14 +65,12 @@ class NumberColumn(Column):
         :returns: :class:`Percentiles`.
         :raises: :exc:`.NullComputationError`
         """
-        if self._cached_percentiles is None:
-            if self._has_nulls():
-                raise NullComputationError
+        if self._has_nulls():
+            raise NullComputationError
 
-            self._cached_percentiles = Percentiles(self)
+        return Percentiles(self)
 
-        return self._cached_percentiles
-
+    @memoize
     def quartiles(self):
         """
         Compute quartiles for this column of data.
@@ -43,6 +80,7 @@ class NumberColumn(Column):
         """
         return Quartiles(self.percentiles())
 
+    @memoize
     def quintiles(self):
         """
         Compute quintiles for this column of data.
@@ -52,6 +90,7 @@ class NumberColumn(Column):
         """
         return Quintiles(self.percentiles())
 
+    @memoize
     def deciles(self):
         """
         Compute deciles for this column of data.

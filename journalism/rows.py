@@ -2,11 +2,13 @@
 
 from collections import Mapping, Sequence
 
-from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 import six
 
 if six.PY3:
     xrange = range
+
+from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
+from journalism.utils import memoize
 
 class RowSequence(Sequence):
     """
@@ -16,8 +18,6 @@ class RowSequence(Sequence):
     """
     def __init__(self, table):
         self._table = table
-
-        self._cached_len = None
 
     def __getitem__(self, i):
         if isinstance(i, slice):
@@ -33,13 +33,9 @@ class RowSequence(Sequence):
     def __iter__(self):
         return RowIterator(self._table)
 
+    @memoize
     def __len__(self):
-        if self._cached_len is not None:
-            return self._cached_len
-
-        self._cached_len = self._table._get_row_count()
-
-        return self._cached_len
+        return self._table._get_row_count()
 
 class Row(Mapping):
     """
@@ -54,8 +50,6 @@ class Row(Mapping):
     def __init__(self, table, i):
         self._table = table
         self._i = i
-
-        self._cached_len = None
 
     def __unicode__(self):
         data = self._table._data[self._i]
@@ -89,13 +83,9 @@ class Row(Mapping):
 
         return self._table._data[self._i][j]
 
+    @memoize
     def __len__(self):
-        if self._cached_len is not None:
-            return self._cached_len
-
-        self._cached_len = len(self._table._data[self._i])
-
-        return self._cached_len
+        return len(self._table._data[self._i])
 
     def __iter__(self):
         return CellIterator(self)

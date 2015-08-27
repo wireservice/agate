@@ -141,19 +141,6 @@ class TestColumns(unittest.TestCase):
     def test_get_column_data(self):
         self.assertSequenceEqual(self.table.columns['one']._data(), (1, 2, None))
 
-    def test_get_column_data_cached(self):
-        c = self.table.columns['one']
-
-        self.assertIs(c._cached_data, None)
-
-        data = c._data()
-
-        self.assertSequenceEqual(c._cached_data, (1, 2, None))
-
-        data2 = c._data()
-
-        self.assertIs(data, data2)
-
     def test_get_column(self):
         self.assertSequenceEqual(self.table.columns['one'], (1, 2, None))
 

@@ -20,7 +20,7 @@ from journalism.computations import Computation
 from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 from journalism.rows import RowSequence, Row
 from journalism.tableset import TableSet
-from journalism.utils import NullOrder
+from journalism.utils import NullOrder, memoize
 
 class Table(object):
     """
