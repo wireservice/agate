@@ -14,24 +14,28 @@ class Analysis(object):
     Implements a promise-like API so that Analyses can depend on one another.
     If a parent analysis is invalidated then all it's children will be as well.
     """
-    def __init__(self, func):
+    def __init__(self, func, cache_path='.analysis'):
         self._name = func.__name__
         self._func = func
+        self._cache_path = cache_path
         self._next_analyses = []
 
     def _save_archive(self, state):
-        path = '%s.pickle' % self._name
+        path = os.path.join(self._cache_path, '%s.pickle' % self._name)
 
         archive = {
             'source': inspect.getsource(self._func),
             'state': state
         }
 
+        if not os.path.exists(self._cache_path):
+            os.makedirs(self._cache_path)
+
         with open(path, 'w') as f:
             pickle.dump(archive, f)
 
     def _load_archive(self):
-        path = '%s.pickle' % self._name
+        path = os.path.join(self._cache_path, '%s.pickle' % self._name)
 
         if not os.path.exists(path):
             return None
