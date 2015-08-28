@@ -90,10 +90,7 @@ Then we define the names and types of the columns that are in our dataset:
         ('inadequate_defense', boolean_type),
     )
 
-    COLUMN_NAMES = [c[0] for c in COLUMNS]
-    COLUMN_TYPES = [c[1] for c in COLUMNS]
-
-You'll notice here that we define the names and types as pairs (tuples), but then use a couple fancy list comprehensions to split the pairs into two lists. The table creation function we'll be using next expects two lists, but I find it's convenient to define them as pairs and then split them up.
+You'll notice here that we define the names and types as pairs (tuples), which is what the :class:`.Table` constructor will expect in the next step.
 
 .. note::
 
@@ -114,7 +111,7 @@ Now let's read the data in the CSV file and use it to create the table.
         next(reader)
 
         # Create the table
-        exonerations = agate.Table(reader, COLUMN_TYPES, COLUMN_NAMES)
+        exonerations = agate.Table(reader, COLUMNS)
 
 :class:`.Table` will accept any array (iterable) of rows (iterables) as its first argument. In this case we're using a CSV reader.
 

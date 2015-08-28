@@ -16,26 +16,28 @@ If your file does not have headers:
     text_type = TextType()
     number_type = NumberType()
 
-    column_names = ('city', 'area', 'population')
-    column_types = (text_type, number_type, number_type)
+    columns = (
+        ('city', text_type),
+        ('area', number_type),
+        ('population', number_type)
+    )
 
     with open('population.csv') as f:
         rows = list(csv.reader(f)
 
-    table = Table(rows, column_types, column_names)
+    table = Table(rows, columns)
 
-If your file does have headers:
+If your file does have headers (and you want to use them):
 
 .. code-block:: python
-
-    column_types = (text_type, number_type, number_type)
 
     with open('population.csv') as f:
         rows = list(csv.reader(f))
 
     column_names = rows.pop(0)
+    column_types = (text_type, number_type, number_type)
 
-    table = Table(rows, column_types, column_names)
+    table = Table(rows, zip(column_names, column_types))
 
 Loading a table from a CSV w/ csvkit
 ====================================
@@ -46,14 +48,13 @@ Of course, cool kids use `csvkit <http://csvkit.rtfd.org/>`_. (Hint: it supports
 
     import csvkit
 
-    column_types = (text_type, number_type, number_type)
-
     with open('population.csv') as f:
         rows = list(csvkit.reader(f))
 
     column_names = rows.pop(0)
+    column_types = (text_type, number_type, number_type)
 
-    table = Table(rows, column_types, column_names)
+    table = Table(rows, zip(column_names, column_types))
 
 Writing a table to a CSV
 ========================

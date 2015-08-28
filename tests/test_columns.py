@@ -111,12 +111,17 @@ class TestColumns(unittest.TestCase):
             (2, 3, 'b'),
             (None, 4, 'c')
         )
-        self.column_names = ('one', 'two', 'three')
+
         self.number_type = NumberType()
         self.text_type = TextType()
-        self.column_types = (self.number_type, self.number_type, self.text_type)
 
-        self.table = Table(self.rows, self.column_types, self.column_names)
+        self.columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            ('three', self.text_type)
+        )
+
+        self.table = Table(self.rows, self.columns)
 
     def test_stringify(self):
         self.assertEqual(str(self.table.columns['one']), "<agate.columns.NumberColumn: (1, 2, None)>")
@@ -131,7 +136,7 @@ class TestColumns(unittest.TestCase):
             (None, 4, 'c')
         )
 
-        self.table = Table(rows, self.column_types, self.column_names)
+        self.table = Table(rows, self.columns)
 
         self.assertEqual(str(self.table.columns['one']), "<agate.columns.NumberColumn: (1, 2, None, 1, 2, ...)>")
 
@@ -186,7 +191,7 @@ class TestColumns(unittest.TestCase):
     def test_percentiles(self):
         rows = [(n,) for n in range(1, 1001)]
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
 
         percentiles = table.columns['ints'].percentiles()
 
@@ -200,7 +205,7 @@ class TestColumns(unittest.TestCase):
     def test_percentiles_locate(self):
         rows = [(n,) for n in range(1, 1001)]
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
 
         percentiles = table.columns['ints'].percentiles()
 
@@ -222,7 +227,7 @@ class TestColumns(unittest.TestCase):
         # N = 4
         rows = [(n,) for n in [1, 2, 3, 4]]
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
 
         quartiles = table.columns['ints'].quartiles()
 
@@ -232,7 +237,7 @@ class TestColumns(unittest.TestCase):
         # N = 5
         rows = [(n,) for n in [1, 2, 3, 4, 5]]
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
 
         quartiles = table.columns['ints'].quartiles()
 
@@ -242,7 +247,7 @@ class TestColumns(unittest.TestCase):
         # N = 6
         rows = [(n,) for n in [1, 2, 3, 4, 5, 6]]
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
 
         quartiles = table.columns['ints'].quartiles()
 
@@ -252,7 +257,7 @@ class TestColumns(unittest.TestCase):
         # N = 7
         rows = [(n,) for n in [1, 2, 3, 4, 5, 6, 7]]
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
 
         quartiles = table.columns['ints'].quartiles()
 
@@ -262,7 +267,7 @@ class TestColumns(unittest.TestCase):
         # N = 8 (doubled)
         rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4]]
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
 
         quartiles = table.columns['ints'].quartiles()
 
@@ -272,7 +277,7 @@ class TestColumns(unittest.TestCase):
         # N = 10 (doubled)
         rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]]
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
 
         quartiles = table.columns['ints'].quartiles()
 
@@ -282,7 +287,7 @@ class TestColumns(unittest.TestCase):
         # N = 12 (doubled)
         rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6]]
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
 
         quartiles = table.columns['ints'].quartiles()
 
@@ -292,7 +297,7 @@ class TestColumns(unittest.TestCase):
         # N = 14 (doubled)
         rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7]]
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
 
         quartiles = table.columns['ints'].quartiles()
 
@@ -307,7 +312,7 @@ class TestColumns(unittest.TestCase):
         # N = 4
         rows = [(n,) for n in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
 
         quartiles = table.columns['ints'].quartiles()
 
@@ -325,7 +330,7 @@ class TestColumns(unittest.TestCase):
     def test_percentile_no_data(self):
         rows = (())
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
 
         with self.assertRaises(ValueError):
             table.columns['ints'].quartiles()

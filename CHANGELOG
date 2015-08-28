@@ -1,6 +1,7 @@
 0.5.0
 -----
 
+* Table now takes (column_name, column_type) pairs. (#180)
 * Renamed the library to agate. (#179)
 * Results of common column operations are now cached using a common memoize decorator. (#162)
 * Deprecated support for Python version 3.2.

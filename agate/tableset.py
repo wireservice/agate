@@ -140,4 +140,4 @@ class TableSet(Mapping):
 
             output.append(tuple(new_row))
 
-        return self._first_table._fork(output, column_types, column_names)
+        return self._first_table._fork(output, zip(column_names, column_types))

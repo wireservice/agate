@@ -41,15 +41,18 @@ class TestTableSet(unittest.TestCase):
             ('c', 3)
         )
 
-        self.column_names = ('letter', 'number')
         self.text_type = TextType()
         self.number_type = NumberType()
-        self.column_types = (self.text_type, self.number_type)
+
+        self.columns = (
+            ('letter', self.text_type),
+            ('number', self.number_type)
+        )
 
         self.tables = OrderedDict([
-            ('table1', Table(self.table1, self.column_types, self.column_names)),
-            ('table2', Table(self.table2, self.column_types, self.column_names)),
-            ('table3', Table(self.table3, self.column_types, self.column_names))
+            ('table1', Table(self.table1, self.columns)),
+            ('table2', Table(self.table2, self.columns)),
+            ('table3', Table(self.table3, self.columns))
         ])
 
     def test_create_tableset(self):
@@ -60,12 +63,12 @@ class TestTableSet(unittest.TestCase):
     def test_get_column_types(self):
         tableset = TableSet(self.tables)
 
-        self.assertEqual(tableset.get_column_types(), self.column_types)
+        self.assertSequenceEqual(tableset.get_column_types(), [t for n, t in self.columns])
 
     def test_get_column_names(self):
         tableset = TableSet(self.tables)
 
-        self.assertSequenceEqual(tableset.get_column_names(), ('letter', 'number'))
+        self.assertSequenceEqual(tableset.get_column_names(), [n for n, t in self.columns])
 
     def test_select(self):
         tableset = TableSet(self.tables)

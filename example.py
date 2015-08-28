@@ -25,9 +25,6 @@ COLUMNS = (
     ('federal_supply_class_name', text_type),
 )
 
-COLUMN_NAMES = [c[0] for c in COLUMNS]
-COLUMN_TYPES = [c[1] for c in COLUMNS]
-
 with open('examples/realdata/ks_1033_data.csv') as f:
     # Create a csv reader
     reader = csv.reader(f)
@@ -36,7 +33,7 @@ with open('examples/realdata/ks_1033_data.csv') as f:
     next(f)
 
     # Create the table
-    table = Table(reader, COLUMN_TYPES, COLUMN_NAMES)
+    table = Table(reader, COLUMNS)
 
 # Filter to counties containing Kansas City
 kansas_city = table.where(lambda r: r['county'] in ('JACKSON', 'CLAY', 'CASS', 'PLATTE'))

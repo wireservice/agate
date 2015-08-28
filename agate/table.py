@@ -27,20 +27,17 @@ class Table(object):
     A dataset consisting of rows and columns.
 
     :param rows: The data as a sequence of any sequences: tuples, lists, etc.
-    :param column_types: A sequence of instances of :class:`.ColumnType`,
-        one per column of data.
-    :param column_names: A sequence of strings that are names for the columns.
+    :param column_info: A sequence of pairs of column names and types. The latter
+        must be instances of :class:`.ColumnType`.
 
     :attr columns: A :class:`.ColumnMapping` for accessing the columns in this
         table.
     :attr rows: A :class:`.RowSequence` for accessing the rows in this table.
     """
-    def __init__(self, rows, column_types, column_names):
-        len_column_types = len(column_types)
-        len_column_names = len(column_names)
+    def __init__(self, rows, column_info):
+        column_names, column_types = zip(*column_info)
 
-        if len_column_types != len_column_names:
-            raise ValueError('column_types and column_names must be the same length.')
+        len_column_names = len(column_names)
 
         if len(set(column_names)) != len_column_names:
             raise ValueError('Duplicate column names are not allowed.')
@@ -58,7 +55,7 @@ class Table(object):
         cast_funcs = [c.cast for c in self._column_types]
 
         for i, row in enumerate(rows):
-            if len(row) != len_column_types:
+            if len(row) != len_column_names:
                 raise ValueError('Row %i has length %i, but Table only has %i columns.' % (i, len(row), len_column_types))
 
             # Forked tables can share data (because they are immutable)
@@ -99,18 +96,15 @@ class Table(object):
     def _get_row_count(self):
         return len(self._data)
 
-    def _fork(self, rows, column_types=[], column_names=[]):
+    def _fork(self, rows, column_info=None):
         """
         Create a new table using the metadata from this one.
         Used internally by functions like :meth:`order_by`.
         """
-        if not column_types:
-            column_types = self._column_types
+        if not column_info:
+            column_info = zip(self._column_names, self._column_types)
 
-        if not column_names:
-            column_names = self._column_names
-
-        return Table(rows, column_types, column_names)
+        return Table(rows, column_info)
 
     def get_column_types(self):
         """
@@ -143,7 +137,7 @@ class Table(object):
         for row in self.rows:
             new_rows.append(tuple(row[i] for i in column_indices))
 
-        return self._fork(new_rows, column_types, column_names)
+        return self._fork(new_rows, zip(column_names, column_types))
 
     def where(self, test):
         """
@@ -392,7 +386,7 @@ class Table(object):
         column_types = self._column_types + table._column_types
         column_names = self._column_names + table._column_names
 
-        return self._fork(rows, column_types, column_names)
+        return self._fork(rows, zip(column_names, column_types))
 
     def left_outer_join(self, left_key, table, right_key):
         """
@@ -443,7 +437,7 @@ class Table(object):
         column_types = self._column_types + table._column_types
         column_names = self._column_names + table._column_names
 
-        return self._fork(rows, column_types, column_names)
+        return self._fork(rows, zip(column_names, column_types))
 
     def group_by(self, key):
         """
@@ -517,4 +511,4 @@ class Table(object):
             new_columns = tuple(computation.run(row) for n, c in computations)
             new_rows.append(tuple(row) + new_columns)
 
-        return self._fork(new_rows, column_types, column_names)
+        return self._fork(new_rows, zip(column_names, column_types))

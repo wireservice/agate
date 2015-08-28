@@ -23,13 +23,17 @@ class TestTable(unittest.TestCase):
             (None, 2, 'c')
         )
 
-        self.column_names = ('one', 'two', 'three')
         self.number_type = NumberType()
         self.text_type = TextType()
-        self.column_types = (self.number_type, self.number_type, self.text_type)
+
+        self.columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            ('three', self.text_type)
+        )
 
     def test_create_table(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         self.assertEqual(len(table.rows), 3)
 
@@ -37,41 +41,28 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[2], (None, 2, 'c'))
 
-    def test_create_table_args(self):
-        with self.assertRaises(ValueError):
-            Table(self.rows, [self.number_type, self.number_type, self.text_type, self.text_type], self.column_names)
-
-        with self.assertRaises(ValueError):
-            Table(self.rows, self.column_types, ['one', 'two', 'three', 'four'])
-
-        with self.assertRaises(ValueError):
-            Table(self.rows, [self.number_type, self.number_type], ['one', 'two'])
-
     def test_create_duplicate_column_names(self):
+        columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            ('two', self.text_type)
+        )
+
         with self.assertRaises(ValueError):
-            Table(self.rows, self.column_types, ['one', 'two', 'one'])
-
-    def test_column_names_immutable(self):
-        column_names = ['one', 'two', 'three']
-
-        table = Table(self.rows, self.column_types, column_names)
-
-        column_names[0] = 'five'
-
-        self.assertEqual(table.get_column_names()[0], 'one')
+            Table(self.rows, columns)
 
     def test_get_column_types(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
-        self.assertEqual(table.get_column_types(), self.column_types)
+        self.assertSequenceEqual(table.get_column_types(), [t for n, t in self.columns])
 
     def test_get_column_names(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
-        self.assertSequenceEqual(table.get_column_names(), ('one', 'two', 'three'))
+        self.assertSequenceEqual(table.get_column_names(), [n for n, t in self.columns])
 
     def test_select(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         new_table = table.select(('three',))
 
@@ -88,7 +79,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['three'], ('a', 'b', 'c'))
 
     def test_where(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         new_table = table.where(lambda r: r['one'] in (2, None))
 
@@ -98,14 +89,14 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['one'], (2, None))
 
     def test_find(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         row = table.find(lambda r: r['two'] - r['one'] == 1)
 
         self.assertIs(row, table.rows[1])
 
     def test_find_none(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         row = table.find(lambda r: r['one'] == 'FOO')
 
@@ -118,7 +109,7 @@ class TestTable(unittest.TestCase):
 
         rows.append((200, 1, 'b'))
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
 
         new_table = table.stdev_outliers('one')
 
@@ -132,7 +123,7 @@ class TestTable(unittest.TestCase):
 
         rows.append((200, 1, 'b'))
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
 
         new_table = table.stdev_outliers('one', reject=True)
 
@@ -146,7 +137,7 @@ class TestTable(unittest.TestCase):
 
         rows.append((200, 1, 'b'))
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
 
         new_table = table.mad_outliers('one')
 
@@ -160,7 +151,7 @@ class TestTable(unittest.TestCase):
 
         rows.append((200, 1, 'b'))
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
 
         new_table = table.mad_outliers('one', reject=True)
 
@@ -174,7 +165,7 @@ class TestTable(unittest.TestCase):
             (1, 3, 'c')
         )
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
 
         self.assertEqual(table.pearson_correlation('one', 'one'), Decimal('1'))
         self.assertAlmostEqual(table.pearson_correlation('one', 'two'), Decimal('3').sqrt() * Decimal('0.5'))
@@ -186,12 +177,12 @@ class TestTable(unittest.TestCase):
             (1, 3, 'c')
         )
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
 
         self.assertEqual(table.pearson_correlation('one', 'two'), Decimal('0'))
 
     def test_order_by(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         new_table = table.order_by('two')
 
@@ -213,7 +204,7 @@ class TestTable(unittest.TestCase):
             (1, 1, 'c')
         )
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
 
         new_table = table.order_by(lambda r: (r['one'], r['two']))
 
@@ -224,7 +215,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], (2, 1, 'b'))
 
     def test_order_by_reverse(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         new_table = table.order_by(lambda r: r['two'], reverse=True)
 
@@ -241,7 +232,7 @@ class TestTable(unittest.TestCase):
             (1, None, 'a')
         )
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
 
         new_table = table.order_by('two')
 
@@ -252,7 +243,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['three'], ('a', 'c', None, None))
 
     def test_limit(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         new_table = table.limit(2)
 
@@ -262,7 +253,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['one'], (1, 2))
 
     def test_limit_slice(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         new_table = table.limit(0, 3, 2)
 
@@ -273,7 +264,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['one'], (1, None))
 
     def test_limit_slice_negative(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         new_table = table.limit(-2, step=-1)
 
@@ -284,7 +275,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['one'], (2, 1))
 
     def test_limit_step_only(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         new_table = table.limit(step=2)
 
@@ -302,7 +293,7 @@ class TestTable(unittest.TestCase):
             (1, None, None)
         )
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
 
         new_table = table.distinct('one')
 
@@ -320,7 +311,7 @@ class TestTable(unittest.TestCase):
             (1, None, None)
         )
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
 
         new_table = table.distinct(lambda row: (row['two'], row['three']))
 
@@ -339,7 +330,7 @@ class TestTable(unittest.TestCase):
             (1, None, None)
         )
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
 
         new_table = table.distinct()
 
@@ -351,7 +342,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table.columns['one'], (1, 1, 1))
 
     def test_chain_select_where(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         new_table = table.select(('one', 'two')).where(lambda r: r['two'] == 3)
 
@@ -374,11 +365,16 @@ class TestTableGrouping(unittest.TestCase):
 
         self.number_type = NumberType()
         self.text_type = TextType()
-        self.column_types = (self.text_type, self.number_type, self.number_type, self.number_type)
-        self.column_names = ('one', 'two', 'three', 'four')
+
+        self.columns = (
+            ('one', self.text_type),
+            ('two', self.number_type),
+            ('three', self.number_type),
+            ('four', self.number_type)
+        )
 
     def test_group_by(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         new_tables = table.group_by('one')
 
@@ -394,7 +390,7 @@ class TestTableGrouping(unittest.TestCase):
         self.assertSequenceEqual(new_tables['None'].columns['one'], (None,))
 
     def test_group_by_function(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         new_tables = table.group_by(lambda r: r['three'] < 5)
 
@@ -408,7 +404,7 @@ class TestTableGrouping(unittest.TestCase):
         self.assertSequenceEqual(new_tables['False'].columns['one'], (None,))
 
     def test_group_by_bad_column(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
 
         with self.assertRaises(ColumnDoesNotExistError):
             table.group_by('bad')
@@ -424,10 +420,15 @@ class TestTableCompute(unittest.TestCase):
 
         self.number_type = NumberType()
         self.text_type = TextType()
-        self.column_types = (self.text_type, self.number_type, self.number_type, self.number_type)
-        self.column_names = ('one', 'two', 'three', 'four')
 
-        self.table = Table(self.rows, self.column_types, self.column_names)
+        self.columns = (
+            ('one', self.text_type),
+            ('two', self.number_type),
+            ('three', self.number_type),
+            ('four', self.number_type)
+        )
+
+        self.table = Table(self.rows, self.columns)
 
     def test_compute(self):
         new_table = self.table.compute([
@@ -457,10 +458,21 @@ class TestTableJoin(unittest.TestCase):
 
         self.number_type = NumberType()
         self.text_type = TextType()
-        self.column_types = (self.number_type, self.number_type, self.text_type)
 
-        self.left = Table(self.left_rows, self.column_types, ('one', 'two', 'three'))
-        self.right = Table(self.right_rows, self.column_types, ('four', 'five', 'six'))
+        self.left_columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            ('three', self.text_type)
+        )
+
+        self.right_columns = (
+            ('four', self.number_type),
+            ('five', self.number_type),
+            ('six', self.text_type)
+        )
+
+        self.left = Table(self.left_rows, self.left_columns)
+        self.right = Table(self.right_rows, self.right_columns)
 
     def test_inner_join(self):
         new_table = self.left.inner_join('one', self.right, 'four')
@@ -534,8 +546,12 @@ class TestTableData(unittest.TestCase):
 
         self.number_type = NumberType()
         self.text_type = TextType()
-        self.column_names = ['one', 'two', 'three']
-        self.column_types = [self.number_type, self.number_type, self.text_type]
+
+        self.columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            ('three', self.text_type),
+        )
 
     def test_data_immutable(self):
         rows = [
@@ -544,12 +560,12 @@ class TestTableData(unittest.TestCase):
             [None, 2, 'c']
         ]
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
         rows[0] = [2, 2, 2]
         self.assertSequenceEqual(table.rows[0], [1, 4, 'a'])
 
     def test_fork_preserves_data(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
         table2 = table._fork(table.rows)
 
         self.assertIs(table.rows[0], table2._data[0])
@@ -561,7 +577,7 @@ class TestTableData(unittest.TestCase):
         self.assertIs(table.rows[2], table2.rows[2])
 
     def test_where_preserves_rows(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
         table2 = table.where(lambda r: r['one'] == 1)
         table3 = table2.where(lambda r: r['one'] == 1)
 
@@ -569,7 +585,7 @@ class TestTableData(unittest.TestCase):
         self.assertIs(table2._data[0], table3._data[0])
 
     def test_order_by_preserves_rows(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
         table2 = table.order_by(lambda r: r['one'])
         table3 = table2.order_by(lambda r: r['one'])
 
@@ -577,7 +593,7 @@ class TestTableData(unittest.TestCase):
         self.assertIs(table2._data[0], table3._data[0])
 
     def test_limit_preserves_rows(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
         table2 = table.limit(2)
         table3 = table2.limit(2)
 
@@ -585,7 +601,7 @@ class TestTableData(unittest.TestCase):
         self.assertIs(table2._data[0], table3._data[0])
 
     def test_compute_creates_rows(self):
-        table = Table(self.rows, self.column_types, self.column_names)
+        table = Table(self.rows, self.columns)
         table2 = table.compute([
             ('new2', Formula(self.number_type, lambda r: r['one']))
         ])

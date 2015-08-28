@@ -26,10 +26,15 @@ class TestTableComputation(unittest.TestCase):
 
         self.number_type = NumberType()
         self.text_type = TextType()
-        self.column_types = (self.text_type, self.number_type, self.number_type, self.number_type)
-        self.column_names = ('one', 'two', 'three', 'four')
 
-        self.table = Table(self.rows, self.column_types, self.column_names)
+        self.columns = (
+            ('one', self.text_type),
+            ('two', self.number_type),
+            ('three', self.number_type),
+            ('four', self.number_type),
+        )
+
+        self.table = Table(self.rows, self.columns)
 
     def test_change(self):
         new_table = self.table.compute([
@@ -140,7 +145,7 @@ class TestTableComputation(unittest.TestCase):
     def test_percentile_rank(self):
         rows = [(n,) for n in range(1, 1001)]
 
-        table = Table(rows, (self.number_type,), ('ints',))
+        table = Table(rows, (('ints', self.number_type),))
         new_table = table.compute([
             ('percentiles', PercentileRank('ints'))
         ])

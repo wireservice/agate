@@ -16,12 +16,17 @@ class TestRows(unittest.TestCase):
             (2, 3, 'b'),
             (None, 4, 'c')
         )
-        self.column_names = ('one', 'two', 'three')
+
         self.number_type = NumberType()
         self.text_type = TextType()
-        self.column_types = (self.number_type, self.number_type, self.text_type)
 
-        self.table = Table(self.rows, self.column_types, self.column_names)
+        self.columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            ('three', self.text_type)
+        )
+
+        self.table = Table(self.rows, self.columns)
 
     def test_stringify(self):
         self.assertEqual(str(self.table.rows[0]), "<agate.rows.Row: (1, 2, a)>")
@@ -31,10 +36,16 @@ class TestRows(unittest.TestCase):
             (1, 2, 'a', 'b', 'c', 'd'),
         )
 
-        column_types = (self.number_type, self.number_type, self.text_type, self.text_type, self.text_type, self.text_type)
-        column_names = ('one', 'two', 'three', 'four', 'five', 'six')
+        columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            ('three', self.text_type),
+            ('four', self.text_type),
+            ('five', self.text_type),
+            ('six', self.text_type),
+        )
 
-        self.table = Table(rows, column_types, column_names)
+        self.table = Table(rows, columns)
 
         self.assertEqual(str(self.table.rows[0]), "<agate.rows.Row: (1, 2, a, b, c, ...)>")
 

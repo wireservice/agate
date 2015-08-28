@@ -29,9 +29,6 @@ COLUMNS = (
     ('inadequate_defense', boolean_type),
 )
 
-COLUMN_NAMES = [c[0] for c in COLUMNS]
-COLUMN_TYPES = [c[1] for c in COLUMNS]
-
 with open('examples/realdata/exonerations-20150828.csv') as f:
     # Create a csv reader
     reader = csv.reader(f)
@@ -40,7 +37,7 @@ with open('examples/realdata/exonerations-20150828.csv') as f:
     next(f)
 
     # Create the table
-    exonerations = agate.Table(reader, COLUMN_TYPES, COLUMN_NAMES)
+    exonerations = agate.Table(reader, COLUMNS)
 
 num_false_confessions = exonerations.columns['false_confession'].aggregate(agate.Count(True))
 

@@ -22,12 +22,17 @@ class TestSimpleAggregation(unittest.TestCase):
             (2, 3, 'b'),
             (None, 4, 'c')
         )
-        self.column_names = ('one', 'two', 'three')
+
         self.number_type = NumberType()
         self.text_type = TextType()
-        self.column_types = (self.number_type, self.number_type, self.text_type)
 
-        self.table = Table(self.rows, self.column_types, self.column_names)
+        self.columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            ('three', self.text_type)
+        )
+
+        self.table = Table(self.rows, self.columns)
 
     def test_any(self):
         self.assertEqual(self.table.columns['one'].aggregate(Any(lambda d: d == 2)), True)
@@ -46,7 +51,7 @@ class TestSimpleAggregation(unittest.TestCase):
             (1, 2, 'a')
         )
 
-        table = Table(rows, self.column_types, self.column_names)
+        table = Table(rows, self.columns)
 
         self.assertEqual(table.columns['one'].aggregate(Count(1)), 3)
         self.assertEqual(table.columns['one'].aggregate(Count(4)), 0)
@@ -119,12 +124,17 @@ class TestNumberAggregation(unittest.TestCase):
             (None, Decimal('4.1'), 'c'),
             (Decimal('2.7'), Decimal('3.42'), 'c')
         )
-        self.column_names = ('one', 'two', 'three')
+
         self.number_type = NumberType()
         self.text_type = TextType()
-        self.column_types = (self.number_type, self.number_type, self.text_type)
 
-        self.table = Table(self.rows, self.column_types, self.column_names)
+        self.columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            ('three', self.text_type)
+        )
+
+        self.table = Table(self.rows, self.columns)
 
     def test_sum(self):
         self.assertEqual(self.table.columns['one'].aggregate(Sum()), Decimal('6.5'))
