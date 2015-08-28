@@ -116,13 +116,7 @@ class Count(Aggregation):
         """
         :returns: :class:`int`
         """
-        count = 0
-
-        for d in column._data():
-            if d == self._value:
-                count += 1
-
-        return count
+        return column._data().count(self._value)
 
 class Min(Aggregation):
     """

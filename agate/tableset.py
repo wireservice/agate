@@ -102,7 +102,7 @@ class TableSet(Mapping):
         """
         return self._column_names
 
-    def aggregate(self, aggregations):
+    def aggregate(self, aggregations=[]):
         """
         Aggregate data from the tables in this set by performing some
         set of column operations on the groups and coalescing the results into
