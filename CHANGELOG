@@ -1,6 +1,7 @@
 0.6.0
 -----
 
+* Analysis class now implements a caching workflow. (#171)
 
 0.5.0
 -----
