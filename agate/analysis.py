@@ -20,30 +20,45 @@ class Analysis(object):
         self._cache_path = cache_path
         self._next_analyses = []
 
-    def _save_archive(self, state):
-        path = os.path.join(self._cache_path, '%s.pickle' % self._name)
-
-        archive = {
-            'source': inspect.getsource(self._func),
-            'state': state
-        }
+    def _save_signature(self):
+        path = os.path.join(self._cache_path, '%s.signature.pickle' % self._name)
 
         if not os.path.exists(self._cache_path):
             os.makedirs(self._cache_path)
 
         with open(path, 'w') as f:
-            pickle.dump(archive, f)
+            pickle.dump(inspect.getsource(self._func), f)
 
-    def _load_archive(self):
-        path = os.path.join(self._cache_path, '%s.pickle' % self._name)
+    def _load_signature(self):
+        path = os.path.join(self._cache_path, '%s.signature.pickle' % self._name)
 
         if not os.path.exists(path):
             return None
 
         with open(path) as f:
-            archive = pickle.load(f)
+            signature = pickle.load(f)
 
-        return archive
+        return signature
+
+    def _save_state(self, state):
+        path = os.path.join(self._cache_path, '%s.state.pickle' % self._name)
+
+        if not os.path.exists(self._cache_path):
+            os.makedirs(self._cache_path)
+
+        with open(path, 'w') as f:
+            pickle.dump(state, f)
+
+    def _load_state(self):
+        path = os.path.join(self._cache_path, '%s.state.pickle' % self._name)
+
+        if not os.path.exists(path):
+            return None
+
+        with open(path) as f:
+            state = pickle.load(f)
+
+        return state
 
     def then(self, next_func):
         analysis = Analysis(next_func)
@@ -59,21 +74,23 @@ class Analysis(object):
             print('Refreshing: %s' % self._name)
 
             self._func(local_state)
-            self._save_archive(local_state)
+            self._save_signature()
+            self._save_state(local_state)
         else:
-            archive = self._load_archive()
+            signature = self._load_signature()
 
-            if not archive or inspect.getsource(self._func) != archive['source']:
+            if not signature or inspect.getsource(self._func) != signature:
                 print('Running: %s' % self._name)
 
                 self._func(local_state)
-                self._save_archive(local_state)
+                self._save_signature()
+                self._save_state(local_state)
 
                 refresh = True
             else:
                 print('Loaded from cache: %s' % self._name)
 
-                local_state = archive['state']
+                local_state = self._load_state()
 
         for analysis in self._next_analyses:
             analysis.run(local_state, refresh)
