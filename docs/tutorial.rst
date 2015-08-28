@@ -7,7 +7,7 @@ About this tutorial
 
 The best way to learn to use any tool is to actually use it. In this tutorial we will answer some basic questions about a dataset using agate.
 
-The data will be using is a copy of the `National Registery of Exonerations dataset <http://www.law.umich.edu/special/exoneration/Pages/detaillist.aspx>`_ made on August 28th, 2015. This dataset lists individuals who are known to have been exonerated after having been wrongly convicted. At the time the data was exported there were 1,651 entries in the registry.
+The data will be using is a copy of the `National Registery of Exonerations <http://www.law.umich.edu/special/exoneration/Pages/detaillist.aspx>`_ made on August 28th, 2015. This dataset lists individuals who are known to have been exonerated after having been wrongly convicted. At the time the data was exported there were 1,651 entries in the registry.
 
 Installing agate
 ================
