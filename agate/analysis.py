@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from copy import deepcopy
+import hashlib
 import inspect
 import os
 import pickle
@@ -20,77 +21,120 @@ class Analysis(object):
         self._cache_path = cache_path
         self._next_analyses = []
 
-    def _save_signature(self):
-        path = os.path.join(self._cache_path, '%s.signature.pickle' % self._name)
+    def _fingerprint(self):
+        """
+        Generate a fingerprint for this analysis function.
+        """
+        fingerprint = hashlib.md5()
+        fingerprint.update(inspect.getsource(self._func))
+
+        return fingerprint.hexdigest()
+
+    def _save_fingerprint(self):
+        """
+        Save the fingerprint of this analysis function to its cache.
+        """
+        path = os.path.join(self._cache_path, '%s.fingerprint' % self._name)
 
         if not os.path.exists(self._cache_path):
             os.makedirs(self._cache_path)
 
         with open(path, 'w') as f:
-            pickle.dump(inspect.getsource(self._func), f)
+            f.write(self._fingerprint())
 
-    def _load_signature(self):
-        path = os.path.join(self._cache_path, '%s.signature.pickle' % self._name)
+    def _load_fingerprint(self):
+        """
+        Load the fingerprint of this analysis function from its cache.
+        """
+        path = os.path.join(self._cache_path, '%s.fingerprint' % self._name)
 
         if not os.path.exists(path):
             return None
 
         with open(path) as f:
-            signature = pickle.load(f)
+            fingerprint = f.read()
 
-        return signature
+        return fingerprint
 
-    def _save_state(self, state):
-        path = os.path.join(self._cache_path, '%s.state.pickle' % self._name)
+    def _save_data(self, data):
+        """
+        Save the output data for this analysis from its cache.
+        """
+        path = os.path.join(self._cache_path, '%s.data' % self._name)
 
         if not os.path.exists(self._cache_path):
             os.makedirs(self._cache_path)
 
         with open(path, 'w') as f:
-            pickle.dump(state, f)
+            pickle.dump(data, f)
 
-    def _load_state(self):
-        path = os.path.join(self._cache_path, '%s.state.pickle' % self._name)
+    def _load_data(self):
+        """
+        Load the output data for this analysis from its cache.
+        """
+        path = os.path.join(self._cache_path, '%s.data' % self._name)
 
         if not os.path.exists(path):
             return None
 
         with open(path) as f:
-            state = pickle.load(f)
+            data = pickle.load(f)
 
-        return state
+        return data
 
     def then(self, next_func):
+        """
+        Create a new analysis which will run after this one has completed.
+
+        :param func: The function to run. Must accept a `data` argument.
+        """
         analysis = Analysis(next_func)
 
         self._next_analyses.append(analysis)
 
         return analysis
 
-    def run(self, state={}, refresh=False):
-        local_state = deepcopy(state)
+    def run(self, data={}, refresh=False):
+        """
+        Execute this analysis and its descendents. There are four possible
+        execution scenarios:
+
+        1. This analysis has never been run. Run it and cache the results.
+        2. This analysis is the child of a parent analysis which was run, so it
+           must be run because its inputs may have changed. Cache the result.
+        3. This analysis has been run, its parents were loaded from cache and
+           its fingerprints match. Load the cached result.
+        4. This analysis has been run and its parents were loaded from cache,
+           but its fingerprints do not match. Run it and cache updated results.
+
+        :param data: The input "state" from the parent analysis, if any.
+        :param refresh: Flag indicating if this analysis must refresh because
+            its parents did.
+        """
 
         if refresh:
             print('Refreshing: %s' % self._name)
 
-            self._func(local_state)
-            self._save_signature()
-            self._save_state(local_state)
-        else:
-            signature = self._load_signature()
+            local_data = deepcopy(data)
 
-            if not signature or inspect.getsource(self._func) != signature:
+            self._func(local_data)
+            self._save_fingerprint()
+            self._save_data(local_data)
+        else:
+            if self._fingerprint() != self._load_fingerprint():
                 print('Running: %s' % self._name)
 
-                self._func(local_state)
-                self._save_signature()
-                self._save_state(local_state)
+                local_data = deepcopy(data)
+
+                self._func(local_data)
+                self._save_fingerprint()
+                self._save_data(local_data)
 
                 refresh = True
             else:
                 print('Loaded from cache: %s' % self._name)
 
-                local_state = self._load_state()
+                local_data = self._load_data()
 
         for analysis in self._next_analyses:
-            analysis.run(local_state, refresh)
+            analysis.run(local_data, refresh)
