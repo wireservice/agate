@@ -1,7 +1,7 @@
 ===================
-journalism.tableset
+agate.tableset
 ===================
 
-.. automodule:: journalism.tableset
+.. automodule:: agate.tableset
     :members:
     :undoc-members:

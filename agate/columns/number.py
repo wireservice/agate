@@ -5,9 +5,9 @@ import math
 
 import six
 
-from journalism.columns.base import Column
-from journalism.exceptions import NullComputationError
-from journalism.utils import memoize
+from agate.columns.base import Column
+from agate.exceptions import NullComputationError
+from agate.utils import memoize
 
 class NumberColumn(Column):
     """

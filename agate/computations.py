@@ -5,15 +5,15 @@ This module contains re-usable functions for computing new :class:`.Table`
 columns.
 """
 
-from journalism.aggregators import Mean, StDev
-from journalism.columns import NumberColumn
-from journalism.column_types import NumberType
-from journalism.exceptions import UnsupportedComputationError
-from journalism.utils import NullOrder
+from agate.aggregators import Mean, StDev
+from agate.columns import NumberColumn
+from agate.column_types import NumberType
+from agate.exceptions import UnsupportedComputationError
+from agate.utils import NullOrder
 
 class Computation(object): #pragma: no cover
     """
-    Base class for row-wise computations on :class:`.Table`s.
+    Base class for row-wise computations on a :class:`.Table`.
     """
     def get_computed_column_type(self):
         """

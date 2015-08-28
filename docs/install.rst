@@ -5,9 +5,9 @@ Installation
 Users
 -----
 
-If you only want to use journalism, install it this way::
+If you only want to use agate, install it this way::
 
-    pip install journalism 
+    pip install agate
 
 .. note::
 
@@ -16,29 +16,28 @@ If you only want to use journalism, install it this way::
 Developers
 ----------
 
-If you are a developer that also wants to hack on journalism, install it this way::
+If you are a developer that also wants to hack on agate, install it this way::
 
-    git clone git://github.com/onyxfish/journalism.git
-    cd journalism
-    mkvirtualenv journalism
+    git clone git://github.com/onyxfish/agate.git
+    cd agate
+    mkvirtualenv agate
     pip install -r requirements.txt
     python setup.py develop
     tox
 
 .. note::
 
-    journalism also supports running tests with coverage:: 
+    agate also supports running tests with coverage::
 
-        nosetests --with-coverage --cover-package=journalism
+        nosetests --with-coverage --cover-package=agate
 
 Supported platforms
 -------------------
 
-journalism supports the following versions of Python:
+agate supports the following versions of Python:
 
 * Python 2.6+
 * Python 3.2+
 * Latest `PyPy <http://pypy.org/>`_
 
 It is tested on OSX, but due to it's minimal dependencies should work fine on both Linux and Windows.
-

@@ -1,16 +1,16 @@
-====================
-journalism |release|
-====================
+===============
+agate |release|
+===============
 
 About
 =====
 
 .. include:: ../README
 
-Why journalism?
+Why agate?
 ===============
 
-Why use journalism?
+Why use agate?
 
 * A clean, readable API.
 * Self-documenting code patterns.

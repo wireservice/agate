@@ -2,7 +2,7 @@
 
 import csv
 
-from journalism import Table, DateType, NumberType, TextType, Sum, StDev
+from agate import Table, DateType, NumberType, TextType, Sum, StDev
 
 text_type = TextType()
 number_type = NumberType()

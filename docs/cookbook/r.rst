@@ -11,7 +11,7 @@ R:
 
     aggregate(employees$salary, list(job = employees$job), mean)
 
-journalism:
+agate:
 
 .. code-block:: python
 

@@ -2,7 +2,7 @@
 
 """
 This module contains the :class:`Table` object, which is the central data
-structure in :code:`journalism`.
+structure in :code:`agate`.
 """
 
 from copy import copy
@@ -14,13 +14,13 @@ except ImportError: # pragma: no cover
 
 import six
 
-from journalism.aggregators import Sum, Mean, Median, StDev, MAD
-from journalism.columns.base import ColumnMapping
-from journalism.computations import Computation
-from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
-from journalism.rows import RowSequence, Row
-from journalism.tableset import TableSet
-from journalism.utils import NullOrder, memoize
+from agate.aggregators import Sum, Mean, Median, StDev, MAD
+from agate.columns.base import ColumnMapping
+from agate.computations import Computation
+from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
+from agate.rows import RowSequence, Row
+from agate.tableset import TableSet
+from agate.utils import NullOrder, memoize
 
 class Table(object):
     """

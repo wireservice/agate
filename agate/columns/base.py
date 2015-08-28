@@ -9,8 +9,8 @@ except ImportError: #pragma: no cover
 
 import six
 
-from journalism.exceptions import ColumnDoesNotExistError
-from journalism.utils import memoize
+from agate.exceptions import ColumnDoesNotExistError
+from agate.utils import memoize
 
 class ColumnMapping(Mapping):
     """
@@ -81,7 +81,7 @@ class Column(Sequence):
 
         sample = '(%s)' % sample
 
-        return '<journalism.columns.%s: %s>' % (self.__class__.__name__, sample)
+        return '<agate.columns.%s: %s>' % (self.__class__.__name__, sample)
 
     def __str__(self):
         return str(self.__unicode__())

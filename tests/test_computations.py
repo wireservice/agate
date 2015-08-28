@@ -10,10 +10,10 @@ try:
 except ImportError:
     import unittest
 
-from journalism import Table
-from journalism.column_types import NumberType, TextType
-from journalism.computations import Change, PercentChange, Rank, ZScores, PercentileRank
-from journalism.exceptions import UnsupportedComputationError
+from agate import Table
+from agate.column_types import NumberType, TextType
+from agate.computations import Change, PercentChange, Rank, ZScores, PercentileRank
+from agate.exceptions import UnsupportedComputationError
 
 class TestTableComputation(unittest.TestCase):
     def setUp(self):

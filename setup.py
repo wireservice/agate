@@ -12,13 +12,13 @@ if sys.version_info == (2, 6):
     install_requires.append('ordereddict>=1.1')
 
 setup(
-    name='journalism',
+    name='agate',
     version='0.5.0',
     description='',
     long_description=open('README').read(),
     author='Christopher Groskopf',
     author_email='staringmonkey@gmail.com',
-    url='http://journalism.readthedocs.org/',
+    url='http://agate.readthedocs.org/',
     license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -39,7 +39,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     packages=[
-        'journalism',
+        'agate',
     ],
     install_requires=install_requires
 )

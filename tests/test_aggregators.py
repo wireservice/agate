@@ -10,10 +10,10 @@ try:
 except ImportError:
     import unittest
 
-from journalism import Table
-from journalism.aggregators import *
-from journalism.column_types import NumberType, TextType
-from journalism.exceptions import NullComputationError, UnsupportedAggregationError
+from agate import Table
+from agate.aggregators import *
+from agate.column_types import NumberType, TextType
+from agate.exceptions import NullComputationError, UnsupportedAggregationError
 
 class TestSimpleAggregation(unittest.TestCase):
     def setUp(self):

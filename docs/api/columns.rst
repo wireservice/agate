@@ -1,33 +1,33 @@
 ==================
-journalism.columns
+agate.columns
 ==================
 
-.. automodule:: journalism.columns.base
+.. automodule:: agate.columns.base
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: journalism.columns.boolean
+.. automodule:: agate.columns.boolean
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: journalism.columns.date
+.. automodule:: agate.columns.date
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: journalism.columns.date_time
+.. automodule:: agate.columns.date_time
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: journalism.columns.number
+.. automodule:: agate.columns.number
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: journalism.columns.text
+.. automodule:: agate.columns.text
     :members:
     :undoc-members:
     :show-inheritance:

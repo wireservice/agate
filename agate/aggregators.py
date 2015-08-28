@@ -3,9 +3,9 @@
 from collections import defaultdict
 import datetime
 
-from journalism.column_types import BooleanType, NumberType
-from journalism.columns import BooleanColumn, DateColumn, DateTimeColumn, NumberColumn, TextColumn
-from journalism.exceptions import NullComputationError, UnsupportedAggregationError
+from agate.column_types import BooleanType, NumberType
+from agate.columns import BooleanColumn, DateColumn, DateTimeColumn, NumberColumn, TextColumn
+from agate.exceptions import NullComputationError, UnsupportedAggregationError
 
 class Aggregation(object): #pragma: no cover
     """

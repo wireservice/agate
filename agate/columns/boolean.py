@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from journalism.columns.base import Column
+from agate.columns.base import Column
 
 class BooleanColumn(Column):
     """

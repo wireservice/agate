@@ -1,7 +1,7 @@
 =======================
-journalism.column_types
+agate.column_types
 =======================
 
-.. automodule:: journalism.column_types
+.. automodule:: agate.column_types
     :members:
     :undoc-members:

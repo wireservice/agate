@@ -11,7 +11,7 @@ If your file does not have headers:
 
 .. code-block:: python
 
-    from journalism import Table, TextType, NumberType
+    from agate import Table, TextType, NumberType
 
     text_type = TextType()
     number_type = NumberType()
@@ -20,7 +20,7 @@ If your file does not have headers:
     column_types = (text_type, number_type, number_type)
 
     with open('population.csv') as f:
-        rows = list(csv.reader(f) 
+        rows = list(csv.reader(f)
 
     table = Table(rows, column_types, column_names)
 
@@ -76,4 +76,3 @@ Writing a table to a CSV w/ csvkit
 
         writer.writerow(table.get_column_names())
         writer.writerows(table.rows)
-

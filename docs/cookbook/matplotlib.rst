@@ -2,7 +2,7 @@
 Plotting with matplotlib
 ========================
 
-journalism integrates well with Python plotting library `matplotlib <http://matplotlib.org/>`_.
+agate integrates well with Python plotting library `matplotlib <http://matplotlib.org/>`_.
 
 Line chart
 ==========
@@ -30,5 +30,3 @@ Histogram
     pylab.title('Count by state')
 
     pylab.show()
-
-

@@ -2,7 +2,7 @@
 
 import six
 
-from journalism.columns.base import Column
+from agate.columns.base import Column
 
 class TextColumn(Column):
     """

@@ -7,8 +7,8 @@ import six
 if six.PY3:
     xrange = range
 
-from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
-from journalism.utils import memoize
+from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
+from agate.utils import memoize
 
 class RowSequence(Sequence):
     """
@@ -61,7 +61,7 @@ class Row(Mapping):
 
         sample = '(%s)' % sample
 
-        return '<journalism.rows.Row: %s>' % sample
+        return '<agate.rows.Row: %s>' % sample
 
     def __str__(self):
         return str(self.__unicode__())

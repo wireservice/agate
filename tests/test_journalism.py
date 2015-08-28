@@ -5,9 +5,9 @@ try:
 except ImportError:
     import unittest
 
-import journalism
+import agate
 
 class TestTable(unittest.TestCase):
-    def test_journalism(self):
+    def test_agate(self):
         with self.assertRaises(NotImplementedError):
-            journalism.save()
+            agate.save()

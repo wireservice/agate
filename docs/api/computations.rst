@@ -1,8 +1,8 @@
 =======================
-journalism.computations
+agate.computations
 =======================
 
-.. automodule:: journalism.computations
+.. automodule:: agate.computations
     :members:
     :undoc-members:
     :show-inheritance:

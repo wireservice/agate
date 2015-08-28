@@ -5,9 +5,9 @@ try:
 except ImportError:
     import unittest
 
-from journalism import Table
-from journalism.column_types import TextType, NumberType
-from journalism.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
+from agate import Table
+from agate.column_types import TextType, NumberType
+from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 
 class TestRows(unittest.TestCase):
     def setUp(self):
@@ -24,7 +24,7 @@ class TestRows(unittest.TestCase):
         self.table = Table(self.rows, self.column_types, self.column_names)
 
     def test_stringify(self):
-        self.assertEqual(str(self.table.rows[0]), "<journalism.rows.Row: (1, 2, a)>")
+        self.assertEqual(str(self.table.rows[0]), "<agate.rows.Row: (1, 2, a)>")
 
     def test_stringify_long(self):
         rows = (
@@ -36,7 +36,7 @@ class TestRows(unittest.TestCase):
 
         self.table = Table(rows, column_types, column_names)
 
-        self.assertEqual(str(self.table.rows[0]), "<journalism.rows.Row: (1, 2, a, b, c, ...)>")
+        self.assertEqual(str(self.table.rows[0]), "<agate.rows.Row: (1, 2, a, b, c, ...)>")
 
     def test_length(self):
         self.assertEqual(len(self.table.rows), 3)

@@ -2,7 +2,7 @@
 
 import datetime
 
-from journalism.columns.base import Column
+from agate.columns.base import Column
 
 class DateColumn(Column):
     """

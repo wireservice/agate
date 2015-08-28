@@ -2,7 +2,7 @@
 Emulating SQL
 =============
 
-journalism's command structure is very similar to SQL. The primary difference between journalism and SQL is that commands like :code:`SELECT` and :code:`WHERE` explicitly create new tables. You can chain them together as you would with SQL, but be aware each command is actually creating a new table.
+agate's command structure is very similar to SQL. The primary difference between agate and SQL is that commands like :code:`SELECT` and :code:`WHERE` explicitly create new tables. You can chain them together as you would with SQL, but be aware each command is actually creating a new table.
 
 .. note::
 
@@ -17,7 +17,7 @@ SQL:
 
     SELECT state, total FROM table;
 
-journalism:
+agate:
 
 .. code-block:: python
 
@@ -32,7 +32,7 @@ SQL:
 
     SELECT * FROM table WHERE LOWER(state) = 'california';
 
-journalism:
+agate:
 
 .. code-block:: python
 
@@ -47,7 +47,7 @@ SQL:
 
     SELECT * FROM table ORDER BY total DESC;
 
-journalism:
+agate:
 
 .. code-block:: python
 
@@ -62,7 +62,7 @@ SQL:
 
     SELECT DISTINCT ON (state) * FROM table;
 
-journalism:
+agate:
 
 .. code-block:: python
 
@@ -70,7 +70,7 @@ journalism:
 
 .. note::
 
-    Unlike most SQL implementations, journalism always returns the full row. Use :meth:`.Table.select` if you want to filter the columns first.
+    Unlike most SQL implementations, agate always returns the full row. Use :meth:`.Table.select` if you want to filter the columns first.
 
 INNER JOIN
 ==========
@@ -83,7 +83,7 @@ SQL (two ways):
 
     SELECT * FROM patient INNER JOIN doctor ON (patient.doctor = doctor.id);
 
-journalism:
+agate:
 
 .. code-block:: python
 
@@ -98,7 +98,7 @@ SQL:
 
     SELECT * FROM patient LEFT OUTER JOIN doctor ON (patient.doctor = doctor.id);
 
-journalism:
+agate:
 
 .. code-block:: python
 
@@ -107,7 +107,7 @@ journalism:
 GROUP BY
 ========
 
-journalism's :meth:`.Table.group_by` works slightly different than SQLs. It does not require an aggregate function. Instead it returns :py:class:`.TableSet`. To see how to perform the equivalent of a SQL aggregate, see below.
+agate's :meth:`.Table.group_by` works slightly different than SQLs. It does not require an aggregate function. Instead it returns :py:class:`.TableSet`. To see how to perform the equivalent of a SQL aggregate, see below.
 
 .. code-block:: python
 
@@ -122,7 +122,7 @@ SQL:
 
     SELECT state, total FROM table WHERE LOWER(state) = 'california' ORDER BY total DESC;
 
-journalism:
+agate:
 
 .. code-block:: python
 
@@ -144,7 +144,7 @@ SQL:
 
     SELECT mean(age) FROM patient GROUP BY doctor;
 
-journalism:
+agate:
 
 .. code-block:: python
 

@@ -10,7 +10,7 @@ except ImportError: #pragma: no cover
 from dateutil.parser import parse
 import six
 
-from journalism.exceptions import CastError
+from agate.exceptions import CastError
 
 #: String values which will be automatically cast to :code:`None`.
 NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
@@ -59,7 +59,7 @@ class BooleanType(ColumnType):
         raise CastError('Can not convert value %s to bool for BooleanColumn.' % d)
 
     def _create_column(self, table, index):
-        from journalism.columns import BooleanColumn
+        from agate.columns import BooleanColumn
 
         return BooleanColumn(table, index)
 
@@ -93,7 +93,7 @@ class DateType(ColumnType):
         return parse(d).date()
 
     def _create_column(self, table, index):
-        from journalism.columns import DateColumn
+        from agate.columns import DateColumn
 
         return DateColumn(table, index)
 
@@ -127,7 +127,7 @@ class DateTimeType(ColumnType):
         return parse(d)
 
     def _create_column(self, table, index):
-        from journalism.columns import DateTimeColumn
+        from agate.columns import DateTimeColumn
 
         return DateTimeColumn(table, index)
 
@@ -160,7 +160,7 @@ class NumberType(ColumnType):
             raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d)
 
     def _create_column(self, table, index):
-        from journalism.columns import NumberColumn
+        from agate.columns import NumberColumn
 
         return NumberColumn(table, index)
 
@@ -187,6 +187,6 @@ class TextType(ColumnType):
         return six.text_type(d)
 
     def _create_column(self, table, index):
-        from journalism.columns import TextColumn
+        from agate.columns import TextColumn
 
         return TextColumn(table, index)

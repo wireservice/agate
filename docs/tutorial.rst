@@ -5,32 +5,32 @@ Tutorial
 About this tutorial
 ===================
 
-The best way to learn to use any tool is to actually use it. In this tutorial we will answer some basic questions about a dataset using journalism.
+The best way to learn to use any tool is to actually use it. In this tutorial we will answer some basic questions about a dataset using agate.
 
 The data will be using is a subset of the United States Defense Logistic Agency Law Enforcement Support Office’s (LESO) 1033 Program dataset, which describes how surplus military arms have been distributed to local police forces. This data has been widely cited in the aftermath of the Ferguson, Missouri protests. The particular data we are using comes from an NPR report analyzing the data.
 
-Installing journalism
-=====================
+Installing agate
+================
 
-Installing journalism is easy::
+Installing agate is easy::
 
-    sudo pip install journalism
+    sudo pip install agate
 
 .. note::
 
-    If you're familiar with `virtualenv <http://virtualenv.readthedocs.org/en/latest/>`_, it's better to install journalism inside an env, in which case you should leave off the ``sudo`` in the previous command.
+    If you're familiar with `virtualenv <http://virtualenv.readthedocs.org/en/latest/>`_, it's better to install agate inside an env, in which case you should leave off the ``sudo`` in the previous command.
 
 Getting the data
 ================
 
 Let's start by creating a clean workspace::
 
-    mkdir journalism_tutorial
-    cd journalism_tutorial
+    mkdir agate_tutorial
+    cd agate_tutorial
 
 Now let's fetch the data::
 
-    curl -L -O https://github.com/onyxfish/journalism/raw/master/examples/realdata/ks_1033_data.csv
+    curl -L -O https://github.com/onyxfish/agate/raw/master/examples/realdata/ks_1033_data.csv
 
 This data is for the state of Kansas.
 
@@ -46,24 +46,24 @@ Now let's import our dependencies:
 .. code-block:: python
 
     import csv
-    import journalism
+    import agate
 
 .. note::
 
-    You should really be using `csvkit <http://csvkit.readthedocs.org/>`_ (journalism's sister project) to load CSV files, but here we stick with the builtin `csv` module because everyone has it.
+    You should really be using `csvkit <http://csvkit.readthedocs.org/>`_ (agate's sister project) to load CSV files, but here we stick with the builtin `csv` module because everyone has it.
 
 Defining the columns
 ====================
 
-journalism requires us to define a type for each column in our dataset. No effort is made to determine these types automatically, however, :class:`.TextType` is always a safe choice if you aren't sure what is in a column.
+agate requires us to define a type for each column in our dataset. No effort is made to determine these types automatically, however, :class:`.TextType` is always a safe choice if you aren't sure what is in a column.
 
 First we create instances of the column types we will be using:
 
 .. code-block:: python
 
-    text_type = journalism.TextType()
-    number_type = journalism.NumberType()
-    date_type = journalism.DateType()
+    text_type = agate.TextType()
+    number_type = agate.NumberType()
+    date_type = agate.DateType()
 
 Then we define the names and types of the columns that are in our dataset:
 
@@ -112,7 +112,7 @@ Now let's read the data in the CSV file and use it to create the table.
     next(reader)
 
     # Create the table
-    table = journalism.Table(reader, COLUMN_TYPES, COLUMN_NAMES)
+    table = agate.Table(reader, COLUMN_TYPES, COLUMN_NAMES)
 
     # Close the file
     f.close()
@@ -139,7 +139,7 @@ A crucial thing to understand about these methods is that they return **new tabl
 Summarizing column data
 =======================
 
-In order to answer our question about the total cost of shipments to Kansas City we need to sum the costs, which is a column-wise operation. To perform column operations in journalism we will use a subclass of :class:`.Aggregation`.
+In order to answer our question about the total cost of shipments to Kansas City we need to sum the costs, which is a column-wise operation. To perform column operations in agate we will use a subclass of :class:`.Aggregation`.
 
 An :class:`.Aggregation` is applied to a column of a table. You can access the columns of a table using the :attr:`.Table.columns` attribute. To sum the ``total_cost`` column we will aggregate using an instance of the :class:`.Sum` aggregator:
 
@@ -174,7 +174,7 @@ Each column in :attr:`.Table.columns` is a subclass of :class:`.Column`, such as
 Computing new columns
 =====================
 
-In addition to column-wise operations there are also many important row-wise data operations. These are operations which go through a :class:`.Table` row-by-row and compute a new column using the existing data. To perform row operations in journalism we use subclasses of :class:`.Computation`.
+In addition to column-wise operations there are also many important row-wise data operations. These are operations which go through a :class:`.Table` row-by-row and compute a new column using the existing data. To perform row operations in agate we use subclasses of :class:`.Computation`.
 
 When one or more instances of :class:`.Computation` are applied to a :class:`.Table`, an entirely new table is created.
 
@@ -184,7 +184,7 @@ TKTK: question
 
     # TODO: Computation example here
 
-For efficiencies sake, journalism allows you to perform several computations at once.
+For efficiencies sake, agate allows you to perform several computations at once.
 
 .. code-block:: python
 
@@ -232,7 +232,7 @@ Grouping and aggregating
 
 Question: **Which five counties acquired the most items?**
 
-This question can't be answered by operating on a single column. What we need is the equivalent of SQL's ``GROUP BY``. journalism supports a full set of SQL-like operations on tables. Unlike SQL, we'll break grouping and aggregation into two distinct steps.
+This question can't be answered by operating on a single column. What we need is the equivalent of SQL's ``GROUP BY``. agate supports a full set of SQL-like operations on tables. Unlike SQL, we'll break grouping and aggregation into two distinct steps.
 
 .. code-block:: python
 
@@ -271,4 +271,4 @@ Lastly, we'll sort our new table and print the results.
 Where to go next
 ================
 
-This tutorial only scratches the surface of journalism's features. For many more ideas on how to apply journalism, check out the :doc:`cookbook`, which includes dozens of examples showing how to substitute journalism for common operations used in Excel, SQL, R and more.
+This tutorial only scratches the surface of agate's features. For many more ideas on how to apply agate, check out the :doc:`cookbook`, which includes dozens of examples showing how to substitute agate for common operations used in Excel, SQL, R and more.

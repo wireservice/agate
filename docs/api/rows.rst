@@ -1,8 +1,7 @@
 ===============
-journalism.rows
+agate.rows
 ===============
 
-.. automodule:: journalism.rows
+.. automodule:: agate.rows
     :members:
     :undoc-members:
-

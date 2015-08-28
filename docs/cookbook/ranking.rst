@@ -2,7 +2,7 @@
 Ranking
 =======
 
-Ranking is a complicated science. Journalism strives to find a balance between simple, intuitive ranking and flexibility when you need it.
+Ranking is a complicated science. agate strives to find a balance between simple, intuitive ranking and flexibility when you need it.
 
 Percentile rank
 ===============
@@ -11,7 +11,7 @@ Percentile rank
 
 .. code-block:: Python
 
-    from journalism import PercentileRank
+    from agate import PercentileRank
 
     new_table = table.compute([
         ('percentile_rank', PercentileRank('value')

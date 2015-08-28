@@ -1,4 +1,4 @@
-A few notes regarding journalism's internal architecture. (Users should not care about any of these things.)
+A few notes regarding agate's internal architecture. (Users should not care about any of these things.)
 
 * Operations on Tables return new Tables.
 
@@ -11,6 +11,3 @@ A few notes regarding journalism's internal architecture. (Users should not care
 * ColumnMapping, RowSequence, Column, and Row have **read only** access to a Table's private variables. They are purely a formal abstraction and for purposes of encapsulation they can be treated as a single unit.
 
 * Columns lazily construct a copy of their data from their parent Table and then cache it.
-
-* Operations accept functional arguments wherever possible for maximum flexibility.
-

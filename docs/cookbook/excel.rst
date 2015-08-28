@@ -2,7 +2,7 @@
 Emulating Excel
 ===============
 
-One of journalism's most powerful assets is that instead of a wimpy "formula" language, you have the entire Python language at your disposal. Here are examples of how to translate a few common Excel operations.
+One of agate's most powerful assets is that instead of a wimpy "formula" language, you have the entire Python language at your disposal. Here are examples of how to translate a few common Excel operations.
 
 Simple formulas
 ===============
@@ -15,7 +15,7 @@ Excel:
 
     =($A1 + $B1) / $C1
 
-journalism:
+agate:
 
 .. code-block:: python
 
@@ -33,7 +33,7 @@ SUM
 
 .. code-block:: python
 
-    from journalism import NumberType, Formula
+    from agate import NumberType, Formula
 
     number_type = NumberType()
 

@@ -5,7 +5,7 @@ Statistics
 Descriptive statistics
 ======================
 
-journalism includes a full set of standard descriptive statistics that can be applied to any :class:`.NumberColumn`.
+agate includes a full set of standard descriptive statistics that can be applied to any :class:`.NumberColumn`.
 
 .. code-block:: python
 
@@ -39,7 +39,7 @@ The ``summary`` table will have four columns: ``group`` (the profession), ``coun
 Identifying outliers
 ====================
 
-journalism includes two builtin methods for identifying outliers. The first, and most widely known, is by identifying values which are more than some number of standard deviations from the mean (typically 3).
+agate includes two builtin methods for identifying outliers. The first, and most widely known, is by identifying values which are more than some number of standard deviations from the mean (typically 3).
 
 .. code-block:: python
 

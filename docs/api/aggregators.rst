@@ -1,8 +1,8 @@
 ======================
-journalism.aggregators
+agate.aggregators
 ======================
 
-.. automodule:: journalism.aggregators
+.. automodule:: agate.aggregators
     :members:
     :undoc-members:
     :show-inheritance:

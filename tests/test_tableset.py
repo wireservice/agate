@@ -15,11 +15,11 @@ try:
 except ImportError:
     import unittest
 
-from journalism import Table, TableSet
-from journalism.aggregators import *
-from journalism.column_types import TextType, NumberType
-from journalism.computations import Formula
-from journalism.exceptions import ColumnDoesNotExistError
+from agate import Table, TableSet
+from agate.aggregators import *
+from agate.column_types import TextType, NumberType
+from agate.computations import Formula
+from agate.exceptions import ColumnDoesNotExistError
 
 class TestTableSet(unittest.TestCase):
     def setUp(self):

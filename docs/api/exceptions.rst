@@ -1,8 +1,7 @@
 =====================
-journalism.exceptions
+agate.exceptions
 =====================
 
-.. automodule:: journalism.exceptions
+.. automodule:: agate.exceptions
     :members:
     :undoc-members:
-

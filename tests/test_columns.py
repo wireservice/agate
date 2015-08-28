@@ -12,10 +12,10 @@ try:
 except ImportError:
     import unittest
 
-from journalism import Table
-from journalism.column_types import BooleanType, DateType, DateTimeType, NumberType, TextType
-from journalism.columns import BooleanColumn, DateColumn, DateTimeColumn, NumberColumn, TextColumn
-from journalism.exceptions import CastError, ColumnDoesNotExistError, NullComputationError
+from agate import Table
+from agate.column_types import BooleanType, DateType, DateTimeType, NumberType, TextType
+from agate.columns import BooleanColumn, DateColumn, DateTimeColumn, NumberColumn, TextColumn
+from agate.exceptions import CastError, ColumnDoesNotExistError, NullComputationError
 
 class TestColumnTypes(unittest.TestCase):
     def test_text(self):
@@ -119,7 +119,7 @@ class TestColumns(unittest.TestCase):
         self.table = Table(self.rows, self.column_types, self.column_names)
 
     def test_stringify(self):
-        self.assertEqual(str(self.table.columns['one']), "<journalism.columns.NumberColumn: (1, 2, None)>")
+        self.assertEqual(str(self.table.columns['one']), "<agate.columns.NumberColumn: (1, 2, None)>")
 
     def test_stringify_long(self):
         rows = (
@@ -133,7 +133,7 @@ class TestColumns(unittest.TestCase):
 
         self.table = Table(rows, self.column_types, self.column_names)
 
-        self.assertEqual(str(self.table.columns['one']), "<journalism.columns.NumberColumn: (1, 2, None, 1, 2, ...)>")
+        self.assertEqual(str(self.table.columns['one']), "<agate.columns.NumberColumn: (1, 2, None, 1, 2, ...)>")
 
     def test_length(self):
         self.assertEqual(len(self.table.columns), 3)

@@ -13,10 +13,10 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-from journalism.aggregators import Aggregation
-from journalism.column_types import TextType, NumberType
-from journalism.exceptions import ColumnDoesNotExistError
-from journalism.rows import RowSequence
+from agate.aggregators import Aggregation
+from agate.column_types import TextType, NumberType
+from agate.exceptions import ColumnDoesNotExistError
+from agate.rows import RowSequence
 
 class TableMethodProxy(object):
     """
