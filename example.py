@@ -42,7 +42,7 @@ with open('examples/realdata/ks_1033_data.csv') as f:
 kansas_city = table.where(lambda r: r['county'] in ('JACKSON', 'CLAY', 'CASS', 'PLATTE'))
 
 # Sum total_cost of four counties
-print('Total for Kansas City area: %i' % kansas_city.columns['total_cost'].summarize(Sum()))
+print('Total for Kansas City area: %i' % kansas_city.columns['total_cost'].aggregate(Sum()))
 
 # Group by county
 counties = table.group_by('county')
@@ -70,11 +70,11 @@ for row in recent_five:
     print(text)
 
 # Calculate the standard of deviation for the total_costs
-stdev = table.columns['total_cost'].summarize(StDev())
+stdev = table.columns['total_cost'].aggregate(StDev())
 
 print('Standard deviation of total_cost: %.2f' % stdev)
 
 # How many roborts were purchased?
-robots = table.where(lambda r: 'ROBOT' in (r['item_name'] or [])).columns['quantity'].summarize(Sum())
+robots = table.where(lambda r: 'ROBOT' in (r['item_name'] or [])).columns['quantity'].aggregate(Sum())
 
 print('Number of robots purchased: %i' % robots)
