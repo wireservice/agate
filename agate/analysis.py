@@ -30,10 +30,12 @@ class Analysis(object):
         """
         Generate a fingerprint for this analysis function.
         """
-        fingerprint = hashlib.md5()
-        fingerprint.update(inspect.getsource(self._func))
+        hasher = hashlib.md5()
+        source = inspect.getsource(self._func)
+        print(source)
+        hasher.update(source)
 
-        return fingerprint.hexdigest()
+        return hasher.hexdigest()
 
     def _save_fingerprint(self):
         """
