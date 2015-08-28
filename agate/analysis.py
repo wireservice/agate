@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 
+import bz2
 from copy import deepcopy
 import hashlib
 import inspect
 import os
-import pickle
+
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 class Analysis(object):
     """
@@ -15,7 +20,7 @@ class Analysis(object):
     Implements a promise-like API so that Analyses can depend on one another.
     If a parent analysis is invalidated then all it's children will be as well.
     """
-    def __init__(self, func, cache_path='.analysis'):
+    def __init__(self, func, cache_path='.agate'):
         self._name = func.__name__
         self._func = func
         self._cache_path = cache_path
@@ -66,7 +71,7 @@ class Analysis(object):
             os.makedirs(self._cache_path)
 
         with open(path, 'w') as f:
-            pickle.dump(data, f)
+            f.write(bz2.compress(pickle.dumps(data)))
 
     def _load_data(self):
         """
@@ -78,7 +83,7 @@ class Analysis(object):
             return None
 
         with open(path) as f:
-            data = pickle.load(f)
+            data = pickle.loads(bz2.decompress(f.read()))
 
         return data
 
@@ -111,7 +116,6 @@ class Analysis(object):
         :param refresh: Flag indicating if this analysis must refresh because
             its parents did.
         """
-
         if refresh:
             print('Refreshing: %s' % self._name)
 
