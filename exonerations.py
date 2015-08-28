@@ -50,23 +50,25 @@ def confessions(state):
     num_without_age = state['exonerations'].columns['age'].aggregate(agate.Count(None))
     print(num_without_age)
 
-# with_age = exonerations.where(lambda row: row['age'] is not None)
+# def age(state):
+#     with_age = exonerations.where(lambda row: row['age'] is not None)
 #
-# old = len(exonerations.rows)
-# new = len(with_age.rows)
-# print(old - new)
+#     old = len(exonerations.rows)
+#     new = len(with_age.rows)
+#     print(old - new)
 #
-# median_age = with_age.columns['age'].aggregate(agate.Median())
-# print(median_age)
-#
-# with_years_in_prison = exonerations.compute([
-#     ('years_in_prison', agate.Change('convicted', 'exonerated'))
-# ])
-#
+#     median_age = with_age.columns['age'].aggregate(agate.Median())
+#     print(median_age)
+
+def years_in_prison(state):
+    state['with_years_in_prison'] = state['exonerations'].compute([
+        ('years_in_prison', agate.Change('convicted', 'exonerated'))
+    ])
+
 # median_years = with_years_in_prison.columns['years_in_prison'].aggregate(agate.Median())
 #
 # print(median_years)
-
+#
 # full_names = exonerations.compute([
 #     ('full_name', agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row))
 # ])
@@ -88,20 +90,23 @@ def confessions(state):
 # with_years_in_prison = exonerations.compute([
 #     ('years_in_prison', agate.Change('convicted', 'exonerated'))
 # ])
-#
-# state_totals = with_years_in_prison.group_by('state')
-#
-# medians = state_totals.aggregate([
-#     ('years_in_prison', agate.Median(), 'median_years_in_prison')
-# ])
-#
-# sorted_medians = medians.order_by('median_years_in_prison', reverse=True)
-#
-# for row in sorted_medians.rows[:5]:
-#     print('%(group)s: %(median_years_in_prison)i' % row)
+
+def states(state):
+    state_totals = state['with_years_in_prison'].group_by('state')
+
+    medians = state_totals.aggregate([
+        ('years_in_prison', agate.Median(), 'median_years_in_prison')
+    ])
+
+    sorted_medians = medians.order_by('median_years_in_prison', reverse=True)
+
+    for row in sorted_medians.rows[:5]:
+        print('%(group)s: %(median_years_in_prison)i' % row)
 
 
 analysis = agate.Analysis(load_data)
-analysis.then(confessions)
+conf = analysis.then(confessions)
+years = analysis.then(years_in_prison)
+st = years.then(states)
 
 analysis.run()

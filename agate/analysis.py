@@ -56,17 +56,23 @@ class Analysis(object):
         local_state = deepcopy(state)
 
         if refresh:
+            print('Refreshing: %s' % self._name)
+
             self._func(local_state)
             self._save_archive(local_state)
         else:
             archive = self._load_archive()
 
             if not archive or inspect.getsource(self._func) != archive['source']:
+                print('Running: %s' % self._name)
+
                 self._func(local_state)
                 self._save_archive(local_state)
 
                 refresh = True
             else:
+                print('Loaded from cache: %s' % self._name)
+
                 local_state = archive['state']
 
         for analysis in self._next_analyses:
