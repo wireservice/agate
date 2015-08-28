@@ -8,7 +8,7 @@ import os
 
 try:
     import cPickle as pickle
-except ImportError:
+except ImportError: # pragma: no cover
     import pickle
 
 class Analysis(object):
@@ -36,7 +36,7 @@ class Analysis(object):
         """
         hasher = hashlib.md5()
         source = inspect.getsource(self._func)
-        hasher.update(source)
+        hasher.update(source.encode('utf-8'))
 
         return hasher.hexdigest()
 
@@ -72,11 +72,9 @@ class Analysis(object):
         """
         path = os.path.join(self._cache_path, '%s.data' % self._name)
 
-        if not os.path.exists(self._cache_path):
-            os.makedirs(self._cache_path)
-
-        with open(path, 'w') as f:
-            f.write(bz2.compress(pickle.dumps(data)))
+        f = bz2.BZ2File(path, 'w')
+        f.write(pickle.dumps(data))
+        f.close()
 
     def _load_data(self):
         """
@@ -85,10 +83,11 @@ class Analysis(object):
         path = os.path.join(self._cache_path, '%s.data' % self._name)
 
         if not os.path.exists(path):
-            return None
+            raise IOError('Data cache missing at %s' % path)
 
-        with open(path) as f:
-            data = pickle.loads(bz2.decompress(f.read()))
+        f = bz2.BZ2File(path)
+        data = pickle.loads(f.read())
+        f.close()
 
         return data
 
@@ -100,7 +99,7 @@ class Analysis(object):
         :param func: The analysis function. Must accept a `data` argument that
             is the state inherited from ancestors analysis.
         """
-        analysis = Analysis(next_func)
+        analysis = Analysis(next_func, cache_path=self._cache_path)
 
         self._next_analyses.append(analysis)
 
