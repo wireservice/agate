@@ -4,32 +4,32 @@ import csv
 
 import agate
 
-text_type = agate.TextType()
-number_type = agate.NumberType()
-boolean_type = agate.BooleanType()
-
-COLUMNS = (
-    ('last_name', text_type),
-    ('first_name', text_type),
-    ('age', number_type),
-    ('race', text_type),
-    ('state', text_type),
-    ('tags', text_type),
-    ('crime', text_type),
-    ('sentence', text_type),
-    ('convicted', number_type),
-    ('exonerated', number_type),
-    ('dna', boolean_type),
-    ('dna_essential', text_type),
-    ('mistaken_witness', boolean_type),
-    ('false_confession', boolean_type),
-    ('perjury', boolean_type),
-    ('false_evidence', boolean_type),
-    ('official_misconduct', boolean_type),
-    ('inadequate_defense', boolean_type),
-)
-
 def load_data(data):
+    text_type = agate.TextType()
+    number_type = agate.NumberType()
+    boolean_type = agate.BooleanType()
+
+    columns = (
+        ('last_name', text_type),
+        ('first_name', text_type),
+        ('age', number_type),
+        ('race', text_type),
+        ('state', text_type),
+        ('tags', text_type),
+        ('crime', text_type),
+        ('sentence', text_type),
+        ('convicted', number_type),
+        ('exonerated', number_type),
+        ('dna', boolean_type),
+        ('dna_essential', text_type),
+        ('mistaken_witness', boolean_type),
+        ('false_confession', boolean_type),
+        ('perjury', boolean_type),
+        ('false_evidence', boolean_type),
+        ('official_misconduct', boolean_type),
+        ('inadequate_defense', boolean_type),
+    )
+
     with open('examples/realdata/exonerations-20150828.csv') as f:
         # Create a csv reader
         reader = csv.reader(f)
@@ -38,7 +38,7 @@ def load_data(data):
         next(f)
 
         # Create the table
-        data['exonerations'] = agate.Table(reader, COLUMNS)
+        data['exonerations'] = agate.Table(reader, columns)
 
 def confessions(data):
     num_false_confessions = data['exonerations'].columns['false_confession'].aggregate(agate.Count(True))
@@ -57,27 +57,12 @@ def years_in_prison(data):
         ('years_in_prison', agate.Change('convicted', 'exonerated'))
     ])
 
-# median_years = with_years_in_prison.columns['years_in_prison'].aggregate(agate.Median())
-#
-# print(median_years)
-#
-# sorted_by_age = exonerations.order_by('age')
-# youngest_ten = sorted_by_age.rows[:10]
-#
-# for row in youngest_ten:
-#     print('%(first_name)s %(last_name)s (%(age)i) %(crime)s' % row)
-#
-# by_state = exonerations.group_by('state')
-# totals = by_state.aggregate()
-#
-# sorted_totals = totals.order_by('count', reverse=True)
-#
-# for row in sorted_totals.rows[:5]:
-#     print('%(group)s: %(count)i' % row)
-#
-# with_years_in_prison = exonerations.compute([
-#     ('years_in_prison', agate.Change('convicted', 'exonerated'))
-# ])
+def youth(data):
+    sorted_by_age = data['exonerations'].order_by('age')
+    youngest_ten = sorted_by_age.rows[:10]
+
+    for row in youngest_ten:
+        print('%(first_name)s %(last_name)s (%(age)i) %(crime)s' % row)
 
 def states(data):
     state_totals = data['with_years_in_prison'].group_by('state')
@@ -93,8 +78,11 @@ def states(data):
 
 
 analysis = agate.Analysis(load_data)
-conf = analysis.then(confessions)
-years = analysis.then(years_in_prison)
-st = years.then(states)
+analysis.then(confessions)
+analysis.then(median_age)
+analysis.then(youth)
+
+years_analysis = analysis.then(years_in_prison)
+years_analysis.then(states)
 
 analysis.run()

@@ -19,6 +19,10 @@ class Analysis(object):
 
     Implements a promise-like API so that Analyses can depend on one another.
     If a parent analysis is invalidated then all it's children will be as well.
+
+    :param func: The analysis function. Must accept a `data` argument that
+        is the state inherited from ancestors analysis.
+    :param cache_path: Where to stored the cache files for this analysis.
     """
     def __init__(self, func, cache_path='.agate'):
         self._name = func.__name__
@@ -32,7 +36,6 @@ class Analysis(object):
         """
         hasher = hashlib.md5()
         source = inspect.getsource(self._func)
-        print(source)
         hasher.update(source)
 
         return hasher.hexdigest()
@@ -91,9 +94,11 @@ class Analysis(object):
 
     def then(self, next_func):
         """
-        Create a new analysis which will run after this one has completed.
+        Create a new analysis which will run after this one has completed with
+        access to the data it generated.
 
-        :param func: The function to run. Must accept a `data` argument.
+        :param func: The analysis function. Must accept a `data` argument that
+            is the state inherited from ancestors analysis.
         """
         analysis = Analysis(next_func)
 
@@ -116,7 +121,7 @@ class Analysis(object):
 
         :param data: The input "state" from the parent analysis, if any.
         :param refresh: Flag indicating if this analysis must refresh because
-            its parents did.
+            one of its ancestors did.
         """
         if refresh:
             print('Refreshing: %s' % self._name)
