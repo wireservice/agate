@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from agate.analysis import *
 from agate.aggregators import *
 from agate.columns import *
 from agate.column_types import *
