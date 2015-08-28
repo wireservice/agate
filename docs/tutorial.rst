@@ -176,7 +176,8 @@ Computing new columns
 
 In addition to column-wise operations there are also many important row-wise data operations. These are operations which go through a :class:`.Table` row-by-row and compute a new column using the existing data. To perform row operations in journalism we use subclasses of :class:`.Computation`.
 
-A :class:`.Computation` is applied to a :class:`.Table` and yields an entirely new table.
+When one or more instances of :class:`.Computation` are applied to a :class:`.Table`, an entirely new table is created.
+
 TKTK: question
 
 .. code-block:: python
