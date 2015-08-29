@@ -142,3 +142,25 @@ class TestAnalysis(unittest.TestCase):
 
         self.assertEqual(self.executed_stage1, 1)
         self.assertEqual(self.executed_stage2, 2)
+
+    def test_same_function_twice_parallel(self):
+        analysis = Analysis(self.stage1, cache_dir=TEST_CACHE)
+        noop = analysis.then(self.stage_noop)
+        noop.then(self.stage2)
+        noop.then(self.stage2)
+
+        analysis.run()
+
+        self.assertEqual(self.executed_stage1, 1)
+        self.assertEqual(self.executed_stage2, 2)
+
+    def test_same_function_twice_sequence(self):
+        analysis = Analysis(self.stage1, cache_dir=TEST_CACHE)
+        analysis.then(self.stage2)
+        analysis.then(self.stage_noop)
+        analysis.then(self.stage2)
+
+        analysis.run()
+
+        self.assertEqual(self.executed_stage1, 1)
+        self.assertEqual(self.executed_stage2, 2)
