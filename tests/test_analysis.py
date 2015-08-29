@@ -16,14 +16,6 @@ from agate.table import Table
 
 TEST_CACHE = '.agate-test'
 
-def wait_for_create(path):
-    while not os.path.exists(path):
-        sleep(1)
-
-def wait_for_delete(path):
-    while os.path.exists(path):
-        sleep(1)
-
 class TestAnalysis(unittest.TestCase):
     def setUp(self):
         self.executed_stage1 = 0

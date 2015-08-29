@@ -10,6 +10,8 @@ try:
 except ImportError: #pragma: no cover
     from decimal import Decimal
 
+import shutil
+
 try:
     import unittest2 as unittest
 except ImportError:
@@ -59,6 +61,39 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables)
 
         self.assertEqual(len(tableset), 3)
+
+    def test_from_csv(self):
+        tableset1 = TableSet(self.tables)
+        tableset2 = TableSet.from_csv('examples/tableset', self.columns)
+
+        self.assertSequenceEqual(tableset1.get_column_names(), tableset2.get_column_names())
+        self.assertSequenceEqual(tableset1.get_column_types(), tableset2.get_column_types())
+
+        self.assertEqual(len(tableset1), len(tableset2))
+
+        for name in ['table1', 'table2', 'table3']:
+            self.assertEqual(len(tableset1[name].columns), len(tableset2[name].columns))
+            self.assertEqual(len(tableset1[name].rows), len(tableset2[name].rows))
+
+            self.assertSequenceEqual(tableset1[name].rows[0], tableset2[name].rows[0])
+            self.assertSequenceEqual(tableset1[name].rows[1], tableset2[name].rows[1])
+            self.assertSequenceEqual(tableset1[name].rows[2], tableset2[name].rows[2])
+
+    def test_to_csv(self):
+        tableset = TableSet(self.tables)
+
+        tableset.to_csv('.test-tableset')
+
+        for name in ['table1', 'table2', 'table3']:
+            with open('.test-tableset/%s.csv' % name) as f:
+                contents1 = f.read()
+
+            with open('examples/tableset/%s.csv' % name) as f:
+                contents2 = f.read()
+
+            self.assertEqual(contents1, contents2)
+
+        shutil.rmtree('.test-tableset')
 
     def test_get_column_types(self):
         tableset = TableSet(self.tables)

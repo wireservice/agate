@@ -115,15 +115,18 @@ class Table(object):
     @classmethod
     def from_csv(cls, path, column_info, header=True, **kwargs):
         """
-        Create a new table for a CSV. Will use csvkit if it is available,
-        otherwise will use Python's builtin csv module. ``args`` and ``kwargs``
-        will be passed through to :meth:`csv.reader`.
+        Create a new table for a CSV. This method will use csvkit if it is
+        available, otherwise it will use Python's builtin csv module.
 
-        Note: if using Python 2 and not using csvkit, this method is not
+        ``kwargs`` will be passed through to :meth:`csv.reader`.
+
+        If you are using Python 2 and not using csvkit, this method is not
         unicode-safe.
 
         :param path: Path to the CSV file to read from.
         :param column_info: See :class:`.Table` constructor.
+        :param header: If `True`, the first row of the CSV is assumed to contains
+            headers and will be skipped.
         """
         with open(path) as f:
             rows = list(csv.reader(f, **kwargs))
@@ -139,11 +142,12 @@ class Table(object):
 
     def to_csv(self, path, **kwargs):
         """
-        Write table to a CSV. Will use csvkit if it is available, otherwise
-        will use Python's builtin csv module. ``args`` and ``kwargs``
-        will be passed through to :meth:`csv.writer`.
+        Write this table to a CSV. This method will use csvkit if it is
+        available, otherwise it will use Python's builtin csv module.
 
-        Note: if using Python 2 and not using csvkit, this method is not
+        ``kwargs`` will be passed through to :meth:`csv.writer`.
+
+        If you are using Python 2 and not using csvkit, this method is not
         unicode-safe.
 
         :param path: Path to the CSV file to read from.

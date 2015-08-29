@@ -1,6 +1,8 @@
 0.6.0
 -----
 
+* TableSet.to_csv implemented. (#195)
+* TableSet.from_csv implemented. (#194)
 * Table.to_csv implemented (#169)
 * Table.from_csv implemented. (#168)
 * Added Table.format method for pretty-printing tables. (#191)

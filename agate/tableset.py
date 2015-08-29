@@ -7,6 +7,8 @@ related tables such as are created when using :meth:`.Table.group_by`.
 
 from collections import Mapping
 from copy import copy
+from glob import glob
+import os
 
 try:
     from collections import OrderedDict
@@ -85,6 +87,60 @@ class TableSet(Mapping):
 
     def __len__(self):
         return self._tables.__len__()
+
+    @classmethod
+    def from_csv(cls, dir_path, column_info, header=True, **kwargs):
+        """
+        Create a new :class:`TableSet` from a directory of CSVs. This method
+        will use csvkit if it is available, otherwise it will use Python's
+        builtin csv module.
+
+        ``kwargs`` will be passed through to :meth:`csv.reader`.
+
+        If you are using Python 2 and not using csvkit, this method is not
+        unicode-safe.
+
+        :param dir_path: Path to a directory full of CSV files. All CSV files
+            in this directory will be loaded.
+        :param column_info: See :class:`.Table` constructor.
+        :param header: If `True`, the first row of the CSV is assumed to contains
+            headers and will be skipped.
+        """
+        from agate.table import Table
+
+        if not os.path.isdir(dir_path):
+            raise IOError('Specified path doesn\'t exist or isn\'t a directory.')
+
+        tables = OrderedDict()
+
+        for path in glob(os.path.join(dir_path, '*.csv')):
+            name = os.path.split(path)[1].strip('.csv')
+            table = Table.from_csv(path, column_info, header=header, **kwargs)
+
+            tables[name] = table
+
+        return TableSet(tables)
+
+    def to_csv(self, dir_path, **kwargs):
+        """
+        Write this each table in this set to a separate CSV in a given
+        directory. This method will use csvkit if it is available, otherwise
+        it will use Python's builtin csv module.
+
+        ``kwargs`` will be passed through to :meth:`csv.writer`.
+
+        If you are using Python 2 and not using csvkit, this method is not
+        unicode-safe.
+
+        :param dir_path: Path to the directory to write the CSV files to.
+        """
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
+        for name, table in self._tables.items():
+            path = os.path.join(dir_path, '%s.csv' % name)
+
+            table.to_csv(path, **kwargs)
 
     def get_column_types(self):
         """
