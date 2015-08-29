@@ -341,16 +341,20 @@ This takes our original :class:`.Table` and groups it into a :class:`.TableSet`,
 
     sorted_totals = totals.order_by('count', reverse=True)
 
-    for row in sorted_totals.rows[:5]:
-        print('%(group)s: %(count)i' % row)
+    print(sorted_totals.format(max_rows=5))
 
 ::
 
-    TX: 212
-    NY: 202
-    CA: 154
-    IL: 153
-    MI: 60
+    |--------+--------|
+    |  group | count  |
+    |--------+--------|
+    |  TX    | 212    |
+    |  NY    | 202    |
+    |  CA    | 154    |
+    |  IL    | 153    |
+    |  MI    | 60     |
+    |  ...   | ...    |
+    |--------+--------|
 
 Unsurpringly, the results appear roughly proportional to population.
 
@@ -374,18 +378,22 @@ This is a much more complicated question that's going to pull together a lot of 
 
     sorted_medians = medians.order_by('median_years_in_prison', reverse=True)
 
-    for row in sorted_medians.rows[:5]:
-        print('%(group)s: %(median_years_in_prison)i' % row)
+    print(sorted_medians.format(max_rows=5))
 
 ::
 
-    DC: 27
-    NE: 20
-    ID: 19
-    VT: 18
-    LA: 16
+    |--------+-------+-------------------------|
+    |  group | count | median_years_in_prison  |
+    |--------+-------+-------------------------|
+    |  DC    | 15    | 27                      |
+    |  NE    | 9     | 20                      |
+    |  ID    | 2     | 19                      |
+    |  VT    | 1     | 18                      |
+    |  LA    | 45    | 16                      |
+    |  ...   | ...   | ...                     |
+    |--------+-------+-------------------------|
 
-DC? Nebraska? Idaho? What accounts for these states having the longest times in prison before exoneration? I have no idea and the data won't tell us. At this point you probably need to make some phone calls.
+DC? Nebraska? What accounts for these states having the longest times in prison before exoneration? I have no idea. Given that the group sizes are small, it would probably be wise to look for outliers.
 
 As with :meth:`.Table.aggregate` and :meth:`.Table.compute`, the :meth:`.TableSet.aggregate`: method takes a list of aggregations to perform. You can aggregate as many columns as you like in a single step and they will all appear in the output table.
 

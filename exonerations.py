@@ -40,8 +40,6 @@ def load_data(data):
         # Create the table
         data['exonerations'] = agate.Table(reader, columns)
 
-    print(data['exonerations'].format(3, 3))
-
 def confessions(data):
     num_false_confessions = data['exonerations'].columns['false_confession'].aggregate(agate.Count(True))
 
@@ -74,8 +72,7 @@ def states(data):
 
     sorted_medians = medians.order_by('median_years_in_prison', reverse=True)
 
-    for row in sorted_medians.rows[:5]:
-        print('%(group)s: %(median_years_in_prison)i' % row)
+    print(sorted_medians.format(max_rows=5))
 
 
 analysis = agate.Analysis(load_data)
@@ -86,4 +83,4 @@ analysis.then(youth)
 years_analysis = analysis.then(years_in_prison)
 years_analysis.then(states)
 
-analysis.run(refresh=True)
+analysis.run()
