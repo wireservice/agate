@@ -45,6 +45,9 @@ class TestAnalysis(unittest.TestCase):
 
         self.data_after_stage2 = deepcopy(data)
 
+    def stage_noop(self, data):
+        pass
+
     def test_data_flow(self):
         analysis = Analysis(self.stage1, cache_path=TEST_CACHE)
         analysis.then(self.stage2)
@@ -143,4 +146,39 @@ class TestAnalysis(unittest.TestCase):
         analysis.run()
 
         self.assertEqual(self.executed_stage1, 2)
+        self.assertEqual(self.executed_stage2, 2)
+
+    def test_cache_reused(self):
+        analysis = Analysis(self.stage1, cache_path=TEST_CACHE)
+        analysis.then(self.stage2)
+
+        analysis.run()
+
+        self.assertEqual(self.executed_stage1, 1)
+        self.assertEqual(self.executed_stage2, 1)
+
+        analysis2 = Analysis(self.stage1, cache_path=TEST_CACHE)
+        analysis2.then(self.stage2)
+
+        analysis2.run()
+
+        self.assertEqual(self.executed_stage1, 1)
+        self.assertEqual(self.executed_stage2, 1)
+
+    def test_ancestor_changed(self):
+        analysis = Analysis(self.stage1, cache_path=TEST_CACHE)
+        noop = analysis.then(self.stage_noop)
+        noop.then(self.stage2)
+
+        analysis.run()
+
+        self.assertEqual(self.executed_stage1, 1)
+        self.assertEqual(self.executed_stage2, 1)
+
+        analysis2 = Analysis(self.stage1, cache_path=TEST_CACHE)
+        analysis2.then(self.stage2)
+
+        analysis2.run()
+
+        self.assertEqual(self.executed_stage1, 1)
         self.assertEqual(self.executed_stage2, 2)

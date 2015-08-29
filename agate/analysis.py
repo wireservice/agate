@@ -22,19 +22,34 @@ class Analysis(object):
 
     :param func: The analysis function. Must accept a `data` argument that
         is the state inherited from ancestors analysis.
+    :param parent: The parent analysis of this one, if any.
     :param cache_path: Where to stored the cache files for this analysis.
     """
-    def __init__(self, func, cache_path='.agate'):
+    def __init__(self, func, parent=None, cache_path='.agate'):
         self._name = func.__name__
         self._func = func
+        self._parent = parent
         self._cache_path = cache_path
         self._next_analyses = []
+
+    def _trace(self):
+        """
+        Returns the sequence of Analysis instances that lead to this one.
+        """
+        if self._parent:
+            return self._parent._trace() + [self._name]
+
+        return [self._name]
 
     def _fingerprint(self):
         """
         Generate a fingerprint for this analysis function.
         """
         hasher = hashlib.md5()
+
+        trace = self._trace()
+        hasher.update('\n'.join(trace))
+
         source = inspect.getsource(self._func)
         hasher.update(source.encode('utf-8'))
 
@@ -99,7 +114,7 @@ class Analysis(object):
         :param func: The analysis function. Must accept a `data` argument that
             is the state inherited from ancestors analysis.
         """
-        analysis = Analysis(next_func, cache_path=self._cache_path)
+        analysis = Analysis(next_func, parent=self, cache_path=self._cache_path)
 
         self._next_analyses.append(analysis)
 
