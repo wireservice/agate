@@ -5,6 +5,8 @@ try:
 except ImportError: #pragma: no cover
     from decimal import Decimal
 
+import os
+
 try:
     import unittest2 as unittest
 except ImportError:
@@ -50,6 +52,35 @@ class TestTable(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             Table(self.rows, columns)
+
+    def test_from_csv(self):
+        table1 = Table(self.rows, self.columns)
+        table2 = Table.from_csv('examples/test.csv', self.columns)
+
+        self.assertSequenceEqual(table1.get_column_names(), table2.get_column_names())
+        self.assertSequenceEqual(table1.get_column_types(), table2.get_column_types())
+
+        self.assertEqual(len(table1.columns), len(table2.columns))
+        self.assertEqual(len(table1.rows), len(table2.rows))
+
+        self.assertSequenceEqual(table1.rows[0], table2.rows[0])
+        self.assertSequenceEqual(table1.rows[1], table2.rows[1])
+        self.assertSequenceEqual(table1.rows[2], table2.rows[2])
+
+    def test_to_csv(self):
+        table = Table(self.rows, self.columns)
+
+        table.to_csv('.test.csv')
+
+        with open('.test.csv') as f:
+            contents1 = f.read()
+
+        with open('examples/test.csv') as f:
+            contents2 = f.read()
+
+        self.assertEqual(contents1, contents2)
+
+        os.remove('.test.csv')
 
     def test_get_column_types(self):
         table = Table(self.rows, self.columns)

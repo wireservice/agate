@@ -99,25 +99,15 @@ You'll notice here that we define the names and types as pairs (tuples), which i
 Loading data from a CSV
 =======================
 
-Now let's read the data in the CSV file and use it to create the table.
+The :class:`.Table` is the basic class in agate. A time-saving method is included to load table data from CSV:
 
 .. code-block:: python
 
-    with open('exonerations-20150828.csv') as f:
-        # Create a CSV reader
-        reader = csv.reader(f)
-
-        # Skip header
-        next(reader)
-
-        # Create the table
-        exonerations = agate.Table(reader, COLUMNS)
-
-:class:`.Table` will accept any array (iterable) of rows (iterables) as its first argument. In this case we're using a CSV reader.
+    exonerations = agate.Table.from_csv('exonerations-20150828.csv', COLUMNS)
 
 .. note::
 
-    The data is copied when the table is constructed so it safe to close the file handle immediately.
+    If you have data that you've generated in another way you can always pass it in the :class:`.Table` constructor directly.
 
 Aggregating column data
 =======================

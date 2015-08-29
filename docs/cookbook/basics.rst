@@ -2,12 +2,16 @@
 The basics
 ==========
 
+You can always use Python's builtin :mod:`csv` to read and write CSV files, but agate also includes shortcuts to save time.
+
+.. note::
+
+    If you have `csvkit <http://csvkit.rtfd.org/>`_ installed, agate will use it instead of Python's builtin :mod:`csv`. The builting module is not unicode-safe for Python 2, so it is strongly suggested that you do install csvkit.
+
 Loading a table from a CSV
 ==========================
 
-You can use Python's builtin :mod:`csv` to read CSV files.
-
-If your file does not have headers:
+Assuming your file has a single row of headers:
 
 .. code-block:: python
 
@@ -22,58 +26,17 @@ If your file does not have headers:
         ('population', number_type)
     )
 
-    with open('population.csv') as f:
-        rows = list(csv.reader(f)
+    table = Table.from_csv('population.csv', columns)
 
-    table = Table(rows, columns)
-
-If your file does have headers (and you want to use them):
+If your file does not have headers:
 
 .. code-block:: python
 
-    with open('population.csv') as f:
-        rows = list(csv.reader(f))
-
-    column_names = rows.pop(0)
-    column_types = (text_type, number_type, number_type)
-
-    table = Table(rows, zip(column_names, column_types))
-
-Loading a table from a CSV w/ csvkit
-====================================
-
-Of course, cool kids use `csvkit <http://csvkit.rtfd.org/>`_. (Hint: it supports unicode!)
-
-.. code-block:: python
-
-    import csvkit
-
-    with open('population.csv') as f:
-        rows = list(csvkit.reader(f))
-
-    column_names = rows.pop(0)
-    column_types = (text_type, number_type, number_type)
-
-    table = Table(rows, zip(column_names, column_types))
+    table = Table.from_csv('population.csv', columns, header=False)
 
 Writing a table to a CSV
 ========================
 
 .. code-block:: python
 
-    with open('output.csv') as f:
-        writer = csv.writer(f)
-
-        writer.writerow(table.get_column_names())
-        writer.writerows(table.rows)
-
-Writing a table to a CSV w/ csvkit
-==================================
-
-.. code-block:: python
-
-    with open('output.csv') as f:
-        writer = csvkit.writer(f)
-
-        writer.writerow(table.get_column_names())
-        writer.writerows(table.rows)
+    table.to_csv('output.csv')

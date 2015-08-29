@@ -13,6 +13,11 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
+try:
+    import csvkit as csv
+except ImportError:
+    import csv
+
 import six
 
 from agate.aggregators import Sum, Mean, Median, StDev, MAD
@@ -106,6 +111,53 @@ class Table(object):
             column_info = zip(self._column_names, self._column_types)
 
         return Table(rows, column_info)
+
+    @classmethod
+    def from_csv(cls, path, column_info, header=True, **kwargs):
+        """
+        Create a new table for a CSV. Will use csvkit if it is available,
+        otherwise will use Python's builtin csv module. ``args`` and ``kwargs``
+        will be passed through to :meth:`csv.reader`.
+
+        Note: if using Python 2 and not using csvkit, this method is not
+        unicode-safe.
+
+        :param path: Path to the CSV file to read from.
+        :param column_info: See :class:`.Table` constructor.
+        """
+        with open(path) as f:
+            rows = list(csv.reader(f, **kwargs))
+
+        if header:
+            column_names = rows.pop(0)
+
+        if len(column_names) != len(column_info):
+            # TKTK Better Error
+            raise ValueError
+
+        return Table(rows, column_info)
+
+    def to_csv(self, path, **kwargs):
+        """
+        Write table to a CSV. Will use csvkit if it is available, otherwise
+        will use Python's builtin csv module. ``args`` and ``kwargs``
+        will be passed through to :meth:`csv.writer`.
+
+        Note: if using Python 2 and not using csvkit, this method is not
+        unicode-safe.
+
+        :param path: Path to the CSV file to read from.
+        """
+        if 'lineterminator' not in kwargs:
+            kwargs['lineterminator'] = '\n'
+
+        with open(path, 'w') as f:
+            writer = csv.writer(f, **kwargs)
+
+            writer.writerow(self._column_names)
+
+            for row in self._data:
+                writer.writerow(row)
 
     def get_column_types(self):
         """
