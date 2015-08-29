@@ -49,7 +49,7 @@ class TestAnalysis(unittest.TestCase):
         pass
 
     def test_data_flow(self):
-        analysis = Analysis(self.stage1, cache_path=TEST_CACHE)
+        analysis = Analysis(self.stage1, cache_dir=TEST_CACHE)
         analysis.then(self.stage2)
 
         data = {}
@@ -63,7 +63,7 @@ class TestAnalysis(unittest.TestCase):
         self.assertEqual(self.data_after_stage2, { 'stage1': 5, 'stage2': 25 })
 
     def test_caching(self):
-        analysis = Analysis(self.stage1, cache_path=TEST_CACHE)
+        analysis = Analysis(self.stage1, cache_dir=TEST_CACHE)
         analysis.then(self.stage2)
 
         analysis.run()
@@ -77,16 +77,15 @@ class TestAnalysis(unittest.TestCase):
         self.assertEqual(self.executed_stage2, 1)
 
     def test_descendent_fingerprint_deleted(self):
-        analysis = Analysis(self.stage1, cache_path=TEST_CACHE)
-        analysis.then(self.stage2)
+        analysis = Analysis(self.stage1, cache_dir=TEST_CACHE)
+        stage2_analysis = analysis.then(self.stage2)
 
         analysis.run()
 
         self.assertEqual(self.executed_stage1, 1)
         self.assertEqual(self.executed_stage2, 1)
 
-        path = os.path.join(TEST_CACHE, 'stage2.fingerprint')
-        os.remove(path)
+        os.remove(stage2_analysis._cache_path())
 
         analysis.run()
 
@@ -94,7 +93,7 @@ class TestAnalysis(unittest.TestCase):
         self.assertEqual(self.executed_stage2, 2)
 
     def test_ancestor_fingerprint_deleted(self):
-        analysis = Analysis(self.stage1, cache_path=TEST_CACHE)
+        analysis = Analysis(self.stage1, cache_dir=TEST_CACHE)
         analysis.then(self.stage2)
 
         analysis.run()
@@ -102,46 +101,7 @@ class TestAnalysis(unittest.TestCase):
         self.assertEqual(self.executed_stage1, 1)
         self.assertEqual(self.executed_stage2, 1)
 
-        path = os.path.join(TEST_CACHE, 'stage1.fingerprint')
-        os.remove(path)
-
-        analysis.run()
-
-        self.assertEqual(self.executed_stage1, 2)
-        self.assertEqual(self.executed_stage2, 2)
-
-    def test_descendent_fingerprint_mismatch(self):
-        analysis = Analysis(self.stage1, cache_path=TEST_CACHE)
-        analysis.then(self.stage2)
-
-        analysis.run()
-
-        self.assertEqual(self.executed_stage1, 1)
-        self.assertEqual(self.executed_stage2, 1)
-
-        path = os.path.join(TEST_CACHE, 'stage2.fingerprint')
-
-        with open(path, 'w') as f:
-            f.write('foo')
-
-        analysis.run()
-
-        self.assertEqual(self.executed_stage1, 1)
-        self.assertEqual(self.executed_stage2, 2)
-
-    def test_ancestor_fingerprint_mismatch(self):
-        analysis = Analysis(self.stage1, cache_path=TEST_CACHE)
-        analysis.then(self.stage2)
-
-        analysis.run()
-
-        self.assertEqual(self.executed_stage1, 1)
-        self.assertEqual(self.executed_stage2, 1)
-
-        path = os.path.join(TEST_CACHE, 'stage1.fingerprint')
-
-        with open(path, 'w') as f:
-            f.write('foo')
+        os.remove(analysis._cache_path())
 
         analysis.run()
 
@@ -149,7 +109,7 @@ class TestAnalysis(unittest.TestCase):
         self.assertEqual(self.executed_stage2, 2)
 
     def test_cache_reused(self):
-        analysis = Analysis(self.stage1, cache_path=TEST_CACHE)
+        analysis = Analysis(self.stage1, cache_dir=TEST_CACHE)
         analysis.then(self.stage2)
 
         analysis.run()
@@ -157,7 +117,7 @@ class TestAnalysis(unittest.TestCase):
         self.assertEqual(self.executed_stage1, 1)
         self.assertEqual(self.executed_stage2, 1)
 
-        analysis2 = Analysis(self.stage1, cache_path=TEST_CACHE)
+        analysis2 = Analysis(self.stage1, cache_dir=TEST_CACHE)
         analysis2.then(self.stage2)
 
         analysis2.run()
@@ -166,7 +126,7 @@ class TestAnalysis(unittest.TestCase):
         self.assertEqual(self.executed_stage2, 1)
 
     def test_ancestor_changed(self):
-        analysis = Analysis(self.stage1, cache_path=TEST_CACHE)
+        analysis = Analysis(self.stage1, cache_dir=TEST_CACHE)
         noop = analysis.then(self.stage_noop)
         noop.then(self.stage2)
 
@@ -175,7 +135,7 @@ class TestAnalysis(unittest.TestCase):
         self.assertEqual(self.executed_stage1, 1)
         self.assertEqual(self.executed_stage2, 1)
 
-        analysis2 = Analysis(self.stage1, cache_path=TEST_CACHE)
+        analysis2 = Analysis(self.stage1, cache_dir=TEST_CACHE)
         analysis2.then(self.stage2)
 
         analysis2.run()

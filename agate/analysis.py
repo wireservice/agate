@@ -11,6 +11,8 @@ try:
 except ImportError: # pragma: no cover
     import pickle
 
+from agate.utils import memoize
+
 class Analysis(object):
     """
     An Analysis is a function whose code configuration and output can be
@@ -23,15 +25,16 @@ class Analysis(object):
     :param func: A callable that implements the analysis. Must accept a `data`
         argument that is the state inherited from its ancestors analysis.
     :param parent: The parent analysis of this one, if any.
-    :param cache_path: Where to stored the cache files for this analysis.
+    :param cache_dir: Where to stored the cache files for this analysis.
     """
-    def __init__(self, func, parent=None, cache_path='.agate'):
+    def __init__(self, func, parent=None, cache_dir='.agate'):
         self._name = func.__name__
         self._func = func
         self._parent = parent
-        self._cache_path = cache_path
+        self._cache_dir = cache_dir
         self._next_analyses = []
 
+    @memoize
     def _trace(self):
         """
         Returns the sequence of Analysis instances that lead to this one.
@@ -41,6 +44,7 @@ class Analysis(object):
 
         return [self._name]
 
+    @memoize
     def _fingerprint(self):
         """
         Generate a fingerprint for this analysis function.
@@ -48,59 +52,42 @@ class Analysis(object):
         hasher = hashlib.md5()
 
         trace = self._trace()
-        hasher.update('\n'.join(trace))
+        hasher.update('\n'.join(trace).encode('utf-8'))
 
         source = inspect.getsource(self._func)
         hasher.update(source.encode('utf-8'))
 
         return hasher.hexdigest()
 
-    def _save_fingerprint(self):
+    @memoize
+    def _cache_path(self):
         """
-        Save the fingerprint of this analysis function to its cache.
+        Get the full cache path for the current fingerprint.
         """
-        path = os.path.join(self._cache_path, '%s.fingerprint' % self._name)
+        return os.path.join(self._cache_dir, '%s.cache' % self._fingerprint())
 
-        if not os.path.exists(self._cache_path):
-            os.makedirs(self._cache_path)
-
-        with open(path, 'w') as f:
-            f.write(self._fingerprint())
-
-    def _load_fingerprint(self):
+    def _check_cache(self):
         """
-        Load the fingerprint of this analysis function from its cache.
+        Check if there exists a cache file for the current fingerprint.
         """
-        path = os.path.join(self._cache_path, '%s.fingerprint' % self._name)
+        return os.path.exists(self._cache_path())
 
-        if not os.path.exists(path):
-            return None
-
-        with open(path) as f:
-            fingerprint = f.read()
-
-        return fingerprint
-
-    def _save_data(self, data):
+    def _save_cache(self, data):
         """
         Save the output data for this analysis from its cache.
         """
-        path = os.path.join(self._cache_path, '%s.data' % self._name)
+        if not os.path.exists(self._cache_dir):
+            os.makedirs(self._cache_dir)
 
-        f = bz2.BZ2File(path, 'w')
+        f = bz2.BZ2File(self._cache_path(), 'w')
         f.write(pickle.dumps(data))
         f.close()
 
-    def _load_data(self):
+    def _load_cache(self):
         """
         Load the output data for this analysis from its cache.
         """
-        path = os.path.join(self._cache_path, '%s.data' % self._name)
-
-        if not os.path.exists(path):
-            raise IOError('Data cache missing at %s' % path)
-
-        f = bz2.BZ2File(path)
+        f = bz2.BZ2File(self._cache_path())
         data = pickle.loads(f.read())
         f.close()
 
@@ -115,7 +102,7 @@ class Analysis(object):
             `data` argument that is the state inherited from its ancestors
             analysis.
         """
-        analysis = Analysis(next_func, parent=self, cache_path=self._cache_path)
+        analysis = Analysis(next_func, parent=self, cache_dir=self._cache_dir)
 
         self._next_analyses.append(analysis)
 
@@ -144,23 +131,23 @@ class Analysis(object):
             local_data = deepcopy(data)
 
             self._func(local_data)
-            self._save_fingerprint()
-            self._save_data(local_data)
+            self._save_cache(local_data)
         else:
-            if self._fingerprint() != self._load_fingerprint():
+            fingerprint = self._fingerprint()
+
+            if self._check_cache():
+                print('Loaded from cache: %s' % self._name)
+
+                local_data = self._load_cache()
+            else:
                 print('Running: %s' % self._name)
 
                 local_data = deepcopy(data)
 
                 self._func(local_data)
-                self._save_fingerprint()
-                self._save_data(local_data)
+                self._save_cache(local_data)
 
                 refresh = True
-            else:
-                print('Loaded from cache: %s' % self._name)
-
-                local_data = self._load_data()
 
         for analysis in self._next_analyses:
             analysis.run(local_data, refresh)
