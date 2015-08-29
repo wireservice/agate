@@ -20,8 +20,8 @@ class Analysis(object):
     Implements a promise-like API so that Analyses can depend on one another.
     If a parent analysis is invalidated then all it's children will be as well.
 
-    :param func: The analysis function. Must accept a `data` argument that
-        is the state inherited from ancestors analysis.
+    :param func: A callable that implements the analysis. Must accept a `data`
+        argument that is the state inherited from its ancestors analysis.
     :param parent: The parent analysis of this one, if any.
     :param cache_path: Where to stored the cache files for this analysis.
     """
@@ -111,8 +111,9 @@ class Analysis(object):
         Create a new analysis which will run after this one has completed with
         access to the data it generated.
 
-        :param func: The analysis function. Must accept a `data` argument that
-            is the state inherited from ancestors analysis.
+        :param func: A callable that implements the analysis. Must accept a
+            `data` argument that is the state inherited from its ancestors
+            analysis.
         """
         analysis = Analysis(next_func, parent=self, cache_path=self._cache_path)
 
