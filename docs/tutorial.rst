@@ -291,27 +291,34 @@ We can then use :meth:`.Table.limit` get only the first ten rows of the data.
 
     youngest_ten = sorted_by_age.limit(10)
 
-Now let's print some information about the resulting rows:
+Now let's use :meth:`.Table.format` to help us pretty the results in a way we can easily review:
 
 .. code-block:: python
 
-    for row in youngest_ten.rows:
-        print('%(first_name)s %(last_name)s (%(age)i) %(crime)s' % row)
+    print(youngest_ten.format(max_columns=7))
 
 ::
 
-    Lacresha Murray (11) Murder
-    Johnathan Adams (12) Murder
-    Anthony Harris (12) Murder
-    Tyler Edmonds (13) Murder
-    Zachary Handley (13) Arson
-    Thaddeus Jimenez (13) Murder
-    Jerry Pacek (13) Murder
-    Jonathan Barr (14) Murder
-    Dominique Brim (14) Assault
-    Timothy Brown (14) Murder
+    |------------+------------+-----+-----------+-------+---------+---------+------|
+    |  last_name | first_name | age | race      | state | tags    | crime   | ...  |
+    |------------+------------+-----+-----------+-------+---------+---------+------|
+    |  Murray    | Lacresha   | 11  | Black     | TX    | CV, F   | Murder  | ...  |
+    |  Adams     | Johnathan  | 12  | Caucasian | GA    | CV, P   | Murder  | ...  |
+    |  Harris    | Anthony    | 12  | Black     | OH    | CV      | Murder  | ...  |
+    |  Edmonds   | Tyler      | 13  | Caucasian | MS    |         | Murder  | ...  |
+    |  Handley   | Zachary    | 13  | Caucasian | PA    | A, CV   | Arson   | ...  |
+    |  Jimenez   | Thaddeus   | 13  | Hispanic  | IL    |         | Murder  | ...  |
+    |  Pacek     | Jerry      | 13  | Caucasian | PA    |         | Murder  | ...  |
+    |  Barr      | Jonathan   | 14  | Black     | IL    | CDC, CV | Murder  | ...  |
+    |  Brim      | Dominique  | 14  | Black     | MI    | F       | Assault | ...  |
+    |  Brown     | Timothy    | 14  | Black     | FL    |         | Murder  | ...  |
+    |------------+------------+-----+-----------+-------+---------+---------+------|
 
 If you find it impossible to believe that an eleven year-old was convicted of murder, I encourage you to read the Registry's `description of the case <http://www.law.umich.edu/special/exoneration/Pages/casedetail.aspx?caseid=3499>`_.
+
+.. note::
+
+    In the previous example we could have omitted the :meth:`.Table.limit` and passed a ``max_rows=10`` to :meth:`.Table.format` instead.
 
 Grouping and aggregating
 ========================

@@ -1,6 +1,7 @@
 0.6.0
 -----
 
+* Added Table.format method for pretty-printing tables. (#191)
 * Analysis class now implements a caching workflow. (#171)
 
 0.5.0

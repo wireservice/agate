@@ -6,6 +6,7 @@ structure in :code:`agate`.
 """
 
 from copy import copy
+from itertools import chain
 
 try:
     from collections import OrderedDict
@@ -71,7 +72,7 @@ class Table(object):
 
     def _get_column(self, i):
         """
-        Get a Column of data, caching a copy for next request.
+        Get a :class:`.Column` of data, caching a copy for next request.
         """
         if i not in self._cached_columns:
             column_type = self._column_types[i]
@@ -82,7 +83,7 @@ class Table(object):
 
     def _get_row(self, i):
         """
-        Get a Row of data, caching a copy for the next request.
+        Get a :class:`.Row` of data, caching a copy for the next request.
         """
         if i not in self._cached_rows:
             # If rows are from a fork, they are safe to access directly
@@ -512,3 +513,98 @@ class Table(object):
             new_rows.append(tuple(row) + new_columns)
 
         return self._fork(new_rows, zip(column_names, column_types))
+
+    def format(self, max_rows=None, max_columns=None):
+        """
+        Formats a text preview of this table.
+
+        :param max_rows: The maximum number of rows to display before
+            truncating the data.
+        :param max_columns: The maximum number of columns to display before
+            truncating the data.
+
+        :returns: A unicode representation of this table suitable for printing
+            to the console.
+        """
+        if max_rows is None:
+            max_rows = len(self._data)
+
+        if max_columns is None:
+            max_columns = len(self._column_names)
+
+        widths = []
+        rows_truncated = False
+        columns_truncated = False
+
+        for i, row in enumerate(chain([self._column_names], self._data)):
+            if i >= max_rows + 1:
+                rows_truncated = True
+
+                break
+
+            for j, v in enumerate(row):
+                if j >= max_columns:
+                    columns_truncated = True
+
+                    try:
+                        widths[j] = 3
+                    except IndexError:
+                        widths.append(3)
+
+                    break
+
+                v = six.text_type(v)
+
+                try:
+                    if len(v) > widths[j]:
+                        widths[j] = len(v)
+                except IndexError:
+                    widths.append(len(v))
+
+        def _format_row(row):
+            """
+            Helper function that formats individual rows.
+            """
+            row_output = []
+
+            for j, d in enumerate(row):
+                if j >= max_columns:
+                    break
+
+                if d is None:
+                    d = ''
+                row_output.append(' %s ' % six.text_type(d).ljust(widths[j]))
+
+            if columns_truncated:
+                row_output.append(' %s ' % six.text_type('...').ljust(widths[j]))
+
+            return '| %s |' % ('|'.join(row_output))
+
+        # Dashes span each width with '+' character at intersection of
+        # horizontal and vertical dividers.
+        divider = '|--' + '-+-'.join('-' * w for w in widths) + '--|'
+
+        output = []
+
+        # Initial divider
+        output.append('%s' % divider)
+
+        # Rows
+        for i, row in enumerate(chain([self._column_names], self._data)):
+            if i >= max_rows + 1:
+                break
+
+            output.append(_format_row(row))
+
+            # Divider under headers
+            if (i == 0):
+                output.append('%s' % divider)
+
+        # Row indicating data was truncated
+        if rows_truncated:
+            output.append(_format_row(['...' for n in self._column_names]))
+
+        # Final divider
+        output.append('%s' % divider)
+
+        return '\n'.join(output)

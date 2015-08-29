@@ -40,6 +40,8 @@ def load_data(data):
         # Create the table
         data['exonerations'] = agate.Table(reader, columns)
 
+    print(data['exonerations'].format(3, 3))
+
 def confessions(data):
     num_false_confessions = data['exonerations'].columns['false_confession'].aggregate(agate.Count(True))
 
@@ -61,8 +63,7 @@ def youth(data):
     sorted_by_age = data['exonerations'].order_by('age')
     youngest_ten = sorted_by_age.limit(10)
 
-    for row in youngest_ten.rows:
-        print('%(first_name)s %(last_name)s (%(age)i) %(crime)s' % row)
+    print(youngest_ten.format(max_columns=7))
 
 def states(data):
     state_totals = data['with_years_in_prison'].group_by('state')
@@ -85,4 +86,4 @@ analysis.then(youth)
 years_analysis = analysis.then(years_in_prison)
 years_analysis.then(states)
 
-analysis.run()
+analysis.run(refresh=True)

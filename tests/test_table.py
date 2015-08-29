@@ -354,6 +354,33 @@ class TestTable(unittest.TestCase):
         self.assertEqual(new_table._column_names, ('one', 'two'))
         self.assertSequenceEqual(new_table.columns['one'], (2,))
 
+    def test_format(self):
+        table = Table(self.rows, self.columns)
+
+        output = table.format()
+        lines = output.split('\n')
+
+        self.assertEqual(len(lines), 7)
+        self.assertEqual(len(lines[0]), 24)
+
+    def test_format_max_rows(self):
+        table = Table(self.rows, self.columns)
+
+        output = table.format(max_rows=2)
+        lines = output.split('\n')
+
+        self.assertEqual(len(lines), 7)
+        self.assertEqual(len(lines[0]), 23)
+
+    def test_format_max_columns(self):
+        table = Table(self.rows, self.columns)
+
+        output = table.format(max_columns=2)
+        lines = output.split('\n')
+
+        self.assertEqual(len(lines), 7)
+        self.assertEqual(len(lines[0]), 22)
+
 class TestTableGrouping(unittest.TestCase):
     def setUp(self):
         self.rows = (
