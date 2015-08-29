@@ -59,9 +59,9 @@ def years_in_prison(data):
 
 def youth(data):
     sorted_by_age = data['exonerations'].order_by('age')
-    youngest_ten = sorted_by_age.rows[:10]
+    youngest_ten = sorted_by_age.limit(10)
 
-    for row in youngest_ten:
+    for row in youngest_ten.rows:
         print('%(first_name)s %(last_name)s (%(age)i) %(crime)s' % row)
 
 def states(data):

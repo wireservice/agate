@@ -285,19 +285,17 @@ Remembering that methods of tables return tables, we will use :meth:`.Table.orde
 
     sorted_by_age = exonerations.order_by('age')
 
-We can then use Python's slice syntax to get a subset of the rows in the table.
+We can then use :meth:`.Table.limit` get only the first ten rows of the data.
 
 .. code-block:: python
 
-    youngest_ten = sorted_by_age.rows[:10]
-
-The variable ``youngest_ten`` now contains a list of :class:`.Row` objects. It is important to note that slicing :attr:`.Table.rows` does not return a new table. If you want get a subset of rows as a table use :meth:`.Table.where` or construct a new ``Table`` from the resulting list of rows.
+    youngest_ten = sorted_by_age.limit(10)
 
 Now let's print some information about the resulting rows:
 
 .. code-block:: python
 
-    for row in youngest_ten:
+    for row in youngest_ten.rows:
         print('%(first_name)s %(last_name)s (%(age)i) %(crime)s' % row)
 
 ::
