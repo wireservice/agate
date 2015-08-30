@@ -17,6 +17,14 @@ describing the source of the analysis function at the time it was invoked. If
 you run the same analysis twice without modifying the code, the cached version
 out of the ``data`` will be used for its dependents. Thus you experiment with
 a dependent analysis without constantly recomputing the results of its parent.
+
+.. warning::
+
+    The fingerprint which is generated for each analysis function is **not**
+    recursive, which is to say, it does not include the source of functions
+    which are invoked by that function. If you modify the source of a function
+    invoked by the analysis function, you will need to ensure that the analysis
+    is manually refreshed by passing ``refresh=True`` to :meth:`Analysis.run`.
 """
 
 import bz2
