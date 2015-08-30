@@ -1,5 +1,24 @@
 #!/usr/bin/env python
 
+"""
+This module contains the :class:`Analysis` class, which is used for creating
+optimized, repeatable data processing workflows. An analysis can be created
+from a function or any other callable object. Dependent analyses can then be
+created using the :meth:`Analysis.then` method. Each function must accept a
+``data`` argument, which is a :class:`dict` of data to be persisted between
+analyses. Modifications made to ``data`` in the scope of one analysis will be
+propogated to all dependent analyses.
+
+When :meth:`Analysis.run` is invoked, the analysis function runs, followed by
+each of dependent analysis created with :meth:`Analysis.then`. These in turn
+invoke their own dependent analyses, allowing a hierarchy to be created. The
+result of each analysis will be cached to disk along with a "fingerprint"
+describing the source of the analysis function at the time it was invoked. If
+you run the same analysis twice without modifying the code, the cached version
+out of the ``data`` will be used for its dependents. Thus you experiment with
+a dependent analysis without constantly recomputing the results of its parent.
+"""
+
 import bz2
 from copy import deepcopy
 import hashlib

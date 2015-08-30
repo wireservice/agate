@@ -2,6 +2,9 @@
 agate.columns
 ==================
 
+.. automodule:: agate.columns
+    :members:
+
 .. automodule:: agate.columns.base
     :members:
     :undoc-members:

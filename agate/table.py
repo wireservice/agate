@@ -2,7 +2,20 @@
 
 """
 This module contains the :class:`Table` object, which is the central data
-structure in :code:`agate`.
+structure in :code:`agate`. Tables are created by supplying row data, column
+names and subclasses of :class:`.ColumnType` to the constructor. Once
+instantiated tables are **immutable**. This concept is central to agate. The
+table of the data may not be accessed or modified directly.
+
+Various methods on the :class:`Table` simulate "SQL-like" operations. For
+example, the :meth:`Table.select` method reduces the table to only the
+specified columns. The :meth:`Table.where` method reduces the table to only
+those rows that pass a truth test. And the :meth:`Table.order_by` method sorts
+the rows in the table. In all of these cases the output is new :class:`Table`
+and the existing table remains unmodified.
+
+Tables are not themselves iterable, but the columns of the table can be
+accessed via :attr:`Table.columns` and the rows via :attr:`Table.rows`.
 """
 
 from copy import copy

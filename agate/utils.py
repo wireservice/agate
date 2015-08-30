@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+This module contains common utilities used in agate.
+"""
+
 from functools import wraps
 
 def memoize(func):

@@ -1,8 +1,19 @@
 #!/usr/bin/env python
 
 """
-This module contains re-usable functions for computing new :class:`.Table`
-columns.
+This module contains the :class:`Computation` class and its subclasses.
+Computations allow for row-wise calculation of new data for :class:`.Table`.
+For instance, the :class:`PercentChange` subclass takes two column names as
+arguments and computes the percentage change between them for each row.
+
+Computations are applied to tables using the :meth:`.Table.compute` method.
+For efficiencies sake, this method accepts a sequence of operations, which are
+applied simultaneously.
+
+If the basic computations supplied in this module are not suitable to your needs
+the :class:`Formula` subclass can be used to apply an arbitrary function to the
+data in each row. If this is still not suitable, :class:`Computation` can be
+subclassed to fully customize it's behavior.
 """
 
 from agate.aggregations import Mean, StDev

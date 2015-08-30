@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+"""
+This module contains agate's :class:`Row` implementation and various related
+classes. In common usage nothing in this module should need to be instantiated
+directly.
+"""
+
 from collections import Mapping, Sequence
 
 import six

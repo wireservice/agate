@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+This module contains various exceptions raised by agate.
+"""
+
 class NullComputationError(Exception):  # pragma: no cover
     """
     Exception raised if an computation which can not logically

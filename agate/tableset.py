@@ -1,8 +1,22 @@
 #!/usr/bin/env python
 
 """
-This module contains the :class:`TableSet` class for working with sets of
-related tables such as are created when using :meth:`.Table.group_by`.
+This module contains the :class:`TableSet` class which abstracts an set of
+related tables into a single data structure. The most common way of creating a
+:class:`TableSet` is using the :meth:`.Table.group_by` method, which is
+similar to SQL's ``GROUP BY`` keyword. The resulting set of tables each have
+identical columns structure.
+
+:class:`TableSet` functions as a dictionary. Individual tables in the set can
+be accessed by using their name as a key. If the table set was created using
+:meth:`.Table.group_by` then the names of the tables will be the group factors
+found in the original data.
+
+:class:`TableSet` replicates the majority of the features of :class:`.Table`.
+When methods such as :meth:`TableSet.select`, :meth:`TableSet.where` or
+:meth:`TableSet.order_by` are used, the operation is applied to *each* table
+in the set and the result is a new :class:`TableSet` instance made up of
+entirely new :class:`.Table` instances.
 """
 
 from collections import Mapping

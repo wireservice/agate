@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 
+"""
+This module contains the :class:`ColumnType` class and its subclasses. These
+types define how data should be converted during the creation of a
+:class:`.Table`. Each subclass of :class:`ColumnType` is associated with a
+subclass of :class:`.Column`. For instance, specifying that data is of
+:class:`NumberType` will cause a :class:`.NumberColumn` to be created on the
+table.
+"""
+
 import datetime
 
 try:
