@@ -121,8 +121,8 @@ class Column(Sequence):
         """
         return not self.__eq__(other)
 
-    def aggregate(self, aggregator):
+    def aggregate(self, aggregation):
         """
-        Apply a :class:`.Aggregator` to this column and return the result.
+        Apply a :class:`.Aggregation` to this column and return the result.
         """
-        return aggregator.run(self)
+        return aggregation.run(self)

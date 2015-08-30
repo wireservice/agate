@@ -11,7 +11,7 @@ except ImportError:
     import unittest
 
 from agate import Table
-from agate.aggregators import *
+from agate.aggregations import *
 from agate.column_types import NumberType, TextType
 from agate.exceptions import NullComputationError, UnsupportedAggregationError
 

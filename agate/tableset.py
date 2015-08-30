@@ -15,7 +15,7 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-from agate.aggregators import Aggregation
+from agate.aggregations import Aggregation
 from agate.column_types import TextType, NumberType
 from agate.exceptions import ColumnDoesNotExistError
 from agate.rows import RowSequence
@@ -172,7 +172,7 @@ class TableSet(Mapping):
         :code:`new_column_name`.
 
         :param aggregations: An list of triples in the format
-            :code:`(column_name, aggregator, new_column_name)`.
+            :code:`(column_name, aggregation, new_column_name)`.
         :returns: A new :class:`.Table`.
         """
         output = []
@@ -180,19 +180,19 @@ class TableSet(Mapping):
         column_types = [TextType(), NumberType()]
         column_names = ['group', 'count']
 
-        for column_name, aggregator, new_column_name in aggregations:
+        for column_name, aggregation, new_column_name in aggregations:
             c = self._first_table.columns[column_name]
 
-            column_types.append(aggregator.get_aggregate_column_type(c))
+            column_types.append(aggregation.get_aggregate_column_type(c))
             column_names.append(new_column_name)
 
         for name, table in self._tables.items():
             new_row = [name, len(table.rows)]
 
-            for column_name, aggregator, new_column_name in aggregations:
+            for column_name, aggregation, new_column_name in aggregations:
                 c = table.columns[column_name]
 
-                new_row.append(c.aggregate(aggregator))
+                new_row.append(c.aggregate(aggregation))
 
             output.append(tuple(new_row))
 

@@ -23,7 +23,7 @@ class NumberColumn(Column):
         """
         Compute the values in this column.
 
-        Should be invoked via the :class:`.Sum` aggregator.
+        Should be invoked via the :class:`.Sum` aggregation.
         """
         return sum(self._data_without_nulls())
 
@@ -32,7 +32,7 @@ class NumberColumn(Column):
         """
         Compute the mean of the values in this column.
 
-        Should be invoked via the :class:`.Mean` aggregator.
+        Should be invoked via the :class:`.Mean` aggregation.
         """
         return self._sum() / len(self)
 
@@ -41,7 +41,7 @@ class NumberColumn(Column):
         """
         Compute the median of the values in this column.
 
-        Should be invoked via the :class:`.Median` aggregator.
+        Should be invoked via the :class:`.Median` aggregation.
         """
         return self.percentiles()[50]
 
@@ -50,7 +50,7 @@ class NumberColumn(Column):
         """
         Compute the median of the values in this column.
 
-        Should be invoked via the :class:`.Variance` aggregator.
+        Should be invoked via the :class:`.Variance` aggregation.
         """
         data = self._data()
         mean = self._mean()

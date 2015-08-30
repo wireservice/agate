@@ -5,7 +5,7 @@ API
 .. toctree::
     :maxdepth: 2
 
-    api/aggregators
+    api/aggregations
     api/column_types
     api/columns
     api/computations

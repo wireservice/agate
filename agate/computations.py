@@ -5,7 +5,7 @@ This module contains re-usable functions for computing new :class:`.Table`
 columns.
 """
 
-from agate.aggregators import Mean, StDev
+from agate.aggregations import Mean, StDev
 from agate.columns import NumberColumn
 from agate.column_types import NumberType
 from agate.exceptions import UnsupportedComputationError

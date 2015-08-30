@@ -1,8 +1,8 @@
-======================
-agate.aggregators
-======================
+==================
+agate.aggregations
+==================
 
-.. automodule:: agate.aggregators
+.. automodule:: agate.aggregations
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,5 +1,21 @@
 #!/usr/bin/env python
 
+"""
+This module contains the :class:`Aggregation` class and its various subclasses.
+Each of these classes processes a column's data and returns a single value. For
+instance, :class:`Mean`, when applied to a :class:`.NumberColumn`, returns a
+single :class:`decimal.Decimal` value which is the average of all values in that column.
+
+Aggregations are applied to instances of :class:`.Column` using the
+:meth:`.Column.aggregate` method. Typically, the column is first retrieved using
+the :attr:`.Table.columns` attribute.
+
+Aggregations can also be applied to instances of :class:`.TableSet` using the
+:meth:`.Tableset.aggregate` method, in which case the result will be a new 
+:class:`.Table` with a column for each aggregation and a row for each table in
+the set.
+"""
+
 from collections import defaultdict
 import datetime
 

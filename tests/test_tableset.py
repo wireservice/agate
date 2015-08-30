@@ -18,7 +18,7 @@ except ImportError:
     import unittest
 
 from agate import Table, TableSet
-from agate.aggregators import *
+from agate.aggregations import *
 from agate.column_types import TextType, NumberType
 from agate.computations import Formula
 from agate.exceptions import ColumnDoesNotExistError

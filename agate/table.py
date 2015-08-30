@@ -20,7 +20,7 @@ except ImportError:
 
 import six
 
-from agate.aggregators import Sum, Mean, Median, StDev, MAD
+from agate.aggregations import Sum, Mean, Median, StDev, MAD
 from agate.columns.base import ColumnMapping
 from agate.computations import Computation
 from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
