@@ -40,15 +40,6 @@ class Aggregation(object): #pragma: no cover
         """
         raise NotImplementedError()
 
-class NonNullAggregation(Aggregation):
-    """
-    Raise a :exc:`.NullComputationError` if the column this aggregation is
-    being applied to contains null values.
-    """
-    def run(self, column):
-        if column.has_nulls():
-            raise NullComputationError
-
 class HasNulls(Aggregation):
     """
     Returns :code:`True` if the column contains null values.
@@ -198,7 +189,7 @@ class Sum(Aggregation):
 
         return column.sum()
 
-class Mean(NonNullAggregation):
+class Mean(Aggregation):
     """
     Compute the mean value of a column.
     """
@@ -209,14 +200,15 @@ class Mean(NonNullAggregation):
         """
         :returns: :class:`decimal.Decimal`.
         """
-        super(Mean, self).run(column)
-
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
+        if column.has_nulls():
+            raise NullComputationError
+
         return column.mean()
 
-class Median(NonNullAggregation):
+class Median(Aggregation):
     """
     Compute the median value of a column.
 
@@ -230,14 +222,15 @@ class Median(NonNullAggregation):
         """
         :returns: :class:`decimal.Decimal`.
         """
-        super(Median, self).run(column)
-
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
+        if column.has_nulls():
+            raise NullComputationError
+
         return column.median()
 
-class Mode(NonNullAggregation):
+class Mode(Aggregation):
     """
     Compute the mode value of a column.
     """
@@ -248,10 +241,11 @@ class Mode(NonNullAggregation):
         """
         :returns: :class:`decimal.Decimal`.
         """
-        super(Mode, self).run(column)
-
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
+
+        if column.has_nulls():
+            raise NullComputationError
 
         data = column.get_data()
         state = defaultdict(int)
@@ -261,7 +255,7 @@ class Mode(NonNullAggregation):
 
         return max(state.keys(), key=lambda x: state[x])
 
-class IQR(NonNullAggregation):
+class IQR(Aggregation):
     """
     Compute the inter-quartile range of a column.
     """
@@ -272,16 +266,17 @@ class IQR(NonNullAggregation):
         """
         :returns: :class:`decimal.Decimal`.
         """
-        super(IQR, self).run(column)
-
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
+
+        if column.has_nulls():
+            raise NullComputationError
 
         percentiles = column.percentiles()
 
         return percentiles[75] - percentiles[25]
 
-class Variance(NonNullAggregation):
+class Variance(Aggregation):
     """
     Compute the variance of a column.
     """
@@ -292,14 +287,15 @@ class Variance(NonNullAggregation):
         """
         :returns: :class:`decimal.Decimal`.
         """
-        super(Variance, self).run(column)
-
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
+        if column.has_nulls():
+            raise NullComputationError
+
         return column.variance()
 
-class StDev(NonNullAggregation):
+class StDev(Aggregation):
     """
     Compute the standard of deviation of a column.
     """
@@ -310,14 +306,15 @@ class StDev(NonNullAggregation):
         """
         :returns: :class:`decimal.Decimal`.
         """
-        super(StDev, self).run(column)
-
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
+        if column.has_nulls():
+            raise NullComputationError
+
         return column.variance().sqrt()
 
-class MAD(NonNullAggregation):
+class MAD(Aggregation):
     """
     Compute the `median absolute deviation <http://en.wikipedia.org/wiki/Median_absolute_deviation>`_
     of a column.
@@ -341,10 +338,11 @@ class MAD(NonNullAggregation):
         """
         :returns: :class:`decimal.Decimal`.
         """
-        super(MAD, self).run(column)
-
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
+
+        if column.has_nulls():
+            raise NullComputationError
 
         data = column.get_data_sorted()
         m = column.percentiles()[50]
