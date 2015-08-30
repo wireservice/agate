@@ -316,7 +316,7 @@ class Table(object):
         x = self.columns[column_one]
         y = self.columns[column_two]
 
-        if x._has_nulls() or y._has_nulls():
+        if x.has_nulls() or y.has_nulls():
             raise NullComputationError
 
         n = len(x)

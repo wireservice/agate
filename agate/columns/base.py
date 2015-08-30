@@ -72,7 +72,7 @@ class Column(Sequence):
         self._index = index
 
     def __unicode__(self):
-        data = self._data()
+        data = self.get_data()
 
         sample = ', '.join(six.text_type(d) for d in data[:5])
 
@@ -86,40 +86,52 @@ class Column(Sequence):
     def __str__(self):
         return str(self.__unicode__())
 
-    @memoize
-    def _data(self):
-        return tuple(r[self._index] for r in self._table._data)
-
-    @memoize
-    def _data_without_nulls(self):
-        return tuple(d for d in self._data() if d is not None)
-
-    @memoize
-    def _data_sorted(self):
-        return sorted(self._data())
-
-    @memoize
-    def _has_nulls(self):
-        return None in self._data()
-
     def __getitem__(self, j):
-        return self._data()[j]
+        return self.get_data()[j]
 
     @memoize
     def __len__(self):
-        return len(self._data())
+        return len(self.get_data())
 
     def __eq__(self, other):
         """
         Ensure equality test with lists works.
         """
-        return self._data() == other
+        return self.get_data() == other
 
     def __ne__(self, other):
         """
         Ensure inequality test with lists works.
         """
         return not self.__eq__(other)
+
+    @memoize
+    def get_data(self):
+        """
+        Get the data contained in this column as a :class:`tuple`.
+        """
+        return tuple(r[self._index] for r in self._table._data)
+
+    @memoize
+    def get_data_without_nulls(self):
+        """
+        Get the data contained in this column with any null values removed.
+        """
+        return tuple(d for d in self.get_data() if d is not None)
+
+    @memoize
+    def get_data_sorted(self):
+        """
+        Get the data contained in this column sorted.
+        """
+        return sorted(self.get_data())
+
+    @memoize
+    def has_nulls(self):
+        """
+        Returns `True` if this column contains null values.
+        """
+        return None in self.get_data()
 
     def aggregate(self, aggregation):
         """

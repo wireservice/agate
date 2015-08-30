@@ -11,7 +11,7 @@ Aggregations are applied to instances of :class:`.Column` using the
 the :attr:`.Table.columns` attribute.
 
 Aggregations can also be applied to instances of :class:`.TableSet` using the
-:meth:`.Tableset.aggregate` method, in which case the result will be a new 
+:meth:`.Tableset.aggregate` method, in which case the result will be a new
 :class:`.Table` with a column for each aggregation and a row for each table in
 the set.
 """
@@ -46,7 +46,7 @@ class NonNullAggregation(Aggregation):
     being applied to contains null values.
     """
     def run(self, column):
-        if column._has_nulls():
+        if column.has_nulls():
             raise NullComputationError
 
 class HasNulls(Aggregation):
@@ -60,7 +60,7 @@ class HasNulls(Aggregation):
         """
         :returns: :class:`bool`
         """
-        return column._has_nulls()
+        return column.has_nulls()
 
 class Any(Aggregation):
     """
@@ -80,7 +80,7 @@ class Any(Aggregation):
         """
         :returns: :class:`bool`
         """
-        data = column._data()
+        data = column.get_data()
 
         if isinstance(column, BooleanColumn):
             return any(data)
@@ -107,7 +107,7 @@ class All(Aggregation):
         """
         :returns: :class:`bool`
         """
-        data = column._data()
+        data = column.get_data()
 
         if isinstance(column, BooleanColumn):
             return all(data)
@@ -132,7 +132,7 @@ class Count(Aggregation):
         """
         :returns: :class:`int`
         """
-        return column._data().count(self._value)
+        return column.get_data().count(self._value)
 
 class Min(Aggregation):
     """
@@ -156,7 +156,7 @@ class Min(Aggregation):
         if not any(isinstance(column, t) for t in supported_columns):
             raise UnsupportedAggregationError(self, column)
 
-        return min(column._data_without_nulls())
+        return min(column.get_data_without_nulls())
 
 class Max(Aggregation):
     """
@@ -180,7 +180,7 @@ class Max(Aggregation):
         if not any(isinstance(column, t) for t in supported_columns):
             raise UnsupportedAggregationError(self, column)
 
-        return max(column._data_without_nulls())
+        return max(column.get_data_without_nulls())
 
 class Sum(Aggregation):
     """
@@ -196,7 +196,7 @@ class Sum(Aggregation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
-        return column._sum()
+        return column.sum()
 
 class Mean(NonNullAggregation):
     """
@@ -214,7 +214,7 @@ class Mean(NonNullAggregation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
-        return column._mean()
+        return column.mean()
 
 class Median(NonNullAggregation):
     """
@@ -235,7 +235,7 @@ class Median(NonNullAggregation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
-        return column._median()
+        return column.median()
 
 class Mode(NonNullAggregation):
     """
@@ -253,7 +253,7 @@ class Mode(NonNullAggregation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
-        data = column._data()
+        data = column.get_data()
         state = defaultdict(int)
 
         for n in data:
@@ -297,7 +297,7 @@ class Variance(NonNullAggregation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
-        return column._variance()
+        return column.variance()
 
 class StDev(NonNullAggregation):
     """
@@ -315,7 +315,7 @@ class StDev(NonNullAggregation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
-        return column._variance().sqrt()
+        return column.variance().sqrt()
 
 class MAD(NonNullAggregation):
     """
@@ -346,7 +346,7 @@ class MAD(NonNullAggregation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
-        data = column._data_sorted()
+        data = column.get_data_sorted()
         m = column.percentiles()[50]
 
         return self._median(tuple(abs(n - m) for n in data))
@@ -365,4 +365,4 @@ class MaxLength(Aggregation):
         if not isinstance(column, TextColumn):
             raise UnsupportedAggregationError(self, column)
 
-        return max([len(d) for d in column._data_without_nulls()])
+        return max([len(d) for d in column.get_data_without_nulls()])

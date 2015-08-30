@@ -60,24 +60,24 @@ class TestSimpleAggregation(unittest.TestCase):
 class TestBooleanAggregation(unittest.TestCase):
     def test_any(self):
         column = BooleanColumn(None, 'one')
-        column._data = lambda: (True, False, None)
+        column.get_data = lambda: (True, False, None)
         self.assertEqual(column.aggregate(Any()), True)
 
-        column._data = lambda: (False, False, None)
+        column.get_data = lambda: (False, False, None)
         self.assertEqual(column.aggregate(Any()), False)
 
     def test_all(self):
         column = BooleanColumn(None, 'one')
-        column._data = lambda: (True, True, None)
+        column.get_data = lambda: (True, True, None)
         self.assertEqual(column.aggregate(All()), False)
 
-        column._data = lambda: (True, True, True)
+        column.get_data = lambda: (True, True, True)
         self.assertEqual(column.aggregate(All()), True)
 
 class TestDateAggregation(unittest.TestCase):
     def test_min(self):
         column = DateColumn(None, 'one')
-        column._data_without_nulls = lambda: (
+        column.get_data_without_nulls = lambda: (
             datetime.date(1994, 3, 1),
             datetime.date(1011, 2, 17),
             datetime.date(1984, 1, 5)
@@ -87,7 +87,7 @@ class TestDateAggregation(unittest.TestCase):
 
     def test_max(self):
         column = DateColumn(None, 'one')
-        column._data_without_nulls = lambda: (
+        column.get_data_without_nulls = lambda: (
             datetime.date(1994, 3, 1),
             datetime.date(1011, 2, 17),
             datetime.date(1984, 1, 5)
@@ -98,7 +98,7 @@ class TestDateAggregation(unittest.TestCase):
 class TestDateTimeAggregation(unittest.TestCase):
     def test_min(self):
         column = DateTimeColumn(None, 'one')
-        column._data_without_nulls = lambda: (
+        column.get_data_without_nulls = lambda: (
             datetime.datetime(1994, 3, 3, 6, 31),
             datetime.datetime(1994, 3, 3, 6, 30, 30),
             datetime.datetime(1994, 3, 3, 6, 30)
@@ -108,7 +108,7 @@ class TestDateTimeAggregation(unittest.TestCase):
 
     def test_max(self):
         column = DateTimeColumn(None, 'one')
-        column._data_without_nulls = lambda: (
+        column.get_data_without_nulls = lambda: (
             datetime.datetime(1994, 3, 3, 6, 31),
             datetime.datetime(1994, 3, 3, 6, 30, 30),
             datetime.datetime(1994, 3, 3, 6, 30)
@@ -193,5 +193,5 @@ class TestNumberAggregation(unittest.TestCase):
 class TestTextAggregation(unittest.TestCase):
     def test_max_length(self):
         column = TextColumn(None, 'one')
-        column._data = lambda: ('a', 'gobble', 'wow')
+        column.get_data = lambda: ('a', 'gobble', 'wow')
         self.assertEqual(column.aggregate(MaxLength()), 6)

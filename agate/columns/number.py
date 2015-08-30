@@ -19,25 +19,25 @@ class NumberColumn(Column):
         super(NumberColumn, self).__init__(*args, **kwargs)
 
     @memoize
-    def _sum(self):
+    def sum(self):
         """
         Compute the values in this column.
 
         Should be invoked via the :class:`.Sum` aggregation.
         """
-        return sum(self._data_without_nulls())
+        return sum(self.get_data_without_nulls())
 
     @memoize
-    def _mean(self):
+    def mean(self):
         """
         Compute the mean of the values in this column.
 
         Should be invoked via the :class:`.Mean` aggregation.
         """
-        return self._sum() / len(self)
+        return self.sum() / len(self)
 
     @memoize
-    def _median(self):
+    def median(self):
         """
         Compute the median of the values in this column.
 
@@ -46,14 +46,14 @@ class NumberColumn(Column):
         return self.percentiles()[50]
 
     @memoize
-    def _variance(self):
+    def variance(self):
         """
         Compute the median of the values in this column.
 
         Should be invoked via the :class:`.Variance` aggregation.
         """
-        data = self._data()
-        mean = self._mean()
+        data = self.get_data()
+        mean = self.mean()
 
         return sum((n - mean) ** 2 for n in data) / len(self)
 
@@ -65,7 +65,7 @@ class NumberColumn(Column):
         :returns: :class:`Percentiles`.
         :raises: :exc:`.NullComputationError`
         """
-        if self._has_nulls():
+        if self.has_nulls():
             raise NullComputationError
 
         return Percentiles(self)
@@ -155,7 +155,7 @@ class Percentiles(Quantiles):
     def __init__(self, column):
         super(Percentiles, self).__init__()
 
-        data = column._data_sorted()
+        data = column.get_data_sorted()
 
         if len(data) == 0:
             raise ValueError('Column does not contain data.')

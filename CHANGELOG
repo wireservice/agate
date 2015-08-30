@@ -1,6 +1,7 @@
 0.6.0
 -----
 
+* Some private Column methods made public. (#183)
 * Rename agate.aggegators to agate.aggregations.
 * TableSet.to_csv implemented. (#195)
 * TableSet.from_csv implemented. (#194)
