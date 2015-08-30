@@ -35,6 +35,7 @@ Table of contents
     cookbook
     api
     contributing
+    release_process
 
 Authors
 =======
