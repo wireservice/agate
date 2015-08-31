@@ -17,8 +17,8 @@ subclassed to fully customize it's behavior.
 """
 
 from agate.aggregations import Mean, StDev
-from agate.columns import NumberColumn
-from agate.column_types import NumberType
+from agate.columns import *
+from agate.column_types import *
 from agate.exceptions import UnsupportedComputationError
 from agate.utils import NullOrder
 
@@ -26,7 +26,7 @@ class Computation(object): #pragma: no cover
     """
     Base class for row-wise computations on a :class:`.Table`.
     """
-    def get_computed_column_type(self):
+    def get_computed_column_type(self, table):
         """
         Returns an instantiated :class:`.ColumnType` which will be appended to
         the table.
@@ -55,7 +55,7 @@ class Formula(Computation):
         self._column_type = column_type
         self._func = func
 
-    def get_computed_column_type(self):
+    def get_computed_column_type(self, table):
         return self._column_type
 
     def run(self, row):
@@ -65,33 +65,70 @@ class Change(Computation):
     """
     Computes change between two columns.
     """
-    def __init__(self, before_column, after_column):
-        self._before_column = before_column
-        self._after_column = after_column
+    def __init__(self, before_column_name, after_column_name):
+        self._before_column_name = before_column_name
+        self._after_column_name = after_column_name
 
-    def get_computed_column_type(self):
+    def _validate(self, table):
+        before_column = table.columns[self._before_column_name]
+        after_column = table.columns[self._after_column_name]
+
+        for column_type in (NumberColumn, DateColumn, DateTimeColumn, TimeDeltaColumn):
+            if isinstance(before_column, column_type):
+                if not isinstance(after_column, column_type):
+                    raise ValueError('Specified columns must be of the same type')
+
+                if before_column.has_nulls():
+                    raise NullCalculationError
+
+                if after_column.has_nulls():
+                    raise NullCalculationError
+
+                return (before_column, after_column)
+
+        raise UnsupportedComputationError(self, before_column)
+
+    def get_computed_column_type(self, table):
+        before_column, after_column = self._validate(table)
+
+        if isinstance(before_column, DateColumn):
+            return TimeDeltaType()
+        elif isinstance(before_column, DateTimeColumn):
+            return TimeDeltaType()
+        elif isinstance(before_column, TimeDeltaColumn):
+            return TimeDeltaType()
+        elif isinstance(before_column, NumberColumn):
+            return NumberType()
+
+    def prepare(self, table):
+        self._validate(table)
+
+    def run(self, row):
+        return row[self._after_column_name] - row[self._before_column_name]
+
+class PercentChange(Computation):
+    """
+    Computes percent change between two columns.
+    """
+    def __init__(self, before_column_name, after_column_name):
+        self._before_column_name = before_column_name
+        self._after_column_name = after_column_name
+
+    def get_computed_column_type(self, table):
         return NumberType()
 
     def prepare(self, table):
-        before_column = table.columns[self._before_column]
+        before_column = table.columns[self._before_column_name]
+        after_column = table.columns[self._after_column_name]
 
         if not isinstance(before_column, NumberColumn):
             raise UnsupportedComputationError(self, before_column)
-
-        after_column = table.columns[self._after_column]
 
         if not isinstance(after_column, NumberColumn):
             raise UnsupportedComputationError(self, after_column)
 
     def run(self, row):
-        return row[self._after_column] - row[self._before_column]
-
-class PercentChange(Change):
-    """
-    Computes percent change between two columns.
-    """
-    def run(self, row):
-        return (row[self._after_column] - row[self._before_column]) / row[self._before_column] * 100
+        return (row[self._after_column_name] - row[self._before_column_name]) / row[self._before_column_name] * 100
 
 class ZScores(Computation):
     """
@@ -100,7 +137,7 @@ class ZScores(Computation):
     def __init__(self, column_name):
         self._column_name = column_name
 
-    def get_computed_column_type(self):
+    def get_computed_column_type(self, table):
         return NumberType()
 
     def prepare(self, table):
@@ -125,7 +162,7 @@ class Rank(Computation):
     def __init__(self, column_name):
         self._column_name = column_name
 
-    def get_computed_column_type(self):
+    def get_computed_column_type(self, table):
         return NumberType()
 
     def _null_handler(self, k):

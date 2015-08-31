@@ -17,6 +17,7 @@ except ImportError: #pragma: no cover
     from decimal import Decimal, InvalidOperation
 
 from dateutil.parser import parse
+import pytimeparse
 import six
 
 from agate.exceptions import CastError
@@ -139,6 +140,35 @@ class DateTimeType(ColumnType):
         from agate.columns import DateTimeColumn
 
         return DateTimeColumn(table, index)
+
+class TimeDeltaType(ColumnType):
+    """
+    Column type for :class:`datetime.timedelta`.
+    """
+    def cast(self, d):
+        """
+        Cast a single value to :class:`datetime.timedelta`.
+
+        :param d: A value to cast.
+        :returns: :class:`datetime.timedelta` or :code:`None`
+        """
+        if isinstance(d, datetime.timedelta) or d is None:
+            return d
+
+        if isinstance(d, six.string_types):
+            d = d.strip()
+
+            if d.lower() in NULL_VALUES:
+                return None
+
+        seconds = pytimeparse.parse(d)
+
+        return datetime.timedelta(seconds=seconds)
+
+    def _create_column(self, table, index):
+        from agate.columns import TimeDeltaColumn
+
+        return TimeDeltaColumn(table, index)
 
 class NumberType(ColumnType):
     """

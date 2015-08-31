@@ -6,7 +6,7 @@ import math
 import six
 
 from agate.columns.base import Column
-from agate.exceptions import NullComputationError
+from agate.exceptions import NullCalculationError
 from agate.utils import memoize
 
 class NumberColumn(Column):
@@ -15,9 +15,6 @@ class NumberColumn(Column):
 
     All data is represented by the :class:`decimal.Decimal` class.
     """
-    def __init__(self, *args, **kwargs):
-        super(NumberColumn, self).__init__(*args, **kwargs)
-
     @memoize
     def sum(self):
         """
@@ -63,10 +60,10 @@ class NumberColumn(Column):
         Compute percentiles for this column of data.
 
         :returns: :class:`Percentiles`.
-        :raises: :exc:`.NullComputationError`
+        :raises: :exc:`.NullCalculationError`
         """
         if self.has_nulls():
-            raise NullComputationError
+            raise NullCalculationError
 
         return Percentiles(self)
 
@@ -76,7 +73,7 @@ class NumberColumn(Column):
         Compute quartiles for this column of data.
 
         :returns: :class:`Quartiles`.
-        :raises: :exc:`.NullComputationError`
+        :raises: :exc:`.NullCalculationError`
         """
         return Quartiles(self.percentiles())
 
@@ -86,7 +83,7 @@ class NumberColumn(Column):
         Compute quintiles for this column of data.
 
         :returns: :class:`Quintiles`.
-        :raises: :exc:`.NullComputationError`
+        :raises: :exc:`.NullCalculationError`
         """
         return Quintiles(self.percentiles())
 
@@ -96,7 +93,7 @@ class NumberColumn(Column):
         Compute deciles for this column of data.
 
         :returns: :class:`Deciles`.
-        :raises: :exc:`.NullComputationError`
+        :raises: :exc:`.NullCalculationError`
         """
         return Deciles(self.percentiles())
 

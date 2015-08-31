@@ -571,7 +571,7 @@ class Table(object):
                 raise ValueError('The second element in pair must be a Computation instance.')
 
             column_names.append(name)
-            column_types.append(computation.get_computed_column_type())
+            column_types.append(computation.get_computed_column_type(self))
 
             computation.prepare(self)
 

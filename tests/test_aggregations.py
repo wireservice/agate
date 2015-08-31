@@ -12,8 +12,8 @@ except ImportError:
 
 from agate import Table
 from agate.aggregations import *
-from agate.column_types import NumberType, TextType
-from agate.exceptions import NullComputationError, UnsupportedAggregationError
+from agate.column_types import *
+from agate.exceptions import *
 
 class TestSimpleAggregation(unittest.TestCase):
     def setUp(self):
@@ -149,43 +149,43 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(self.table.columns['two'].aggregate(Max()), Decimal('4.1'))
 
     def test_mean(self):
-        with self.assertRaises(NullComputationError):
+        with self.assertRaises(NullCalculationError):
             self.table.columns['one'].aggregate(Mean())
 
         self.assertEqual(self.table.columns['two'].aggregate(Mean()), Decimal('3.2825'))
 
     def test_median(self):
-        with self.assertRaises(NullComputationError):
+        with self.assertRaises(NullCalculationError):
             self.table.columns['one'].aggregate(Median())
 
         self.assertEqual(self.table.columns['two'].aggregate(Median()), Decimal('3.42'))
 
     def test_mode(self):
-        with self.assertRaises(NullComputationError):
+        with self.assertRaises(NullCalculationError):
             self.table.columns['one'].aggregate(Mode())
 
         self.assertEqual(self.table.columns['two'].aggregate(Mode()), Decimal('3.42'))
 
     def test_iqr(self):
-        with self.assertRaises(NullComputationError):
+        with self.assertRaises(NullCalculationError):
             self.table.columns['one'].aggregate(IQR())
 
         self.assertEqual(self.table.columns['two'].aggregate(IQR()), Decimal('0.955'))
 
     def test_variance(self):
-        with self.assertRaises(NullComputationError):
+        with self.assertRaises(NullCalculationError):
             self.table.columns['one'].aggregate(Variance())
 
         self.assertEqual(self.table.columns['two'].aggregate(Variance()).quantize(Decimal('0.01')), Decimal('0.47'))
 
     def test_stdev(self):
-        with self.assertRaises(NullComputationError):
+        with self.assertRaises(NullCalculationError):
             self.table.columns['one'].aggregate(StDev())
 
         self.assertAlmostEqual(self.table.columns['two'].aggregate(StDev()).quantize(Decimal('0.01')), Decimal('0.69'))
 
     def test_mad(self):
-        with self.assertRaises(NullComputationError):
+        with self.assertRaises(NullCalculationError):
             self.table.columns['one'].aggregate(MAD())
 
         self.assertAlmostEqual(self.table.columns['two'].aggregate(MAD()), Decimal('0'))

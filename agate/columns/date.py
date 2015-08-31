@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import datetime
-
 from agate.columns.base import Column
 
 class DateColumn(Column):

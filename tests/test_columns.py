@@ -13,9 +13,9 @@ except ImportError:
     import unittest
 
 from agate import Table
-from agate.column_types import BooleanType, DateType, DateTimeType, NumberType, TextType
-from agate.columns import BooleanColumn, DateColumn, DateTimeColumn, NumberColumn, TextColumn
-from agate.exceptions import CastError, ColumnDoesNotExistError, NullComputationError
+from agate.column_types import *
+from agate.columns import *
+from agate.exceptions import *
 
 class TestColumnTypes(unittest.TestCase):
     def test_text(self):
@@ -101,6 +101,20 @@ class TestColumnTypes(unittest.TestCase):
             datetime.datetime(1011, 2, 17, 6, 30, 0),
             None,
             datetime.datetime(1984, 1, 5, 22, 37, 0),
+            None
+        ))
+
+    def test_timedelta(self):
+        self.assertIsInstance(TimeDeltaType()._create_column(None, 1), TimeDeltaColumn)
+
+    def test_timedelta_cast_parser(self):
+        values = ('4:10', '1.2m', '172 hours', '5 weeks, 2 days', 'n/a')
+        casted = tuple(TimeDeltaType().cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.timedelta(minutes=4, seconds=10),
+            datetime.timedelta(minutes=1, seconds=12),
+            datetime.timedelta(hours=172),
+            datetime.timedelta(weeks=5, days=2),
             None
         ))
 

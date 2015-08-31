@@ -1,6 +1,8 @@
 0.6.0
 -----
 
+* Change computation now works with DateType, DateTimeType and TimeDeltaType. (#159)
+* TimeDeltaType and TimeDeltaColumn implemented.
 * NonNullAggregation class removed.
 * Some private Column methods made public. (#183)
 * Rename agate.aggegators to agate.aggregations.

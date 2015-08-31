@@ -21,7 +21,7 @@ import datetime
 
 from agate.column_types import BooleanType, NumberType
 from agate.columns import BooleanColumn, DateColumn, DateTimeColumn, NumberColumn, TextColumn
-from agate.exceptions import NullComputationError, UnsupportedAggregationError
+from agate.exceptions import NullCalculationError, UnsupportedAggregationError
 
 class Aggregation(object): #pragma: no cover
     """
@@ -138,6 +138,8 @@ class Min(Aggregation):
         elif isinstance(column, NumberColumn):
             return NumberType()
 
+        raise UnsupportedAggregationError(self, column)
+
     def run(self, column):
         """
         :returns: :class:`datetime.date`
@@ -204,7 +206,7 @@ class Mean(Aggregation):
             raise UnsupportedAggregationError(self, column)
 
         if column.has_nulls():
-            raise NullComputationError
+            raise NullCalculationError
 
         return column.mean()
 
@@ -226,7 +228,7 @@ class Median(Aggregation):
             raise UnsupportedAggregationError(self, column)
 
         if column.has_nulls():
-            raise NullComputationError
+            raise NullCalculationError
 
         return column.median()
 
@@ -245,7 +247,7 @@ class Mode(Aggregation):
             raise UnsupportedAggregationError(self, column)
 
         if column.has_nulls():
-            raise NullComputationError
+            raise NullCalculationError
 
         data = column.get_data()
         state = defaultdict(int)
@@ -270,7 +272,7 @@ class IQR(Aggregation):
             raise UnsupportedAggregationError(self, column)
 
         if column.has_nulls():
-            raise NullComputationError
+            raise NullCalculationError
 
         percentiles = column.percentiles()
 
@@ -291,7 +293,7 @@ class Variance(Aggregation):
             raise UnsupportedAggregationError(self, column)
 
         if column.has_nulls():
-            raise NullComputationError
+            raise NullCalculationError
 
         return column.variance()
 
@@ -310,7 +312,7 @@ class StDev(Aggregation):
             raise UnsupportedAggregationError(self, column)
 
         if column.has_nulls():
-            raise NullComputationError
+            raise NullCalculationError
 
         return column.variance().sqrt()
 
@@ -342,7 +344,7 @@ class MAD(Aggregation):
             raise UnsupportedAggregationError(self, column)
 
         if column.has_nulls():
-            raise NullComputationError
+            raise NullCalculationError
 
         data = column.get_data_sorted()
         m = column.percentiles()[50]

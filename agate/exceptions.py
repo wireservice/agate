@@ -4,10 +4,10 @@
 This module contains various exceptions raised by agate.
 """
 
-class NullComputationError(Exception):  # pragma: no cover
+class NullCalculationError(Exception):  # pragma: no cover
     """
-    Exception raised if an computation which can not logically
-    account for null values is attempted on a Column containing
+    Exception raised if a calculation which can not logically
+    account for null values is attempted on a :class:`Column containing
     nulls.
     """
     pass

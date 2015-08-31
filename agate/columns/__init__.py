@@ -20,3 +20,4 @@ from agate.columns.date import *
 from agate.columns.date_time import *
 from agate.columns.number import *
 from agate.columns.text import *
+from agate.columns.time_delta import *
