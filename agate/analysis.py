@@ -109,12 +109,8 @@ class Analysis(object):
         Deletes any cache files that exist in the cache directory which were
         not used when this analysis was last run.
         """
-        print self._registered_cache_paths
-
         for path in glob(os.path.join(self._cache_dir, '*.cache')):
-            print path
             if path not in self._registered_cache_paths:
-                print 'Deleting ', path
                 os.remove(path)
 
     @memoize
