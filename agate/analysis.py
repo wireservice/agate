@@ -21,7 +21,7 @@ a dependent analysis without constantly recomputing the results of its parent.
 .. warning::
 
     The fingerprint which is generated for each analysis function is **not**
-    recursive, which is to say, it does not include the source of functions
+    recursive, which is to say, it does not include the source of any functions
     which are invoked by that function. If you modify the source of a function
     invoked by the analysis function, you will need to ensure that the analysis
     is manually refreshed by passing ``refresh=True`` to :meth:`Analysis.run`.
@@ -29,6 +29,7 @@ a dependent analysis without constantly recomputing the results of its parent.
 
 import bz2
 from copy import deepcopy
+from glob import glob
 import hashlib
 import inspect
 import os
@@ -61,15 +62,24 @@ class Analysis(object):
         self._cache_dir = cache_dir
         self._next_analyses = []
 
+        self._registered_cache_paths = []
+
     @memoize
     def _trace(self):
         """
         Returns the sequence of Analysis instances that lead to this one.
         """
         if self._parent:
-            return self._parent._trace() + [self._name]
+            return self._parent._trace() + [self]
 
-        return [self._name]
+        return [self]
+
+    @memoize
+    def _root(self):
+        """
+        Returns the root node of this Analysis' trace. (It may be itself.)
+        """
+        return self._trace()[0]
 
     @memoize
     def _fingerprint(self):
@@ -78,13 +88,34 @@ class Analysis(object):
         """
         hasher = hashlib.md5()
 
-        trace = self._trace()
+        trace = [analysis._name for analysis in self._trace()]
         hasher.update('\n'.join(trace).encode('utf-8'))
 
         source = inspect.getsource(self._func)
         hasher.update(source.encode('utf-8'))
 
         return hasher.hexdigest()
+
+    def _register_cache(self, path):
+        """
+        Invoked on the root analysis by any descendant analyses that save's a
+        cache file. This list of cache files is used once all analysis has
+        completed to cleanup old cache files.
+        """
+        self._registered_cache_paths.append(path)
+
+    def _cleanup_cache_files(self):
+        """
+        Deletes any cache files that exist in the cache directory which were
+        not used when this analysis was last run.
+        """
+        print self._registered_cache_paths
+
+        for path in glob(os.path.join(self._cache_dir, '*.cache')):
+            print path
+            if path not in self._registered_cache_paths:
+                print 'Deleting ', path
+                os.remove(path)
 
     @memoize
     def _cache_path(self):
@@ -148,10 +179,17 @@ class Analysis(object):
         4. This analysis has been run and its parents were loaded from cache,
            but its fingerprints do not match. Run it and cache updated results.
 
+        On each run this analysis will clear any unused cache files from the
+        cache directory. If you have multiple analyses running in the same
+        location, specify separate cache directories for them using the
+        ``cache_dir`` argument to the the :class:`Analysis` constructor.
+
         :param data: The input "state" from the parent analysis, if any.
         :param refresh: Flag indicating if this analysis must refresh because
             one of its ancestors did.
         """
+        self._registered_fingerprints = []
+
         if refresh:
             print('Refreshing: %s' % self._name)
 
@@ -178,3 +216,8 @@ class Analysis(object):
 
         for analysis in self._next_analyses:
             analysis.run(local_data, refresh)
+
+        self._root()._register_cache(self._cache_path())
+
+        if self._root() is self:
+            self._cleanup_cache_files()

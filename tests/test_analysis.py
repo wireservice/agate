@@ -1,6 +1,7 @@
 #!/usr/bin/env Python
 
 from copy import deepcopy
+from glob import glob
 import os
 import shutil
 from time import sleep
@@ -164,3 +165,30 @@ class TestAnalysis(unittest.TestCase):
 
         self.assertEqual(self.executed_stage1, 1)
         self.assertEqual(self.executed_stage2, 2)
+
+    def test_cleanup(self):
+        self.assertFalse(os.path.exists(TEST_CACHE))
+
+        analysis = Analysis(self.stage1, cache_dir=TEST_CACHE)
+        analysis.then(self.stage2)
+
+        data = {}
+
+        # Initial run, creates two cache files
+        analysis.run(data)
+
+        cache_files = glob(os.path.join(TEST_CACHE, '*.cache'))
+        self.assertEqual(len(cache_files), 2)
+
+        # Create false third cache file
+        open(os.path.join(TEST_CACHE, 'foo.cache'), 'a').close()
+
+        cache_files2 = glob(os.path.join(TEST_CACHE, '*.cache'))
+        self.assertEqual(len(cache_files2), 3)
+
+        # Second run, removes false cache file
+        analysis.run(data)
+
+        cache_files3 = glob(os.path.join(TEST_CACHE, '*.cache'))
+        self.assertEqual(len(cache_files3), 2)
+        self.assertSequenceEqual(cache_files, cache_files3)
