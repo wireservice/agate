@@ -252,7 +252,7 @@ For instance, this example will create a ``full_name`` column from the ``first_n
 .. code-block:: python
 
     full_names = exonerations.compute([
-        ('full_name', agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row)
+        ('full_name', agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row))
     ])
 
 For efficiencies sake, agate allows you to perform several computations at once.
@@ -260,8 +260,8 @@ For efficiencies sake, agate allows you to perform several computations at once.
 .. code-block:: python
 
     with_computations = exonerations.compute([
-        ('years_in_prison', agate.Change('convicted', 'exonerated')),
-        ('full_name', agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row)
+        ('full_name', agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row)),
+        ('years_in_prison', agate.Change('convicted', 'exonerated'))
     ])
 
 If :class:`.Formula` still is not flexible enough (for instance, if you need to compute a new row based on the distribution of data in a column) you can always implement your own subclass of :class:`.Computation`. See the API documentation for :mod:`.computations` to see all of the supported ways to compute new data.
@@ -331,7 +331,7 @@ This takes our original :class:`.Table` and groups it into a :class:`.TableSet`,
 
     state_totals = by_state.aggregate()
 
-    sorted_totals = totals.order_by('count', reverse=True)
+    sorted_totals = state_totals.order_by('count', reverse=True)
 
     print(sorted_totals.format(max_rows=5))
 
@@ -364,8 +364,8 @@ This is a much more complicated question that's going to pull together a lot of 
 
     state_totals = with_years_in_prison.group_by('state')
 
-    medians = totals.aggregate([
-        ('years_in_prison', Median(), 'median_years_in_prison')
+    medians = state_totals.aggregate([
+        ('years_in_prison', agate.Median(), 'median_years_in_prison')
     ])
 
     sorted_medians = medians.order_by('median_years_in_prison', reverse=True)
