@@ -14,7 +14,7 @@ if sys.version_info == (2, 6):
 
 setup(
     name='agate',
-    version='0.6.0',
+    version='0.7.0',
     description='',
     long_description=open('README').read(),
     author='Christopher Groskopf',
