@@ -50,7 +50,9 @@ Now let's import our dependencies:
 
 .. note::
 
-    You should really be using `csvkit <http://csvkit.readthedocs.org/>`_ (agate's sister project) to load CSV files, but here we stick with the builtin `csv` module because it comes with Python so everyone already has it.
+    You should really be using `csvkit <http://csvkit.readthedocs.org/>`_ to load CSV files, but here we stick with the builtin `csv` module because it comes with Python so everyone already has it.
+
+    I also strongly suggest taking a look at `proof <http://proof.readthedocs.org/en/latest/>`_ for building data processing pipelines, but we won't use it in this tutorial to keep things simple.
 
 Defining the columns
 ====================
@@ -391,3 +393,5 @@ Where to go next
 ================
 
 This tutorial only scratches the surface of agate's features. For many more ideas on how to apply agate, check out the :doc:`cookbook`, which includes dozens of examples showing how to substitute agate for common operations used in Excel, SQL, R and more.
+
+Also, if you're going to be doing data processing in Python you really ought to check out `proof <http://proof.readthedocs.org/en/latest/>`_, a library for building data processing pipelines that are repeatable and self-documenting. It will make your code cleaner and save you tons of time.
