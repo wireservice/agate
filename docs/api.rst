@@ -6,7 +6,6 @@ API
     :maxdepth: 2
 
     api/aggregations
-    api/analysis
     api/column_types
     api/columns
     api/computations
