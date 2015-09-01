@@ -1,6 +1,7 @@
 0.6.0
 -----
 
+* Split Analysis off into the proof library.
 * Change computation now works with DateType, DateTimeType and TimeDeltaType. (#159)
 * TimeDeltaType and TimeDeltaColumn implemented.
 * NonNullAggregation class removed.
