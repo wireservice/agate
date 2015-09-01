@@ -1,6 +1,7 @@
 0.6.0
 -----
 
+* Fix missing package definition in setup.py.
 * Split Analysis off into the proof library.
 * Change computation now works with DateType, DateTimeType and TimeDeltaType. (#159)
 * TimeDeltaType and TimeDeltaColumn implemented.
