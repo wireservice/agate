@@ -1,7 +1,7 @@
 0.7.0
 -----
 
-
+* Fix error messages for RowDoesNotExistError and ColumnDoesNotExistError.
 
 0.6.0
 -----

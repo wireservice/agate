@@ -66,7 +66,7 @@ class ColumnDoesNotExistError(Exception):  # pragma: no cover
         return 'Column `%s` does not exist.' % (self.k)
 
     def __str__(self):
-        return str(self.__unicode())
+        return str(self.__unicode__())
 
 class RowDoesNotExistError(Exception):  # pragma: no cover
     """
@@ -82,4 +82,4 @@ class RowDoesNotExistError(Exception):  # pragma: no cover
         return 'Row `%i` does not exist.' % (self.i)
 
     def __str__(self):
-        return str(self.__unicode())
+        return str(self.__unicode__())
