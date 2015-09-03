@@ -365,6 +365,7 @@ This is a much more complicated question that's going to pull together a lot of 
     state_totals = with_years_in_prison.group_by('state')
 
     medians = state_totals.aggregate([
+        ('years_in_prison', agate.Length(), 'count')
         ('years_in_prison', agate.Median(), 'median_years_in_prison')
     ])
 
@@ -375,7 +376,7 @@ This is a much more complicated question that's going to pull together a lot of 
 ::
 
     |--------+-------+-------------------------|
-    |  group | count | median_years_in_prison  |
+    |  state | count | median_years_in_prison  |
     |--------+-------+-------------------------|
     |  DC    | 15    | 27                      |
     |  NE    | 9     | 20                      |
@@ -389,9 +390,68 @@ DC? Nebraska? What accounts for these states having the longest times in prison 
 
 As with :meth:`.Table.aggregate` and :meth:`.Table.compute`, the :meth:`.TableSet.aggregate`: method takes a list of aggregations to perform. You can aggregate as many columns as you like in a single step and they will all appear in the output table.
 
+Multi-dimensional aggregations
+==============================
+
+Before we wrap up, let's try one more thing. I've already shown you that you can use :class:`.TableSet` to group instances of :class:`.Table`. However, you can also use a :class:`.TableSet` to group other instances of :class:`.TableSet`. To put that another way, instance sof :class:`.TableSet` can be *nested*.
+
+The key to nesting data in this way is to use :meth:`.TableSet.group_by`. Just as we used :meth:`.Table.group_by` to split data up into a group of tables, you can use :meth:`.TableSet.group_by` to further subdivide that data. Effectively this means you can create multi-dimensional groupings. Let's look at a concrete example.
+
+Question: **Is there a collective relationship between race, age and time spent in prison prior to exoneration?**
+
+I'm not going to explain every stage of this analysis as most of it users features you've seen before. The key part to look for is the two separate calls to ``group_by``:
+
+.. code-block:: python
+
+    # Filters rows without age data
+    only_with_age = data['with_years_in_prison'].where(
+        lambda r: r['age'] is not None
+    )
+
+    # Group by race
+    race_groups = only_with_age.group_by('race')
+
+    # Sub-group by age cohorts (20s, 30s, etc.)
+    race_and_age_groups = race_groups.group_by(
+        lambda r: '%i0s' % (r['age'] // 10),
+        key_name='age_group'
+    )
+
+    # Aggregate medians for each group
+    medians = race_and_age_groups.aggregate([
+        ('years_in_prison', agate.Length(), 'count'),
+        ('years_in_prison', agate.Median(), 'median_years_in_prison')
+    ])
+
+    # Sort the results
+    sorted_groups = medians.order_by('median_years_in_prison', reverse=True)
+
+    # Print out the results
+    print(sorted_groups.format(max_rows=10))
+
+::
+
+    |------------------+-----------+-------+-------------------------|
+    |  race            | age_group | count | median_years_in_prison  |
+    |------------------+-----------+-------+-------------------------|
+    |  Native American | 20s       | 2     | 21.5                    |
+    |                  | 20s       | 1     | 19                      |
+    |  Native American | 10s       | 2     | 15                      |
+    |  Native American | 30s       | 2     | 14.5                    |
+    |  Black           | 10s       | 188   | 14                      |
+    |  Black           | 20s       | 358   | 13                      |
+    |  Asian           | 20s       | 4     | 12                      |
+    |  Black           | 30s       | 156   | 10                      |
+    |  Caucasian       | 10s       | 76    | 8                       |
+    |  Caucasian       | 20s       | 255   | 8                       |
+    |  ...             | ...       | ...   | ...                     |
+    |------------------+-----------+-------+-------------------------|
+
+Well, what are you waiting for? Get to reporting!
+
 Where to go next
 ================
 
-This tutorial only scratches the surface of agate's features. For many more ideas on how to apply agate, check out the :doc:`cookbook`, which includes dozens of examples showing how to substitute agate for common operations used in Excel, SQL, R and more.
+This tutorial only scratches the surface of agate's features. For many more ideas on how to apply agate, check out the :doc:`cookbook`, which includes dozens of examples showing how to substitute agate for common patterns used in Excel, SQL, R and more.
 
 Also, if you're going to be doing data processing in Python you really ought to check out `proof <http://proof.readthedocs.org/en/latest/>`_, a library for building data processing pipelines that are repeatable and self-documenting. It will make your code cleaner and save you tons of time.

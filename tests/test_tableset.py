@@ -238,3 +238,47 @@ class TestTableSet(unittest.TestCase):
 
         with self.assertRaises(ColumnDoesNotExistError):
             tableset.aggregate([('bad', Sum(), 'bad_sum')])
+
+    def test_nested(self):
+        tableset = TableSet(self.tables, key_name='test')
+
+        nested = tableset.group_by('letter')
+
+        self.assertIsInstance(nested, TableSet)
+        self.assertEqual(len(nested), 3)
+        self.assertSequenceEqual(nested._column_names, ('letter', 'number'))
+        self.assertSequenceEqual(nested._column_types, (self.text_type, self.number_type))
+
+        self.assertIsInstance(nested['table1'], TableSet)
+        self.assertEqual(len(nested['table1']), 2)
+        self.assertSequenceEqual(nested['table1']._column_names, ('letter', 'number'))
+        self.assertSequenceEqual(nested['table1']._column_types, (self.text_type, self.number_type))
+
+        self.assertIsInstance(nested['table1']['a'], Table)
+        self.assertEqual(len(nested['table1']['a'].columns), 2)
+        self.assertEqual(len(nested['table1']['a'].rows), 2)
+
+    def test_nested_aggregation(self):
+        tableset = TableSet(self.tables, key_name='test')
+
+        nested = tableset.group_by('letter')
+
+        results = nested.aggregate([
+            ('letter', Length(), 'count'),
+            ('number', Sum(), 'number_sum')
+        ])
+
+        self.assertIsInstance(results, Table)
+        self.assertEqual(len(results.rows), 7)
+        self.assertEqual(len(results.columns), 4)
+        self.assertSequenceEqual(results._column_names, ('test', 'letter', 'count', 'number_sum'))
+
+        self.assertSequenceEqual(results.rows[0], ('table1', 'a', 2, 4))
+        self.assertSequenceEqual(results.rows[1], ('table1', 'b', 1, 2))
+
+        self.assertSequenceEqual(results.rows[2], ('table2', 'b', 1, 0))
+        self.assertSequenceEqual(results.rows[3], ('table2', 'a', 1, 2))
+        self.assertSequenceEqual(results.rows[4], ('table2', 'c', 1, 5))
+
+        self.assertSequenceEqual(results.rows[5], ('table3', 'a', 2, 3))
+        self.assertSequenceEqual(results.rows[6], ('table3', 'c', 1, 3))

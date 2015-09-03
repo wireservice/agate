@@ -75,7 +75,7 @@ class Table(object):
 
         for i, row in enumerate(rows):
             if len(row) != len_column_names:
-                raise ValueError('Row %i has length %i, but Table only has %i columns.' % (i, len(row), len_column_types))
+                raise ValueError('Row %i has length %i, but Table only has %i columns.' % (i, len(row), len_column_names))
 
             # Forked tables can share data (because they are immutable)
             # but original data should be buffered so it can't be changed
@@ -549,12 +549,14 @@ class Table(object):
             else:
                 group_name = six.text_type(row[i])
 
+            # print group_name
+
             if group_name not in groups:
                 groups[group_name] = []
 
             groups[group_name].append(row)
 
-        output = {}
+        output = OrderedDict()
 
         for group, rows in groups.items():
             output[group] = self._fork(rows)

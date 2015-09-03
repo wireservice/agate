@@ -3,6 +3,7 @@
 import csv
 
 import agate
+import proof
 
 def load_data(data):
     text_type = agate.TextType()
@@ -74,13 +75,40 @@ def states(data):
 
     print(sorted_medians.format(max_rows=5))
 
+def race_and_age(data):
+    # Filters rows without age data
+    only_with_age = data['with_years_in_prison'].where(
+        lambda r: r['age'] is not None
+    )
 
-analysis = agate.Analysis(load_data)
+    # Group by race
+    race_groups = only_with_age.group_by('race')
+
+    # Sub-group by age cohorts (20s, 30s, etc.)
+    race_and_age_groups = race_groups.group_by(
+        lambda r: '%i0s' % (r['age'] // 10),
+        key_name='age_group'
+    )
+
+    # Aggregate medians for each group
+    medians = race_and_age_groups.aggregate([
+        ('years_in_prison', agate.Length(), 'count'),
+        ('years_in_prison', agate.Median(), 'median_years_in_prison')
+    ])
+
+    # Sort the results
+    sorted_groups = medians.order_by('median_years_in_prison', reverse=True)
+
+    # Print out the results
+    print(sorted_groups.format(max_rows=10))
+
+analysis = proof.Analysis(load_data)
 analysis.then(confessions)
 analysis.then(median_age)
 analysis.then(youth)
 
 years_analysis = analysis.then(years_in_prison)
 years_analysis.then(states)
+years_analysis.then(race_and_age)
 
 analysis.run()

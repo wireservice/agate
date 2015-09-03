@@ -1,6 +1,7 @@
 0.7.0
 -----
 
+* Nested TableSet's and multi-dimensional aggregates. (#204)
 * TableSet.aggregate will now use key_name as the group column name. (#203)
 * Added key_name argument to TableSet and Table.group_by.
 * Added Length aggregation and removed count from TableSet.aggregate output. (#203)

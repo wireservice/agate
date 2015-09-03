@@ -17,6 +17,10 @@ When methods such as :meth:`TableSet.select`, :meth:`TableSet.where` or
 :meth:`TableSet.order_by` are used, the operation is applied to *each* table
 in the set and the result is a new :class:`TableSet` instance made up of
 entirely new :class:`.Table` instances.
+
+:class:`TableSet` instances can also contain other TableSet's. This means you
+can chain calls to :class:`.Table.aggregate` and :class:`TableSet.aggregeate`
+and end up with data aggregated across multiple dimensions.
 """
 
 from collections import Mapping
@@ -49,7 +53,7 @@ class TableMethodProxy(object):
         for key, value in self.tableset._tables.items():
             groups[key] = getattr(value, self.method_name)(*args, **kwargs)
 
-        return TableSet(groups)
+        return TableSet(groups, key_name=self.tableset._key_name)
 
 class TableSet(Mapping):
     """
@@ -68,10 +72,11 @@ class TableSet(Mapping):
     def __init__(self, group, key_name='group'):
         self._key_name = key_name
 
-        self._sample_table = group.values()[0]
+        self._sample_table = self
 
         while isinstance(self._sample_table, TableSet):
-            self._sample_table = self._sample_table.values()[0]
+            # Note: list call is a workaround for Python 3 "ValuesView"
+            self._sample_table = list(self._sample_table.values())[0]
 
         self._column_types = self._sample_table.get_column_types()
         self._column_names = self._sample_table.get_column_names()
@@ -96,7 +101,7 @@ class TableSet(Mapping):
         self.distinct = TableMethodProxy(self, 'distinct')
         self.inner_join = TableMethodProxy(self, 'inner_join')
         self.left_outer_join = TableMethodProxy(self, 'left_outer_join')
-        # self.group_by = TableMethodProxy(self, 'group_by')
+        self.group_by = TableMethodProxy(self, 'group_by')
         self.compute = TableMethodProxy(self, 'compute')
         self.percent_change = TableMethodProxy(self, 'percent_change')
         self.rank = TableMethodProxy(self, 'rank')
@@ -181,14 +186,55 @@ class TableSet(Mapping):
         """
         return self._column_names
 
+    def _aggregate(self, aggregations=[]):
+        """
+        Recursive aggregation allowing for TableSet's to be nested inside
+        one another.
+
+        See :meth:`TableSet.aggregate` for the user-facing API.
+        """
+        output = []
+
+        # Process nested TableSet's
+        if isinstance(list(self._tables.values())[0], TableSet):
+            for key, tableset in self._tables.items():
+                column_names, column_types, nested_output = tableset._aggregate(aggregations)
+
+                for row in nested_output:
+                    row.insert(0, key)
+
+                    output.append(row)
+
+            column_names.insert(0, self._key_name)
+            column_types.insert(0, TextType())
+        # Regular Tables
+        else:
+            column_names = [self._key_name]
+            column_types = [TextType()]
+
+            for column_name, aggregation, new_column_name in aggregations:
+                c = self._sample_table.columns[column_name]
+
+                column_names.append(new_column_name)
+                column_types.append(aggregation.get_aggregate_column_type(c))
+
+            for name, table in self._tables.items():
+                new_row = [name]
+
+                for column_name, aggregation, new_column_name in aggregations:
+                    c = table.columns[column_name]
+
+                    new_row.append(c.aggregate(aggregation))
+
+                output.append(new_row)
+
+        return column_names, column_types, output
+
     def aggregate(self, aggregations=[]):
         """
         Aggregate data from the tables in this set by performing some
         set of column operations on the groups and coalescing the results into
         a new :class:`.Table`.
-
-        :class:`group` and :class:`count` columns will always be included as at
-        the beginning of the output table, before the aggregated columns.
 
         :code:`aggregations` must be a list of tuples, where each has three
         parts: a :code:`column_name`, a :class:`.Aggregation` instance and a
@@ -198,25 +244,6 @@ class TableSet(Mapping):
             :code:`(column_name, aggregation, new_column_name)`.
         :returns: A new :class:`.Table`.
         """
-        output = []
-
-        column_types = [TextType(), NumberType()]
-        column_names = [self._key_name]
-
-        for column_name, aggregation, new_column_name in aggregations:
-            c = self._sample_table.columns[column_name]
-
-            column_types.append(aggregation.get_aggregate_column_type(c))
-            column_names.append(new_column_name)
-
-        for name, table in self._tables.items():
-            new_row = [name]
-
-            for column_name, aggregation, new_column_name in aggregations:
-                c = table.columns[column_name]
-
-                new_row.append(c.aggregate(aggregation))
-
-            output.append(tuple(new_row))
+        column_names, column_types, output = self._aggregate(aggregations)
 
         return self._sample_table._fork(output, zip(column_names, column_types))
