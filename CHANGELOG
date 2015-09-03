@@ -1,6 +1,8 @@
 0.7.0
 -----
 
+* Values to coerce to true/false can now be overridden for BooleanType.
+* Values to coerce to null can now be overridden for all ColumnType subclasses. (#206)
 * Add key_type argument to TableSet and Table.group_by. (#205)
 * Nested TableSet's and multi-dimensional aggregates. (#204)
 * TableSet.aggregate will now use key_name as the group column name. (#203)

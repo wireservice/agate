@@ -22,26 +22,43 @@ import six
 
 from agate.exceptions import CastError
 
-#: String values which will be automatically cast to :code:`None`.
-NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
+#: Default values which will be automatically cast to :code:`None`
+DEFAULT_NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
 
-#: String values which will be automatically cast to :code:`True`.
-TRUE_VALUES = ('yes', 'y', 'true', 't')
+#: Default values which will be automatically cast to :code:`True`.
+DEFAULT_TRUE_VALUES = ('yes', 'y', 'true', 't')
 
-#: String values which will be automatically cast to :code:`False`.
-FALSE_VALUES = ('no', 'n', 'false', 'f')
+#: Default values which will be automatically cast to :code:`False`.
+DEFAULT_FALSE_VALUES = ('no', 'n', 'false', 'f')
 
 class ColumnType(object): #pragma: no cover
     """
     Base class for column data types.
+
+    :param null_values: A sequence of values which should be cast to
+        :code:`None` when encountered with this type.
     """
+    def __init__(self, null_values=DEFAULT_NULL_VALUES):
+        self.null_values = null_values
+
     def _create_column(self, table, index):
         raise NotImplementedError
 
 class BooleanType(ColumnType):
     """
     Column type for :class:`BooleanColumn`.
+
+    :param true_values: A sequence of values which should be cast to
+        :code:`True` when encountered with this type.
+    :param false_values: A sequence of values which should be cast to
+        :code:`False` when encountered with this type.
     """
+    def __init__(self, true_values=DEFAULT_TRUE_VALUES, false_values=DEFAULT_FALSE_VALUES, null_values=DEFAULT_NULL_VALUES):
+        super(BooleanType, self).__init__(null_values=null_values)
+
+        self.true_values = true_values
+        self.false_values = false_values
+
     def cast(self, d):
         """
         Cast a single value to :class:`bool`.
@@ -57,13 +74,13 @@ class BooleanType(ColumnType):
 
             d_lower = d.lower()
 
-            if d_lower in NULL_VALUES:
+            if d_lower in self.null_values:
                 return None
 
-            if d_lower in TRUE_VALUES:
+            if d_lower in self.true_values:
                 return True
 
-            if d_lower in FALSE_VALUES:
+            if d_lower in self.false_values:
                 return False
 
         raise CastError('Can not convert value %s to bool for BooleanColumn.' % d)
@@ -77,7 +94,9 @@ class DateType(ColumnType):
     """
     Column type for :class:`DateColumn`.
     """
-    def __init__(self, date_format=None):
+    def __init__(self, date_format=None, null_values=DEFAULT_NULL_VALUES):
+        super(DateType, self).__init__(null_values=null_values)
+
         self.date_format = date_format
 
     def cast(self, d):
@@ -94,7 +113,7 @@ class DateType(ColumnType):
         if isinstance(d, six.string_types):
             d = d.strip()
 
-            if d.lower() in NULL_VALUES:
+            if d.lower() in self.null_values:
                 return None
 
         if self.date_format:
@@ -111,7 +130,9 @@ class DateTimeType(ColumnType):
     """
     Column type for :class:`DateTimeColumn`.
     """
-    def __init__(self, datetime_format=None):
+    def __init__(self, datetime_format=None, null_values=DEFAULT_NULL_VALUES):
+        super(DateTimeType, self).__init__(null_values=null_values)
+
         self.datetime_format = datetime_format
 
     def cast(self, d):
@@ -128,7 +149,7 @@ class DateTimeType(ColumnType):
         if isinstance(d, six.string_types):
             d = d.strip()
 
-            if d.lower() in NULL_VALUES:
+            if d.lower() in self.null_values:
                 return None
 
         if self.datetime_format:
@@ -158,7 +179,7 @@ class TimeDeltaType(ColumnType):
         if isinstance(d, six.string_types):
             d = d.strip()
 
-            if d.lower() in NULL_VALUES:
+            if d.lower() in self.null_values:
                 return None
 
         seconds = pytimeparse.parse(d)
@@ -187,7 +208,7 @@ class NumberType(ColumnType):
         if isinstance(d, six.string_types):
             d = d.replace(',' ,'').strip()
 
-            if d.lower() in NULL_VALUES:
+            if d.lower() in self.null_values:
                 return None
 
         if isinstance(d, float):
@@ -220,7 +241,7 @@ class TextType(ColumnType):
         if isinstance(d, six.string_types):
             d = d.strip()
 
-            if d.lower() in NULL_VALUES:
+            if d.lower() in self.null_values:
                 return None
 
         return six.text_type(d)

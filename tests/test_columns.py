@@ -34,6 +34,16 @@ class TestColumnTypes(unittest.TestCase):
         casted = tuple(BooleanType().cast(v) for v in values)
         self.assertSequenceEqual(casted, (True, True, None, False, False, None))
 
+    def test_boolean_cast_custom_strings(self):
+        values = ('a', 'b', 'c', 'd', 'e', 'f')
+        boolean_type = BooleanType(
+            true_values=('a', 'b'),
+            false_values=('d', 'e'),
+            null_values=('c', 'f')
+        )
+        casted = tuple(boolean_type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (True, True, None, False, False, None))
+
     def test_number(self):
         self.assertIsInstance(NumberType()._create_column(None, 1), NumberColumn)
 
