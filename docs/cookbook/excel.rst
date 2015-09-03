@@ -99,10 +99,11 @@ You can emulate most of the functionality of Excel's pivot tables using the :met
 
 .. code-block:: python
 
-    professions = data.group_by('profession')
-    summary = professions.aggregate([
-        ('salary', 'mean'),
-        ('salary', 'median')
+    jobs = employees.group_by('job_title')
+    summary = jobs.aggregate([
+        ('salary', agate.Length(), 'employee_count')
+        ('salary', agate.Mean(), 'salary_mean'),
+        ('salary', agate.Median(), 'salary_median')
     ])
 
-The resulting ``summary`` table will have four columns: ``group`` (the profession), ``count`` (the number of grouped rows), ``salary_mean`` and ``salary_median`` (the aggregates).
+The resulting ``summary`` table will have four columns: ``job_title`, ``employee_count``, ``salary_mean`` and ``salary_median``.

@@ -146,10 +146,23 @@ class TestTableSet(unittest.TestCase):
             self.assertSequenceEqual(new_table._column_types, (self.number_type,))
             self.assertSequenceEqual(new_table._column_names, ('number',))
 
+    def test_aggregate_grouper_name(self):
+        tableset = TableSet(self.tables, key_name='test')
+
+        new_table = tableset.aggregate([
+            ('number', Length(), 'count')
+        ])
+
+        self.assertIsInstance(new_table, Table)
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 2)
+        self.assertSequenceEqual(new_table._column_names, ('test', 'count'))
+
     def test_aggregate_sum(self):
         tableset = TableSet(self.tables)
 
         new_table = tableset.aggregate([
+            ('number', Length(), 'count'),
             ('number', Sum(), 'number_sum')
         ])
 
@@ -165,6 +178,7 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables)
 
         new_table = tableset.aggregate([
+            ('number', Length(), 'count'),
             ('number', Min(), 'number_min')
         ])
 
@@ -181,6 +195,7 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables)
 
         new_table = tableset.aggregate([
+            ('number', Length(), 'count'),
             ('number', Sum(), 'number_sum'),
             ('number', Mean(), 'number_mean')
         ])
@@ -197,6 +212,7 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables)
 
         new_table = tableset.aggregate([
+            ('letter', Length(), 'count'),
             ('letter', MaxLength(), 'letter_max_length')
         ])
 

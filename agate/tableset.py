@@ -61,8 +61,13 @@ class TableSet(Mapping):
     values.
 
     :param tables: A dictionary of string keys and :class:`Table` values.
+    :param group_name: A name that describes the grouping properties. Used as
+        the column header when the groups are aggregated. Defaults to the
+        column name that was grouped on.
     """
-    def __init__(self, group):
+    def __init__(self, group, key_name='group'):
+        self._key_name = key_name
+
         self._first_table = list(group.values())[0]
         self._column_types = self._first_table.get_column_types()
         self._column_names = self._first_table.get_column_names()
@@ -192,7 +197,7 @@ class TableSet(Mapping):
         output = []
 
         column_types = [TextType(), NumberType()]
-        column_names = ['group', 'count']
+        column_names = [self._key_name]
 
         for column_name, aggregation, new_column_name in aggregations:
             c = self._first_table.columns[column_name]
@@ -201,7 +206,7 @@ class TableSet(Mapping):
             column_names.append(new_column_name)
 
         for name, table in self._tables.items():
-            new_row = [name, len(table.rows)]
+            new_row = [name]
 
             for column_name, aggregation, new_column_name in aggregations:
                 c = table.columns[column_name]

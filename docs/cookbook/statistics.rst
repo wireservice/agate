@@ -28,13 +28,14 @@ You can also generate aggregate statistics for subsets of data (sometimes colloq
 
 .. code-block:: python
 
-    professions = data.group_by('profession')
-    summary = professions.aggregate([
-        ('salary', 'mean'),
-        ('salary', 'median')
+    doctors = patients.group_by('doctor')
+    patient_ages = doctors.aggregate([
+        ('age', agate.Length(), 'patient_count')
+        ('age', agate.Mean(), 'age_mean'),
+        ('age', agate.Median(), 'age_median')
     ])
 
-The ``summary`` table will have four columns: ``group`` (the profession), ``count`` (the number of grouped rows), ``salary_mean`` and ``salary_median`` (the aggregates).
+The resulting table will have four columns: ``doctor``, ``patient_count``, ``age_mean`` and ``age_median``.
 
 Identifying outliers
 ====================

@@ -325,11 +325,13 @@ First, we use :meth:`.Table.group_by` to group the data by state.
 
     by_state = exonerations.group_by('state')
 
-This takes our original :class:`.Table` and groups it into a :class:`.TableSet`, which contains one table per county. Now we need to aggregate the total for each state. This works in a very similar way to how it did when we were aggregating columns of a single table.
+This takes our original :class:`.Table` and groups it into a :class:`.TableSet`, which contains one table per county. Now we need to aggregate the total for each state. This works in a very similar way to how it did when we were aggregating columns of a single table, except that we'll use the :class:`.Length` aggregation to count the total number of values in the column.
 
 .. code-block:: python
 
-    state_totals = by_state.aggregate()
+    state_totals = by_state.aggregate([
+        ('state', agate.Length(), 'count')
+    ])
 
     sorted_totals = state_totals.order_by('count', reverse=True)
 
@@ -338,7 +340,7 @@ This takes our original :class:`.Table` and groups it into a :class:`.TableSet`,
 ::
 
     |--------+--------|
-    |  group | count  |
+    |  state | count  |
     |--------+--------|
     |  TX    | 212    |
     |  NY    | 202    |
@@ -348,9 +350,7 @@ This takes our original :class:`.Table` and groups it into a :class:`.TableSet`,
     |  ...   | ...    |
     |--------+--------|
 
-Unsurpringly, the results appear roughly proportional to population.
-
-Because we passed no arguments, :meth:`.TableSet.aggregate` did nothing except group the data and count the elements in each group, but the possiblities are much bigger.
+You'll notice we pass a list of tuples to :meth:`.TableSet.aggregate`. Each one includes three elements. The first is the column name to aggregate. The second is an instance of some :class:`.Aggregation`. The third is the new column name. Unsurpringly, in this case the results appear roughly proportional to population.
 
 Question: **What state has the longest median time in prison prior to exoneration?**
 

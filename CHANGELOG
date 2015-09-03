@@ -1,6 +1,9 @@
 0.7.0
 -----
 
+* TableSet.aggregate will now use key_name as the group column name. (#203)
+* Added key_name argument to TableSet and Table.group_by.
+* Added Length aggregation and removed count from TableSet.aggregate output. (#203)
 * Fix error messages for RowDoesNotExistError and ColumnDoesNotExistError.
 
 0.6.0

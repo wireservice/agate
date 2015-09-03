@@ -142,16 +142,17 @@ SQL:
 
 .. code-block:: postgres
 
-    SELECT mean(age) FROM patient GROUP BY doctor;
+    SELECT mean(age), median(age) FROM patients GROUP BY doctor;
 
 agate:
 
 .. code-block:: python
 
     doctors = patients.group_by('doctor')
-    patient_ages = patient.aggregate([
-        ('age', 'mean'),
-        ('age', 'median')
+    patient_ages = doctors.aggregate([
+        ('age', agate.Length(), 'patient_count')
+        ('age', agate.Mean(), 'age_mean'),
+        ('age', agate.Median(), 'age_median')
     ])
 
-The resulting table will have four columns: ``group`` (the doctor), ``count`` (the number of patients), ``age_mean`` and ``age_median`` (the aggregates).
+The resulting table will have four columns: ``doctor``, ``patient_count``, ``age_mean`` and ``age_median``.

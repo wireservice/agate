@@ -42,6 +42,20 @@ class TestSimpleAggregation(unittest.TestCase):
         self.assertEqual(self.table.columns['one'].aggregate(All(lambda d: d != 5)), True)
         self.assertEqual(self.table.columns['one'].aggregate(All(lambda d: d == 2)), False)
 
+    def test_length(self):
+        rows = (
+            (1, 2, 'a'),
+            (2, 3, 'b'),
+            (None, 4, 'c'),
+            (1, 2, 'a'),
+            (1, 2, 'a')
+        )
+
+        table = Table(rows, self.columns)
+
+        self.assertEqual(table.columns['one'].aggregate(Length()), 5)
+        self.assertEqual(table.columns['two'].aggregate(Length()), 5)
+
     def test_count(self):
         rows = (
             (1, 2, 'a'),

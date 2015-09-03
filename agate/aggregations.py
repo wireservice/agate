@@ -107,9 +107,27 @@ class All(Aggregation):
 
         return all(self._test(d) for d in data)
 
+class Length(Aggregation):
+    """
+    Count the total number of values in the column.
+
+    Equivalent to Python's :func:`len` function.
+    """
+    def get_aggregate_column_type(self, column):
+        return NumberType()
+
+    def run(self, column):
+        """
+        :returns: :class:`int`
+        """
+        return len(column)
+
 class Count(Aggregation):
     """
     Count the number of times a specific value occurs in a column.
+
+    If you want to count the total number of values in a column use
+    :class:`Length`.
 
     :param value: The value to be counted.
     """
