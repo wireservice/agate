@@ -146,7 +146,7 @@ class TestTableSet(unittest.TestCase):
             self.assertSequenceEqual(new_table._column_types, (self.number_type,))
             self.assertSequenceEqual(new_table._column_names, ('number',))
 
-    def test_aggregate_grouper_name(self):
+    def test_aggregate_key_name(self):
         tableset = TableSet(self.tables, key_name='test')
 
         new_table = tableset.aggregate([
@@ -157,6 +157,28 @@ class TestTableSet(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 2)
         self.assertSequenceEqual(new_table._column_names, ('test', 'count'))
+        self.assertIsInstance(new_table._column_types[0], TextType)
+        self.assertIsInstance(new_table._column_types[1], NumberType)
+
+    def test_aggregate_key_type(self):
+        tables = OrderedDict([
+            (1, Table(self.table1, self.columns)),
+            (2, Table(self.table2, self.columns)),
+            (3, Table(self.table3, self.columns))
+        ])
+
+        tableset = TableSet(tables, key_name='test', key_type=self.number_type)
+
+        new_table = tableset.aggregate([
+            ('number', Length(), 'count')
+        ])
+
+        self.assertIsInstance(new_table, Table)
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 2)
+        self.assertSequenceEqual(new_table._column_names, ('test', 'count'))
+        self.assertIsInstance(new_table._column_types[0], NumberType)
+        self.assertIsInstance(new_table._column_types[1], NumberType)
 
     def test_aggregate_sum(self):
         tableset = TableSet(self.tables)

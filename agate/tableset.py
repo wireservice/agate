@@ -34,7 +34,7 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 from agate.aggregations import Aggregation
-from agate.column_types import TextType, NumberType
+from agate.column_types import *
 from agate.exceptions import ColumnDoesNotExistError
 from agate.rows import RowSequence
 
@@ -65,12 +65,15 @@ class TableSet(Mapping):
     values.
 
     :param tables: A dictionary of string keys and :class:`Table` values.
-    :param group_name: A name that describes the grouping properties. Used as
+    :param key_name: A name that describes the grouping properties. Used as
         the column header when the groups are aggregated. Defaults to the
         column name that was grouped on.
+    :param key_type: An instance some subclass of :class:`.ColumnType`. If not
+        provided it will default to a :class`.TextType`.
     """
-    def __init__(self, group, key_name='group'):
+    def __init__(self, group, key_name='group', key_type=None):
         self._key_name = key_name
+        self._key_type = key_type or TextType()
 
         # Note: list call is a workaround for Python 3 "ValuesView"
         self._sample_table = list(group.values())[0]
@@ -206,11 +209,11 @@ class TableSet(Mapping):
                     output.append(row)
 
             column_names.insert(0, self._key_name)
-            column_types.insert(0, TextType())
+            column_types.insert(0, self._key_type)
         # Regular Tables
         else:
             column_names = [self._key_name]
-            column_types = [TextType()]
+            column_types = [self._key_type]
 
             for column_name, aggregation, new_column_name in aggregations:
                 c = self._sample_table.columns[column_name]

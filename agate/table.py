@@ -509,7 +509,7 @@ class Table(object):
 
         return self._fork(rows, zip(column_names, column_types))
 
-    def group_by(self, key, key_name=None):
+    def group_by(self, key, key_name=None, key_type=None):
         """
         Create a new :class:`Table` for unique value and return them as a
         :class:`.TableSet`. The :code:`key` can be either a column name
@@ -524,6 +524,8 @@ class Table(object):
         :param key_name: A name that describes the grouped properties.
             Defaults to the column name that was grouped on or "group" if
             grouping with a key function. See :class:`.TableSet` for more.
+        :param key_type: An instance some subclass of :class:`.ColumnType`. If
+            not provided it will default to a :class`.TextType`.
         :returns: A :class:`.TableSet` mapping where the keys are unique
             values from the :code:`key` and the values are new :class:`Table`
             instances containing the grouped rows.
@@ -561,7 +563,7 @@ class Table(object):
         for group, rows in groups.items():
             output[group] = self._fork(rows)
 
-        return TableSet(output, key_name=key_name)
+        return TableSet(output, key_name=key_name, key_type=key_type)
 
     def compute(self, computations):
         """
