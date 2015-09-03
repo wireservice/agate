@@ -46,8 +46,8 @@ class TableMethodProxy(object):
     def __call__(self, *args, **kwargs):
         groups = OrderedDict()
 
-        for name, table in self.tableset._tables.items():
-            groups[name] = getattr(table, self.method_name)(*args, **kwargs)
+        for key, value in self.tableset._tables.items():
+            groups[key] = getattr(value, self.method_name)(*args, **kwargs)
 
         return TableSet(groups)
 
@@ -68,16 +68,20 @@ class TableSet(Mapping):
     def __init__(self, group, key_name='group'):
         self._key_name = key_name
 
-        self._first_table = list(group.values())[0]
-        self._column_types = self._first_table.get_column_types()
-        self._column_names = self._first_table.get_column_names()
+        self._sample_table = group.values()[0]
+
+        while isinstance(self._sample_table, TableSet):
+            self._sample_table = self._sample_table.values()[0]
+
+        self._column_types = self._sample_table.get_column_types()
+        self._column_names = self._sample_table.get_column_names()
 
         for name, table in group.items():
             if table._column_types != self._column_types:
-                raise ValueError('Table %i has different column types from the initial table.' % i)
+                raise ValueError('Not all tables have the same column types!')
 
             if table._column_names != self._column_names:
-                raise ValueError('Table %i has different column names from the initial table.' % i)
+                raise ValueError('Not all tables have the same column names!')
 
         self._tables = copy(group)
 
@@ -200,7 +204,7 @@ class TableSet(Mapping):
         column_names = [self._key_name]
 
         for column_name, aggregation, new_column_name in aggregations:
-            c = self._first_table.columns[column_name]
+            c = self._sample_table.columns[column_name]
 
             column_types.append(aggregation.get_aggregate_column_type(c))
             column_names.append(new_column_name)
@@ -215,4 +219,4 @@ class TableSet(Mapping):
 
             output.append(tuple(new_row))
 
-        return self._first_table._fork(output, zip(column_names, column_types))
+        return self._sample_table._fork(output, zip(column_names, column_types))
