@@ -390,16 +390,16 @@ DC? Nebraska? What accounts for these states having the longest times in prison 
 
 As with :meth:`.Table.aggregate` and :meth:`.Table.compute`, the :meth:`.TableSet.aggregate`: method takes a list of aggregations to perform. You can aggregate as many columns as you like in a single step and they will all appear in the output table.
 
-Multi-dimensional aggregations
-==============================
+Multi-dimensional aggregation
+=============================
 
-Before we wrap up, let's try one more thing. I've already shown you that you can use :class:`.TableSet` to group instances of :class:`.Table`. However, you can also use a :class:`.TableSet` to group other instances of :class:`.TableSet`. To put that another way, instance sof :class:`.TableSet` can be *nested*.
+Before we wrap up, let's try one more thing. I've already shown you that you can use :class:`.TableSet` to group instances of :class:`.Table`. However, you can also use a :class:`.TableSet` to group other instances of :class:`.TableSet`. To put that another way, instances of :class:`.TableSet` can be *nested*.
 
-The key to nesting data in this way is to use :meth:`.TableSet.group_by`. Just as we used :meth:`.Table.group_by` to split data up into a group of tables, you can use :meth:`.TableSet.group_by` to further subdivide that data. Effectively this means you can create multi-dimensional groupings. Let's look at a concrete example.
+The key to nesting data in this way is to use :meth:`.TableSet.group_by`. Before we used :meth:`.Table.group_by` to split data up into a group of tables. Now we'll use :meth:`.TableSet.group_by` to further subdivide that data. Let's look at a concrete example.
 
 Question: **Is there a collective relationship between race, age and time spent in prison prior to exoneration?**
 
-I'm not going to explain every stage of this analysis as most of it users features you've seen before. The key part to look for is the two separate calls to ``group_by``:
+I'm not going to explain every stage of this analysis as most of it repeats patterns used previously. The key part to look for is the two separate calls to ``group_by``:
 
 .. code-block:: python
 
@@ -447,7 +447,7 @@ I'm not going to explain every stage of this analysis as most of it users featur
     |  ...             | ...       | ...   | ...                     |
     |------------------+-----------+-------+-------------------------|
 
-Well, what are you waiting for? Get to reporting!
+Well, what are you waiting for? It's your turn!
 
 Where to go next
 ================

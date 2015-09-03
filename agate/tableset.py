@@ -72,10 +72,10 @@ class TableSet(Mapping):
     def __init__(self, group, key_name='group'):
         self._key_name = key_name
 
-        self._sample_table = self
+        # Note: list call is a workaround for Python 3 "ValuesView"
+        self._sample_table = list(group.values())[0]
 
         while isinstance(self._sample_table, TableSet):
-            # Note: list call is a workaround for Python 3 "ValuesView"
             self._sample_table = list(self._sample_table.values())[0]
 
         self._column_types = self._sample_table.get_column_types()

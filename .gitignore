@@ -7,4 +7,4 @@ docs/_build
 dist
 .coverage
 build
-.agate
+.proof
