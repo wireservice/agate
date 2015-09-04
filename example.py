@@ -54,7 +54,7 @@ totals = totals.order_by('total_cost_sum', reverse=True).rows[:5]
 print('Five most spendy counties:')
 
 for i, row in enumerate(totals):
-    text = '# {}: {}, ${:,}'.format(i + 1, row['group'], row['total_cost_sum'])
+    text = '# {}: {}, ${:,}'.format(i + 1, row['county'], row['total_cost_sum'])
     print(text)
 
 # Get the five most recent purchases
