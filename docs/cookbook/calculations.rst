@@ -92,7 +92,7 @@ Implementing Levenshtein requires writing a custom :class:`.Computation`. To sav
 .. code-block:: python
 
     import agate
-    from Levenshtein.StringMatcher import StringMatcher
+    from Levenshtein import distance
     import six
 
     class LevenshteinDistance(agate.Computation):
@@ -101,7 +101,7 @@ Implementing Levenshtein requires writing a custom :class:`.Computation`. To sav
         """
         def __init__(self, column_name, compare_string):
             self._column_name = column_name
-            self._matcher = StringMatcher(seq2=six.text_type(compare_string))
+            self._compare_string = compare_string
 
         def get_computed_column_type(self, table):
             """
@@ -127,9 +127,7 @@ Implementing Levenshtein requires writing a custom :class:`.Computation`. To sav
             if val is None:
                 return None
 
-            self._matcher.set_seq1(val)
-
-            return self._matcher.distance()
+            return distance(val, self._compare_string)
 
 This code can now be applied to any :class:`.Table` just as any other :class:`.Computation` would be:
 

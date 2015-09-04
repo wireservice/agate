@@ -8,6 +8,7 @@ Cookbook
     cookbook/basics
     cookbook/filtering
     cookbook/sorting
+    cookbook/searching
     cookbook/statistics
     cookbook/calculations
     cookbook/ranking
