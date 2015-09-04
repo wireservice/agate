@@ -39,7 +39,17 @@ This snippet filters the dataset to incomes between 100,000 and 200,000.
 
 .. code-block:: python
 
-    new_table = table.where(lambda row: 100000 < row['income'] < 200000) 
+    new_table = table.where(lambda row: 100000 < row['income'] < 200000)
+
+Filter to top x%
+================
+
+To filter a dataset to the top 10% percent of values we first compute the percentiles for the column and then use the result in the :meth:`.Table.where` truth test:
+
+.. code-block:: python
+
+    percentiles = table.columns['salary'].percentiles()
+    top_ten_percent = table.where(lambda r: r['salary'] >= percentiles[90])
 
 Random sample
 =============
@@ -61,5 +71,3 @@ With can also get an ordered sample by simply using the :code:`step` parameter o
 .. code-block:: python
 
     sampled = table.limit(step=10)
-
-
