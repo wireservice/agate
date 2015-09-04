@@ -1,6 +1,7 @@
 0.7.0
 -----
 
+* Cookbook: USA Today diversity index.
 * Cookbook: filter to top x%. (#47)
 * Cookbook: fuzzy string search example. (#176)
 * Values to coerce to true/false can now be overridden for BooleanType.

@@ -138,3 +138,35 @@ This code can now be applied to any :class:`.Table` just as any other :class:`.C
     ])
 
 The resulting column will contain an integer measuring the edit distance between the value in the column and the comparison string.
+
+USA Today Diversity Index
+=========================
+
+The `USA Today Diversity Index <http://www.usatoday.com/story/news/nation/2014/10/21/diversity-index-data-how-we-did-report/17432103/>`_ is a widely cited method for evaluating the racial diversity of a given area. Using a custom :class:`.Computation` makes it simple to calculate.
+
+Assuming that your data has a column for the total population, another for the population of each race and a final column for the hispanic population, you can implement the diversity index like this:
+
+.. code-block:: python
+
+    class USATodayDiversityIndex(agate.Computation):
+        def get_computed_column_type(self, table):
+            return agate.NumberType()
+
+        def run(self, row):
+            race_squares = 0
+
+            for race in ['white', 'black', 'asian', 'american_indian', 'pacific_islander']:
+                race_squares += (row[race] / row['population']) ** 2
+
+            hispanic_squares = (row['hispanic'] / row['population']) ** 2
+            hispanic_squares += (1 - (row['hispanic'] / row['population'])) ** 2
+
+            return (1 - (race_squares * hispanic_squares)) * 100
+
+We apply the diversity index like any other computation:
+
+.. code-block:: Python
+
+    with_index = table.compute([
+        ('diversity_index', USATodayDiversityIndex())
+    ])
