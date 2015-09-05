@@ -119,7 +119,10 @@ class DateType(ColumnType):
         if self.date_format:
             return datetime.datetime.strptime(d, self.date_format).date()
 
-        return parse(d).date()
+        try:
+            return parse(d).date()
+        except (TypeError, ValueError):
+            raise CastError('Can not parse value "%s" to as datetime for DateColumn.' % d)
 
     def _create_column(self, table, index):
         from agate.columns import DateColumn
@@ -155,7 +158,10 @@ class DateTimeType(ColumnType):
         if self.datetime_format:
             return datetime.datetime.strptime(d, self.datetime_format)
 
-        return parse(d)
+        try:
+            return parse(d)
+        except (TypeError, ValueError):
+            raise CastError('Can not parse value "%s" to as datetime for DateTimeColumn.' % d)
 
     def _create_column(self, table, index):
         from agate.columns import DateTimeColumn
@@ -183,6 +189,9 @@ class TimeDeltaType(ColumnType):
                 return None
 
         seconds = pytimeparse.parse(d)
+
+        if seconds is None:
+            raise CastError('Can not parse value "%s" to as timedelta for TimeDeltaColumn.' % d)
 
         return datetime.timedelta(seconds=seconds)
 
@@ -228,6 +237,10 @@ class TextType(ColumnType):
     """
     Column type for :class:`TextColumn`.
     """
+    @classmethod
+    def test(cls, d):
+        return True
+
     def cast(self, d):
         """
         Cast a single value to :func:`unicode` (:func:`str` in Python 3).
