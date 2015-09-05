@@ -10,7 +10,7 @@ except ImportError: #pragma: no cover
 import six
 
 from agate.exceptions import ColumnDoesNotExistError
-from agate.utils import memoize
+from agate.utils import NullOrder, memoize
 
 class ColumnMapping(Mapping):
     """
@@ -119,12 +119,21 @@ class Column(Sequence):
         """
         return tuple(d for d in self.get_data() if d is not None)
 
+    def _null_handler(self, k):
+        """
+        Key method for sorting nulls correctly.
+        """
+        if k is None:
+            return NullOrder()
+
+        return k
+
     @memoize
     def get_data_sorted(self):
         """
         Get the data contained in this column sorted.
         """
-        return sorted(self.get_data())
+        return sorted(self.get_data(), key=self._null_handler)
 
     @memoize
     def has_nulls(self):
