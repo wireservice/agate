@@ -19,5 +19,5 @@ class ColumnType(object): #pragma: no cover
     def cast(self, d):
         raise NotImplementedError
 
-    def _create_column(self, table, index):
+    def create_column(self, table, index):
         raise NotImplementedError

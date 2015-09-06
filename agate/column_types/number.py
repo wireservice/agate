@@ -4,7 +4,7 @@ try:
     from cdecimal import Decimal, InvalidOperation
 except ImportError: #pragma: no cover
     from decimal import Decimal, InvalidOperation
-    
+
 import six
 
 from agate.column_types.base import *
@@ -54,7 +54,7 @@ class NumberType(ColumnType):
         except InvalidOperation:
             raise CastError('Can not convert value "%s" to Decimal for NumberColumn.' % d)
 
-    def _create_column(self, table, index):
+    def create_column(self, table, index):
         from agate.columns import NumberColumn
 
         return NumberColumn(table, index)

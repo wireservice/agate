@@ -72,7 +72,7 @@ class BooleanType(ColumnType):
 
         raise CastError('Can not convert value %s to bool for BooleanColumn.' % d)
 
-    def _create_column(self, table, index):
+    def create_column(self, table, index):
         from agate.columns import BooleanColumn
 
         return BooleanColumn(table, index)

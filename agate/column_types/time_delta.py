@@ -52,7 +52,7 @@ class TimeDeltaType(ColumnType):
 
         return datetime.timedelta(seconds=seconds)
 
-    def _create_column(self, table, index):
+    def create_column(self, table, index):
         from agate.columns import TimeDeltaColumn
 
         return TimeDeltaColumn(table, index)

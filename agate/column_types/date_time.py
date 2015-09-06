@@ -59,7 +59,7 @@ class DateTimeType(ColumnType):
         except:
             raise CastError('Can not parse value "%s" to as datetime for DateTimeColumn.' % d)
 
-    def _create_column(self, table, index):
+    def create_column(self, table, index):
         from agate.columns import DateTimeColumn
 
         return DateTimeColumn(table, index)
