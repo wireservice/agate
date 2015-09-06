@@ -158,7 +158,7 @@ class Table(object):
         else:
             if len(column_names) != len(column_info):
                 # TKTK Better Error
-                raise ValueError
+                raise ValueError('CSV contains more columns than were specified.')
 
         return Table(rows, column_info)
 
