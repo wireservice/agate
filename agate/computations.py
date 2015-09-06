@@ -154,8 +154,10 @@ class Rank(Computation):
     """
     Computes rank order of the values in a column.
 
-    NOTE: This rank algorithm is overly-simplistic and currently does not
-    handle ties.
+    Uses the "competition" ranking method: if there are four values and the
+    middle two are tied, then the output will be :code:`[1, 2, 2, 4]`.
+
+    Null values will always be ranked last.
     """
     def __init__(self, column_name):
         self._column_name = column_name
@@ -163,18 +165,20 @@ class Rank(Computation):
     def get_computed_column_type(self, table):
         return NumberType()
 
-    def _null_handler(self, k):
-        if k is None:
-            return NullOrder()
-
-        return k
-
     def prepare(self, table):
-        values = [row[self._column_name] for row in table.rows]
-        self._rank_column = sorted(values, key=self._null_handler)
+        self._ranks = {}
+        rank = 0
+
+        for c in table.columns[self._column_name].get_data_sorted():
+            rank += 1
+
+            if c in self._ranks:
+                continue
+
+            self._ranks[c] = rank
 
     def run(self, row):
-        return self._rank_column.index(row[self._column_name]) + 1
+         return self._ranks[row[self._column_name]]
 
 class PercentileRank(Rank):
     """

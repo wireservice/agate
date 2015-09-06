@@ -365,7 +365,7 @@ This is a much more complicated question that's going to pull together a lot of 
     state_totals = with_years_in_prison.group_by('state')
 
     medians = state_totals.aggregate([
-        ('years_in_prison', agate.Length(), 'count')
+        ('years_in_prison', agate.Length(), 'count'),
         ('years_in_prison', agate.Median(), 'median_years_in_prison')
     ])
 

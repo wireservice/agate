@@ -1,6 +1,7 @@
 0.8.0
 -----
 
+* Competition ranking implemented as default. (#125)
 * Remove DateType and DateColumn.
 * Implement robust type inference. (#210)
 
