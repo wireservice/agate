@@ -37,6 +37,7 @@ from agate.aggregations import Sum, Mean, Median, StDev, MAD
 from agate.columns.base import ColumnMapping
 from agate.computations import Computation
 from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
+from agate.inference import TypeTester
 from agate.rows import RowSequence, Row
 from agate.tableset import TableSet
 from agate.utils import NullOrder, memoize
@@ -141,15 +142,23 @@ class Table(object):
         :param header: If `True`, the first row of the CSV is assumed to contains
             headers and will be skipped.
         """
+        inference = isinstance(column_info, TypeTester)
+
+        if inference and not header:
+            raise ValueError('Can not apply TypeTester to a CSV without headers.')
+
         with open(path) as f:
             rows = list(csv.reader(f, **kwargs))
 
         if header:
             column_names = rows.pop(0)
 
-        if len(column_names) != len(column_info):
-            # TKTK Better Error
-            raise ValueError
+        if inference:
+            column_info = column_info.run(rows, column_names)
+        else:
+            if len(column_names) != len(column_info):
+                # TKTK Better Error
+                raise ValueError
 
         return Table(rows, column_info)
 

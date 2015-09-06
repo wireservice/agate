@@ -6,46 +6,47 @@ except ImportError:
     import unittest
 
 from agate.column_types import *
-from agate.inference import *
+from agate.inference import TypeTester
+from agate.table import Table
 
 class TestTypeInference(unittest.TestCase):
     def setUp(self):
-        pass
+        self.tester = TypeTester()
 
-    def testTextType(self):
+    def test_text_type(self):
         rows = [
             ('a',),
             ('b',),
             ('',)
         ]
 
-        inferred = infer_types(rows, ['one'])
+        inferred = self.tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0][1], TextType)
 
-    def testNumberType(self):
+    def test_number_type(self):
         rows = [
             ('1.7',),
             ('200000000',),
             ('',)
         ]
 
-        inferred = infer_types(rows, ['one'])
+        inferred = self.tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0][1], NumberType)
 
-    def testBooleanType(self):
+    def test_boolean_type(self):
         rows = [
             ('True',),
             ('FALSE',),
             ('',)
         ]
 
-        inferred = infer_types(rows, ['one'])
+        inferred = self.tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0][1], BooleanType)
 
-    def testDateTimeType(self):
+    def test_date_time_type(self):
         rows = [
             ('5/7/84 3:44:12',),
             ('2/28/1997 3:12 AM',),
@@ -53,17 +54,29 @@ class TestTypeInference(unittest.TestCase):
             ('',)
         ]
 
-        inferred = infer_types(rows, ['one'])
+        inferred = self.tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0][1], DateTimeType)
 
-    def testTimeDeltaType(self):
+    def test_time_delta_type(self):
         rows = [
             ('1:42',),
             ('1w 27h',),
             ('',)
         ]
 
-        inferred = infer_types(rows, ['one'])
+        inferred = self.tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0][1], TimeDeltaType)
+
+    def test_from_csv(self):
+        table = Table.from_csv('examples/test.csv', self.tester)
+
+        self.assertSequenceEqual(table.get_column_names(), ['one', 'two', 'three'])
+        self.assertSequenceEqual(map(type, table.get_column_types()), [NumberType, NumberType, TextType])
+
+        self.assertEqual(len(table.columns), 3)
+
+        self.assertSequenceEqual(table.rows[0], [1, 4, 'a'])
+        self.assertSequenceEqual(table.rows[1], [2, 3, 'b'])
+        self.assertSequenceEqual(table.rows[2], [None, 2, 'c'])
