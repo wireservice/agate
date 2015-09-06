@@ -31,6 +31,9 @@ class NumberColumn(Column):
 
         Should be invoked via the :class:`.Mean` aggregation.
         """
+        if self.has_nulls():
+            raise NullCalculationError
+
         return self.sum() / len(self)
 
     @memoize
@@ -40,15 +43,36 @@ class NumberColumn(Column):
 
         Should be invoked via the :class:`.Median` aggregation.
         """
+        if self.has_nulls():
+            raise NullCalculationError
+
         return self.percentiles()[50]
 
     @memoize
     def variance(self):
         """
-        Compute the median of the values in this column.
+        Compute the sample variance of the values in this column.
 
         Should be invoked via the :class:`.Variance` aggregation.
         """
+        if self.has_nulls():
+            raise NullCalculationError
+
+        data = self.get_data()
+        mean = self.mean()
+
+        return sum((n - mean) ** 2 for n in data) / (len(self) - 1)
+
+    @memoize
+    def population_variance(self):
+        """
+        Compute the population variance of the values in this column.
+
+        Should be invoked via the :class:`.Variance` aggregation.
+        """
+        if self.has_nulls():
+            raise NullCalculationError
+
         data = self.get_data()
         mean = self.mean()
 

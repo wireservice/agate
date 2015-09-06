@@ -215,9 +215,6 @@ class Mean(Aggregation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
-        if column.has_nulls():
-            raise NullCalculationError
-
         return column.mean()
 
 class Median(Aggregation):
@@ -236,9 +233,6 @@ class Median(Aggregation):
         """
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
-
-        if column.has_nulls():
-            raise NullCalculationError
 
         return column.median()
 
@@ -281,16 +275,13 @@ class IQR(Aggregation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
-        if column.has_nulls():
-            raise NullCalculationError
-
         percentiles = column.percentiles()
 
         return percentiles[75] - percentiles[25]
 
 class Variance(Aggregation):
     """
-    Compute the variance of a column.
+    Compute the sample variance of a column.
     """
     def get_aggregate_column_type(self, column):
         return NumberType()
@@ -301,15 +292,25 @@ class Variance(Aggregation):
         """
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
-
-        if column.has_nulls():
-            raise NullCalculationError
 
         return column.variance()
 
+class PopulationVariance(Variance):
+    """
+    Compute the population variance of a column.
+    """
+    def run(self, column):
+        """
+        :returns: :class:`decimal.Decimal`.
+        """
+        if not isinstance(column, NumberColumn):
+            raise UnsupportedAggregationError(self, column)
+
+        return column.population_variance()
+
 class StDev(Aggregation):
     """
-    Compute the standard of deviation of a column.
+    Compute the sample standard of deviation of a column.
     """
     def get_aggregate_column_type(self, column):
         return NumberType()
@@ -321,10 +322,20 @@ class StDev(Aggregation):
         if not isinstance(column, NumberColumn):
             raise UnsupportedAggregationError(self, column)
 
-        if column.has_nulls():
-            raise NullCalculationError
-
         return column.variance().sqrt()
+
+class PopulationStDev(StDev):
+    """
+    Compute the population standard of deviation of a column.
+    """
+    def run(self, column):
+        """
+        :returns: :class:`decimal.Decimal`.
+        """
+        if not isinstance(column, NumberColumn):
+            raise UnsupportedAggregationError(self, column)
+
+        return column.population_variance().sqrt()
 
 class MAD(Aggregation):
     """

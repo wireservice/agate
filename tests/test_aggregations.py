@@ -169,13 +169,25 @@ class TestNumberAggregation(unittest.TestCase):
         with self.assertRaises(NullCalculationError):
             self.table.columns['one'].aggregate(Variance())
 
-        self.assertEqual(self.table.columns['two'].aggregate(Variance()).quantize(Decimal('0.01')), Decimal('0.47'))
+        self.assertEqual(self.table.columns['two'].aggregate(Variance()).quantize(Decimal('0.0001')), Decimal('0.6332'))
+
+    def test_population_variance(self):
+        with self.assertRaises(NullCalculationError):
+            self.table.columns['one'].aggregate(PopulationVariance())
+
+        self.assertEqual(self.table.columns['two'].aggregate(PopulationVariance()).quantize(Decimal('0.0001')), Decimal('0.4749'))
 
     def test_stdev(self):
         with self.assertRaises(NullCalculationError):
             self.table.columns['one'].aggregate(StDev())
 
-        self.assertAlmostEqual(self.table.columns['two'].aggregate(StDev()).quantize(Decimal('0.01')), Decimal('0.69'))
+        self.assertAlmostEqual(self.table.columns['two'].aggregate(StDev()).quantize(Decimal('0.0001')), Decimal('0.7958'))
+
+    def test_population_stdev(self):
+        with self.assertRaises(NullCalculationError):
+            self.table.columns['one'].aggregate(PopulationStDev())
+
+        self.assertAlmostEqual(self.table.columns['two'].aggregate(PopulationStDev()).quantize(Decimal('0.0001')), Decimal('0.6891'))
 
     def test_mad(self):
         with self.assertRaises(NullCalculationError):
