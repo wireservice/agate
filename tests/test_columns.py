@@ -60,30 +60,27 @@ class TestColumnTypes(unittest.TestCase):
         with self.assertRaises(CastError):
             NumberType().cast(1.1)
 
-    def test_date(self):
-        self.assertIsInstance(DateType()._create_column(None, 1), DateColumn)
-
     def test_date_cast_format(self):
-        date_type = DateType(date_format='%m-%d-%Y')
+        date_type = DateTimeType(datetime_format='%m-%d-%Y')
 
         values = ('03-01-1994', '02-17-1011', None, '01-05-1984', 'n/a')
         casted = tuple(date_type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
-            datetime.date(1994, 3, 1),
-            datetime.date(1011, 2, 17),
+            datetime.datetime(1994, 3, 1),
+            datetime.datetime(1011, 2, 17),
             None,
-            datetime.date(1984, 1, 5),
+            datetime.datetime(1984, 1, 5),
             None
         ))
 
     def test_date_cast_parser(self):
         values = ('3-1-1994', '2/17/1011', None, 'January 5th, 1984', 'n/a')
-        casted = tuple(DateType().cast(v) for v in values)
+        casted = tuple(DateTimeType().cast(v) for v in values)
         self.assertSequenceEqual(casted, (
-            datetime.date(1994, 3, 1),
-            datetime.date(1011, 2, 17),
+            datetime.datetime(1994, 3, 1),
+            datetime.datetime(1011, 2, 17),
             None,
-            datetime.date(1984, 1, 5),
+            datetime.datetime(1984, 1, 5),
             None
         ))
 

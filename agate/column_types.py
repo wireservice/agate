@@ -41,6 +41,13 @@ class ColumnType(object): #pragma: no cover
     def __init__(self, null_values=DEFAULT_NULL_VALUES):
         self.null_values = null_values
 
+    @classmethod
+    def test(cls, d):
+        raise NotImplementedError
+
+    def cast(self, d):
+        raise NotImplementedError
+
     def _create_column(self, table, index):
         raise NotImplementedError
 
@@ -58,6 +65,27 @@ class BooleanType(ColumnType):
 
         self.true_values = true_values
         self.false_values = false_values
+
+    @classmethod
+    def test(cls, d):
+        """
+        Test, for purposes of type inference, if a string value could possibly
+        be valid for this column type.
+        """
+        d = d.replace(',' ,'').strip()
+
+        d_lower = d.lower()
+
+        if d_lower in DEFAULT_NULL_VALUES:
+            return True
+
+        if d_lower in DEFAULT_TRUE_VALUES:
+            return True
+
+        if d_lower in DEFAULT_FALSE_VALUES:
+            return True
+
+        return False
 
     def cast(self, d):
         """
@@ -90,45 +118,6 @@ class BooleanType(ColumnType):
 
         return BooleanColumn(table, index)
 
-class DateType(ColumnType):
-    """
-    Column type for :class:`DateColumn`.
-    """
-    def __init__(self, date_format=None, null_values=DEFAULT_NULL_VALUES):
-        super(DateType, self).__init__(null_values=null_values)
-
-        self.date_format = date_format
-
-    def cast(self, d):
-        """
-        Cast a single value to a :class:`datetime.date`.
-
-        :param date_format: An optional :func:`datetime.strptime`
-            format string for parsing dates in this column.
-        :returns: :class:`datetime.date` or :code:`None`.
-        """
-        if isinstance(d, datetime.date) or d is None:
-            return d
-
-        if isinstance(d, six.string_types):
-            d = d.strip()
-
-            if d.lower() in self.null_values:
-                return None
-
-        if self.date_format:
-            return datetime.datetime.strptime(d, self.date_format).date()
-
-        try:
-            return parse(d).date()
-        except (TypeError, ValueError):
-            raise CastError('Can not parse value "%s" to as datetime for DateColumn.' % d)
-
-    def _create_column(self, table, index):
-        from agate.columns import DateColumn
-
-        return DateColumn(table, index)
-
 class DateTimeType(ColumnType):
     """
     Column type for :class:`DateTimeColumn`.
@@ -137,6 +126,31 @@ class DateTimeType(ColumnType):
         super(DateTimeType, self).__init__(null_values=null_values)
 
         self.datetime_format = datetime_format
+
+    @classmethod
+    def test(cls, d):
+        """
+        Test, for purposes of type inference, if a string value could possibly
+        be valid for this column type.
+        """
+        d = d.strip()
+
+        if d.lower() in DEFAULT_NULL_VALUES:
+            return True
+
+        # Ignore numerical values--these are never dates for inference purposes
+        try:
+            Decimal(d)
+            return False
+        except InvalidOperation:
+            pass
+
+        try:
+            parse_result = parse(d)
+        except:
+            return False
+
+        return True
 
     def cast(self, d):
         """
@@ -160,7 +174,7 @@ class DateTimeType(ColumnType):
 
         try:
             return parse(d)
-        except (TypeError, ValueError):
+        except:
             raise CastError('Can not parse value "%s" to as datetime for DateTimeColumn.' % d)
 
     def _create_column(self, table, index):
@@ -172,6 +186,24 @@ class TimeDeltaType(ColumnType):
     """
     Column type for :class:`datetime.timedelta`.
     """
+    @classmethod
+    def test(self, d):
+        """
+        Test, for purposes of type inference, if a string value could possibly
+        be valid for this column type.
+        """
+        d = d.strip()
+
+        if d.lower() in DEFAULT_NULL_VALUES:
+            return True
+
+        seconds = pytimeparse.parse(d)
+
+        if seconds is None:
+            return False
+
+        return True
+
     def cast(self, d):
         """
         Cast a single value to :class:`datetime.timedelta`.
@@ -204,6 +236,23 @@ class NumberType(ColumnType):
     """
     Column type for :class:`NumberColumn`.
     """
+    @classmethod
+    def test(cls, d):
+        """
+        Test, for purposes of type inference, if a string value could possibly
+        be valid for this column type.
+        """
+        d = d.replace(',' ,'').strip()
+
+        if d.lower() in DEFAULT_NULL_VALUES:
+            return True
+
+        try:
+            Decimal(d)
+            return True
+        except InvalidOperation:
+            return False
+
     def cast(self, d):
         """
         Cast a single value to a :class:`decimal.Decimal`.
@@ -239,6 +288,10 @@ class TextType(ColumnType):
     """
     @classmethod
     def test(cls, d):
+        """
+        Test, for purposes of type inference, if a string value could possibly
+        be valid for this column type.
+        """
         return True
 
     def cast(self, d):

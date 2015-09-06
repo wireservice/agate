@@ -19,9 +19,9 @@ the set.
 from collections import defaultdict
 import datetime
 
-from agate.column_types import BooleanType, NumberType
-from agate.columns import BooleanColumn, DateColumn, DateTimeColumn, NumberColumn, TextColumn
-from agate.exceptions import NullCalculationError, UnsupportedAggregationError
+from agate.column_types import *
+from agate.columns import *
+from agate.exceptions import *
 
 class Aggregation(object): #pragma: no cover
     """
@@ -146,12 +146,10 @@ class Count(Aggregation):
 class Min(Aggregation):
     """
     Compute the minimum value in a column. May be applied to
-    :class:`.DateColumn`, :class:`.DateTimeColumn` and :class:`.NumberColumn`.
+    :class:`.DateTimeColumn` and :class:`.NumberColumn`.
     """
     def get_aggregate_column_type(self, column):
-        if isinstance(column, DateColumn):
-            return DateType()
-        elif isinstance(column, DateTimeColumn):
+        if isinstance(column, DateTimeColumn):
             return DateTimeType()
         elif isinstance(column, NumberColumn):
             return NumberType()
@@ -162,9 +160,7 @@ class Min(Aggregation):
         """
         :returns: :class:`datetime.date`
         """
-        supported_columns = (DateColumn, DateTimeColumn, NumberColumn)
-
-        if not any(isinstance(column, t) for t in supported_columns):
+        if not (isinstance(column, DateTimeColumn) or isinstance(column, NumberColumn)):
             raise UnsupportedAggregationError(self, column)
 
         return min(column.get_data_without_nulls())
@@ -172,12 +168,10 @@ class Min(Aggregation):
 class Max(Aggregation):
     """
     Compute the maximum value in a column. May be applied to
-    :class:`.DateColumn`, :class:`.DateTimeColumn` and :class:`.NumberColumn`.
+    :class:`.DateTimeColumn` and :class:`.NumberColumn`.
     """
     def get_aggregate_column_type(self, column):
-        if isinstance(column, DateColumn):
-            return DateType()
-        elif isinstance(column, DateTimeColumn):
+        if isinstance(column, DateTimeColumn):
             return DateTimeType()
         elif isinstance(column, NumberColumn):
             return NumberType()
@@ -186,9 +180,7 @@ class Max(Aggregation):
         """
         :returns: :class:`datetime.date`
         """
-        supported_columns = (DateColumn, DateTimeColumn, NumberColumn)
-
-        if not any(isinstance(column, t) for t in supported_columns):
+        if not (isinstance(column, DateTimeColumn) or isinstance(column, NumberColumn)):
             raise UnsupportedAggregationError(self, column)
 
         return max(column.get_data_without_nulls())

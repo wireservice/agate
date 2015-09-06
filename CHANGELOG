@@ -1,7 +1,8 @@
 0.8.0
 -----
 
-
+* Remove DateType and DateColumn.
+* Implement robust type inference. (#210)
 
 0.7.0
 -----

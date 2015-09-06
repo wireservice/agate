@@ -5,18 +5,24 @@ from copy import copy
 from agate.column_types import *
 from agate.exceptions import *
 
-def infer_types(rows, overrides={}):
-    possible_types = {
-        'boolean': BooleanType(),
-        'date': DateType(),
-        'datetime': DateTimeType(),
-        'timedelta': TimeDeltaType(),
-        'number': NumberType(),
-        'text': TextType()
-    }
+def infer_types(rows, force={}):
+    """
+    Infer types for the columns in a given set of data.
+
+    :param force: A dictionary where each key is a column name and each value
+        is a :class:`.ColumnType` that overrides inference.
+    """
+    # In order of preference
+    possible_types = [
+        BooleanType,
+        NumberType,
+        TimeDeltaType,
+        DateTimeType,
+        TextType
+    ]
 
     num_columns = len(rows[0])
-    hypotheses = [set(possible_types.values()) for i in range(num_columns)]
+    hypotheses = [set(possible_types) for i in range(num_columns)]
 
     for row in rows:
         for i in range(num_columns):
@@ -26,30 +32,18 @@ def infer_types(rows, overrides={}):
                 continue
 
             for column_type in copy(h):
-                try:
-                    column_type.cast(row[i])
-                except CastError:
+                if not column_type.test(row[i]):
                     h.remove(column_type)
-
-    preference_order = [
-        possible_types['boolean'],
-        possible_types['number'],
-        possible_types['timedelta'],
-        possible_types['datetime'],
-        # possible_types['date'],
-        possible_types['text']
-    ]
 
     column_types = []
 
     for i in range(num_columns):
         h = hypotheses[i]
 
-        for t in preference_order:
+        # Select in prefer order
+        for t in possible_types:
             if t in h:
                 column_types.append(t)
                 break
-        else:
-            column_types.append(None)
 
     return column_types
