@@ -19,9 +19,9 @@ class TestTypeInference(unittest.TestCase):
             ('',)
         ]
 
-        inferred = infer_types(rows)
+        inferred = infer_types(rows, ['one'])
 
-        self.assertIs(inferred[0], TextType)
+        self.assertIsInstance(inferred[0][1], TextType)
 
     def testNumberType(self):
         rows = [
@@ -30,9 +30,9 @@ class TestTypeInference(unittest.TestCase):
             ('',)
         ]
 
-        inferred = infer_types(rows)
+        inferred = infer_types(rows, ['one'])
 
-        self.assertIs(inferred[0], NumberType)
+        self.assertIsInstance(inferred[0][1], NumberType)
 
     def testBooleanType(self):
         rows = [
@@ -41,9 +41,9 @@ class TestTypeInference(unittest.TestCase):
             ('',)
         ]
 
-        inferred = infer_types(rows)
+        inferred = infer_types(rows, ['one'])
 
-        self.assertIs(inferred[0], BooleanType)
+        self.assertIsInstance(inferred[0][1], BooleanType)
 
     def testDateTimeType(self):
         rows = [
@@ -53,9 +53,9 @@ class TestTypeInference(unittest.TestCase):
             ('',)
         ]
 
-        inferred = infer_types(rows)
+        inferred = infer_types(rows, ['one'])
 
-        self.assertIs(inferred[0], DateTimeType)
+        self.assertIsInstance(inferred[0][1], DateTimeType)
 
     def testTimeDeltaType(self):
         rows = [
@@ -64,6 +64,6 @@ class TestTypeInference(unittest.TestCase):
             ('',)
         ]
 
-        inferred = infer_types(rows)
+        inferred = infer_types(rows, ['one'])
 
-        self.assertIs(inferred[0], TimeDeltaType)
+        self.assertIsInstance(inferred[0][1], TimeDeltaType)

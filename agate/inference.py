@@ -2,27 +2,35 @@
 
 from copy import copy
 
+try:
+    from collections import OrderedDict
+except ImportError: # pragma: no cover
+    from ordereddict import OrderedDict
+
 from agate.column_types import *
 from agate.exceptions import *
 
-def infer_types(rows, force={}):
+def infer_types(rows, column_names, force={}):
     """
     Infer types for the columns in a given set of data.
 
     :param force: A dictionary where each key is a column name and each value
-        is a :class:`.ColumnType` that overrides inference.
+        is a :class:`.ColumnType` instance that overrides inference.
     """
     # In order of preference
-    possible_types = [
-        BooleanType,
-        NumberType,
-        TimeDeltaType,
-        DateTimeType,
-        TextType
-    ]
+    possible_types = OrderedDict([
+        ('boolean', BooleanType()),
+        ('number', NumberType()),
+        ('timedelta', TimeDeltaType()),
+        ('datetime', DateTimeType()),
+        ('text', TextType())
+    ])
 
     num_columns = len(rows[0])
-    hypotheses = [set(possible_types) for i in range(num_columns)]
+    hypotheses = [set(possible_types.values()) for i in range(num_columns)]
+
+    for column_name, column_type in force.items():
+        hypotheses[column_names.index(column_name)] = set(column_type)
 
     for row in rows:
         for i in range(num_columns):
@@ -41,9 +49,9 @@ def infer_types(rows, force={}):
         h = hypotheses[i]
 
         # Select in prefer order
-        for t in possible_types:
+        for t in possible_types.values():
             if t in h:
                 column_types.append(t)
                 break
 
-    return column_types
+    return zip(column_names, column_types)

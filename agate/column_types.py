@@ -41,8 +41,7 @@ class ColumnType(object): #pragma: no cover
     def __init__(self, null_values=DEFAULT_NULL_VALUES):
         self.null_values = null_values
 
-    @classmethod
-    def test(cls, d):
+    def test(self, d):
         raise NotImplementedError
 
     def cast(self, d):
@@ -66,8 +65,7 @@ class BooleanType(ColumnType):
         self.true_values = true_values
         self.false_values = false_values
 
-    @classmethod
-    def test(cls, d):
+    def test(self, d):
         """
         Test, for purposes of type inference, if a string value could possibly
         be valid for this column type.
@@ -76,13 +74,13 @@ class BooleanType(ColumnType):
 
         d_lower = d.lower()
 
-        if d_lower in DEFAULT_NULL_VALUES:
+        if d_lower in self.null_values:
             return True
 
-        if d_lower in DEFAULT_TRUE_VALUES:
+        if d_lower in self.true_values:
             return True
 
-        if d_lower in DEFAULT_FALSE_VALUES:
+        if d_lower in self.false_values:
             return True
 
         return False
@@ -127,15 +125,14 @@ class DateTimeType(ColumnType):
 
         self.datetime_format = datetime_format
 
-    @classmethod
-    def test(cls, d):
+    def test(self, d):
         """
         Test, for purposes of type inference, if a string value could possibly
         be valid for this column type.
         """
         d = d.strip()
 
-        if d.lower() in DEFAULT_NULL_VALUES:
+        if d.lower() in self.null_values:
             return True
 
         # Ignore numerical values--these are never dates for inference purposes
@@ -186,7 +183,6 @@ class TimeDeltaType(ColumnType):
     """
     Column type for :class:`datetime.timedelta`.
     """
-    @classmethod
     def test(self, d):
         """
         Test, for purposes of type inference, if a string value could possibly
@@ -194,7 +190,7 @@ class TimeDeltaType(ColumnType):
         """
         d = d.strip()
 
-        if d.lower() in DEFAULT_NULL_VALUES:
+        if d.lower() in self.null_values:
             return True
 
         seconds = pytimeparse.parse(d)
@@ -236,15 +232,14 @@ class NumberType(ColumnType):
     """
     Column type for :class:`NumberColumn`.
     """
-    @classmethod
-    def test(cls, d):
+    def test(self, d):
         """
         Test, for purposes of type inference, if a string value could possibly
         be valid for this column type.
         """
         d = d.replace(',' ,'').strip()
 
-        if d.lower() in DEFAULT_NULL_VALUES:
+        if d.lower() in self.null_values:
             return True
 
         try:
@@ -286,8 +281,7 @@ class TextType(ColumnType):
     """
     Column type for :class:`TextColumn`.
     """
-    @classmethod
-    def test(cls, d):
+    def test(self, d):
         """
         Test, for purposes of type inference, if a string value could possibly
         be valid for this column type.
