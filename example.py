@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import csv
-
 import agate
 
 tester = agate.TypeTester(force={
