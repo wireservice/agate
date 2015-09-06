@@ -34,15 +34,21 @@ class TypeTester(object):
         Apply inference to the provided data and return an array of
         :code:`(column_name, column_type)` tuples suitable as an argument to
         :class:`.Table`.
+
+        :param rows: The data as a sequence of any sequences: tuples, lists,
+            etc.
+        :param column_names: A sequence of column names.
         """
         num_columns = len(column_names)
         hypotheses = [set(self._possible_types) for i in range(num_columns)]
 
-        for column_name, column_type in self._force.items():
-            hypotheses[column_names.index(column_name)] = set(column_type)
+        force_indices = [column_names.index(name) for name in self._force.keys()]
 
         for row in rows:
             for i in range(num_columns):
+                if i in force_indices:
+                    continue
+
                 h = hypotheses[i]
 
                 if len(h) == 1:
@@ -55,6 +61,10 @@ class TypeTester(object):
         column_types = []
 
         for i in range(num_columns):
+            if i in force_indices:
+                column_types.append(self._force[column_names[i]])
+                continue
+
             h = hypotheses[i]
 
             # Select in prefer order

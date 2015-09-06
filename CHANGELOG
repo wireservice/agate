@@ -1,9 +1,10 @@
 0.8.0
 -----
 
+* Support for overriding column inference with "force".
 * Competition ranking implemented as default. (#125)
 * Remove DateType and DateColumn.
-* Implement robust type inference. (#210)
+* TypeTester: robust type inference. (#210)
 
 0.7.0
 -----

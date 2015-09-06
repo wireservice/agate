@@ -70,6 +70,21 @@ class TestTypeInference(unittest.TestCase):
 
         self.assertIsInstance(inferred[0][1], TimeDeltaType)
 
+    def test_force_type(self):
+        rows = [
+            ('1.7',),
+            ('200000000',),
+            ('',)
+        ]
+
+        tester = TypeTester(force={
+            'one': TextType()
+        })
+
+        inferred = tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0][1], TextType)
+
     def test_table_from_csv(self):
         table = Table.from_csv('examples/test.csv', self.tester)
 
