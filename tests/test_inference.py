@@ -8,6 +8,7 @@ except ImportError:
 from agate.column_types import *
 from agate.inference import TypeTester
 from agate.table import Table
+from agate.tableset import TableSet
 
 class TestTypeInference(unittest.TestCase):
     def setUp(self):
@@ -69,7 +70,7 @@ class TestTypeInference(unittest.TestCase):
 
         self.assertIsInstance(inferred[0][1], TimeDeltaType)
 
-    def test_from_csv(self):
+    def test_table_from_csv(self):
         table = Table.from_csv('examples/test.csv', self.tester)
 
         self.assertSequenceEqual(table.get_column_names(), ['one', 'two', 'three'])
@@ -80,3 +81,15 @@ class TestTypeInference(unittest.TestCase):
         self.assertSequenceEqual(table.rows[0], [1, 4, 'a'])
         self.assertSequenceEqual(table.rows[1], [2, 3, 'b'])
         self.assertSequenceEqual(table.rows[2], [None, 2, 'c'])
+
+    def test_tableset_from_csv(self):
+        tableset = TableSet.from_csv('examples/tableset', self.tester)
+
+        self.assertSequenceEqual(tableset.get_column_names(), ['letter', 'number'])
+        self.assertSequenceEqual(map(type, tableset.get_column_types()), [TextType, NumberType])
+
+        self.assertEqual(len(tableset['table1'].columns), 2)
+
+        self.assertSequenceEqual(tableset['table1'].rows[0], ['a', 1])
+        self.assertSequenceEqual(tableset['table1'].rows[1], ['a', 3])
+        self.assertSequenceEqual(tableset['table1'].rows[2], ['b', 2])

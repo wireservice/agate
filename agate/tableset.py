@@ -36,6 +36,7 @@ except ImportError: # pragma: no cover
 from agate.aggregations import Aggregation
 from agate.column_types import *
 from agate.exceptions import ColumnDoesNotExistError
+from agate.inference import TypeTester
 from agate.rows import RowSequence
 
 class TableMethodProxy(object):
@@ -133,20 +134,35 @@ class TableSet(Mapping):
 
         :param dir_path: Path to a directory full of CSV files. All CSV files
             in this directory will be loaded.
-        :param column_info: See :class:`.Table` constructor.
+        :param column_info: A sequence of pairs of column names and types. The latter
+            must be instances of :class:`.ColumnType`. Or, an instance of
+            :class:`.TypeTester` to infer types.
         :param header: If `True`, the first row of the CSV is assumed to contains
             headers and will be skipped.
         """
         from agate.table import Table
+
+        use_inference = isinstance(column_info, TypeTester)
+
+        if use_inference and not header:
+            raise ValueError('Can not apply TypeTester to a CSV without headers.')
 
         if not os.path.isdir(dir_path):
             raise IOError('Specified path doesn\'t exist or isn\'t a directory.')
 
         tables = OrderedDict()
 
+        if use_inference:
+            has_inferred_columns = False
+
         for path in glob(os.path.join(dir_path, '*.csv')):
             name = os.path.split(path)[1].strip('.csv')
+
             table = Table.from_csv(path, column_info, header=header, **kwargs)
+
+            if use_inference and not has_inferred_columns:
+                column_info = zip(table.get_column_names(), table.get_column_types())
+                has_inferred_columns = True
 
             tables[name] = table
 

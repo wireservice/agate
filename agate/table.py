@@ -138,13 +138,15 @@ class Table(object):
         unicode-safe.
 
         :param path: Path to the CSV file to read from.
-        :param column_info: See :class:`.Table` constructor.
+        :param column_info: A sequence of pairs of column names and types. The latter
+            must be instances of :class:`.ColumnType`. Or, an instance of
+            :class:`.TypeTester` to infer types.
         :param header: If `True`, the first row of the CSV is assumed to contains
             headers and will be skipped.
         """
-        inference = isinstance(column_info, TypeTester)
+        use_inference = isinstance(column_info, TypeTester)
 
-        if inference and not header:
+        if use_inference and not header:
             raise ValueError('Can not apply TypeTester to a CSV without headers.')
 
         with open(path) as f:
@@ -153,7 +155,7 @@ class Table(object):
         if header:
             column_names = rows.pop(0)
 
-        if inference:
+        if use_inference:
             column_info = column_info.run(rows, column_names)
         else:
             if len(column_names) != len(column_info):
