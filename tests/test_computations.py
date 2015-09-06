@@ -84,12 +84,10 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 4)
         self.assertEqual(len(new_table.columns), 5)
 
-        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, -1))
-        self.assertSequenceEqual(new_table.rows[1], (None, 3, 5, None, 1))
-        self.assertSequenceEqual(new_table.rows[2], ('a', 2, 4, None, -1))
-        self.assertSequenceEqual(new_table.rows[3], ('b', 3, 4, None, 1))
-
-        self.assertSequenceEqual(new_table.columns['z-scores'],(-1,1,-1,1))
+        self.assertEqual(new_table.columns['z-scores'][0].quantize(Decimal('0.01')), Decimal('-0.87'))
+        self.assertEqual(new_table.columns['z-scores'][1].quantize(Decimal('0.01')), Decimal('0.87'))
+        self.assertEqual(new_table.columns['z-scores'][2].quantize(Decimal('0.01')), Decimal('-0.87'))
+        self.assertEqual(new_table.columns['z-scores'][3].quantize(Decimal('0.01')), Decimal('0.87'))
 
     def test_zscores_invalid_column(self):
         with self.assertRaises(UnsupportedComputationError):

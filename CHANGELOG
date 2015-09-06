@@ -1,6 +1,8 @@
 0.8.0
 -----
 
+* Fix computations.ZScores calculation. (#123)
+* Differentiate sample and population variance and stdev. (#208)
 * Support for overriding column inference with "force".
 * Competition ranking implemented as default. (#125)
 * Remove DateType and DateColumn.
