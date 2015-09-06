@@ -35,9 +35,9 @@ import six
 
 from agate.aggregations import Sum, Mean, Median, StDev, MAD
 from agate.columns.base import ColumnMapping
+from agate.column_types import TypeTester
 from agate.computations import Computation
 from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
-from agate.inference import TypeTester
 from agate.rows import RowSequence, Row
 from agate.tableset import TableSet
 from agate.utils import NullOrder, memoize

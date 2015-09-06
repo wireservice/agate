@@ -34,9 +34,8 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 from agate.aggregations import Aggregation
-from agate.column_types import *
+from agate.column_types import TextType, TypeTester
 from agate.exceptions import ColumnDoesNotExistError
-from agate.inference import TypeTester
 from agate.rows import RowSequence
 
 class TableMethodProxy(object):

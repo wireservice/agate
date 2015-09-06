@@ -57,9 +57,15 @@ Now let's import our dependencies:
 Defining the columns
 ====================
 
-agate requires us to give it some information about each column in our dataset. No effort is made to determine these types automatically, however, :class:`.TextType` is always a safe choice if you aren't sure what kind of data is in a column.
+There are two ways to specify column types in agate. You can specify a particular type one-by-one, which gives you complete control over how the data is processed, or you can use agate's :class:`.TypeTester` to infer types from the data. The latter is more convenient, but it is imperfect, so it's wise to check that the types in infers are reasonable. (For instance, some date formats look exactly like numbers and some numbers are really text.)
 
-First we create instances of the column types we will be using:
+You can create a :class:`.TypeTester` like this:
+
+.. code-block:: python
+
+    tester = agate.TypeTester()
+
+If you prefer to specify your columns manually you will need to create instances of each type that you are using:
 
 .. code-block:: python
 
@@ -67,11 +73,11 @@ First we create instances of the column types we will be using:
     number_type = agate.NumberType()
     boolean_type = agate.BooleanType()
 
-Then we define the names and types of the columns that are in our dataset:
+Then you define the names and types of the columns that are in our dataset as a sequence of pairs. For the exonerations dataset, you would define:
 
 .. code-block:: python
 
-    COLUMNS = (
+    columns = (
         ('last_name', text_type),
         ('first_name', text_type),
         ('age', number_type),
@@ -92,20 +98,30 @@ Then we define the names and types of the columns that are in our dataset:
         ('inadequate_defense', boolean_type),
     )
 
-You'll notice here that we define the names and types as pairs (tuples), which is what the :class:`.Table` constructor will expect in the next step.
-
 .. note::
 
-    The column names defined here do not necessarily need to match those found in your CSV file. I've kept them consistent in this example for clarity.
+    If specifying column names manually they do not necessarily need to match those found in your CSV file. I've kept them consistent in this example for clarity. If using :class:`.TypeTester` column names will be inferred from the headers of your CSV.
 
 Loading data from a CSV
 =======================
 
-The :class:`.Table` is the basic class in agate. A time-saving method is included to load table data from CSV:
+The :class:`.Table` is the basic class in agate. A time-saving method is included to create a table from CSV. To infer column types automatically while reading the data:
 
 .. code-block:: python
 
-    exonerations = agate.Table.from_csv('exonerations-20150828.csv', COLUMNS)
+    exonerations = agate.Table.from_csv('exonerations-20150828.csv', tester)
+
+.. note::
+
+    The :class:`.TypeTester` can be slow to evaluate the data. It's best to use it with a tool such as `proof <http://proof.readthedocs.org/en/latest/>`_ so you don't have to run it everytime you work with your data.
+
+Or, to use the column types we created manually:
+
+.. code-block:: python
+
+    exonerations = agate.Table.from_csv('exonerations-20150828.csv', columns)
+
+In either case the ``exonerations`` variable will now be an instance of :class:`.Table`.
 
 .. note::
 

@@ -6,7 +6,6 @@ except ImportError:
     import unittest
 
 from agate.column_types import *
-from agate.inference import TypeTester
 from agate.table import Table
 from agate.tableset import TableSet
 
