@@ -160,7 +160,7 @@ class TableSet(Mapping):
             table = Table.from_csv(path, column_info, header=header, **kwargs)
 
             if use_inference and not has_inferred_columns:
-                column_info = zip(table.get_column_names(), table.get_column_types())
+                column_info = tuple(zip(table.get_column_names(), table.get_column_types()))
                 has_inferred_columns = True
 
             tables[name] = table

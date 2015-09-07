@@ -29,7 +29,7 @@ class TestRows(unittest.TestCase):
         self.table = Table(self.rows, self.columns)
 
     def test_stringify(self):
-        self.assertEqual(str(self.table.rows[0]), "<agate.rows.Row: (1, 2, a)>")
+        self.assertEqual(str(self.table.rows[0]), '<agate.rows.Row: (1, 2, a)>')
 
     def test_stringify_long(self):
         rows = (

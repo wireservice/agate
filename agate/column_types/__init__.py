@@ -18,7 +18,7 @@ try:
     from collections import OrderedDict
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
-    
+
 from agate.column_types.base import *
 from agate.column_types.boolean import *
 from agate.column_types.date_time import *
@@ -91,4 +91,4 @@ class TypeTester(object):
                     column_types.append(t)
                     break
 
-        return zip(column_names, column_types)
+        return tuple(zip(column_names, column_types))

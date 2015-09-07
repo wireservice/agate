@@ -70,6 +70,9 @@ class Row(Mapping):
         return '<agate.rows.Row: %s>' % sample
 
     def __str__(self):
+        if six.PY2:
+            return str(self.__unicode__().encode('utf8'))
+
         return str(self.__unicode__())
 
     def __repr__(self):

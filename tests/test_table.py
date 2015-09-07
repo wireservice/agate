@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
 
 try:
     from cdecimal import Decimal
@@ -12,6 +13,8 @@ try:
 except ImportError:
     import unittest
 
+import six
+
 from agate import Table, TableSet
 from agate.column_types import TextType, NumberType
 from agate.computations import Formula
@@ -22,7 +25,7 @@ class TestTable(unittest.TestCase):
         self.rows = (
             (1, 4, 'a'),
             (2, 3, 'b'),
-            (None, 2, 'c')
+            (None, 2, u'👍')
         )
 
         self.number_type = NumberType()
@@ -41,7 +44,7 @@ class TestTable(unittest.TestCase):
 
         self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
         self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
-        self.assertSequenceEqual(table.rows[2], (None, 2, 'c'))
+        self.assertSequenceEqual(table.rows[2], (None, 2, u'👍'))
 
     def test_create_duplicate_column_names(self):
         columns = (
@@ -53,7 +56,24 @@ class TestTable(unittest.TestCase):
         with self.assertRaises(ValueError):
             Table(self.rows, columns)
 
-    def test_from_csv(self):
+    def test_from_csv_builtin(self):
+        import csv
+        from agate import table
+        table.csv = csv
+
+        if six.PY2:
+            with self.assertRaises(UnicodeDecodeError):
+                table = Table.from_csv('examples/test.csv', self.columns)
+        else:
+            table = Table.from_csv('examples/test.csv', self.columns)
+
+            self.assertEqual(len(table.columns), 3)
+
+    def test_from_csv_csvkit(self):
+        import csvkit
+        from agate import table
+        table.csv = csvkit
+
         table1 = Table(self.rows, self.columns)
         table2 = Table.from_csv('examples/test.csv', self.columns)
 
@@ -102,12 +122,12 @@ class TestTable(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 3)
         self.assertSequenceEqual(new_table.rows[0], ('a',))
         self.assertSequenceEqual(new_table.rows[1], ('b',))
-        self.assertSequenceEqual(new_table.rows[2], ('c',))
+        self.assertSequenceEqual(new_table.rows[2], (u'👍',))
 
         self.assertEqual(len(new_table.columns), 1)
         self.assertSequenceEqual(new_table._column_types, (self.text_type,))
         self.assertSequenceEqual(new_table._column_names, ('three',))
-        self.assertSequenceEqual(new_table.columns['three'], ('a', 'b', 'c'))
+        self.assertSequenceEqual(new_table.columns['three'], ('a', 'b', u'👍'))
 
     def test_where(self):
         table = Table(self.rows, self.columns)
@@ -219,14 +239,14 @@ class TestTable(unittest.TestCase):
 
         self.assertIsNot(new_table, table)
         self.assertEqual(len(new_table.rows), 3)
-        self.assertSequenceEqual(new_table.rows[0], (None, 2, 'c'))
+        self.assertSequenceEqual(new_table.rows[0], (None, 2, u'👍'))
         self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b'))
         self.assertSequenceEqual(new_table.rows[2], (1, 4, 'a'))
 
         # Verify old table not changed
         self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
         self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
-        self.assertSequenceEqual(table.rows[2], (None, 2, 'c'))
+        self.assertSequenceEqual(table.rows[2], (None, 2, u'👍'))
 
     def test_order_by_func(self):
         rows = (
@@ -253,7 +273,7 @@ class TestTable(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 3)
         self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a'))
         self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b'))
-        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c'))
+        self.assertSequenceEqual(new_table.rows[2], (None, 2, u'👍'))
 
     def test_order_by_nulls(self):
         rows = (
@@ -291,7 +311,7 @@ class TestTable(unittest.TestCase):
         self.assertIsNot(new_table, table)
         self.assertEqual(len(new_table.rows), 2)
         self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (None, 2, 'c'))
+        self.assertSequenceEqual(new_table.rows[1], (None, 2, u'👍'))
         self.assertSequenceEqual(new_table.columns['one'], (1, None))
 
     def test_limit_slice_negative(self):
@@ -313,7 +333,7 @@ class TestTable(unittest.TestCase):
         self.assertIsNot(new_table, table)
         self.assertEqual(len(new_table.rows), 2)
         self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (None, 2, 'c'))
+        self.assertSequenceEqual(new_table.rows[1], (None, 2, u'👍'))
         self.assertSequenceEqual(new_table.columns['one'], (1, None))
 
     def test_distinct_column(self):

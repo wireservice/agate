@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
 
 try:
     import unittest2 as unittest
@@ -85,22 +86,29 @@ class TestTypeInference(unittest.TestCase):
         self.assertIsInstance(inferred[0][1], TextType)
 
     def test_table_from_csv(self):
-        table = Table.from_csv('examples/test.csv', self.tester)
+        import csvkit
+        from agate import table
+        table.csv = csvkit
+
+        if six.PY2:
+            table = Table.from_csv('examples/test.csv', self.tester, encoding='utf8')
+        else:
+            table = Table.from_csv('examples/test.csv', self.tester)
 
         self.assertSequenceEqual(table.get_column_names(), ['one', 'two', 'three'])
-        self.assertSequenceEqual(map(type, table.get_column_types()), [NumberType, NumberType, TextType])
+        self.assertSequenceEqual(tuple(map(type, table.get_column_types())), [NumberType, NumberType, TextType])
 
         self.assertEqual(len(table.columns), 3)
 
         self.assertSequenceEqual(table.rows[0], [1, 4, 'a'])
         self.assertSequenceEqual(table.rows[1], [2, 3, 'b'])
-        self.assertSequenceEqual(table.rows[2], [None, 2, 'c'])
+        self.assertSequenceEqual(table.rows[2], [None, 2, u'👍'])
 
     def test_tableset_from_csv(self):
         tableset = TableSet.from_csv('examples/tableset', self.tester)
 
         self.assertSequenceEqual(tableset.get_column_names(), ['letter', 'number'])
-        self.assertSequenceEqual(map(type, tableset.get_column_types()), [TextType, NumberType])
+        self.assertSequenceEqual(tuple(map(type, tableset.get_column_types())), [TextType, NumberType])
 
         self.assertEqual(len(tableset['table1'].columns), 2)
 

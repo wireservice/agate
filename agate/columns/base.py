@@ -84,6 +84,9 @@ class Column(Sequence):
         return '<agate.columns.%s: %s>' % (self.__class__.__name__, sample)
 
     def __str__(self):
+        if six.PY2:
+            return str(self.__unicode__().encode('utf8'))
+
         return str(self.__unicode__())
 
     def __getitem__(self, j):

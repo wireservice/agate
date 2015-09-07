@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
 
 import datetime
 
@@ -22,9 +23,9 @@ class TestColumnTypes(unittest.TestCase):
         self.assertIsInstance(TextType().create_column(None, 1), TextColumn)
 
     def test_text_cast(self):
-        values = ('a', 1, None, Decimal('2.7'), 'n/a')
+        values = ('a', 1, None, Decimal('2.7'), 'n/a', u'👍')
         casted = tuple(TextType().cast(v) for v in values)
-        self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None))
+        self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None, u'👍'))
 
     def test_boolean(self):
         self.assertIsInstance(BooleanType().create_column(None, 1), BooleanColumn)
