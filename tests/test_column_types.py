@@ -36,6 +36,17 @@ class TestTypeInference(unittest.TestCase):
 
         self.assertIsInstance(inferred[0][1], NumberType)
 
+    def test_number_locale(self):
+        rows = [
+            ('1,7',),
+            ('200.000.000',),
+            ('',)
+        ]
+
+        inferred = self.tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0][1], NumberType)
+
     def test_boolean_type(self):
         rows = [
             ('True',),

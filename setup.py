@@ -6,7 +6,8 @@ import sys
 install_requires = [
     'six==1.6.1',
     'python-dateutil>=2.2',
-    'pytimeparse>=1.1.5'
+    'pytimeparse>=1.1.5',
+    'Babel>=2.0'
 ]
 
 if sys.version_info == (2, 6):

@@ -49,9 +49,14 @@ class TestColumnTypes(unittest.TestCase):
         self.assertIsInstance(NumberType().create_column(None, 1), NumberColumn)
 
     def test_number_cast(self):
-        values = (2, 1, None, Decimal('2.7'), 'n/a')
+        values = (2, 1, None, Decimal('2.7'), 'n/a', '2.7', '200,000,000')
         casted = tuple(NumberType().cast(v) for v in values)
-        self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None))
+        self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000')))
+
+    def test_number_cast_locale(self):
+        values = (2, 1, None, Decimal('2.7'), 'n/a', '2,7', '200.000.000')
+        casted = tuple(NumberType(locale='de_DE').cast(v) for v in values)
+        self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000')))
 
     def test_number_cast_text(self):
         with self.assertRaises(CastError):

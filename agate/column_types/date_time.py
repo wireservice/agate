@@ -12,8 +12,8 @@ class DateTimeType(ColumnType):
     """
     Column type for :class:`DateTimeColumn`.
     """
-    def __init__(self, datetime_format=None, null_values=DEFAULT_NULL_VALUES):
-        super(DateTimeType, self).__init__(null_values=null_values)
+    def __init__(self, datetime_format=None, **kwargs):
+        super(DateTimeType, self).__init__(**kwargs)
 
         self.datetime_format = datetime_format
 
