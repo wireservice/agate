@@ -41,6 +41,23 @@ This snippet filters the dataset to incomes between 100,000 and 200,000.
 
     new_table = table.where(lambda row: 100000 < row['income'] < 200000)
 
+Filter to date range
+====================
+
+This snippet filters the dataset to events during the summer of 2015:
+
+.. code-block:: python
+
+    import datetime
+
+    new_table = table.where(lambda row: datetime.datetime(2015, 6, 1) <= row['date'] <= datetime.datetime(2015, 8, 31))
+
+If you want to filter to events during the summer of any year:
+
+.. code-block:: python
+
+    new_table = table.where(lambda row: 6 <= row['date'].month <= 8)
+
 Filter to top x%
 ================
 

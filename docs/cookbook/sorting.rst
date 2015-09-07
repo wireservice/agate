@@ -11,6 +11,14 @@ Order a table by the :code:`last_name` column:
 
     new_table = table.order_by('last_name')
 
+Sort by date
+============
+
+Sorting by dates also wrks as expected:
+
+.. code-block:: python
+
+    new_table = table.order_by('birthdate')
 
 Multicolumn sort
 ================
@@ -31,4 +39,3 @@ Randomizing order
     import random
 
     new_table = table.order_by(lambda row: random.random())
-
