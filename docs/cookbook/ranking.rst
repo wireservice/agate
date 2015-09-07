@@ -27,7 +27,7 @@ You can compute the change from one rank to another by combining the :class:`.Ra
         ('rank2015', agate.Rank('value2015')
     ])
 
-    new_table2 = table.compute([
+    new_table2 = new_table.compute([
         ('rank_change', agate.Change('rank2014', 'rank2015')
     ])
 
