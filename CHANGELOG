@@ -1,6 +1,7 @@
 0.8.0
 -----
 
+* Handle percents and currency symbols when casting numbers. (#217)
 * Table.format is now Table.pretty_print. (#223)
 * Rename TextType to Text, NumberType to Number, etc.
 * Rename agate.ColumnType to agate.DataType (#216)

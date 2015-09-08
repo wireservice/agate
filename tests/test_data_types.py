@@ -47,6 +47,40 @@ class TestTypeInference(unittest.TestCase):
         inferred = tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0][1], Number)
+        self.assertEqual(inferred[0][1]._locale, 'de_DE')
+
+    def test_number_percent(self):
+        rows = [
+            ('1.7%',),
+            ('200000000%',),
+            ('',)
+        ]
+
+        inferred = self.tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0][1], Number)
+
+    def test_number_currency(self):
+        rows = [
+            ('$1.7',),
+            ('$200000000',),
+            ('',)
+        ]
+
+        inferred = self.tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0][1], Number)
+
+    def test_number_currency_locale(self):
+        rows = [
+            (u'£1.7',),
+            (u'£200000000',),
+            ('',)
+        ]
+
+        inferred = self.tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0][1], Number)
 
     def test_boolean_type(self):
         rows = [

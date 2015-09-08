@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
 
 try:
     from cdecimal import Decimal, InvalidOperation
@@ -10,6 +11,9 @@ import six
 
 from agate.data_types.base import *
 from agate.exceptions import CastError
+
+#: A list of currency symbols sourced from `Xe <http://www.xe.com/symbols.php>`_.
+CURRENCY_SYMBOLS = [u'؋', u'$', u'ƒ', u'៛', u'¥', u'₡', u'₱', u'£', u'€', u'¢', u'﷼', u'₪', u'₩', u'₭', u'₮', u'₦', u'฿', u'₤', u'₫']
 
 class Number(DataType):
     """
@@ -29,6 +33,10 @@ class Number(DataType):
         be valid for this column type.
         """
         d = d.strip()
+        d = d.strip('%')
+
+        for symbol in CURRENCY_SYMBOLS:
+            d = d.strip(symbol)
 
         if d.lower() in self.null_values:
             return True
