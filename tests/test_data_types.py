@@ -43,7 +43,8 @@ class TestTypeInference(unittest.TestCase):
             ('',)
         ]
 
-        inferred = self.tester.run(rows, ['one'])
+        tester = TypeTester(locale='de_DE')
+        inferred = tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0][1], Number)
 

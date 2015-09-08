@@ -30,18 +30,20 @@ from agate.exceptions import *
 
 class TypeTester(object):
     """
-    Infer types for the columns in a given set of data.
+    Infer data types for the columns in a given set of data.
 
     :param force: A dictionary where each key is a column name and each
         value is a :class:`.DataType` instance that overrides inference.
+    :param locale: A locale to use when evaluating the types of data. See
+        :class:`.Number`.
     """
-    def __init__(self, force={}):
+    def __init__(self, force={}, locale='en_US'):
         self._force = force
 
         # In order of preference
         self._possible_types =[
             Boolean(),
-            Number(),
+            Number(locale=locale),
             TimeDelta(),
             DateTime(),
             Text()
