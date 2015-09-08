@@ -8,7 +8,7 @@ import six
 from agate.data_types.base import *
 from agate.exceptions import CastError
 
-class TimeDeltaType(DataType):
+class TimeDelta(DataType):
     """
     Data type representing the interval between two times. Creates
     :class:`datetime.timedelta`.

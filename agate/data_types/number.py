@@ -11,7 +11,7 @@ import six
 from agate.data_types.base import *
 from agate.exceptions import CastError
 
-class NumberType(DataType):
+class Number(DataType):
     """
     Data type representing numbers. Creates :class:`NumberColumn`.
 
@@ -19,7 +19,7 @@ class NumberType(DataType):
         :code:`de_DE` to use for parsing formatted numbers.
     """
     def __init__(self, locale='en_US', **kwargs):
-        super(NumberType, self).__init__(**kwargs)
+        super(Number, self).__init__(**kwargs)
 
         self._locale = locale
 

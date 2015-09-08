@@ -6,9 +6,9 @@ import agate
 import proof
 
 def load_data(data):
-    text_type = agate.TextType()
-    number_type = agate.NumberType()
-    boolean_type = agate.BooleanType()
+    text_type = agate.Text()
+    number_type = agate.Number()
+    boolean_type = agate.Boolean()
 
     columns = (
         ('last_name', text_type),

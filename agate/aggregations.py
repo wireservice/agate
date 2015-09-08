@@ -45,7 +45,7 @@ class HasNulls(Aggregation):
     Returns :code:`True` if the column contains null values.
     """
     def get_aggregate_column_type(self, column):
-        return BooleanType()
+        return Boolean()
 
     def run(self, column):
         """
@@ -65,7 +65,7 @@ class Any(Aggregation):
         self._test = test
 
     def get_aggregate_column_type(self, column):
-        return BooleanType()
+        return Boolean()
 
     def run(self, column):
         """
@@ -92,7 +92,7 @@ class All(Aggregation):
         self._test = test
 
     def get_aggregate_column_type(self, column):
-        return BooleanType()
+        return Boolean()
 
     def run(self, column):
         """
@@ -114,7 +114,7 @@ class Length(Aggregation):
     Equivalent to Python's :func:`len` function.
     """
     def get_aggregate_column_type(self, column):
-        return NumberType()
+        return Number()
 
     def run(self, column):
         """
@@ -135,7 +135,7 @@ class Count(Aggregation):
         self._value = value
 
     def get_aggregate_column_type(self, column):
-        return NumberType()
+        return Number()
 
     def run(self, column):
         """
@@ -150,9 +150,9 @@ class Min(Aggregation):
     """
     def get_aggregate_column_type(self, column):
         if isinstance(column, DateTimeColumn):
-            return DateTimeType()
+            return DateTime()
         elif isinstance(column, NumberColumn):
-            return NumberType()
+            return Number()
 
         raise UnsupportedAggregationError(self, column)
 
@@ -172,9 +172,9 @@ class Max(Aggregation):
     """
     def get_aggregate_column_type(self, column):
         if isinstance(column, DateTimeColumn):
-            return DateTimeType()
+            return DateTime()
         elif isinstance(column, NumberColumn):
-            return NumberType()
+            return Number()
 
     def run(self, column):
         """
@@ -190,7 +190,7 @@ class Sum(Aggregation):
     Compute the sum of a column.
     """
     def get_aggregate_column_type(self, column):
-        return NumberType()
+        return Number()
 
     def run(self, column):
         """
@@ -206,7 +206,7 @@ class Mean(Aggregation):
     Compute the mean value of a column.
     """
     def get_aggregate_column_type(self, column):
-        return NumberType()
+        return Number()
 
     def run(self, column):
         """
@@ -225,7 +225,7 @@ class Median(Aggregation):
     details.
     """
     def get_aggregate_column_type(self, column):
-        return NumberType()
+        return Number()
 
     def run(self, column):
         """
@@ -241,7 +241,7 @@ class Mode(Aggregation):
     Compute the mode value of a column.
     """
     def get_aggregate_column_type(self, column):
-        return NumberType()
+        return Number()
 
     def run(self, column):
         """
@@ -266,7 +266,7 @@ class IQR(Aggregation):
     Compute the inter-quartile range of a column.
     """
     def get_aggregate_column_type(self, column):
-        return NumberType()
+        return Number()
 
     def run(self, column):
         """
@@ -284,7 +284,7 @@ class Variance(Aggregation):
     Compute the sample variance of a column.
     """
     def get_aggregate_column_type(self, column):
-        return NumberType()
+        return Number()
 
     def run(self, column):
         """
@@ -313,7 +313,7 @@ class StDev(Aggregation):
     Compute the sample standard of deviation of a column.
     """
     def get_aggregate_column_type(self, column):
-        return NumberType()
+        return Number()
 
     def run(self, column):
         """
@@ -343,7 +343,7 @@ class MAD(Aggregation):
     of a column.
     """
     def get_aggregate_column_type(self, column):
-        return NumberType()
+        return Number()
 
     def _median(self, data_sorted):
         length = len(data_sorted)
@@ -377,7 +377,7 @@ class MaxLength(Aggregation):
     Calculates the longest string in a column.
     """
     def get_aggregate_column_type(self, column):
-        return NumberType()
+        return Number()
 
     def run(self, column):
         """

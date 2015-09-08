@@ -23,8 +23,8 @@ class TestSimpleAggregation(unittest.TestCase):
             (None, 4, 'c')
         )
 
-        self.number_type = NumberType()
-        self.text_type = TextType()
+        self.number_type = Number()
+        self.text_type = Text()
 
         self.columns = (
             ('one', self.number_type),
@@ -118,8 +118,8 @@ class TestNumberAggregation(unittest.TestCase):
             (Decimal('2.7'), Decimal('3.42'), 'c')
         )
 
-        self.number_type = NumberType()
-        self.text_type = TextType()
+        self.number_type = Number()
+        self.text_type = Text()
 
         self.columns = (
             ('one', self.number_type),

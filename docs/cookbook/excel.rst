@@ -33,16 +33,14 @@ SUM
 
 .. code-block:: python
 
-    from agate import NumberType, Formula
-
-    number_type = NumberType()
+    number_type = agate.Number()
 
     def five_year_total(row):
         columns = ('2009', '2010', '2011', '2012', '2013')
 
         return sum(tuple(row[c] for c in columns)]
 
-    formula = Formula(number_type, five_year_total)
+    formula = agate.Formula(number_type, five_year_total)
 
     new_table = table.compute([
         ('five_year_total', formula)

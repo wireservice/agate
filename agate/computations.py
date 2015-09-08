@@ -92,11 +92,11 @@ class Change(Computation):
         before_column, after_column = self._validate(table)
 
         if isinstance(before_column, DateTimeColumn):
-            return TimeDeltaType()
+            return TimeDelta()
         elif isinstance(before_column, TimeDeltaColumn):
-            return TimeDeltaType()
+            return TimeDelta()
         elif isinstance(before_column, NumberColumn):
-            return NumberType()
+            return Number()
 
     def prepare(self, table):
         self._validate(table)
@@ -113,7 +113,7 @@ class PercentChange(Computation):
         self._after_column_name = after_column_name
 
     def get_computed_column_type(self, table):
-        return NumberType()
+        return Number()
 
     def prepare(self, table):
         before_column = table.columns[self._before_column_name]
@@ -136,7 +136,7 @@ class ZScores(Computation):
         self._column_name = column_name
 
     def get_computed_column_type(self, table):
-        return NumberType()
+        return Number()
 
     def prepare(self, table):
         column = table.columns[self._column_name]
@@ -163,7 +163,7 @@ class Rank(Computation):
         self._column_name = column_name
 
     def get_computed_column_type(self, table):
-        return NumberType()
+        return Number()
 
     def prepare(self, table):
         self._ranks = {}

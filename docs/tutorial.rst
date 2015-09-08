@@ -69,9 +69,9 @@ If you prefer to specify your columns manually you will need to create instances
 
 .. code-block:: python
 
-    text_type = agate.TextType()
-    number_type = agate.NumberType()
-    boolean_type = agate.BooleanType()
+    text_type = agate.Text()
+    number_type = agate.Number()
+    boolean_type = agate.Boolean()
 
 Then you define the names and types of the columns that are in our dataset as a sequence of pairs. For the exonerations dataset, you would define:
 
@@ -134,7 +134,7 @@ Analysis begins with questions, so that's how we'll learn about agate.
 
 Question: **How many exonerations involved a false confession?**
 
-Answering this question involves counting the number of "True" values in the ``false_confession`` column. When we created the table we specified that the data in this column was :class:`.BooleanType`. Because of this, agate has taken care of coercing the original text data from the CSV into Python's ``True`` and ``False`` values.
+Answering this question involves counting the number of "True" values in the ``false_confession`` column. When we created the table we specified that the data in this column was :class:`.Boolean`. Because of this, agate has taken care of coercing the original text data from the CSV into Python's ``True`` and ``False`` values.
 
 We'll answer the question using :class:`.Count` which is a type of :class:`.Aggregation`. Aggregations in agate are used to perform "column-wise" calculations. That is, they derive a new single value from the contents of a column. In the case of :class:`.Count`, it will tell us how many times a particular value appears in the column.
 

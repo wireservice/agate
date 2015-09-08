@@ -23,7 +23,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], TextType)
+        self.assertIsInstance(inferred[0][1], Text)
 
     def test_number_type(self):
         rows = [
@@ -34,7 +34,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], NumberType)
+        self.assertIsInstance(inferred[0][1], Number)
 
     def test_number_locale(self):
         rows = [
@@ -45,7 +45,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], NumberType)
+        self.assertIsInstance(inferred[0][1], Number)
 
     def test_boolean_type(self):
         rows = [
@@ -56,7 +56,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], BooleanType)
+        self.assertIsInstance(inferred[0][1], Boolean)
 
     def test_date_time_type(self):
         rows = [
@@ -68,7 +68,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], DateTimeType)
+        self.assertIsInstance(inferred[0][1], DateTime)
 
     def test_time_delta_type(self):
         rows = [
@@ -79,7 +79,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], TimeDeltaType)
+        self.assertIsInstance(inferred[0][1], TimeDelta)
 
     def test_force_type(self):
         rows = [
@@ -89,12 +89,12 @@ class TestTypeInference(unittest.TestCase):
         ]
 
         tester = TypeTester(force={
-            'one': TextType()
+            'one': Text()
         })
 
         inferred = tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], TextType)
+        self.assertIsInstance(inferred[0][1], Text)
 
     def test_table_from_csv(self):
         import csvkit
@@ -107,7 +107,7 @@ class TestTypeInference(unittest.TestCase):
             table = Table.from_csv('examples/test.csv', self.tester)
 
         self.assertSequenceEqual(table.get_column_names(), ['one', 'two', 'three'])
-        self.assertSequenceEqual(tuple(map(type, table.get_column_types())), [NumberType, NumberType, TextType])
+        self.assertSequenceEqual(tuple(map(type, table.get_column_types())), [Number, Number, Text])
 
         self.assertEqual(len(table.columns), 3)
 
@@ -119,7 +119,7 @@ class TestTypeInference(unittest.TestCase):
         tableset = TableSet.from_csv('examples/tableset', self.tester)
 
         self.assertSequenceEqual(tableset.get_column_names(), ['letter', 'number'])
-        self.assertSequenceEqual(tuple(map(type, tableset.get_column_types())), [TextType, NumberType])
+        self.assertSequenceEqual(tuple(map(type, tableset.get_column_types())), [Text, Number])
 
         self.assertEqual(len(tableset['table1'].columns), 2)
 

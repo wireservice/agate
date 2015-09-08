@@ -3,7 +3,7 @@
 import agate
 
 tester = agate.TypeTester(force={
-    'fips': agate.TextType()
+    'fips': agate.Text()
 })
 
 table = agate.Table.from_csv('examples/realdata/ks_1033_data.csv', tester)

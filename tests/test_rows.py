@@ -6,7 +6,7 @@ except ImportError:
     import unittest
 
 from agate import Table
-from agate.data_types import TextType, NumberType
+from agate.data_types import *
 from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 
 class TestRows(unittest.TestCase):
@@ -17,8 +17,8 @@ class TestRows(unittest.TestCase):
             (None, 4, 'c')
         )
 
-        self.number_type = NumberType()
-        self.text_type = TextType()
+        self.number_type = Number()
+        self.text_type = Text()
 
         self.columns = (
             ('one', self.number_type),

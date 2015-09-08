@@ -20,24 +20,24 @@ from agate.exceptions import *
 
 class TestColumnTypes(unittest.TestCase):
     def test_text(self):
-        self.assertIsInstance(TextType().create_column(None, 1), TextColumn)
+        self.assertIsInstance(Text().create_column(None, 1), TextColumn)
 
     def test_text_cast(self):
         values = ('a', 1, None, Decimal('2.7'), 'n/a', u'👍')
-        casted = tuple(TextType().cast(v) for v in values)
+        casted = tuple(Text().cast(v) for v in values)
         self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None, u'👍'))
 
     def test_boolean(self):
-        self.assertIsInstance(BooleanType().create_column(None, 1), BooleanColumn)
+        self.assertIsInstance(Boolean().create_column(None, 1), BooleanColumn)
 
     def test_boolean_cast(self):
         values = (True, 'yes', None, False, 'no', 'n/a')
-        casted = tuple(BooleanType().cast(v) for v in values)
+        casted = tuple(Boolean().cast(v) for v in values)
         self.assertSequenceEqual(casted, (True, True, None, False, False, None))
 
     def test_boolean_cast_custom_strings(self):
         values = ('a', 'b', 'c', 'd', 'e', 'f')
-        boolean_type = BooleanType(
+        boolean_type = Boolean(
             true_values=('a', 'b'),
             false_values=('d', 'e'),
             null_values=('c', 'f')
@@ -46,28 +46,28 @@ class TestColumnTypes(unittest.TestCase):
         self.assertSequenceEqual(casted, (True, True, None, False, False, None))
 
     def test_number(self):
-        self.assertIsInstance(NumberType().create_column(None, 1), NumberColumn)
+        self.assertIsInstance(Number().create_column(None, 1), NumberColumn)
 
     def test_number_cast(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a', '2.7', '200,000,000')
-        casted = tuple(NumberType().cast(v) for v in values)
+        casted = tuple(Number().cast(v) for v in values)
         self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000')))
 
     def test_number_cast_locale(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a', '2,7', '200.000.000')
-        casted = tuple(NumberType(locale='de_DE').cast(v) for v in values)
+        casted = tuple(Number(locale='de_DE').cast(v) for v in values)
         self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000')))
 
     def test_number_cast_text(self):
         with self.assertRaises(CastError):
-            NumberType().cast('a')
+            Number().cast('a')
 
     def test_number_cast_float(self):
         with self.assertRaises(CastError):
-            NumberType().cast(1.1)
+            Number().cast(1.1)
 
     def test_date_cast_format(self):
-        date_type = DateTimeType(datetime_format='%m-%d-%Y')
+        date_type = DateTime(datetime_format='%m-%d-%Y')
 
         values = ('03-01-1994', '02-17-1011', None, '01-05-1984', 'n/a')
         casted = tuple(date_type.cast(v) for v in values)
@@ -81,7 +81,7 @@ class TestColumnTypes(unittest.TestCase):
 
     def test_date_cast_parser(self):
         values = ('3-1-1994', '2/17/1011', None, 'January 5th, 1984', 'n/a')
-        casted = tuple(DateTimeType().cast(v) for v in values)
+        casted = tuple(DateTime().cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.datetime(1994, 3, 1),
             datetime.datetime(1011, 2, 17),
@@ -91,10 +91,10 @@ class TestColumnTypes(unittest.TestCase):
         ))
 
     def test_datetime(self):
-        self.assertIsInstance(DateTimeType().create_column(None, 1), DateTimeColumn)
+        self.assertIsInstance(DateTime().create_column(None, 1), DateTimeColumn)
 
     def test_datetime_cast_format(self):
-        datetime_type = DateTimeType(datetime_format='%m-%d-%Y %I:%M %p')
+        datetime_type = DateTime(datetime_format='%m-%d-%Y %I:%M %p')
 
         values = ('03-01-1994 12:30 PM', '02-17-1011 06:30 AM', None, '01-05-1984 06:30 PM', 'n/a')
         casted = tuple(datetime_type.cast(v) for v in values)
@@ -108,7 +108,7 @@ class TestColumnTypes(unittest.TestCase):
 
     def test_datetime_cast_parser(self):
         values = ('3-1-1994 12:30 PM', '2/17/1011 06:30', None, 'January 5th, 1984 22:37', 'n/a')
-        casted = tuple(DateTimeType().cast(v) for v in values)
+        casted = tuple(DateTime().cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.datetime(1994, 3, 1, 12, 30, 0),
             datetime.datetime(1011, 2, 17, 6, 30, 0),
@@ -118,11 +118,11 @@ class TestColumnTypes(unittest.TestCase):
         ))
 
     def test_timedelta(self):
-        self.assertIsInstance(TimeDeltaType().create_column(None, 1), TimeDeltaColumn)
+        self.assertIsInstance(TimeDelta().create_column(None, 1), TimeDeltaColumn)
 
     def test_timedelta_cast_parser(self):
         values = ('4:10', '1.2m', '172 hours', '5 weeks, 2 days', 'n/a')
-        casted = tuple(TimeDeltaType().cast(v) for v in values)
+        casted = tuple(TimeDelta().cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.timedelta(minutes=4, seconds=10),
             datetime.timedelta(minutes=1, seconds=12),
@@ -139,8 +139,8 @@ class TestColumns(unittest.TestCase):
             (None, 4, 'c')
         )
 
-        self.number_type = NumberType()
-        self.text_type = TextType()
+        self.number_type = Number()
+        self.text_type = Text()
 
         self.columns = (
             ('one', self.number_type),

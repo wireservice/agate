@@ -5,7 +5,7 @@ This module contains the :class:`.DataType` class and its subclasses. These
 types define how data should be converted during the creation of a
 :class:`.Table`. Each subclass of :class:`.DataType` is associated with a
 subclass of :class:`.Column`. For instance, specifying that data is of
-:class:`.NumberType` will cause a :class:`.NumberColumn` to be created on the
+:class:`.Number` will cause a :class:`.NumberColumn` to be created on the
 table.
 
 A :class:`TypeTester` class is also included which be used to infer column
@@ -40,11 +40,11 @@ class TypeTester(object):
 
         # In order of preference
         self._possible_types =[
-            BooleanType(),
-            NumberType(),
-            TimeDeltaType(),
-            DateTimeType(),
-            TextType()
+            Boolean(),
+            Number(),
+            TimeDelta(),
+            DateTime(),
+            Text()
         ]
 
     def run(self, rows, column_names):

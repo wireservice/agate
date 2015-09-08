@@ -536,7 +536,7 @@ class Table(object):
             Defaults to the column name that was grouped on or "group" if
             grouping with a key function. See :class:`.TableSet` for more.
         :param key_type: An instance some subclass of :class:`.DataType`. If
-            not provided it will default to a :class`.TextType`.
+            not provided it will default to a :class`.Text`.
         :returns: A :class:`.TableSet` mapping where the keys are unique
             values from the :code:`key` and the values are new :class:`Table`
             instances containing the grouped rows.

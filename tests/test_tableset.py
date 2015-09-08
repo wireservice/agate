@@ -19,7 +19,7 @@ except ImportError:
 
 from agate import Table, TableSet
 from agate.aggregations import *
-from agate.data_types import TextType, NumberType
+from agate.data_types import *
 from agate.computations import Formula
 from agate.exceptions import ColumnDoesNotExistError
 
@@ -43,8 +43,8 @@ class TestTableSet(unittest.TestCase):
             ('c', 3)
         )
 
-        self.text_type = TextType()
-        self.number_type = NumberType()
+        self.text_type = Text()
+        self.number_type = Number()
 
         self.columns = (
             ('letter', self.text_type),
@@ -157,8 +157,8 @@ class TestTableSet(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 2)
         self.assertSequenceEqual(new_table._column_names, ('test', 'count'))
-        self.assertIsInstance(new_table._column_types[0], TextType)
-        self.assertIsInstance(new_table._column_types[1], NumberType)
+        self.assertIsInstance(new_table._column_types[0], Text)
+        self.assertIsInstance(new_table._column_types[1], Number)
 
     def test_aggregate_key_type(self):
         tables = OrderedDict([
@@ -177,8 +177,8 @@ class TestTableSet(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 2)
         self.assertSequenceEqual(new_table._column_names, ('test', 'count'))
-        self.assertIsInstance(new_table._column_types[0], NumberType)
-        self.assertIsInstance(new_table._column_types[1], NumberType)
+        self.assertIsInstance(new_table._column_types[0], Number)
+        self.assertIsInstance(new_table._column_types[1], Number)
 
     def test_aggregate_sum(self):
         tableset = TableSet(self.tables)

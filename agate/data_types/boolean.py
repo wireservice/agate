@@ -11,7 +11,7 @@ DEFAULT_TRUE_VALUES = ('yes', 'y', 'true', 't')
 #: Default values which will be automatically cast to :code:`False`.
 DEFAULT_FALSE_VALUES = ('no', 'n', 'false', 'f')
 
-class BooleanType(DataType):
+class Boolean(DataType):
     """
     Data type representing boolean values. Creates :class:`BooleanColumn`.
 
@@ -21,7 +21,7 @@ class BooleanType(DataType):
         :code:`False` when encountered with this type.
     """
     def __init__(self, true_values=DEFAULT_TRUE_VALUES, false_values=DEFAULT_FALSE_VALUES, null_values=DEFAULT_NULL_VALUES):
-        super(BooleanType, self).__init__(null_values=null_values)
+        super(Boolean, self).__init__(null_values=null_values)
 
         self.true_values = true_values
         self.false_values = false_values

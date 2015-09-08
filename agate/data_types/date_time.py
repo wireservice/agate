@@ -8,12 +8,12 @@ import six
 from agate.data_types.base import *
 from agate.exceptions import CastError
 
-class DateTimeType(DataType):
+class DateTime(DataType):
     """
     Data type representing dates and times. Creates :class:`DateTimeColumn`.
     """
     def __init__(self, datetime_format=None, **kwargs):
-        super(DateTimeType, self).__init__(**kwargs)
+        super(DateTime, self).__init__(**kwargs)
 
         self.datetime_format = datetime_format
 

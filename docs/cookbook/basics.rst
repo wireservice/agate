@@ -15,10 +15,8 @@ Assuming your file has a single row of headers:
 
 .. code-block:: python
 
-    from agate import Table, TextType, NumberType
-
-    text_type = TextType()
-    number_type = NumberType()
+    text_type = agate.Text()
+    number_type = agate.Number()
 
     columns = (
         ('city', text_type),
@@ -26,13 +24,13 @@ Assuming your file has a single row of headers:
         ('population', number_type)
     )
 
-    table = Table.from_csv('population.csv', columns)
+    table = agate.Table.from_csv('population.csv', columns)
 
 If your file does not have headers:
 
 .. code-block:: python
 
-    table = Table.from_csv('population.csv', columns, header=False)
+    table = agate.Table.from_csv('population.csv', columns, header=False)
 
 Writing a table to a CSV
 ========================

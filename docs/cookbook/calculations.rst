@@ -69,9 +69,8 @@ We can use :meth:`.Table.compute` to apply the quantize to generate a rounded co
 .. code-block:: python
 
     from decimal import Decimal
-    from agate import NumberType
 
-    number_type = NumberType()
+    number_type = agate.Number()
 
     def round_price(row):
         return row['price'].quantize(Decimal('0.01'))
@@ -107,7 +106,7 @@ Implementing Levenshtein requires writing a custom :class:`.Computation`. To sav
             """
             The return value is a numerical distance.
             """
-            return agate.NumberType()
+            return agate.Number()
 
         def prepare(self, table):
             """
@@ -150,7 +149,7 @@ Assuming that your data has a column for the total population, another for the p
 
     class USATodayDiversityIndex(agate.Computation):
         def get_computed_column_type(self, table):
-            return agate.NumberType()
+            return agate.Number()
 
         def run(self, row):
             race_squares = 0

@@ -16,7 +16,7 @@ except ImportError:
 import six
 
 from agate import Table, TableSet
-from agate.data_types import TextType, NumberType
+from agate.data_types import *
 from agate.computations import Formula
 from agate.exceptions import ColumnDoesNotExistError
 
@@ -28,8 +28,8 @@ class TestTable(unittest.TestCase):
             (None, 2, u'👍')
         )
 
-        self.number_type = NumberType()
-        self.text_type = TextType()
+        self.number_type = Number()
+        self.text_type = Text()
 
         self.columns = (
             ('one', self.number_type),
@@ -441,8 +441,8 @@ class TestTableGrouping(unittest.TestCase):
             ('b', 3, 4, None)
         )
 
-        self.number_type = NumberType()
-        self.text_type = TextType()
+        self.number_type = Number()
+        self.text_type = Text()
 
         self.columns = (
             ('one', self.text_type),
@@ -514,8 +514,8 @@ class TestTableCompute(unittest.TestCase):
             ('b', 3, 4, None)
         )
 
-        self.number_type = NumberType()
-        self.text_type = TextType()
+        self.number_type = Number()
+        self.text_type = Text()
 
         self.columns = (
             ('one', self.text_type),
@@ -552,8 +552,8 @@ class TestTableJoin(unittest.TestCase):
             (None, 2, 'c')
         )
 
-        self.number_type = NumberType()
-        self.text_type = TextType()
+        self.number_type = Number()
+        self.text_type = Text()
 
         self.left_columns = (
             ('one', self.number_type),
@@ -640,8 +640,8 @@ class TestTableData(unittest.TestCase):
             (None, 2, 'c')
         )
 
-        self.number_type = NumberType()
-        self.text_type = TextType()
+        self.number_type = Number()
+        self.text_type = Text()
 
         self.columns = (
             ('one', self.number_type),

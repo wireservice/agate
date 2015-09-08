@@ -24,8 +24,8 @@ class TestTableComputation(unittest.TestCase):
             ('b', 3, 4, None)
         )
 
-        self.number_type = NumberType()
-        self.text_type = TextType()
+        self.number_type = Number()
+        self.text_type = Text()
 
         self.columns = (
             ('one', self.text_type),
@@ -142,7 +142,7 @@ class TestDateAndTimeComputations(unittest.TestCase):
             ('September 28th, 12:00:00', '9/1/15, 6 PM')
         )
 
-        datetime_type = DateTimeType()
+        datetime_type = DateTime()
 
         columns = (
             ('one', datetime_type),
@@ -184,7 +184,7 @@ class TestDateAndTimeComputations(unittest.TestCase):
             ('4 weeks', '27 days')
         )
 
-        timedelta_type = TimeDeltaType()
+        timedelta_type = TimeDelta()
 
         columns = (
             ('one', timedelta_type),

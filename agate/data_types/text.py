@@ -5,7 +5,7 @@ import six
 from agate.data_types.base import *
 from agate.exceptions import CastError
 
-class TextType(DataType):
+class Text(DataType):
     """
     Data type representing text. Creates :class:`TextColumn`.
     """
