@@ -39,8 +39,7 @@ class TimeDelta(DataType):
         """
         if isinstance(d, datetime.timedelta) or d is None:
             return d
-
-        if isinstance(d, six.string_types):
+        elif isinstance(d, six.string_types):
             d = d.strip()
 
             if d.lower() in self.null_values:

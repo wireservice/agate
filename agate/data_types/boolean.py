@@ -37,11 +37,9 @@ class Boolean(DataType):
 
         if d_lower in self.null_values:
             return True
-
-        if d_lower in self.true_values:
+        elif d_lower in self.true_values:
             return True
-
-        if d_lower in self.false_values:
+        elif d_lower in self.false_values:
             return True
 
         return False
@@ -55,19 +53,16 @@ class Boolean(DataType):
         """
         if isinstance(d, bool) or d is None:
             return d
-
-        if isinstance(d, six.string_types):
+        elif isinstance(d, six.string_types):
             d = d.replace(',' ,'').strip()
 
             d_lower = d.lower()
 
             if d_lower in self.null_values:
                 return None
-
-            if d_lower in self.true_values:
+            elif d_lower in self.true_values:
                 return True
-
-            if d_lower in self.false_values:
+            elif d_lower in self.false_values:
                 return False
 
         raise CastError('Can not convert value %s to bool.' % d)
