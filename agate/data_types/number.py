@@ -8,12 +8,12 @@ except ImportError: #pragma: no cover
 from babel.numbers import parse_decimal
 import six
 
-from agate.column_types.base import *
+from agate.data_types.base import *
 from agate.exceptions import CastError
 
-class NumberType(ColumnType):
+class NumberType(DataType):
     """
-    Column type for :class:`NumberColumn`.
+    Data type representing numbers. Creates :class:`NumberColumn`.
 
     :param locale: A locale specification such as :code:`en_US` or
         :code:`de_DE` to use for parsing formatted numbers.
@@ -51,7 +51,7 @@ class NumberType(ColumnType):
         elif isinstance(d, int):
             return Decimal(d)
         elif isinstance(d, float):
-            raise CastError('Can not convert float to Decimal for NumberColumn. Convert data to string first!')
+            raise CastError('Can not convert float to Decimal. Convert data to string first!')
         elif isinstance(d, six.string_types):
             d = d.strip()
 
@@ -61,7 +61,7 @@ class NumberType(ColumnType):
         try:
             return parse_decimal(d, self._locale)
         except:
-            raise CastError('Can not parse value "%s" as Decimal for NumberColumn.' % d)
+            raise CastError('Can not parse value "%s" as Decimal.' % d)
 
     def create_column(self, table, index):
         from agate.columns import NumberColumn

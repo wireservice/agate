@@ -2,12 +2,12 @@
 
 import six
 
-from agate.column_types.base import *
+from agate.data_types.base import *
 from agate.exceptions import CastError
 
-class TextType(ColumnType):
+class TextType(DataType):
     """
-    Column type for :class:`TextColumn`.
+    Data type representing text. Creates :class:`TextColumn`.
     """
     def test(self, d):
         """

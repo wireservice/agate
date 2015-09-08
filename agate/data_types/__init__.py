@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 """
-This module contains the :class:`.ColumnType` class and its subclasses. These
+This module contains the :class:`.DataType` class and its subclasses. These
 types define how data should be converted during the creation of a
-:class:`.Table`. Each subclass of :class:`.ColumnType` is associated with a
+:class:`.Table`. Each subclass of :class:`.DataType` is associated with a
 subclass of :class:`.Column`. For instance, specifying that data is of
 :class:`.NumberType` will cause a :class:`.NumberColumn` to be created on the
 table.
@@ -19,12 +19,12 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-from agate.column_types.base import *
-from agate.column_types.boolean import *
-from agate.column_types.date_time import *
-from agate.column_types.number import *
-from agate.column_types.text import *
-from agate.column_types.time_delta import *
+from agate.data_types.base import *
+from agate.data_types.boolean import *
+from agate.data_types.date_time import *
+from agate.data_types.number import *
+from agate.data_types.text import *
+from agate.data_types.time_delta import *
 
 from agate.exceptions import *
 
@@ -33,7 +33,7 @@ class TypeTester(object):
     Infer types for the columns in a given set of data.
 
     :param force: A dictionary where each key is a column name and each
-        value is a :class:`.ColumnType` instance that overrides inference.
+        value is a :class:`.DataType` instance that overrides inference.
     """
     def __init__(self, force={}):
         self._force = force

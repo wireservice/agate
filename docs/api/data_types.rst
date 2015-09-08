@@ -2,31 +2,31 @@
 agate.column_types
 =======================
 
-.. automodule:: agate.column_types
+.. automodule:: agate.data_types
     :members:
     :undoc-members:
 
-.. automodule:: agate.column_types.base
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: agate.column_types.boolean
+.. automodule:: agate.data_types.base
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: agate.column_types.date_time
+.. automodule:: agate.data_types.boolean
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: agate.column_types.number
+.. automodule:: agate.data_types.date_time
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: agate.column_types.text
+.. automodule:: agate.data_types.number
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: agate.data_types.text
     :members:
     :undoc-members:
     :show-inheritance:

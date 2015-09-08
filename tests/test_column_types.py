@@ -6,7 +6,7 @@ try:
 except ImportError:
     import unittest
 
-from agate.column_types import *
+from agate.data_types import *
 from agate.table import Table
 from agate.tableset import TableSet
 

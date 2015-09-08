@@ -5,12 +5,13 @@ import datetime
 import pytimeparse
 import six
 
-from agate.column_types.base import *
+from agate.data_types.base import *
 from agate.exceptions import CastError
 
-class TimeDeltaType(ColumnType):
+class TimeDeltaType(DataType):
     """
-    Column type for :class:`datetime.timedelta`.
+    Data type representing the interval between two times. Creates
+    :class:`datetime.timedelta`.
     """
     def test(self, d):
         """
@@ -48,7 +49,7 @@ class TimeDeltaType(ColumnType):
         seconds = pytimeparse.parse(d)
 
         if seconds is None:
-            raise CastError('Can not parse value "%s" to as timedelta for TimeDeltaColumn.' % d)
+            raise CastError('Can not parse value "%s" to as timedelta.' % d)
 
         return datetime.timedelta(seconds=seconds)
 

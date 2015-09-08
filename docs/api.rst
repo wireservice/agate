@@ -6,7 +6,7 @@ API
     :maxdepth: 2
 
     api/aggregations
-    api/column_types
+    api/data_types
     api/columns
     api/computations
     api/exceptions

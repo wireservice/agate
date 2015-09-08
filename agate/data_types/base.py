@@ -3,9 +3,9 @@
 #: Default values which will be automatically cast to :code:`None`
 DEFAULT_NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
 
-class ColumnType(object): #pragma: no cover
+class DataType(object): #pragma: no cover
     """
-    Base class for column data types.
+    Base class for data types.
 
     :param null_values: A sequence of values which should be cast to
         :code:`None` when encountered with this type.

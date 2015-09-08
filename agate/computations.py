@@ -18,7 +18,7 @@ subclassed to fully customize it's behavior.
 
 from agate.aggregations import Mean, StDev
 from agate.columns import *
-from agate.column_types import *
+from agate.data_types import *
 from agate.exceptions import UnsupportedComputationError
 from agate.utils import NullOrder
 
@@ -28,7 +28,7 @@ class Computation(object): #pragma: no cover
     """
     def get_computed_column_type(self, table):
         """
-        Returns an instantiated :class:`.ColumnType` which will be appended to
+        Returns an instantiated :class:`.DataType` which will be appended to
         the table.
         """
         raise NotImplementedError()

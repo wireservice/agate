@@ -11,7 +11,7 @@ except ImportError:
     import unittest
 
 from agate import Table
-from agate.column_types import *
+from agate.data_types import *
 from agate.computations import *
 from agate.exceptions import *
 

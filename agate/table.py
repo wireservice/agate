@@ -3,7 +3,7 @@
 """
 This module contains the :class:`Table` object, which is the central data
 structure in :code:`agate`. Tables are created by supplying row data, column
-names and subclasses of :class:`.ColumnType` to the constructor. Once
+names and subclasses of :class:`.DataType` to the constructor. Once
 instantiated tables are **immutable**. This concept is central to agate. The
 table of the data may not be accessed or modified directly.
 
@@ -35,7 +35,7 @@ import six
 
 from agate.aggregations import Sum, Mean, Median, StDev, MAD
 from agate.columns.base import ColumnMapping
-from agate.column_types import TypeTester
+from agate.data_types import TypeTester
 from agate.computations import Computation
 from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 from agate.rows import RowSequence, Row
@@ -48,7 +48,7 @@ class Table(object):
 
     :param rows: The data as a sequence of any sequences: tuples, lists, etc.
     :param column_info: A sequence of pairs of column names and types. The latter
-        must be instances of :class:`.ColumnType`.
+        must be instances of :class:`.DataType`.
 
     :attr columns: A :class:`.ColumnMapping` for accessing the columns in this
         table.
@@ -139,7 +139,7 @@ class Table(object):
 
         :param path: Path to the CSV file to read from.
         :param column_info: A sequence of pairs of column names and types. The latter
-            must be instances of :class:`.ColumnType`. Or, an instance of
+            must be instances of :class:`.DataType`. Or, an instance of
             :class:`.TypeTester` to infer types.
         :param header: If `True`, the first row of the CSV is assumed to contains
             headers and will be skipped.
@@ -535,7 +535,7 @@ class Table(object):
         :param key_name: A name that describes the grouped properties.
             Defaults to the column name that was grouped on or "group" if
             grouping with a key function. See :class:`.TableSet` for more.
-        :param key_type: An instance some subclass of :class:`.ColumnType`. If
+        :param key_type: An instance some subclass of :class:`.DataType`. If
             not provided it will default to a :class`.TextType`.
         :returns: A :class:`.TableSet` mapping where the keys are unique
             values from the :code:`key` and the values are new :class:`Table`

@@ -12,7 +12,7 @@ except ImportError:
 
 from agate import Table
 from agate.aggregations import *
-from agate.column_types import *
+from agate.data_types import *
 from agate.exceptions import *
 
 class TestSimpleAggregation(unittest.TestCase):

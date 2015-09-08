@@ -2,7 +2,7 @@
 
 """
 This module contains the :class:`.Column` class and its various subclasses.
-Each column is created from its associated :class:`.ColumnType` during the
+Each column is created by instances of :class:`.DataType` during the
 creation of a :class:`.Table`. There is never any reason to create a column
 by directly instantiating it.
 

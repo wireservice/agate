@@ -1,6 +1,11 @@
 0.8.0
 -----
 
+* Rename agate.ColumnType to agate.DataType (#216)
+* Rename agate.column_types to agate.data_types.
+* Implement locale support for number parsing. (#116)
+* Cookbook: ranking. (#110)
+* Cookbook: date change and date ranking. (#113)
 * Add tests for unicode support. (#138)
 * Fix computations.ZScores calculation. (#123)
 * Differentiate sample and population variance and stdev. (#208)

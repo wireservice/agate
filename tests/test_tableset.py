@@ -19,7 +19,7 @@ except ImportError:
 
 from agate import Table, TableSet
 from agate.aggregations import *
-from agate.column_types import TextType, NumberType
+from agate.data_types import TextType, NumberType
 from agate.computations import Formula
 from agate.exceptions import ColumnDoesNotExistError
 

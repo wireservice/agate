@@ -2,7 +2,7 @@
 
 import six
 
-from agate.column_types.base import *
+from agate.data_types.base import *
 from agate.exceptions import CastError
 
 #: Default values which will be automatically cast to :code:`True`.
@@ -11,9 +11,9 @@ DEFAULT_TRUE_VALUES = ('yes', 'y', 'true', 't')
 #: Default values which will be automatically cast to :code:`False`.
 DEFAULT_FALSE_VALUES = ('no', 'n', 'false', 'f')
 
-class BooleanType(ColumnType):
+class BooleanType(DataType):
     """
-    Column type for :class:`BooleanColumn`.
+    Data type representing boolean values. Creates :class:`BooleanColumn`.
 
     :param true_values: A sequence of values which should be cast to
         :code:`True` when encountered with this type.
@@ -70,7 +70,7 @@ class BooleanType(ColumnType):
             if d_lower in self.false_values:
                 return False
 
-        raise CastError('Can not convert value %s to bool for BooleanColumn.' % d)
+        raise CastError('Can not convert value %s to bool.' % d)
 
     def create_column(self, table, index):
         from agate.columns import BooleanColumn

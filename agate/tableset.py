@@ -34,7 +34,7 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 from agate.aggregations import Aggregation
-from agate.column_types import TextType, TypeTester
+from agate.data_types import TextType, TypeTester
 from agate.exceptions import ColumnDoesNotExistError
 from agate.rows import RowSequence
 
@@ -68,7 +68,7 @@ class TableSet(Mapping):
     :param key_name: A name that describes the grouping properties. Used as
         the column header when the groups are aggregated. Defaults to the
         column name that was grouped on.
-    :param key_type: An instance some subclass of :class:`.ColumnType`. If not
+    :param key_type: An instance some subclass of :class:`.DataType`. If not
         provided it will default to a :class`.TextType`.
     """
     def __init__(self, group, key_name='group', key_type=None):
@@ -134,7 +134,7 @@ class TableSet(Mapping):
         :param dir_path: Path to a directory full of CSV files. All CSV files
             in this directory will be loaded.
         :param column_info: A sequence of pairs of column names and types. The latter
-            must be instances of :class:`.ColumnType`. Or, an instance of
+            must be instances of :class:`.DataType`. Or, an instance of
             :class:`.TypeTester` to infer types.
         :param header: If `True`, the first row of the CSV is assumed to contains
             headers and will be skipped.

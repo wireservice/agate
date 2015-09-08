@@ -5,12 +5,12 @@ import datetime
 from dateutil.parser import parse
 import six
 
-from agate.column_types.base import *
+from agate.data_types.base import *
 from agate.exceptions import CastError
 
-class DateTimeType(ColumnType):
+class DateTimeType(DataType):
     """
-    Column type for :class:`DateTimeColumn`.
+    Data type representing dates and times. Creates :class:`DateTimeColumn`.
     """
     def __init__(self, datetime_format=None, **kwargs):
         super(DateTimeType, self).__init__(**kwargs)
@@ -57,7 +57,7 @@ class DateTimeType(ColumnType):
         try:
             return parse(d)
         except:
-            raise CastError('Can not parse value "%s" to as datetime for DateTimeColumn.' % d)
+            raise CastError('Can not parse value "%s" to as datetime.' % d)
 
     def create_column(self, table, index):
         from agate.columns import DateTimeColumn

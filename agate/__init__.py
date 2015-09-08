@@ -2,7 +2,7 @@
 
 from agate.aggregations import *
 from agate.columns import *
-from agate.column_types import *
+from agate.data_types import *
 from agate.computations import *
 from agate.exceptions import *
 from agate.table import Table

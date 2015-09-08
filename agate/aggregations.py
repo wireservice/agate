@@ -19,7 +19,7 @@ the set.
 from collections import defaultdict
 import datetime
 
-from agate.column_types import *
+from agate.data_types import *
 from agate.columns import *
 from agate.exceptions import *
 
