@@ -1,6 +1,7 @@
 0.8.0
 -----
 
+* Table.format is now Table.pretty_print. (#223)
 * Rename TextType to Text, NumberType to Number, etc.
 * Rename agate.ColumnType to agate.DataType (#216)
 * Rename agate.column_types to agate.data_types.

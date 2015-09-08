@@ -22,22 +22,18 @@ totals = counties.aggregate([
     ('total_cost', agate.Sum(), 'total_cost_sum')
 ])
 
-totals = totals.order_by('total_cost_sum', reverse=True).rows[:5]
+totals = totals.order_by('total_cost_sum', reverse=True)
 
 print('Five most spendy counties:')
 
-for i, row in enumerate(totals):
-    text = '# {}: {}, ${:,}'.format(i + 1, row['county'], row['total_cost_sum'])
-    print(text)
+totals.pretty_print(5)
 
-# Get the five most recent purchases
-recent_five = table.order_by('ship_date', reverse=True).rows[:5]
+# Get the most recent purchases
+recent = table.order_by('ship_date', reverse=True)
 
 print('Five most recent purchases:')
 
-for row in recent_five:
-    text = '{}: {} {}, ${:,}'.format(row['ship_date'], row['quantity'], row['item_name'], row['total_cost'])
-    print(text)
+recent.pretty_print(5, 5)
 
 # Calculate the standard of deviation for the total_costs
 stdev = table.columns['total_cost'].aggregate(agate.StDev())

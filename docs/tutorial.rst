@@ -299,11 +299,11 @@ We can then use :meth:`.Table.limit` get only the first ten rows of the data.
 
     youngest_ten = sorted_by_age.limit(10)
 
-Now let's use :meth:`.Table.format` to help us pretty the results in a way we can easily review:
+Now let's use :meth:`.Table.pretty_print` to help us pretty the results in a way we can easily review:
 
 .. code-block:: python
 
-    print(youngest_ten.format(max_columns=7))
+    youngest_ten.pretty_print(max_columns=7)
 
 ::
 
@@ -326,7 +326,7 @@ If you find it impossible to believe that an eleven year-old was convicted of mu
 
 .. note::
 
-    In the previous example we could have omitted the :meth:`.Table.limit` and passed a ``max_rows=10`` to :meth:`.Table.format` instead.
+    In the previous example we could have omitted the :meth:`.Table.limit` and passed a ``max_rows=10`` to :meth:`.Table.pretty_print` instead.
 
 Grouping and aggregating
 ========================
@@ -351,7 +351,7 @@ This takes our original :class:`.Table` and groups it into a :class:`.TableSet`,
 
     sorted_totals = state_totals.order_by('count', reverse=True)
 
-    print(sorted_totals.format(max_rows=5))
+    sorted_totals.pretty_print(max_rows=5)
 
 ::
 
@@ -387,7 +387,7 @@ This is a much more complicated question that's going to pull together a lot of 
 
     sorted_medians = medians.order_by('median_years_in_prison', reverse=True)
 
-    print(sorted_medians.format(max_rows=5))
+    sorted_medians.pretty_print(max_rows=5)
 
 ::
 
@@ -443,7 +443,7 @@ I'm not going to explain every stage of this analysis as most of it repeats patt
     sorted_groups = medians.order_by('median_years_in_prison', reverse=True)
 
     # Print out the results
-    print(sorted_groups.format(max_rows=10))
+    sorted_groups.pretty_print(max_rows=10)
 
 ::
 

@@ -20,6 +20,7 @@ accessed via :attr:`Table.columns` and the rows via :attr:`Table.rows`.
 
 from copy import copy
 from itertools import chain
+import sys
 
 try:
     from collections import OrderedDict
@@ -605,17 +606,17 @@ class Table(object):
 
         return self._fork(new_rows, zip(column_names, column_types))
 
-    def format(self, max_rows=None, max_columns=None):
+    def pretty_print(self, max_rows=None, max_columns=None, output=sys.stdout):
         """
-        Formats a text preview of this table.
+        Print a well-formatted preview of this table to the console or any
+        other output.
 
         :param max_rows: The maximum number of rows to display before
             truncating the data.
         :param max_columns: The maximum number of columns to display before
             truncating the data.
-
-        :returns: A unicode representation of this table suitable for printing
-            to the console.
+        :param output: A file-like object to print to. Defaults to
+            :code:`sys.stdout`.
         """
         if max_rows is None:
             max_rows = len(self._data)
@@ -669,33 +670,29 @@ class Table(object):
             if columns_truncated:
                 row_output.append(' %s ' % six.text_type('...').ljust(widths[j]))
 
-            return '| %s |' % ('|'.join(row_output))
+            return '| %s |\n' % ('|'.join(row_output))
 
         # Dashes span each width with '+' character at intersection of
         # horizontal and vertical dividers.
-        divider = '|--' + '-+-'.join('-' * w for w in widths) + '--|'
-
-        output = []
+        divider = '|--' + '-+-'.join('-' * w for w in widths) + '--|\n'
 
         # Initial divider
-        output.append('%s' % divider)
+        output.write(divider)
 
         # Rows
         for i, row in enumerate(chain([self._column_names], self._data)):
             if i >= max_rows + 1:
                 break
 
-            output.append(_format_row(row))
+            output.write(_format_row(row))
 
             # Divider under headers
             if (i == 0):
-                output.append('%s' % divider)
+                output.write(divider)
 
         # Row indicating data was truncated
         if rows_truncated:
-            output.append(_format_row(['...' for n in self._column_names]))
+            output.write(_format_row(['...' for n in self._column_names]))
 
         # Final divider
-        output.append('%s' % divider)
-
-        return '\n'.join(output)
+        output.write(divider)

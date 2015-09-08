@@ -7,6 +7,7 @@ except ImportError: #pragma: no cover
     from decimal import Decimal
 
 import os
+from StringIO import StringIO
 
 try:
     import unittest2 as unittest
@@ -408,28 +409,31 @@ class TestTable(unittest.TestCase):
     def test_format(self):
         table = Table(self.rows, self.columns)
 
-        output = table.format()
-        lines = output.split('\n')
+        output = StringIO()
+        table.pretty_print(output=output)
+        lines = output.getvalue().split('\n')
 
-        self.assertEqual(len(lines), 7)
+        self.assertEqual(len(lines), 8)
         self.assertEqual(len(lines[0]), 24)
 
     def test_format_max_rows(self):
         table = Table(self.rows, self.columns)
 
-        output = table.format(max_rows=2)
-        lines = output.split('\n')
+        output = StringIO()
+        table.pretty_print(max_rows=2, output=output)
+        lines = output.getvalue().split('\n')
 
-        self.assertEqual(len(lines), 7)
+        self.assertEqual(len(lines), 8)
         self.assertEqual(len(lines[0]), 23)
 
     def test_format_max_columns(self):
         table = Table(self.rows, self.columns)
 
-        output = table.format(max_columns=2)
-        lines = output.split('\n')
+        output = StringIO()
+        table.pretty_print(max_columns=2, output=output)
+        lines = output.getvalue().split('\n')
 
-        self.assertEqual(len(lines), 7)
+        self.assertEqual(len(lines), 8)
         self.assertEqual(len(lines[0]), 22)
 
 class TestTableGrouping(unittest.TestCase):
