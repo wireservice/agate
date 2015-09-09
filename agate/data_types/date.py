@@ -9,19 +9,19 @@ import six
 from agate.data_types.base import *
 from agate.exceptions import CastError
 
-class DateTime(DataType):
+class Date(DataType):
     """
-    Data type representing dates and times. Creates :class:`DateTimeColumn`.
+    Data type representing dates only. Creates :class:`DateColumn`.
 
-    :param datetime_format: A formatting string for
-        :meth:`datetime.datetime.strptime` to use instead of using regex-based
+    :param dat_format: A formatting string for
+        :func:`datetime.strptime` to use instead of using regex-based
         parsing.
     :param timezone: A
     """
-    def __init__(self, datetime_format=None, timezone=None, **kwargs):
-        super(DateTime, self).__init__(**kwargs)
+    def __init__(self, date_format=None, timezone=None, **kwargs):
+        super(Date, self).__init__(**kwargs)
 
-        self.datetime_format = datetime_format
+        self.date_format = date_format
         self.parser = parsedatetime.Calendar()
 
     def test(self, d):
@@ -36,20 +36,20 @@ class DateTime(DataType):
 
         value, status = self.parser.parseDT(d)
 
-        if status != 3:
+        if status != 1:
             return False
 
         return True
 
     def cast(self, d):
         """
-        Cast a single value to a :class:`datetime.datetime`.
+        Cast a single value to a :class:`datetime.date`.
 
         :param date_format: An optional :func:`datetime.strptime`
             format string for parsing datetimes in this column.
-        :returns: :class:`datetime.datetime` or :code:`None`.
+        :returns: :class:`datetime.date` or :code:`None`.
         """
-        if isinstance(d, datetime.datetime) or d is None:
+        if isinstance(d, datetime.date) or d is None:
             return d
         elif isinstance(d, six.string_types):
             d = d.strip()
@@ -57,15 +57,16 @@ class DateTime(DataType):
             if d.lower() in self.null_values:
                 return None
 
-        if self.datetime_format:
-            return datetime.datetime.strptime(d, self.datetime_format)
+        if self.date_format:
+            dt = datetime.datetime.strptime(d, self.date_format)
+            return dt.date()
 
         value, status = self.parser.parseDT(d)
 
-        if status != 3:
-            raise CastError('Can not parse value "%s" to as datetime.' % d)
+        if status != 1:
+            raise CastError('Can not parse value "%s" to as date.' % d)
 
-        return value
+        return value.date()
 
     def create_column(self, table, index):
         from agate.columns import DateTimeColumn

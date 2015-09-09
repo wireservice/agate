@@ -132,14 +132,45 @@ class TestTableComputation(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[999], (1000, 100))
 
 class TestDateAndTimeComputations(unittest.TestCase):
+    def test_change_dates(self):
+        rows = (
+            ('10/4/2015', '10/7/2015'),
+            ('10/2/2015', '9/28/2015'),
+            ('9/28/2015', '9/1/2015')
+        )
+
+        date_type = Date()
+
+        columns = (
+            ('one', date_type),
+            ('two', date_type)
+        )
+
+        table = Table(rows, columns)
+
+        new_table = table.compute([
+            ('test', Change('one', 'two'))
+        ])
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 3)
+
+        self.assertSequenceEqual(new_table.rows[0], (
+            datetime.date(2015, 10, 4),
+            datetime.date(2015, 10, 7),
+            datetime.timedelta(days=3)
+        ))
+
+        self.assertEqual(new_table.columns['test'][0], datetime.timedelta(days=3))
+        self.assertEqual(new_table.columns['test'][1], datetime.timedelta(days=-4))
+        self.assertEqual(new_table.columns['test'][2], datetime.timedelta(days=-27))
+
     def test_change_datetimes(self):
         rows = (
-            ('October 4th', 'October 7th'),
-            ('October 2nd', 'September 28'),
-            ('September 28th', '9/1/15'),
-            ('October 4th 4:43', 'October 7th, 4:50'),
-            ('October 2nd, 12 PM', 'September 28, 12 PM'),
-            ('September 28th, 12:00:00', '9/1/15, 6 PM')
+            ('10/4/2015 4:43', '10/7/2015 4:50'),
+            ('10/2/2015 12 PM', '9/28/2015 12 PM'),
+            ('9/28/2015 12:00:00', '9/1/2015 6 PM')
         )
 
         datetime_type = DateTime()
@@ -156,26 +187,18 @@ class TestDateAndTimeComputations(unittest.TestCase):
         ])
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 6)
+        self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 3)
 
         self.assertSequenceEqual(new_table.rows[0], (
-            datetime.datetime(2015, 10, 4),
-            datetime.datetime(2015, 10, 7),
-            datetime.timedelta(days=3)
-        ))
-        self.assertSequenceEqual(new_table.rows[3], (
             datetime.datetime(2015, 10, 4, 4, 43),
             datetime.datetime(2015, 10, 7, 4, 50),
             datetime.timedelta(days=3, minutes=7)
         ))
 
-        self.assertEqual(new_table.columns['test'][0], datetime.timedelta(days=3))
+        self.assertEqual(new_table.columns['test'][0], datetime.timedelta(days=3, minutes=7))
         self.assertEqual(new_table.columns['test'][1], datetime.timedelta(days=-4))
-        self.assertEqual(new_table.columns['test'][2], datetime.timedelta(days=-27))
-        self.assertEqual(new_table.columns['test'][3], datetime.timedelta(days=3, minutes=7))
-        self.assertEqual(new_table.columns['test'][4], datetime.timedelta(days=-4))
-        self.assertEqual(new_table.columns['test'][5], datetime.timedelta(days=-26, hours=-18))
+        self.assertEqual(new_table.columns['test'][2], datetime.timedelta(days=-26, hours=-18))
 
     def test_change_timedeltas(self):
         rows = (

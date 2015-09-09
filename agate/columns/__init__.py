@@ -16,6 +16,7 @@ computation.
 
 from agate.columns.base import *
 from agate.columns.boolean import *
+from agate.columns.date import *
 from agate.columns.date_time import *
 from agate.columns.number import *
 from agate.columns.text import *

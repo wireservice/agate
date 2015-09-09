@@ -6,7 +6,7 @@ import sys
 install_requires = [
     'six==1.6.1',
     'pytimeparse>=1.1.5',
-    'parsedatetime>=1.5'
+    'parsedatetime>=1.5',
     'Babel>=2.0'
 ]
 

@@ -16,6 +16,11 @@ agate.column_types
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: agate.data_types.date
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. automodule:: agate.data_types.date_time
     :members:
     :undoc-members:

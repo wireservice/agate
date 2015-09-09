@@ -93,11 +93,23 @@ class TestTypeInference(unittest.TestCase):
 
         self.assertIsInstance(inferred[0][1], Boolean)
 
+    def test_date_type(self):
+        rows = [
+            ('5/7/1984',),
+            ('2/28/1997',),
+            ('3/19/2020',),
+            ('',)
+        ]
+
+        inferred = self.tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0][1], Date)
+
     def test_date_time_type(self):
         rows = [
             ('5/7/84 3:44:12',),
             ('2/28/1997 3:12 AM',),
-            ('3/19/20',),
+            ('3/19/20 4:40 PM',),
             ('',)
         ]
 
