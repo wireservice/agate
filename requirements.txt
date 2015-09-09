@@ -5,9 +5,9 @@ Sphinx>=1.2.2
 coverage>=3.7.1
 ordereddict>=1.1
 six>=1.6.1
-python-dateutil==2.2
 sphinx_rtd_theme>=0.1.6
 wheel>=0.24.0
 pytimeparse>=1.1.5
 csvkit>=0.9.1
 Babel>=2.0
+parsedatetime>=1.5

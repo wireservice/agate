@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 import datetime
+import time
 
-from dateutil.parser import parse
+import parsedatetime
 import six
 
 from agate.data_types.base import *
@@ -11,11 +12,17 @@ from agate.exceptions import CastError
 class DateTime(DataType):
     """
     Data type representing dates and times. Creates :class:`DateTimeColumn`.
+
+    :param datetime_format: A formatting string for
+        :meth:`datetime.datetime.strptime` to use instead of using regex-based
+        parsing.
+    :param timezone: A
     """
-    def __init__(self, datetime_format=None, **kwargs):
+    def __init__(self, datetime_format=None, timezone=None, **kwargs):
         super(DateTime, self).__init__(**kwargs)
 
         self.datetime_format = datetime_format
+        self.parser = parsedatetime.Calendar()
 
     def test(self, d):
         """
@@ -27,9 +34,9 @@ class DateTime(DataType):
         if d.lower() in self.null_values:
             return True
 
-        try:
-            parse_result = parse(d)
-        except:
+        value, status = self.parser.parseDT(d)
+
+        if status != 3:
             return False
 
         return True
@@ -53,10 +60,14 @@ class DateTime(DataType):
         if self.datetime_format:
             return datetime.datetime.strptime(d, self.datetime_format)
 
-        try:
-            return parse(d)
-        except:
+        value, status = self.parser.parseDT(d)
+
+        print value, status
+
+        if status != 3:
             raise CastError('Can not parse value "%s" to as datetime.' % d)
+
+        return value
 
     def create_column(self, table, index):
         from agate.columns import DateTimeColumn

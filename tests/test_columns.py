@@ -68,23 +68,23 @@ class TestColumnTypes(unittest.TestCase):
 
     def test_date_cast_format(self):
         date_type = DateTime(datetime_format='%m-%d-%Y')
-
-        values = ('03-01-1994', '02-17-1011', None, '01-05-1984', 'n/a')
+#
+        values = ('03-01-1994', '02-17-2011', None, '01-05-1984', 'n/a')
         casted = tuple(date_type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.datetime(1994, 3, 1),
-            datetime.datetime(1011, 2, 17),
+            datetime.datetime(2011, 2, 17),
             None,
             datetime.datetime(1984, 1, 5),
             None
         ))
 
     def test_date_cast_parser(self):
-        values = ('3-1-1994', '2/17/1011', None, 'January 5th, 1984', 'n/a')
+        values = ('3/1/1994', '2/17/2011', None, 'January 5th, 1984', 'n/a')
         casted = tuple(DateTime().cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.datetime(1994, 3, 1),
-            datetime.datetime(1011, 2, 17),
+            datetime.datetime(2011, 2, 17),
             None,
             datetime.datetime(1984, 1, 5),
             None
@@ -107,11 +107,11 @@ class TestColumnTypes(unittest.TestCase):
         ))
 
     def test_datetime_cast_parser(self):
-        values = ('3-1-1994 12:30 PM', '2/17/1011 06:30', None, 'January 5th, 1984 22:37', 'n/a')
+        values = ('3/1/1994 12:30 PM', '2/17/2011 06:30', None, 'January 5th, 1984 22:37', 'n/a')
         casted = tuple(DateTime().cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.datetime(1994, 3, 1, 12, 30, 0),
-            datetime.datetime(1011, 2, 17, 6, 30, 0),
+            datetime.datetime(2011, 2, 17, 6, 30, 0),
             None,
             datetime.datetime(1984, 1, 5, 22, 37, 0),
             None
