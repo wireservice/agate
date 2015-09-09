@@ -6,12 +6,12 @@ Cookbook
     :maxdepth: 2
 
     cookbook/basics
-    cookbook/filtering
-    cookbook/sorting
-    cookbook/searching
+    cookbook/filter
+    cookbook/sort
+    cookbook/search
     cookbook/statistics
-    cookbook/computations
-    cookbook/ranking
+    cookbook/compute
+    cookbook/rank
     cookbook/datetime
     cookbook/sql
     cookbook/excel
