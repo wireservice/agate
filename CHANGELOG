@@ -1,6 +1,8 @@
 0.8.0
 -----
 
+* Add timezone support to DateTimeType.
+* Use pytimeparse instead of python-dateutil. (#221)
 * Handle percents and currency symbols when casting numbers. (#217)
 * Table.format is now Table.pretty_print. (#223)
 * Rename TextType to Text, NumberType to Number, etc.
@@ -14,7 +16,6 @@
 * Differentiate sample and population variance and stdev. (#208)
 * Support for overriding column inference with "force".
 * Competition ranking implemented as default. (#125)
-* Remove DateType and DateColumn.
 * TypeTester: robust type inference. (#210)
 
 0.7.0

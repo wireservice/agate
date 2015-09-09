@@ -13,6 +13,8 @@ try:
 except ImportError:
     import unittest
 
+import pytz
+
 from agate import Table
 from agate.data_types import *
 from agate.columns import *
@@ -118,6 +120,20 @@ class TestColumnTypes(unittest.TestCase):
             datetime.datetime(2011, 2, 17, 6, 30, 0),
             None,
             datetime.datetime(1984, 1, 5, 22, 37, 0),
+            None
+        ))
+
+    def test_datetime_cast_parser_timezone(self):
+        tzinfo = pytz.timezone('US/Pacific')
+        datetime_type = DateTime(timezone=tzinfo)
+
+        values = ('3/1/1994 12:30 PM', '2/17/2011 06:30', None, 'January 5th, 1984 22:37', 'n/a')
+        casted = tuple(datetime_type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            tzinfo.localize(datetime.datetime(1994, 3, 1, 12, 30, 0, 0)),
+            tzinfo.localize(datetime.datetime(2011, 2, 17, 6, 30, 0, 0)),
+            None,
+            tzinfo.localize(datetime.datetime(1984, 1, 5, 22, 37, 0, 0)),
             None
         ))
 

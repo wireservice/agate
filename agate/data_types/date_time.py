@@ -16,13 +16,20 @@ class DateTime(DataType):
     :param datetime_format: A formatting string for
         :meth:`datetime.datetime.strptime` to use instead of using regex-based
         parsing.
-    :param timezone: A
+    :param timezone: A `pytz <http://pytz.sourceforge.net/>`_ timezone to apply
+        to each parsed date.
     """
     def __init__(self, datetime_format=None, timezone=None, **kwargs):
         super(DateTime, self).__init__(**kwargs)
 
         self.datetime_format = datetime_format
-        self.parser = parsedatetime.Calendar()
+        self.timezone = timezone
+
+        now = datetime.datetime.now()
+        self._source_time = datetime.datetime(
+            now.year, now.month, now.day, 0, 0, 0, 0, None
+        )
+        self._parser = parsedatetime.Calendar()
 
     def test(self, d):
         """
@@ -34,7 +41,11 @@ class DateTime(DataType):
         if d.lower() in self.null_values:
             return True
 
-        value, status = self.parser.parseDT(d)
+        value, status = self._parser.parseDT(
+            d,
+            sourceTime=self._source_time,
+            tzinfo=self.timezone
+        )
 
         if status != 3:
             return False
@@ -60,7 +71,11 @@ class DateTime(DataType):
         if self.datetime_format:
             return datetime.datetime.strptime(d, self.datetime_format)
 
-        value, status = self.parser.parseDT(d)
+        value, status = self._parser.parseDT(
+            d,
+            sourceTime=self._source_time,
+            tzinfo=self.timezone
+        )
 
         if status != 3:
             raise CastError('Can not parse value "%s" to as datetime.' % d)

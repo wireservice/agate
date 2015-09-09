@@ -16,9 +16,8 @@ class Date(DataType):
     :param dat_format: A formatting string for
         :func:`datetime.strptime` to use instead of using regex-based
         parsing.
-    :param timezone: A
     """
-    def __init__(self, date_format=None, timezone=None, **kwargs):
+    def __init__(self, date_format=None, **kwargs):
         super(Date, self).__init__(**kwargs)
 
         self.date_format = date_format
