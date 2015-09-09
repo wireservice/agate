@@ -73,7 +73,7 @@ class Change(Computation):
         before_column = table.columns[self._before_column_name]
         after_column = table.columns[self._after_column_name]
 
-        for column_type in (NumberColumn, DateTimeColumn, TimeDeltaColumn):
+        for column_type in (NumberColumn, DateColumn, DateTimeColumn, TimeDeltaColumn):
             if isinstance(before_column, column_type):
                 if not isinstance(after_column, column_type):
                     raise ValueError('Specified columns must be of the same type')
@@ -91,7 +91,9 @@ class Change(Computation):
     def get_computed_column_type(self, table):
         before_column, after_column = self._validate(table)
 
-        if isinstance(before_column, DateTimeColumn):
+        if isinstance(before_column, DateColumn):
+            return TimeDelta()
+        elif isinstance(before_column, DateTimeColumn):
             return TimeDelta()
         elif isinstance(before_column, TimeDeltaColumn):
             return TimeDelta()

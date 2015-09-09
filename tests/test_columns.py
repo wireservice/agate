@@ -68,6 +68,9 @@ class TestColumnTypes(unittest.TestCase):
         with self.assertRaises(CastError):
             Number().cast(1.1)
 
+    def test_date(self):
+        self.assertIsInstance(Date().create_column(None, 1), DateColumn)
+
     def test_date_cast_format(self):
         date_type = Date(date_format='%m-%d-%Y')
 #
