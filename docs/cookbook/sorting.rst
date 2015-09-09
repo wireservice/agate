@@ -2,8 +2,8 @@
 Sort
 ====
 
-Basic sort
-==========
+Alphabetical
+============
 
 Order a table by the :code:`last_name` column:
 
@@ -11,30 +11,48 @@ Order a table by the :code:`last_name` column:
 
     new_table = table.order_by('last_name')
 
+Numerical
+=========
+
+Order a table by the :code:`cost` column:
+
+.. code-block:: python
+
+    new_table = table.order_by('cost')
+
 .. _sort_by_date:
 
-Sort by date
-============
+By date
+=======
 
-Sorting by dates also wrks as expected:
+Order a table by the :code:`birth_date` column:
 
 .. code-block:: python
 
-    new_table = table.order_by('birthdate')
+    new_table = table.order_by('birth_date')
 
-Multicolumn sort
+Reverse order
+=============
+
+The order of any sort can be reversed by using the :code:`reverse` keyword:
+
+.. code-block:: python
+
+    new_table = table.order_by('birth_date', reverse=True)
+
+Multiple columns
 ================
 
-Because Python's internal sorting works natively with arrays, we can implement multi-column sort by returning an array from the key function.
+Because Python's internal sorting works natively with arrays, we can implement multi-column sort by returning a tuple from the key function.
 
 .. code-block:: python
 
-    new_table = table.order_by(lambda row: [row['last_name'], row['first_name'])
+    new_table = table.order_by(lambda row: (row['last_name'], row['first_name']))
 
 This table will now be ordered by :code:`last_name`, then :code:`first_name`.
 
-Randomizing order
-=================
+Random order
+============
 
 .. code-block:: python
 

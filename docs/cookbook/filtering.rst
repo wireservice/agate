@@ -2,8 +2,8 @@
 Filter
 ======
 
-Filter by regex
-===============
+By regex
+========
 
 You can use Python's builtin :mod:`re` module to introduce a regular expression into a :meth:`.Table.where` query.
 
@@ -21,8 +21,8 @@ This can also be useful for finding values that **don't** match your expectation
 
     new_table = table.where(lambda row: not re.match('\d{3}-\d{3}-\d{4}', row['phone']))
 
-Filter by glob
-==============
+By glob
+=======
 
 Hate regexes? You can use glob (a.k.a. :mod:`fnmatch`) syntax too!
 
@@ -32,8 +32,8 @@ Hate regexes? You can use glob (a.k.a. :mod:`fnmatch`) syntax too!
 
     new_table = table.where(lambda row: fnmatch('C*', row['state'])
 
-Filter to values within a range
-===============================
+Values within a range
+=====================
 
 This snippet filters the dataset to incomes between 100,000 and 200,000.
 
@@ -41,7 +41,7 @@ This snippet filters the dataset to incomes between 100,000 and 200,000.
 
     new_table = table.where(lambda row: 100000 < row['income'] < 200000)
 
-Filter to date range
+Dates within a range
 ====================
 
 This snippet filters the dataset to events during the summer of 2015:
@@ -58,8 +58,8 @@ If you want to filter to events during the summer of any year:
 
     new_table = table.where(lambda row: 6 <= row['date'].month <= 8)
 
-Filter to top x%
-================
+Top N percent
+=============
 
 To filter a dataset to the top 10% percent of values we first compute the percentiles for the column and then use the result in the :meth:`.Table.where` truth test:
 
