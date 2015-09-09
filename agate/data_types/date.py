@@ -68,6 +68,6 @@ class Date(DataType):
         return value.date()
 
     def create_column(self, table, index):
-        from agate.columns import DateTimeColumn
+        from agate.columns import DateColumn
 
-        return DateTimeColumn(table, index)
+        return DateColumn(table, index)
