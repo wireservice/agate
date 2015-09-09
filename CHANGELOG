@@ -1,6 +1,7 @@
 0.8.0
 -----
 
+* Cookbook: dealing with locales. (#220)
 * Cookbook: working with dates and times.
 * Add timezone support to DateTimeType.
 * Use pytimeparse instead of python-dateutil. (#221)
