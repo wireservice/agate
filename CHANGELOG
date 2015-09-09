@@ -1,6 +1,7 @@
 0.8.0
 -----
 
+* Cookbook: working with dates and times.
 * Add timezone support to DateTimeType.
 * Use pytimeparse instead of python-dateutil. (#221)
 * Handle percents and currency symbols when casting numbers. (#217)

@@ -1,6 +1,6 @@
-=============
-Emulating SQL
-=============
+===========
+Emulate SQL
+===========
 
 agate's command structure is very similar to SQL. The primary difference between agate and SQL is that commands like :code:`SELECT` and :code:`WHERE` explicitly create new tables. You can chain them together as you would with SQL, but be aware each command is actually creating a new table.
 
@@ -113,8 +113,8 @@ agate's :meth:`.Table.group_by` works slightly different than SQLs. It does not 
 
     doctors = patients.group_by('doctor')
 
-Chaining commands together
-==========================
+Chain commands together
+=======================
 
 SQL:
 
@@ -133,7 +133,7 @@ agate:
 
 .. note::
 
-    I don't advise chaining commands like this. Being explicit about each step is usually better.
+    Chaining commands in this way is often not a good idea. Being explicit about each step tends to produce clearer code.
 
 Aggregate functions
 ===================

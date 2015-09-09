@@ -37,8 +37,8 @@ You can also generate aggregate statistics for subsets of data (sometimes colloq
 
 The resulting table will have four columns: ``doctor``, ``patient_count``, ``age_mean`` and ``age_median``.
 
-Identifying outliers
-====================
+Identify outliers
+=================
 
 agate includes two builtin methods for identifying outliers. The first, and most widely known, is by identifying values which are more than some number of standard deviations from the mean (typically 3).
 

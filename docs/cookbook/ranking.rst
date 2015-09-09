@@ -1,6 +1,6 @@
-=======
-Ranking
-=======
+====
+Rank
+====
 
 There are many ways to rank a sequence of values. agate strives to find a balance between simple, intuitive ranking and flexibility when you need it.
 

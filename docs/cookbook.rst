@@ -10,8 +10,9 @@ Cookbook
     cookbook/sorting
     cookbook/searching
     cookbook/statistics
-    cookbook/calculations
+    cookbook/computations
     cookbook/ranking
+    cookbook/datetime
     cookbook/sql
     cookbook/excel
     cookbook/r

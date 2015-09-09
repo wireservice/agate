@@ -1,6 +1,6 @@
-===================
-Plotting with pygal
-===================
+===============
+Plot with pygal
+===============
 
 `pygal <http://pygal.org/>`_ is a neat library for generating SVG charts. agate works well with it too.
 

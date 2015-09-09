@@ -1,6 +1,6 @@
-====================
-Computing new values
-====================
+==================
+Compute new values
+==================
 
 Annual change
 =============
@@ -80,6 +80,19 @@ We can use :meth:`.Table.compute` to apply the quantize to generate a rounded co
     ])
 
 To round to one decimal place you would simply change :code:`0.01` to :code:`0.1`.
+
+.. _difference_between_dates:
+
+Difference between dates
+========================
+
+Calculating the difference between dates (or dates and times) works exactly the same as it does for numbers:
+
+.. code-block:: python
+
+    new_table = table.compute([
+        ('age_at_death', Change('born', 'died')
+    ])
 
 Levenshtein edit distance
 =========================

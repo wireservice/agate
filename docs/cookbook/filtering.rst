@@ -1,6 +1,6 @@
-=========
-Filtering
-=========
+======
+Filter
+======
 
 Filter by regex
 ===============

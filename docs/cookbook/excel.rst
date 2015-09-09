@@ -1,6 +1,6 @@
-===============
-Emulating Excel
-===============
+=============
+Emulate Excel
+=============
 
 One of agate's most powerful assets is that instead of a wimpy "formula" language, you have the entire Python language at your disposal. Here are examples of how to translate a few common Excel operations.
 

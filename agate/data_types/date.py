@@ -13,8 +13,8 @@ class Date(DataType):
     """
     Data type representing dates only. Creates :class:`DateColumn`.
 
-    :param dat_format: A formatting string for
-        :func:`datetime.strptime` to use instead of using regex-based
+    :param date_format: A formatting string for
+        :meth:`datetime.datetime.strptime` to use instead of using regex-based
         parsing.
     """
     def __init__(self, date_format=None, **kwargs):

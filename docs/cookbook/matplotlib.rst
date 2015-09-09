@@ -1,6 +1,6 @@
-========================
-Plotting with matplotlib
-========================
+====================
+Plot with matplotlib
+====================
 
 agate integrates well with Python plotting library `matplotlib <http://matplotlib.org/>`_.
 

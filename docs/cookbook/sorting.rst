@@ -1,6 +1,6 @@
-=======
-Sorting
-=======
+====
+Sort
+====
 
 Basic sort
 ==========
@@ -10,6 +10,8 @@ Order a table by the :code:`last_name` column:
 .. code-block:: python
 
     new_table = table.order_by('last_name')
+
+.. _sort_by_date:
 
 Sort by date
 ============

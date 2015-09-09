@@ -1,8 +1,8 @@
-=========
-Searching
-=========
+======
+Search
+======
 
-Basic search
+Exact search
 ============
 
 Find all individuals with the last_name "Groskopf":
