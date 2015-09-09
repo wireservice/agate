@@ -13,6 +13,7 @@ Cookbook
     cookbook/compute
     cookbook/rank
     cookbook/datetime
+    cookbook/locale
     cookbook/sql
     cookbook/excel
     cookbook/r
