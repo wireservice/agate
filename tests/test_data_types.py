@@ -88,7 +88,7 @@ class TestDataTypes(unittest.TestCase):
     def test_date_cast_parser(self):
         date_type = Date()
 
-        values = ('3/1/1994', '2/17/2011', None, 'January 5th, 1984', 'n/a')
+        values = ('3/1/1994', '2011-02-17', None, 'January 5th, 1984', 'n/a')
         casted = tuple(date_type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.date(1994, 3, 1),
