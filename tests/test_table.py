@@ -87,10 +87,45 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table1.rows[1], table2.rows[1])
         self.assertSequenceEqual(table1.rows[2], table2.rows[2])
 
+    def test_from_csv_file_like_object(self):
+        import csvkit
+        from agate import table
+        table.csv = csvkit
+
+        table1 = Table.from_csv('examples/test.csv', self.columns)
+        with open('examples/test.csv') as fh:
+            table2 = Table.from_csv(fh, self.columns)
+
+            self.assertSequenceEqual(table1.get_column_names(), table2.get_column_names())
+            self.assertSequenceEqual(table1.get_column_types(), table2.get_column_types())
+
+            self.assertEqual(len(table1.columns), len(table2.columns))
+            self.assertEqual(len(table1.rows), len(table2.rows))
+
+            self.assertSequenceEqual(table1.rows[0], table2.rows[0])
+            self.assertSequenceEqual(table1.rows[1], table2.rows[1])
+            self.assertSequenceEqual(table1.rows[2], table2.rows[2])
+
     def test_to_csv(self):
         table = Table(self.rows, self.columns)
 
         table.to_csv('.test.csv')
+
+        with open('.test.csv') as f:
+            contents1 = f.read()
+
+        with open('examples/test.csv') as f:
+            contents2 = f.read()
+
+        self.assertEqual(contents1, contents2)
+
+        os.remove('.test.csv')
+
+    def test_to_csv_file_like_object(self):
+        table = Table(self.rows, self.columns)
+
+        with open('.test.csv', 'w') as f:
+            table.to_csv(f)
 
         with open('.test.csv') as f:
             contents1 = f.read()

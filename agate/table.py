@@ -138,7 +138,7 @@ class Table(object):
         If you are using Python 2 and not using csvkit, this method is not
         unicode-safe.
 
-        :param path: Path to the CSV file to read from.
+        :param path: Filepath or file-like object from which to read CSV data.
         :param column_info: A sequence of pairs of column names and types. The latter
             must be instances of :class:`.DataType`. Or, an instance of
             :class:`.TypeTester` to infer types.
@@ -150,8 +150,11 @@ class Table(object):
         if use_inference and not header:
             raise ValueError('Can not apply TypeTester to a CSV without headers.')
 
-        with open(path) as f:
-            rows = list(csv.reader(f, **kwargs))
+        if hasattr(path, 'read'):
+            rows = list(csv.reader(path, **kwargs))
+        else:
+            with open(path) as f:
+                rows = list(csv.reader(f, **kwargs))
 
         if header:
             column_names = rows.pop(0)
@@ -175,18 +178,25 @@ class Table(object):
         If you are using Python 2 and not using csvkit, this method is not
         unicode-safe.
 
-        :param path: Path to the CSV file to read from.
+        :param path: Filepath or file-like object to write to.
         """
         if 'lineterminator' not in kwargs:
             kwargs['lineterminator'] = '\n'
 
-        with open(path, 'w') as f:
+        try:
+            if hasattr(path, 'write'):
+                f = path
+            else:
+                f = open(path, 'w')
+
             writer = csv.writer(f, **kwargs)
 
             writer.writerow(self._column_names)
 
             for row in self._data:
                 writer.writerow(row)
+        finally:
+            f.close()
 
     def get_column_types(self):
         """
