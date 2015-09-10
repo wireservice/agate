@@ -29,7 +29,7 @@ except ImportError: # pragma: no cover
 
 try:
     import csvkit as csv
-except ImportError:
+except ImportError: #pragma: no cover
     import csv
 
 import six

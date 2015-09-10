@@ -10,7 +10,7 @@ from collections import Mapping, Sequence
 
 import six
 
-if six.PY3:
+if six.PY3: #pragma: no cover
     xrange = range
 
 from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError

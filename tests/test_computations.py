@@ -53,6 +53,24 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(new_table.columns['test'][2], Decimal('2'))
         self.assertEqual(new_table.columns['test'][3], Decimal('1'))
 
+    def test_change_mixed_types(self):
+        rows = (
+            ('1', '10/24/1978'),
+            ('2', '11/13/1974')
+        )
+
+        columns = (
+            ('number', Number()),
+            ('date', Date())
+        )
+
+        table = Table(rows, columns)
+
+        with self.assertRaises(ValueError):
+            table.compute([
+                ('test', Change('number', 'date'))
+            ])
+
     def test_percent_change(self):
         new_table = self.table.compute([
             ('test', PercentChange('two', 'three'))
