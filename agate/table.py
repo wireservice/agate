@@ -563,8 +563,6 @@ class Table(object):
             else:
                 group_name = six.text_type(row[i])
 
-            # print group_name
-
             if group_name not in groups:
                 groups[group_name] = []
 
