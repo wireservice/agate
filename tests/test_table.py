@@ -531,6 +531,20 @@ class TestTableCompute(unittest.TestCase):
 
     def test_compute(self):
         new_table = self.table.compute([
+            ('number', Formula(self.number_type, lambda r: r['two'] + r['three'])),
+            ('text', Formula(self.text_type, lambda r: (r['one'] or '-') + unicode(r['three'])))
+        ])
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 6)
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 5, 'a3'))
+        self.assertSequenceEqual(new_table.columns['number'], (5, 8, 6, 7))
+        self.assertSequenceEqual(new_table.columns['text'], ('a3', '-5', 'a4', 'b4'))
+
+    def test_compute_multiple(self):
+        new_table = self.table.compute([
             ('test', Formula(self.number_type, lambda r: r['two'] + r['three']))
         ])
 

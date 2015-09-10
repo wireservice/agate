@@ -601,7 +601,7 @@ class Table(object):
         new_rows = []
 
         for row in self.rows:
-            new_columns = tuple(computation.run(row) for n, c in computations)
+            new_columns = tuple(c.run(row) for n, c in computations)
             new_rows.append(tuple(row) + new_columns)
 
         return self._fork(new_rows, zip(column_names, column_types))
