@@ -113,7 +113,7 @@ The :class:`.Table` is the basic class in agate. A time-saving method is include
 
 .. note::
 
-    The :class:`.TypeTester` can be slow to evaluate the data. It's best to use it with a tool such as `proof <http://proof.readthedocs.org/en/latest/>`_ so you don't have to run it everytime you work with your data.
+    For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. It's best to use it with a tool such as `proof <http://proof.readthedocs.org/en/latest/>`_ so you don't have to run it everytime you work with your data.
 
 Or, to use the column types we created manually:
 

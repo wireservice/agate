@@ -35,9 +35,28 @@ If your file does not have headers:
 Write a table to a CSV
 ======================
 
-.. code-block:: python
+    .. code-block:: python
 
     table.to_csv('output.csv')
+
+Guess column types
+==================
+
+When loading data into a :class:`.Table` instead of specifying each column's type you can instead opt to have agate "guess" what the type of each column is. The advantage of this is that it's much quicker to get started with your analysis. The disadvantage is that it might sometimes guess wrong. Either way, using this feature will never break your code. If agate can't figure out the type of a column it was always fall back to :class:`.Text`.
+
+The class which implements the type guessing is :class:`.TypeTester`. It supports a :code:`force` argument which allows you to override the type guessing.
+
+.. code-block:: python
+
+    tester = agate.TypeTester(force={
+        'fips': agate.Text()
+    })
+
+    table = agate.Table.from_csv('counties.csv', tester)
+
+.. note::
+
+    For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. It's best to use it with a tool such as `proof <http://proof.readthedocs.org/en/latest/>`_ so you don't have to run it everytime you work with your data.
 
 Reorder columns
 ===============
