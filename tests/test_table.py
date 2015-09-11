@@ -504,7 +504,7 @@ class TestTableGrouping(unittest.TestCase):
         self.assertIn(None, tableset.keys())
 
         self.assertSequenceEqual(tableset['a'].columns['one'], ('a', 'a'))
-        self.assertSequenceEqual(tableset['b'].columns['one'], (None, 'b',))
+        self.assertSequenceEqual(tableset['b'].columns['one'], ('b',))
 
     def test_group_by_number(self):
         table = Table(self.rows, self.columns)
@@ -516,12 +516,11 @@ class TestTableGrouping(unittest.TestCase):
         self.assertEqual(tableset._key_name, 'two')
         self.assertIsInstance(tableset._key_type, Number)
 
-        self.assertIn(1, tableset.keys())
         self.assertIn(2, tableset.keys())
+        self.assertIn(3, tableset.keys())
 
         self.assertSequenceEqual(tableset[2].columns['one'], ('a', 'a'))
-        self.assertSequenceEqual(tableset[3].columns['one'], ('b',))
-        self.assertSequenceEqual(tableset['None'].columns['one'], (None,))
+        self.assertSequenceEqual(tableset[3].columns['one'], (None, 'b'))
 
     def test_group_by_key_name(self):
         table = Table(self.rows, self.columns)
@@ -537,9 +536,9 @@ class TestTableGrouping(unittest.TestCase):
         self.assertIn(None, tableset.keys())
 
         self.assertSequenceEqual(tableset['a'].columns['one'], ('a', 'a'))
-        self.assertSequenceEqual(tableset['b'].columns['one'], (None, 'b',))
+        self.assertSequenceEqual(tableset['b'].columns['one'], ('b',))
 
-    def test_group_by_key_name(self):
+    def test_group_by_key_type(self):
         table = Table(self.rows, self.columns)
 
         tableset = table.group_by('two', key_type=Text())
@@ -552,8 +551,7 @@ class TestTableGrouping(unittest.TestCase):
         self.assertIn(3, tableset.keys())
 
         self.assertSequenceEqual(tableset[2].columns['one'], ('a', 'a'))
-        self.assertSequenceEqual(tableset[3].columns['one'], ('b',))
-        self.assertSequenceEqual(tableset['None'].columns['one'], (None,))
+        self.assertSequenceEqual(tableset[3].columns['one'], (None, 'b'))
 
     def test_group_by_function(self):
         table = Table(self.rows, self.columns)

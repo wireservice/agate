@@ -557,6 +557,7 @@ class Table(object):
 
         if key_is_row_function:
             key_name = key_name or 'group'
+            key_type = key_type or Text()
         else:
             key_name = key_name or key
 
@@ -565,7 +566,9 @@ class Table(object):
             except ValueError:
                 raise ColumnDoesNotExistError(key)
 
-        key_type = key_type or Text()
+            key_type = key_type or self._column_types[i]
+
+        print key_name, key_type
 
         groups = OrderedDict()
 
