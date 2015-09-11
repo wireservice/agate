@@ -85,10 +85,11 @@ class TestDataTypes(unittest.TestCase):
             None
         ))
 
+
     def test_date_cast_parser(self):
         date_type = Date()
 
-        values = ('3/1/1994', '2011-02-17', None, 'January 5th, 1984', 'n/a')
+        values = ('3/1/1994', '2/17/2011', None, 'January 5th, 1984', 'n/a')
         casted = tuple(date_type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.date(1994, 3, 1),
@@ -96,6 +97,17 @@ class TestDataTypes(unittest.TestCase):
             None,
             datetime.date(1984, 1, 5),
             None
+        ))
+
+    @unittest.skip('Broken pending parsedatetime 1.6 release')
+    def test_date_dash_format(self):
+        date_type = Date()
+
+        values = ('1994-03-01', '2011-02-17')
+        casted = tuple(date_type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.date(1994, 3, 1),
+            datetime.date(2011, 2, 17)
         ))
 
     def test_date_cast_error(self):
