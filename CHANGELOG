@@ -1,6 +1,8 @@
 0.9.0
 -----
 
+* Fix issue where all group keys were being cast to text. (#235)
+* Table.group_by will now default key_type to the type of the grouping column. (#234)
 * Add Matt Riggott to AUTHORS. (#231)
 * Support file-like objects in Table.to_csv and Table.from_csv. (#229)
 * Fix bug when applying multiple computations with Table.compute.

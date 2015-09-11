@@ -36,7 +36,7 @@ import six
 
 from agate.aggregations import Sum, Mean, Median, StDev, MAD
 from agate.columns.base import ColumnMapping
-from agate.data_types import TypeTester
+from agate.data_types import TypeTester, Text
 from agate.computations import Computation
 from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 from agate.rows import RowSequence, Row
@@ -565,13 +565,15 @@ class Table(object):
             except ValueError:
                 raise ColumnDoesNotExistError(key)
 
+        key_type = key_type or Text()
+
         groups = OrderedDict()
 
         for row in self.rows:
             if key_is_row_function:
-                group_name = six.text_type(key(row))
+                group_name = key(row)
             else:
-                group_name = six.text_type(row[i])
+                group_name = row[i]
 
             if group_name not in groups:
                 groups[group_name] = []

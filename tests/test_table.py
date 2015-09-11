@@ -497,45 +497,78 @@ class TestTableGrouping(unittest.TestCase):
         self.assertIsInstance(tableset, TableSet)
         self.assertEqual(len(tableset), 3)
         self.assertEqual(tableset._key_name, 'one')
+        self.assertIsInstance(tableset._key_type, Text)
 
         self.assertIn('a', tableset.keys())
         self.assertIn('b', tableset.keys())
-        self.assertIn('None', tableset.keys())
+        self.assertIn(None, tableset.keys())
 
         self.assertSequenceEqual(tableset['a'].columns['one'], ('a', 'a'))
-        self.assertSequenceEqual(tableset['b'].columns['one'], ('b',))
+        self.assertSequenceEqual(tableset['b'].columns['one'], (None, 'b',))
+
+    def test_group_by_number(self):
+        table = Table(self.rows, self.columns)
+
+        tableset = table.group_by('two')
+
+        self.assertIsInstance(tableset, TableSet)
+        self.assertEqual(len(tableset), 2)
+        self.assertEqual(tableset._key_name, 'two')
+        self.assertIsInstance(tableset._key_type, Number)
+
+        self.assertIn(1, tableset.keys())
+        self.assertIn(2, tableset.keys())
+
+        self.assertSequenceEqual(tableset[2].columns['one'], ('a', 'a'))
+        self.assertSequenceEqual(tableset[3].columns['one'], ('b',))
         self.assertSequenceEqual(tableset['None'].columns['one'], (None,))
 
-    def test_group_by_group_name(self):
+    def test_group_by_key_name(self):
         table = Table(self.rows, self.columns)
 
         tableset = table.group_by('one', key_name='test')
 
         self.assertIsInstance(tableset, TableSet)
         self.assertEqual(tableset._key_name, 'test')
+        self.assertIsInstance(tableset._key_type, Text)
+
+        self.assertIn('a', tableset.keys())
+        self.assertIn('b', tableset.keys())
+        self.assertIn(None, tableset.keys())
+
+        self.assertSequenceEqual(tableset['a'].columns['one'], ('a', 'a'))
+        self.assertSequenceEqual(tableset['b'].columns['one'], (None, 'b',))
+
+    def test_group_by_key_name(self):
+        table = Table(self.rows, self.columns)
+
+        tableset = table.group_by('two', key_type=Text())
+
+        self.assertIsInstance(tableset, TableSet)
+        self.assertEqual(tableset._key_name, 'two')
+        self.assertIsInstance(tableset._key_type, Text)
+
+        self.assertIn(2, tableset.keys())
+        self.assertIn(3, tableset.keys())
+
+        self.assertSequenceEqual(tableset[2].columns['one'], ('a', 'a'))
+        self.assertSequenceEqual(tableset[3].columns['one'], ('b',))
+        self.assertSequenceEqual(tableset['None'].columns['one'], (None,))
 
     def test_group_by_function(self):
         table = Table(self.rows, self.columns)
 
-        tableset = table.group_by(lambda r: r['three'] < 5)
+        tableset = table.group_by(lambda r: r['three'] < 5, key_type=Boolean())
 
         self.assertIsInstance(tableset, TableSet)
         self.assertEqual(len(tableset), 2)
         self.assertEqual(tableset._key_name, 'group')
 
-        self.assertIn('True', tableset.keys())
-        self.assertIn('False', tableset.keys())
+        self.assertIn(True, tableset.keys())
+        self.assertIn(False, tableset.keys())
 
-        self.assertSequenceEqual(tableset['True'].columns['one'], ('a', 'a', 'b'))
-        self.assertSequenceEqual(tableset['False'].columns['one'], (None,))
-
-    def test_group_by_function_group_name(self):
-        table = Table(self.rows, self.columns)
-
-        tableset = table.group_by(lambda r: r['three'] < 5, key_name='test')
-
-        self.assertIsInstance(tableset, TableSet)
-        self.assertEqual(tableset._key_name, 'test')
+        self.assertSequenceEqual(tableset[True].columns['one'], ('a', 'a', 'b'))
+        self.assertSequenceEqual(tableset[False].columns['one'], (None,))
 
     def test_group_by_bad_column(self):
         table = Table(self.rows, self.columns)
