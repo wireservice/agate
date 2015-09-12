@@ -1,6 +1,7 @@
 0.9.0
 -----
 
+* Table.merge implemented.
 * Cookbook: guess column types. (#230)
 * Fix issue where all group keys were being cast to text. (#235)
 * Table.group_by will now default key_type to the type of the grouping column. (#234)

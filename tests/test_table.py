@@ -715,6 +715,64 @@ class TestTableJoin(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 2, 3, 'b'))
         self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, 2, 'c'))
 
+class TestTableMerge(unittest.TestCase):
+    def setUp(self):
+        self.rows = (
+            (1, 4, 'a'),
+            (2, 3, 'b'),
+            (None, 2, 'c')
+        )
+
+        self.number_type = Number()
+        self.text_type = Text()
+
+        self.columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            ('three', self.text_type),
+        )
+
+    def test_merge(self):
+        table_a = Table(self.rows, self.columns)
+        table_b = Table(self.rows, self.columns)
+        table_c = Table.merge([table_a, table_b])
+
+        self.assertEqual(table_c.get_column_names(), table_a.get_column_names())
+        self.assertEqual(table_c.get_column_types(), table_a.get_column_types())
+
+        self.assertEqual(len(table_c.rows), 6)
+
+    def test_merge_different_names(self):
+        table_a = Table(self.rows, self.columns)
+
+        diff_columns = (
+            ('four', self.number_type),
+            ('five', self.number_type),
+            ('six', self.text_type),
+        )
+
+        table_b = Table(self.rows, diff_columns)
+        table_c = Table.merge([table_a, table_b])
+
+        self.assertEqual(table_c.get_column_names(), table_a.get_column_names())
+        self.assertEqual(table_c.get_column_types(), table_a.get_column_types())
+
+        self.assertEqual(len(table_c.rows), 6)
+
+    def test_merge_different_types(self):
+        table_a = Table(self.rows, self.columns)
+
+        diff_columns = (
+            ('one', self.number_type),
+            ('two', self.text_type),
+            ('three', self.text_type),
+        )
+
+        table_b = Table(self.rows, diff_columns)
+
+        with self.assertRaises(ValueError):
+            table_c = Table.merge([table_a, table_b])
+
 class TestTableData(unittest.TestCase):
     def setUp(self):
         self.rows = (

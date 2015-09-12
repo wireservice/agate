@@ -531,6 +531,28 @@ class Table(object):
 
         return self._fork(rows, zip(column_names, column_types))
 
+    @classmethod
+    def merge(cls, tables):
+        """
+        Merge an array of tables with identical columns into a single table.
+        Each table must have exactly the same column types. Their column names
+        need not be identical.T he first table's column names will be the ones
+        which are used.
+
+        :param tables: An array of :class:`Table`.
+        :returns: A new :class:`Table`.
+        """
+        column_names = tables[0].get_column_names()
+        column_types = tables[0].get_column_types()
+
+        for table in tables[1:]:
+            if table.get_column_types() != column_types:
+                raise ValueError('Only tables with identical column types may be merged.')
+
+        rows = chain(*[table.rows for table in tables])
+
+        return Table(rows, zip(column_names, column_types))
+
     def group_by(self, key, key_name=None, key_type=None):
         """
         Create a new :class:`Table` for unique value and return them as a
