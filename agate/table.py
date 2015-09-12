@@ -568,15 +568,13 @@ class Table(object):
 
             key_type = key_type or self._column_types[i]
 
-        print key_name, key_type
-
         groups = OrderedDict()
 
         for row in self.rows:
             if key_is_row_function:
-                group_name = key(row)
+                group_name = key_type.cast(key(row))
             else:
-                group_name = row[i]
+                group_name = key_type.cast(row[i])
 
             if group_name not in groups:
                 groups[group_name] = []
