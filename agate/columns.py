@@ -67,7 +67,9 @@ class Column(Sequence):
     :param table: The table that contains this column.
     :param index: The index of this column in the table.
     """
-    def __init__(self, table, index):
+    def __init__(self, data_type, table, index):
+        self.data_type = data_type
+
         self._table = table
         self._index = index
 
@@ -137,13 +139,6 @@ class Column(Sequence):
         Get the data contained in this column sorted.
         """
         return sorted(self.get_data(), key=self._null_handler)
-
-    @memoize
-    def has_nulls(self):
-        """
-        Returns `True` if this column contains null values.
-        """
-        return None in self.get_data()
 
     def aggregate(self, aggregation):
         """

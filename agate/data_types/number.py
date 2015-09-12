@@ -70,8 +70,3 @@ class Number(DataType):
             return parse_decimal(d, self._locale)
         except:
             raise CastError('Can not parse value "%s" as Decimal.' % d)
-
-    def create_column(self, table, index):
-        from agate.columns import NumberColumn
-
-        return NumberColumn(table, index)

@@ -32,8 +32,3 @@ class Text(DataType):
                 return None
 
         return six.text_type(d)
-
-    def create_column(self, table, index):
-        from agate.columns import TextColumn
-
-        return TextColumn(table, index)

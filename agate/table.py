@@ -34,14 +34,14 @@ except ImportError: #pragma: no cover
 
 import six
 
-from agate.aggregations import Sum, Mean, Median, StDev, MAD
-from agate.columns.base import ColumnMapping
-from agate.data_types import TypeTester, Text
-from agate.computations import Computation
-from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
-from agate.rows import RowSequence, Row
-from agate.tableset import TableSet
-from agate.utils import NullOrder, memoize
+from agate.aggregations import *
+from agate.columns import *
+from agate.data_types import *
+from agate.computations import *
+from agate.exceptions import *
+from agate.rows import *
+from agate.tableset import *
+from agate.utils import *
 
 class Table(object):
     """
@@ -97,7 +97,7 @@ class Table(object):
         if i not in self._cached_columns:
             column_type = self._column_types[i]
 
-            self._cached_columns[i] = column_type.create_column(self, i)
+            self._cached_columns[i] = Column(column_type, self, i)
 
         return self._cached_columns[i]
 
@@ -338,7 +338,7 @@ class Table(object):
         x = self.columns[column_one]
         y = self.columns[column_two]
 
-        if x.has_nulls() or y.has_nulls():
+        if x.aggregate(HasNulls()) or y.aggregate(HasNulls()):
             raise NullComputationError
 
         n = len(x)
@@ -627,7 +627,7 @@ class Table(object):
                 raise ValueError('The second element in pair must be a Computation instance.')
 
             column_names.append(name)
-            column_types.append(computation.get_computed_column_type(self))
+            column_types.append(computation.get_computed_data_type(self))
 
             computation.prepare(self)
 

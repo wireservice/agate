@@ -51,8 +51,3 @@ class TimeDelta(DataType):
             raise CastError('Can not parse value "%s" to as timedelta.' % d)
 
         return datetime.timedelta(seconds=seconds)
-
-    def create_column(self, table, index):
-        from agate.columns import TimeDeltaColumn
-
-        return TimeDeltaColumn(table, index)

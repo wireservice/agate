@@ -81,8 +81,3 @@ class DateTime(DataType):
             raise CastError('Can not parse value "%s" to as datetime.' % d)
 
         return value
-
-    def create_column(self, table, index):
-        from agate.columns import DateTimeColumn
-
-        return DateTimeColumn(table, index)

@@ -4,51 +4,31 @@
 This module contains various exceptions raised by agate.
 """
 
-class NullCalculationError(Exception):  # pragma: no cover
+class NullCalculationError(ValueError):  # pragma: no cover
     """
     Exception raised if a calculation which can not logically
-    account for null values is attempted on a :class:`Column` containing
+    account for null values is attempted on a :class:`.Column` containing
     nulls.
     """
     pass
 
-class UnsupportedAggregationError(Exception):  # pragma: no cover
+class DataTypeError(TypeError):  # pragma: no cover
     """
-    Exception raised if an computation is applied to a column where it is not
-    supported or it is not logically possible to complete it.
+    Exception raised if a process, such as an :class:`.Aggregation`, is
+    attempted with an invalid data type.
     """
-    def __init__(self, aggregation, column):
-        self.aggregation = aggregation
-        self.column = column
+    pass
 
-    def __unicode__(self):
-        return '`%s` is not a supported operation for %s' % (type(self.aggregation), type(self.column))
-
-    def __str__(self):
-        return str(self.__unicode__())
-
-class UnsupportedComputationError(Exception):  # pragma: no cover
+class UnsupportedAggregationError(TypeError):  # pragma: no cover
     """
-    Exception raised when a :class:`.Computation` is applied to a column type
-    that does not support it.
-
-    :param computation: The :class:`.Computation` being applied.
-    :param column: The :class:`.Column` it was applied to.
+    Exception raised if an aggregation is attempted which is not supported. For
+    example if a :class:`.Percentiles` is used on a :class:`.TableSet`.
     """
-    def __init__(self, computation, column):
-        self.computation = computation
-        self.column = column
-
-    def __unicode__(self):
-        return '`%s` is not a supported computation for %s' % (type(self.computation), type(self.column))
-
-    def __str__(self):
-        return str(self.__unicode__())
+    pass
 
 class CastError(Exception):   #pragma: no cover
     """
-    Exception raised when a column value can not be cast to
-    the correct type.
+    Exception raised when a column value can not be cast to the correct type.
     """
     pass
 

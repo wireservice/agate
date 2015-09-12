@@ -16,17 +16,17 @@ data in each row. If this is still not suitable, :class:`Computation` can be
 subclassed to fully customize it's behavior.
 """
 
-from agate.aggregations import Mean, StDev
+from agate.aggregations import HasNulls, Mean, StDev, Percentiles
 from agate.columns import *
 from agate.data_types import *
-from agate.exceptions import UnsupportedComputationError
+from agate.exceptions import *
 from agate.utils import NullOrder
 
 class Computation(object): #pragma: no cover
     """
     Base class for row-wise computations on a :class:`.Table`.
     """
-    def get_computed_column_type(self, table):
+    def get_computed_data_type(self, table):
         """
         Returns an instantiated :class:`.DataType` which will be appended to
         the table.
@@ -55,7 +55,7 @@ class Formula(Computation):
         self._column_type = column_type
         self._func = func
 
-    def get_computed_column_type(self, table):
+    def get_computed_data_type(self, table):
         return self._column_type
 
     def run(self, row):
@@ -73,31 +73,31 @@ class Change(Computation):
         before_column = table.columns[self._before_column_name]
         after_column = table.columns[self._after_column_name]
 
-        for column_type in (NumberColumn, DateColumn, DateTimeColumn, TimeDeltaColumn):
-            if isinstance(before_column, column_type):
-                if not isinstance(after_column, column_type):
+        for data_type in (Number, Date, DateTime, TimeDelta):
+            if isinstance(before_column.data_type, data_type):
+                if not isinstance(after_column.data_type, data_type):
                     raise ValueError('Specified columns must be of the same type')
 
-                if before_column.has_nulls():
+                if before_column.aggregate(HasNulls()):
                     raise NullCalculationError
 
-                if after_column.has_nulls():
+                if after_column.aggregate(HasNulls()):
                     raise NullCalculationError
 
                 return (before_column, after_column)
 
-        raise UnsupportedComputationError(self, before_column)
+        raise DataTypeError('Change before and after columns must both contain data that is one of: Number, Date, DateTime or TimeDelta.')
 
-    def get_computed_column_type(self, table):
+    def get_computed_data_type(self, table):
         before_column, after_column = self._validate(table)
 
-        if isinstance(before_column, DateColumn):
+        if isinstance(before_column.data_type, Date):
             return TimeDelta()
-        elif isinstance(before_column, DateTimeColumn):
+        elif isinstance(before_column.data_type, DateTime):
             return TimeDelta()
-        elif isinstance(before_column, TimeDeltaColumn):
+        elif isinstance(before_column.data_type, TimeDelta):
             return TimeDelta()
-        elif isinstance(before_column, NumberColumn):
+        elif isinstance(before_column.data_type, Number):
             return Number()
 
     def prepare(self, table):
@@ -114,18 +114,18 @@ class PercentChange(Computation):
         self._before_column_name = before_column_name
         self._after_column_name = after_column_name
 
-    def get_computed_column_type(self, table):
+    def get_computed_data_type(self, table):
         return Number()
 
     def prepare(self, table):
         before_column = table.columns[self._before_column_name]
         after_column = table.columns[self._after_column_name]
 
-        if not isinstance(before_column, NumberColumn):
-            raise UnsupportedComputationError(self, before_column)
+        if not isinstance(before_column.data_type, Number):
+            raise DataTypeError('PercentChange before column must contain Number data.')
 
-        if not isinstance(after_column, NumberColumn):
-            raise UnsupportedComputationError(self, after_column)
+        if not isinstance(after_column.data_type, Number):
+            raise DataTypeError('PercentChange after column must contain Number data.')
 
     def run(self, row):
         return (row[self._after_column_name] - row[self._before_column_name]) / row[self._before_column_name] * 100
@@ -137,14 +137,14 @@ class ZScores(Computation):
     def __init__(self, column_name):
         self._column_name = column_name
 
-    def get_computed_column_type(self, table):
+    def get_computed_data_type(self, table):
         return Number()
 
     def prepare(self, table):
         column = table.columns[self._column_name]
 
-        if not isinstance(column, NumberColumn):
-            raise UnsupportedComputationError(self, column)
+        if not isinstance(column.data_type, Number):
+            raise DataTypeError('ZScores column must contain Number data.')
 
         self._mean = column.aggregate(Mean())
         self._sd = column.aggregate(StDev())
@@ -164,7 +164,7 @@ class Rank(Computation):
     def __init__(self, column_name):
         self._column_name = column_name
 
-    def get_computed_column_type(self, table):
+    def get_computed_data_type(self, table):
         return Number()
 
     def prepare(self, table):
@@ -191,10 +191,10 @@ class PercentileRank(Rank):
     def prepare(self, table):
         column = table.columns[self._column_name]
 
-        if not isinstance(column, NumberColumn):
-            raise UnsupportedComputationError(self, column)
+        if not isinstance(column.data_type, Number):
+            raise DataTypeError('PercentileRank column must contain Number data.')
 
-        self._percentiles = column.percentiles()
+        self._percentiles = column.aggregate(Percentiles())
 
     def run(self, row):
         return self._percentiles.locate(row[self._column_name])

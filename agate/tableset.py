@@ -234,7 +234,7 @@ class TableSet(Mapping):
                 c = self._sample_table.columns[column_name]
 
                 column_names.append(new_column_name)
-                column_types.append(aggregation.get_aggregate_column_type(c))
+                column_types.append(aggregation.get_aggregate_data_type(c))
 
             for name, table in self._tables.items():
                 new_row = [name]

@@ -208,7 +208,7 @@ class TestTableSet(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 3)
         self.assertSequenceEqual(new_table._column_names, ('group', 'count', 'number_min'))
-        self.assertIsInstance(new_table.columns['number_min'], NumberColumn)
+        self.assertIsInstance(new_table.columns['number_min'].data_type, Number)
         self.assertSequenceEqual(new_table.rows[0], ('table1', 3, 1))
         self.assertSequenceEqual(new_table.rows[1], ('table2', 3, 0))
         self.assertSequenceEqual(new_table.rows[2], ('table3', 3, 1))
@@ -249,7 +249,7 @@ class TestTableSet(unittest.TestCase):
     def test_aggregate_sum_invalid(self):
         tableset = TableSet(self.tables)
 
-        with self.assertRaises(UnsupportedAggregationError):
+        with self.assertRaises(DataTypeError):
             tableset.aggregate([('letter', Sum(), 'letter_sum')])
 
     def test_aggregeate_bad_column(self):

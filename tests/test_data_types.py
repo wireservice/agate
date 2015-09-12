@@ -14,16 +14,10 @@ from agate.table import Table
 from agate.tableset import TableSet
 
 class TestDataTypes(unittest.TestCase):
-    def test_text(self):
-        self.assertIsInstance(Text().create_column(None, 1), TextColumn)
-
     def test_text_cast(self):
         values = ('a', 1, None, Decimal('2.7'), 'n/a', u'👍')
         casted = tuple(Text().cast(v) for v in values)
         self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None, u'👍'))
-
-    def test_boolean(self):
-        self.assertIsInstance(Boolean().create_column(None, 1), BooleanColumn)
 
     def test_boolean_cast(self):
         values = (True, 'yes', None, False, 'no', 'n/a')
@@ -43,9 +37,6 @@ class TestDataTypes(unittest.TestCase):
     def test_boolean_cast_error(self):
         with self.assertRaises(CastError):
             Boolean().cast('quack')
-
-    def test_number(self):
-        self.assertIsInstance(Number().create_column(None, 1), NumberColumn)
 
     def test_number_cast(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a', '2.7', '200,000,000')
@@ -68,9 +59,6 @@ class TestDataTypes(unittest.TestCase):
     def test_number_cast_error(self):
         with self.assertRaises(CastError):
             Number().cast('quack')
-
-    def test_date(self):
-        self.assertIsInstance(Date().create_column(None, 1), DateColumn)
 
     def test_date_cast_format(self):
         date_type = Date(date_format='%m-%d-%Y')
@@ -113,9 +101,6 @@ class TestDataTypes(unittest.TestCase):
     def test_date_cast_error(self):
         with self.assertRaises(CastError):
             Date().cast('quack')
-
-    def test_datetime(self):
-        self.assertIsInstance(DateTime().create_column(None, 1), DateTimeColumn)
 
     def test_datetime_cast_format(self):
         datetime_type = DateTime(datetime_format='%m-%d-%Y %I:%M %p')
@@ -160,9 +145,6 @@ class TestDataTypes(unittest.TestCase):
     def test_datetime_cast_error(self):
         with self.assertRaises(CastError):
             DateTime().cast('quack')
-
-    def test_timedelta(self):
-        self.assertIsInstance(TimeDelta().create_column(None, 1), TimeDeltaColumn)
 
     def test_timedelta_cast_parser(self):
         values = ('4:10', '1.2m', '172 hours', '5 weeks, 2 days', 'n/a')

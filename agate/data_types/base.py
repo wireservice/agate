@@ -18,6 +18,3 @@ class DataType(object): #pragma: no cover
 
     def cast(self, d):
         raise NotImplementedError
-
-    def create_column(self, table, index):
-        raise NotImplementedError

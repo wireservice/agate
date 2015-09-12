@@ -12,6 +12,7 @@ except ImportError:
 
 from agate import Table
 from agate.aggregations import *
+from agate.columns import Column
 from agate.data_types import *
 from agate.exceptions import *
 
@@ -73,7 +74,7 @@ class TestSimpleAggregation(unittest.TestCase):
 
 class TestBooleanAggregation(unittest.TestCase):
     def test_any(self):
-        column = BooleanColumn(None, 'one')
+        column = Column(Boolean(), None, 'one')
         column.get_data = lambda: (True, False, None)
         self.assertEqual(column.aggregate(Any()), True)
 
@@ -81,7 +82,7 @@ class TestBooleanAggregation(unittest.TestCase):
         self.assertEqual(column.aggregate(Any()), False)
 
     def test_all(self):
-        column = BooleanColumn(None, 'one')
+        column = Column(Boolean(), None, 'one')
         column.get_data = lambda: (True, True, None)
         self.assertEqual(column.aggregate(All()), False)
 
@@ -90,7 +91,7 @@ class TestBooleanAggregation(unittest.TestCase):
 
 class TestDateTimeAggregation(unittest.TestCase):
     def test_min(self):
-        column = DateTimeColumn(None, 'one')
+        column = Column(DateTime(), None, 'one')
         column.get_data_without_nulls = lambda: (
             datetime.datetime(1994, 3, 3, 6, 31),
             datetime.datetime(1994, 3, 3, 6, 30, 30),
@@ -100,7 +101,7 @@ class TestDateTimeAggregation(unittest.TestCase):
         self.assertEqual(column.aggregate(Min()), datetime.datetime(1994, 3, 3, 6, 30))
 
     def test_max(self):
-        column = DateTimeColumn(None, 'one')
+        column = Column(DateTime(), None, 'one')
         column.get_data_without_nulls = lambda: (
             datetime.datetime(1994, 3, 3, 6, 31),
             datetime.datetime(1994, 3, 3, 6, 30, 30),
@@ -195,8 +196,153 @@ class TestNumberAggregation(unittest.TestCase):
 
         self.assertAlmostEqual(self.table.columns['two'].aggregate(MAD()), Decimal('0'))
 
+    def test_percentiles(self):
+        with self.assertRaises(NullCalculationError):
+            self.table.columns['one'].aggregate(Percentiles())
+
+        rows = [(n,) for n in range(1, 1001)]
+
+        table = Table(rows, (('ints', self.number_type),))
+
+        percentiles = table.columns['ints'].aggregate(Percentiles())
+
+        self.assertEqual(percentiles[0], Decimal('1'))
+        self.assertEqual(percentiles[25], Decimal('250.5'))
+        self.assertEqual(percentiles[50], Decimal('500.5'))
+        self.assertEqual(percentiles[75], Decimal('750.5'))
+        self.assertEqual(percentiles[99], Decimal('990.5'))
+        self.assertEqual(percentiles[100], Decimal('1000'))
+
+    def test_percentiles_locate(self):
+        rows = [(n,) for n in range(1, 1001)]
+
+        table = Table(rows, (('ints', self.number_type),))
+
+        percentiles = table.columns['ints'].aggregate(Percentiles())
+
+        self.assertEqual(percentiles.locate(251), Decimal('25'))
+        self.assertEqual(percentiles.locate(260), Decimal('25'))
+        self.assertEqual(percentiles.locate(261), Decimal('26'))
+
+        with self.assertRaises(ValueError):
+            percentiles.locate(0)
+
+        with self.assertRaises(ValueError):
+            percentiles.locate(1012)
+
+    def test_quartiles(self):
+        """
+        CDF quartile tests from:
+        http://www.amstat.org/publications/jse/v14n3/langford.html#Parzen1979
+        """
+        with self.assertRaises(NullCalculationError):
+            self.table.columns['one'].aggregate(Quartiles())
+
+        # N = 4
+        rows = [(n,) for n in [1, 2, 3, 4]]
+
+        table = Table(rows, (('ints', self.number_type),))
+
+        quartiles = table.columns['ints'].aggregate(Quartiles())
+
+        for i, v in enumerate(['1', '1.5', '2.5', '3.5', '4']):
+            self.assertEqual(quartiles[i], Decimal(v))
+
+        # N = 5
+        rows = [(n,) for n in [1, 2, 3, 4, 5]]
+
+        table = Table(rows, (('ints', self.number_type),))
+
+        quartiles = table.columns['ints'].aggregate(Quartiles())
+
+        for i, v in enumerate(['1', '2', '3', '4', '5']):
+            self.assertEqual(quartiles[i], Decimal(v))
+
+        # N = 6
+        rows = [(n,) for n in [1, 2, 3, 4, 5, 6]]
+
+        table = Table(rows, (('ints', self.number_type),))
+
+        quartiles = table.columns['ints'].aggregate(Quartiles())
+
+        for i, v in enumerate(['1', '2', '3.5', '5', '6']):
+            self.assertEqual(quartiles[i], Decimal(v))
+
+        # N = 7
+        rows = [(n,) for n in [1, 2, 3, 4, 5, 6, 7]]
+
+        table = Table(rows, (('ints', self.number_type),))
+
+        quartiles = table.columns['ints'].aggregate(Quartiles())
+
+        for i, v in enumerate(['1', '2', '4', '6', '7']):
+            self.assertEqual(quartiles[i], Decimal(v))
+
+        # N = 8 (doubled)
+        rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4]]
+
+        table = Table(rows, (('ints', self.number_type),))
+
+        quartiles = table.columns['ints'].aggregate(Quartiles())
+
+        for i, v in enumerate(['1', '1.5', '2.5', '3.5', '4']):
+            self.assertEqual(quartiles[i], Decimal(v))
+
+        # N = 10 (doubled)
+        rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]]
+
+        table = Table(rows, (('ints', self.number_type),))
+
+        quartiles = table.columns['ints'].aggregate(Quartiles())
+
+        for i, v in enumerate(['1', '2', '3', '4', '5']):
+            self.assertEqual(quartiles[i], Decimal(v))
+
+        # N = 12 (doubled)
+        rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6]]
+
+        table = Table(rows, (('ints', self.number_type),))
+
+        quartiles = table.columns['ints'].aggregate(Quartiles())
+
+        for i, v in enumerate(['1', '2', '3.5', '5', '6']):
+            self.assertEqual(quartiles[i], Decimal(v))
+
+        # N = 14 (doubled)
+        rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7]]
+
+        table = Table(rows, (('ints', self.number_type),))
+
+        quartiles = table.columns['ints'].aggregate(Quartiles())
+
+        for i, v in enumerate(['1', '2', '4', '6', '7']):
+            self.assertEqual(quartiles[i], Decimal(v))
+
+    def test_quartiles_locate(self):
+        """
+        CDF quartile tests from:
+        http://www.amstat.org/publications/jse/v14n3/langford.html#Parzen1979
+        """
+        # N = 4
+        rows = [(n,) for n in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]
+
+        table = Table(rows, (('ints', self.number_type),))
+
+        quartiles = table.columns['ints'].aggregate(Quartiles())
+
+        self.assertEqual(quartiles.locate(2), Decimal('0'))
+        self.assertEqual(quartiles.locate(4), Decimal('1'))
+        self.assertEqual(quartiles.locate(6), Decimal('2'))
+        self.assertEqual(quartiles.locate(8), Decimal('3'))
+
+        with self.assertRaises(ValueError):
+            quartiles.locate(0)
+
+        with self.assertRaises(ValueError):
+            quartiles.locate(11)
+
 class TestTextAggregation(unittest.TestCase):
     def test_max_length(self):
-        column = TextColumn(None, 'one')
+        column = Column(Text(), None, 'one')
         column.get_data = lambda: ('a', 'gobble', 'wow')
         self.assertEqual(column.aggregate(MaxLength()), 6)

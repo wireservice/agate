@@ -89,7 +89,7 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(to_one_place(new_table.columns['test'][3]), Decimal('33.3'))
 
     def test_percent_change_invalid_columns(self):
-        with self.assertRaises(UnsupportedComputationError):
+        with self.assertRaises(DataTypeError):
             new_table = self.table.compute([
                 ('test', PercentChange('one', 'three'))
             ])
@@ -108,7 +108,7 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(new_table.columns['z-scores'][3].quantize(Decimal('0.01')), Decimal('0.87'))
 
     def test_zscores_invalid_column(self):
-        with self.assertRaises(UnsupportedComputationError):
+        with self.assertRaises(DataTypeError):
             new_table = self.table.compute([
                 ('test', ZScores('one'))
             ])
