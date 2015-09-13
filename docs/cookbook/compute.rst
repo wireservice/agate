@@ -123,12 +123,12 @@ Implementing Levenshtein requires writing a custom :class:`.Computation`. To sav
 
         def prepare(self, table):
             """
-            Verify the comparison column is a TextColumn.
+            Verify the column is text.
             """
             column = table.columns[self._column_name]
 
-            if not isinstance(column, agate.TextColumn):
-                raise agate.UnsupportedComputationError(self, column)
+            if not isinstance(column.data_type, agate.Text):
+                raise agate.DataTypeError('Can only be applied to Text data.')
 
         def run(self, row):
             """

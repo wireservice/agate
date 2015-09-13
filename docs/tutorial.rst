@@ -134,7 +134,7 @@ Analysis begins with questions, so that's how we'll learn about agate.
 
 Question: **How many exonerations involved a false confession?**
 
-Answering this question involves counting the number of "True" values in the ``false_confession`` column. When we created the table we specified that the data in this column was :class:`.Boolean`. Because of this, agate has taken care of coercing the original text data from the CSV into Python's ``True`` and ``False`` values.
+Answering this question involves counting the number of "True" values in the ``false_confession`` column. When we created the table we specified that the data in this column contained :class:`.Boolean` data. Because of this, agate has taken care of coercing the original text data from the CSV into Python's ``True`` and ``False`` values.
 
 We'll answer the question using :class:`.Count` which is a type of :class:`.Aggregation`. Aggregations in agate are used to perform "column-wise" calculations. That is, they derive a new single value from the contents of a column. In the case of :class:`.Count`, it will tell us how many times a particular value appears in the column.
 
@@ -186,7 +186,7 @@ Answer:
 
 Only nine rows in this dataset don't have age, so it's still useful to compute a median, but to do this we'll need to filter out those null values first.
 
-Each column in :attr:`.Table.columns` is a subclass of :class:`.Column`, such as :class:`.NumberColumn` or :class:`.TextColumn`. As we've seen with :class:`.Median`, different aggregations can be applied depending on the column type and, in this case, its contents.
+Each column in :attr:`.Table.columns` is an instance of :class:`.Column`. As we've seen with :class:`.Median`, different aggregations can be applied depending on the type of data in the column and, in this case, the specific values.
 
 If none of the provided aggregations suit your needs you can also easily create your own by subclassing :class:`.Aggregation`. See the API documentation for :mod:`.aggregations` to see all of the implemented types.
 

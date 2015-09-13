@@ -10,8 +10,7 @@ from agate.exceptions import CastError
 
 class TimeDelta(DataType):
     """
-    Data type representing the interval between two times. Creates
-    :class:`datetime.timedelta`.
+    Data type representing the interval between two times.
     """
     def test(self, d):
         """

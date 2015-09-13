@@ -11,7 +11,7 @@ from agate.exceptions import CastError
 
 class DateTime(DataType):
     """
-    Data type representing dates and times. Creates :class:`DateTimeColumn`.
+    Data type representing dates and times.
 
     :param datetime_format: A formatting string for
         :meth:`datetime.datetime.strptime` to use instead of using regex-based

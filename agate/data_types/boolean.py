@@ -13,7 +13,7 @@ DEFAULT_FALSE_VALUES = ('no', 'n', 'false', 'f')
 
 class Boolean(DataType):
     """
-    Data type representing boolean values. Creates :class:`BooleanColumn`.
+    Data type representing boolean values.
 
     :param true_values: A sequence of values which should be cast to
         :code:`True` when encountered with this type.

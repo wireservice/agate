@@ -7,7 +7,7 @@ from agate.exceptions import CastError
 
 class Text(DataType):
     """
-    Data type representing text. Creates :class:`TextColumn`.
+    Data type representing text.
     """
     def test(self, d):
         """

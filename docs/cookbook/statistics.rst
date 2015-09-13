@@ -5,7 +5,7 @@ Statistics
 Descriptive statistics
 ======================
 
-agate includes a full set of standard descriptive statistics that can be applied to any :class:`.NumberColumn`.
+agate includes a full set of standard descriptive statistics that can be applied to any column containing :class:`.Number` data.
 
 .. code-block:: python
 

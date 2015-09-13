@@ -51,12 +51,12 @@ class Formula(Computation):
     """
     A simple drop-in computation that can apply any function to rows.
     """
-    def __init__(self, column_type, func):
-        self._column_type = column_type
+    def __init__(self, data_type, func):
+        self._data_type = data_type
         self._func = func
 
     def get_computed_data_type(self, table):
-        return self._column_type
+        return self._data_type
 
     def run(self, row):
         return self._func(row)

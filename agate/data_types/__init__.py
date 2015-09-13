@@ -3,13 +3,10 @@
 """
 This module contains the :class:`.DataType` class and its subclasses. These
 types define how data should be converted during the creation of a
-:class:`.Table`. Each subclass of :class:`.DataType` is associated with a
-subclass of :class:`.Column`. For instance, specifying that data is of
-:class:`.Number` will cause a :class:`.NumberColumn` to be created on the
-table.
+:class:`.Table`.
 
-A :class:`TypeTester` class is also included which be used to infer column
-types from data.
+A :class:`TypeTester` class is also included which be used to infer data
+types from column data.
 """
 
 from copy import copy

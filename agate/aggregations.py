@@ -2,10 +2,10 @@
 
 """
 This module contains the :class:`Aggregation` class and its various subclasses.
-Each of these classes processes a column's data and some value(s). For
-instance, :class:`Mean`, when applied to a :class:`.NumberColumn`, returns a
-single :class:`decimal.Decimal` value which is the average of all values in
-that column.
+Each of these classes processes a column's data and returns some value(s). For
+instance, :class:`Mean`, when applied to a column containing :class:`.Number`
+data, returns a single :class:`decimal.Decimal` value which is the average of
+all values in that column.
 
 Aggregations are applied to instances of :class:`.Column` using the
 :meth:`.Column.aggregate` method. Typically, the column is first retrieved using
@@ -469,6 +469,8 @@ class Quartiles(Aggregation):
     reference and intuitive indexing.
 
     See :class:`Percentiles` for implementation details.
+
+    This aggregation can not be applied to a :class:`.TableSet`.
     """
     def run(self, column):
         percentiles = column.aggregate(Percentiles())
@@ -484,6 +486,8 @@ class Quintiles(Aggregation):
     reference and intuitive indexing.
 
     See :class:`Percentiles` for implementation details.
+
+    This aggregation can not be applied to a :class:`.TableSet`.
     """
     def run(self, column):
         percentiles = column.aggregate(Percentiles())
@@ -498,6 +502,8 @@ class Deciles(Aggregation):
     reference and intuitive indexing.
 
     See :class:`Percentiles` for implementation details.
+
+    This aggregation can not be applied to a :class:`.TableSet`.
     """
     def run(self, column):
         percentiles = column.aggregate(Percentiles())
@@ -506,7 +512,7 @@ class Deciles(Aggregation):
 
 class MaxLength(Aggregation):
     """
-    Calculates the longest string in a column.
+    Calculates the longest string in a column containing :class:`.Text` data.
     """
     def get_aggregate_data_type(self, column):
         return Number()
