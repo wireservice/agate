@@ -420,7 +420,7 @@ I'm not going to explain every stage of this analysis as most of it repeats patt
 .. code-block:: python
 
     # Filters rows without age data
-    only_with_age = data['with_years_in_prison'].where(
+    only_with_age = with_years_in_prison.where(
         lambda r: r['age'] is not None
     )
 
