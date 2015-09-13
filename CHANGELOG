@@ -1,9 +1,11 @@
 0.9.0
 -----
 
+* Implement aggregation result caching. (#245)
 * Reimplement Percentiles, Quartiles, etc as aggregations.
 * UnsupportedAggregationError is now used to disable TableSet aggregations.
 * Replaced several exceptions with more general DataTypeError.
+* Column type information can now be accessed as Column.data_type.
 * Eliminated Column subclasses. Restructured around DataType classes.
 * Table.merge implemented. (#9)
 * Cookbook: guess column types. (#230)

@@ -73,6 +73,8 @@ class Column(Sequence):
         self._table = table
         self._index = index
 
+        self._aggregate_cache = {}
+
     def __unicode__(self):
         data = self.get_data()
 
@@ -142,6 +144,18 @@ class Column(Sequence):
 
     def aggregate(self, aggregation):
         """
-        Apply a :class:`.Aggregation` to this column and return the result.
+        Apply a :class:`.Aggregation` to this column and return the result. If
+        the aggregation defines a
         """
-        return aggregation.run(self)
+        cache_key = aggregation.get_cache_key()
+
+        if cache_key is not None:
+            if cache_key in self._aggregate_cache:
+                return self._aggregate_cache[cache_key]
+
+        result = aggregation.run(self)
+
+        if cache_key is not None:
+            self._aggregate_cache[cache_key] = result
+
+        return result

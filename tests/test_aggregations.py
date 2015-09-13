@@ -10,6 +10,11 @@ try:
 except ImportError:
     import unittest
 
+try:
+    from unittest.mock import Mock
+except:
+    from mock import Mock
+
 from agate import Table
 from agate.aggregations import *
 from agate.columns import Column
@@ -34,6 +39,17 @@ class TestSimpleAggregation(unittest.TestCase):
         )
 
         self.table = Table(self.rows, self.columns)
+
+    def test_caching(self):
+        length = Length()
+        length.run = Mock(return_value=33)
+
+        self.assertEqual(self.table.columns['one']._aggregate_cache, {})
+        self.assertEqual(self.table.columns['one'].aggregate(length), 33)
+        self.assertEqual(self.table.columns['one']._aggregate_cache, { 'Length': 33 })
+        self.assertEqual(length.run.call_count, 1)
+        self.assertEqual(self.table.columns['one'].aggregate(length), 33)
+        self.assertEqual(length.run.call_count, 1)
 
     def test_any(self):
         self.assertEqual(self.table.columns['one'].aggregate(Any(lambda d: d == 2)), True)

@@ -12,3 +12,4 @@ csvkit>=0.9.1
 Babel>=2.0
 parsedatetime>=1.5
 pytz>=2015.4
+mock>=1.3.0

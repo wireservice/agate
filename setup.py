@@ -41,7 +41,6 @@ setup(
     ],
     packages=[
         'agate',
-        'agate.columns',
         'agate.data_types'
     ],
     install_requires=install_requires

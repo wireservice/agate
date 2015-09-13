@@ -598,7 +598,7 @@ class TestTableCompute(unittest.TestCase):
     def test_compute(self):
         new_table = self.table.compute([
             ('number', Formula(self.number_type, lambda r: r['two'] + r['three'])),
-            ('text', Formula(self.text_type, lambda r: (r['one'] or '-') + unicode(r['three'])))
+            ('text', Formula(self.text_type, lambda r: (r['one'] or '-') + six.text_type(r['three'])))
         ])
 
         self.assertIsNot(new_table, self.table)

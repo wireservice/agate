@@ -31,6 +31,15 @@ class Aggregation(object): #pragma: no cover
     :meth:`.Table.aggregate` or on a set of columns using
     :class:`.TableSet.aggregate`.
     """
+    def get_cache_key(self):
+        """
+        Aggregations can optionally define a cache key that uniquely identifies
+        this operation. If they do they future invocations of this aggregation
+        with the same cache key applied to the same column will use the
+        cached value.
+        """
+        return None
+
     def get_aggregate_data_type(self, column):
         """
         Get the data type that should be used when using this aggregation with
@@ -54,6 +63,9 @@ class HasNulls(Aggregation):
     """
     def get_aggregate_data_type(self, column):
         return Boolean()
+
+    def get_cache_key(self):
+        return 'HasNulls'
 
     def run(self, column):
         """
@@ -123,6 +135,9 @@ class Length(Aggregation):
     """
     def get_aggregate_data_type(self, column):
         return Number()
+
+    def get_cache_key(self):
+        return 'Length'
 
     def run(self, column):
         """
@@ -206,6 +221,9 @@ class Sum(Aggregation):
     def get_aggregate_data_type(self, column):
         return Number()
 
+    def get_cache_key(self):
+        return 'Sum'
+
     def run(self, column):
         """
         :returns: :class:`decimal.Decimal`.
@@ -221,6 +239,9 @@ class Mean(Aggregation):
     """
     def get_aggregate_data_type(self, column):
         return Number()
+
+    def get_cache_key(self):
+        return 'Mean'
 
     def run(self, column):
         """
@@ -244,6 +265,9 @@ class Median(Aggregation):
     def get_aggregate_data_type(self, column):
         return Number()
 
+    def get_cache_key(self):
+        return 'Median'
+
     def run(self, column):
         """
         :returns: :class:`decimal.Decimal`.
@@ -262,6 +286,9 @@ class Mode(Aggregation):
     """
     def get_aggregate_data_type(self, column):
         return Number()
+
+    def get_cache_key(self):
+        return 'Mode'
 
     def run(self, column):
         """
@@ -289,6 +316,9 @@ class IQR(Aggregation):
     def get_aggregate_data_type(self, column):
         return Number()
 
+    def get_cache_key(self):
+        return 'IQR'
+
     def run(self, column):
         """
         :returns: :class:`decimal.Decimal`.
@@ -311,6 +341,9 @@ class Variance(Aggregation):
     def get_aggregate_data_type(self, column):
         return Number()
 
+    def get_cache_key(self):
+        return 'Variance'
+
     def run(self, column):
         """
         :returns: :class:`decimal.Decimal`.
@@ -331,6 +364,12 @@ class PopulationVariance(Variance):
     Compute the population variance of a column containing
     :class:`.Number` data.
     """
+    def get_aggregate_data_type(self, column):
+        return Number()
+
+    def get_cache_key(self):
+        return 'PopulationVariance'
+
     def run(self, column):
         """
         :returns: :class:`decimal.Decimal`.
@@ -354,6 +393,9 @@ class StDev(Aggregation):
     def get_aggregate_data_type(self, column):
         return Number()
 
+    def get_cache_key(self):
+        return 'StDev'
+
     def run(self, column):
         """
         :returns: :class:`decimal.Decimal`.
@@ -368,6 +410,12 @@ class PopulationStDev(StDev):
     Compute the population standard of deviation of a column containing
     :class:`.Number` data.
     """
+    def get_aggregate_data_type(self, column):
+        return Number()
+
+    def get_cache_key(self):
+        return 'PopulationStDev'
+
     def run(self, column):
         """
         :returns: :class:`decimal.Decimal`.
@@ -384,6 +432,9 @@ class MAD(Aggregation):
     """
     def get_aggregate_data_type(self, column):
         return Number()
+
+    def get_cache_key(self):
+        return 'MAD'
 
     def _median(self, data_sorted):
         length = len(data_sorted)
@@ -428,6 +479,9 @@ class Percentiles(Aggregation):
 
     This aggregation can not be applied to a :class:`.TableSet`.
     """
+    def get_cache_key(self):
+        return 'Percentiles'
+
     def run(self, column):
         """
         :returns: An array of :class:`decimal.Decimal`.
@@ -472,6 +526,9 @@ class Quartiles(Aggregation):
 
     This aggregation can not be applied to a :class:`.TableSet`.
     """
+    def get_cache_key(self):
+        return 'Quartiles'
+
     def run(self, column):
         percentiles = column.aggregate(Percentiles())
 
@@ -489,6 +546,9 @@ class Quintiles(Aggregation):
 
     This aggregation can not be applied to a :class:`.TableSet`.
     """
+    def get_cache_key(self):
+        return 'Quintiles'
+
     def run(self, column):
         percentiles = column.aggregate(Percentiles())
 
@@ -505,6 +565,9 @@ class Deciles(Aggregation):
 
     This aggregation can not be applied to a :class:`.TableSet`.
     """
+    def get_cache_key(self):
+        return 'Deciles'
+
     def run(self, column):
         percentiles = column.aggregate(Percentiles())
 
@@ -516,6 +579,9 @@ class MaxLength(Aggregation):
     """
     def get_aggregate_data_type(self, column):
         return Number()
+
+    def get_cache_key(self):
+        return 'MaxLength'
 
     def run(self, column):
         """
