@@ -5,7 +5,7 @@
 * UnsupportedAggregationError is now used to disable TableSet aggregations.
 * Replaced several exceptions with more general DataTypeError.
 * Eliminated Column subclasses. Restructured around DataType classes.
-* Table.merge implemented.
+* Table.merge implemented. (#9)
 * Cookbook: guess column types. (#230)
 * Fix issue where all group keys were being cast to text. (#235)
 * Table.group_by will now default key_type to the type of the grouping column. (#234)
