@@ -12,52 +12,6 @@ import six
 from agate.exceptions import ColumnDoesNotExistError
 from agate.utils import NullOrder, memoize
 
-class ColumnMapping(Mapping):
-    """
-    Proxy access to :class:`Column` instances for :class:`.Table`.
-
-    :param table: :class:`.Table`.
-    """
-    def __init__(self, table):
-        self._table = table
-
-    def __getitem__(self, k):
-        try:
-            i = self._table._column_names.index(k)
-        except ValueError:
-            raise ColumnDoesNotExistError(k)
-
-        return self._table._get_column(i)
-
-    def __iter__(self):
-        return ColumnIterator(self._table)
-
-    @memoize
-    def __len__(self):
-        return len(self._table._column_names)
-
-class ColumnIterator(six.Iterator):
-    """
-    Iterator over :class:`Column` instances within a :class:`.Table`.
-
-    :param table: :class:`.Table`.
-    """
-    def __init__(self, table):
-        self._table = table
-        self._i = 0
-
-    def __next__(self):
-        try:
-            self._table._column_names[self._i]
-        except IndexError:
-            raise StopIteration
-
-        column = self._table._get_column(self._i)
-
-        self._i += 1
-
-        return column
-
 class Column(Sequence):
     """
     Proxy access to column data. Instances of :class:`Column` should
@@ -162,3 +116,49 @@ class Column(Sequence):
             self._aggregate_cache[cache_key] = result
 
         return result
+
+class ColumnMapping(Mapping):
+    """
+    Proxy access to :class:`Column` instances for :class:`.Table`.
+
+    :param table: :class:`.Table`.
+    """
+    def __init__(self, table):
+        self._table = table
+
+    def __getitem__(self, k):
+        try:
+            i = self._table._column_names.index(k)
+        except ValueError:
+            raise ColumnDoesNotExistError(k)
+
+        return self._table._get_column(i)
+
+    def __iter__(self):
+        return ColumnIterator(self._table)
+
+    @memoize
+    def __len__(self):
+        return len(self._table._column_names)
+
+class ColumnIterator(six.Iterator):
+    """
+    Iterator over :class:`Column` instances within a :class:`.Table`.
+
+    :param table: :class:`.Table`.
+    """
+    def __init__(self, table):
+        self._table = table
+        self._i = 0
+
+    def __next__(self):
+        try:
+            self._table._column_names[self._i]
+        except IndexError:
+            raise StopIteration
+
+        column = self._table._get_column(self._i)
+
+        self._i += 1
+
+        return column

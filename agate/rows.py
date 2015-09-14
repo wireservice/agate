@@ -16,33 +16,6 @@ if six.PY3: #pragma: no cover
 from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 from agate.utils import memoize
 
-class RowSequence(Sequence):
-    """
-    Proxy access to rows by index.
-
-    :param table: The :class:`.Table` that contains the rows.
-    """
-    def __init__(self, table):
-        self._table = table
-
-    def __getitem__(self, i):
-        if isinstance(i, slice):
-            indices = xrange(*i.indices(len(self)))
-
-            return tuple(self._table._get_row(row) for row in indices)
-
-        try:
-            return self._table._get_row(i)
-        except IndexError:
-            raise RowDoesNotExistError(i)
-
-    def __iter__(self):
-        return RowIterator(self._table)
-
-    @memoize
-    def __len__(self):
-        return self._table._get_row_count()
-
 class Row(Mapping):
     """
     Proxy to row data.
@@ -102,6 +75,33 @@ class Row(Mapping):
     def __eq__(self, other):
         return self._table._data[self._i] == other
 
+class RowSequence(Sequence):
+    """
+    Proxy access to rows by index.
+
+    :param table: The :class:`.Table` that contains the rows.
+    """
+    def __init__(self, table):
+        self._table = table
+
+    def __getitem__(self, i):
+        if isinstance(i, slice):
+            indices = xrange(*i.indices(len(self)))
+
+            return tuple(self._table._get_row(row) for row in indices)
+
+        try:
+            return self._table._get_row(i)
+        except IndexError:
+            raise RowDoesNotExistError(i)
+
+    def __iter__(self):
+        return RowIterator(self._table)
+
+    @memoize
+    def __len__(self):
+        return self._table._get_row_count()
+        
 class RowIterator(six.Iterator):
     """
     Iterator over row proxies.
