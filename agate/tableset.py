@@ -119,6 +119,22 @@ class TableSet(Mapping):
     def __len__(self):
         return self._tables.__len__()
 
+    @property
+    def key_name(self):
+        """
+        Get the name of the key this TableSet is grouped by. (If created using
+        :meth:`.Table.group_by` then this is the original column name.)
+        """
+        return self._key_name
+
+    @property
+    def key_type(self):
+        """
+        Get the :class:`.DataType` this TableSet is grouped by. (If created
+        using :meth:`.Table.group_by` then this is the original column type.)
+        """
+        return self._key_type
+
     @classmethod
     def from_csv(cls, dir_path, column_info, header=True, **kwargs):
         """

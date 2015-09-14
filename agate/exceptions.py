@@ -40,10 +40,10 @@ class ColumnDoesNotExistError(Exception):  # pragma: no cover
     :param k: The key used to access the non-existent :class:`.Column`.
     """
     def __init__(self, k):
-        self.k = k
+        self._k = k
 
     def __unicode__(self):
-        return 'Column `%s` does not exist.' % (self.k)
+        return 'Column `%s` does not exist.' % (self._k)
 
     def __str__(self):
         return str(self.__unicode__())
@@ -56,10 +56,10 @@ class RowDoesNotExistError(Exception):  # pragma: no cover
     :param i: The index used to access the non-existent :class:`.Row`.
     """
     def __init__(self, i):
-        self.i = i
+        self._i = i
 
     def __unicode__(self):
-        return 'Row `%i` does not exist.' % (self.i)
+        return 'Row `%i` does not exist.' % (self._i)
 
     def __str__(self):
         return str(self.__unicode__())

@@ -496,8 +496,8 @@ class TestTableGrouping(unittest.TestCase):
 
         self.assertIsInstance(tableset, TableSet)
         self.assertEqual(len(tableset), 3)
-        self.assertEqual(tableset._key_name, 'one')
-        self.assertIsInstance(tableset._key_type, Text)
+        self.assertEqual(tableset.key_name, 'one')
+        self.assertIsInstance(tableset.key_type, Text)
 
         self.assertIn('a', tableset.keys())
         self.assertIn('b', tableset.keys())
@@ -513,8 +513,8 @@ class TestTableGrouping(unittest.TestCase):
 
         self.assertIsInstance(tableset, TableSet)
         self.assertEqual(len(tableset), 2)
-        self.assertEqual(tableset._key_name, 'two')
-        self.assertIsInstance(tableset._key_type, Number)
+        self.assertEqual(tableset.key_name, 'two')
+        self.assertIsInstance(tableset.key_type, Number)
 
         self.assertIn(2, tableset.keys())
         self.assertIn(3, tableset.keys())
@@ -528,8 +528,8 @@ class TestTableGrouping(unittest.TestCase):
         tableset = table.group_by('one', key_name='test')
 
         self.assertIsInstance(tableset, TableSet)
-        self.assertEqual(tableset._key_name, 'test')
-        self.assertIsInstance(tableset._key_type, Text)
+        self.assertEqual(tableset.key_name, 'test')
+        self.assertIsInstance(tableset.key_type, Text)
 
         self.assertIn('a', tableset.keys())
         self.assertIn('b', tableset.keys())
@@ -544,8 +544,8 @@ class TestTableGrouping(unittest.TestCase):
         tableset = table.group_by('two', key_type=Text())
 
         self.assertIsInstance(tableset, TableSet)
-        self.assertEqual(tableset._key_name, 'two')
-        self.assertIsInstance(tableset._key_type, Text)
+        self.assertEqual(tableset.key_name, 'two')
+        self.assertIsInstance(tableset.key_type, Text)
 
         self.assertIn('2', tableset.keys())
         self.assertIn('3', tableset.keys())
@@ -560,7 +560,7 @@ class TestTableGrouping(unittest.TestCase):
 
         self.assertIsInstance(tableset, TableSet)
         self.assertEqual(len(tableset), 2)
-        self.assertEqual(tableset._key_name, 'group')
+        self.assertEqual(tableset.key_name, 'group')
 
         self.assertIn(True, tableset.keys())
         self.assertIn(False, tableset.keys())
