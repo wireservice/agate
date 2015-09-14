@@ -32,6 +32,7 @@ try:
 except ImportError: #pragma: no cover
     import csv
 
+from babel.numbers import format_decimal
 import six
 
 from agate.aggregations import *
@@ -657,51 +658,83 @@ class Table(object):
         if max_columns is None:
             max_columns = len(self._column_names)
 
-        widths = []
-        rows_truncated = False
-        columns_truncated = False
+        rows_truncated = max_rows < len(self._data)
+        columns_truncated = max_columns < len(self._column_names)
 
-        for i, row in enumerate(chain([self._column_names], self._data)):
-            if i >= max_rows + 1:
-                rows_truncated = True
+        column_names = list(self._column_names[:max_columns])
 
+        if columns_truncated:
+            column_names.append('...')
+
+        widths = [len(n) for n in column_names]
+        decimal_places = []
+        formatted_data = []
+
+        # Determine correct number of decimal places for each Number column
+        for i, c in enumerate(self.columns):
+            if i >= max_columns:
                 break
+
+            if isinstance(c.data_type, Number):
+                max_places = 0
+
+                for j, d in enumerate(c):
+                    if j >= max_rows:
+                        break
+
+                    if d is None:
+                        continue
+
+                    places = d.as_tuple().exponent * -1
+
+                    if places > max_places:
+                        max_places = places
+
+                decimal_places.append(max_places)
+            else:
+                decimal_places.append(None)
+
+        # Format data and display column widths
+        for i, row in enumerate(self._data):
+            if i >= max_rows:
+                break
+
+            formatted_row = []
 
             for j, v in enumerate(row):
                 if j >= max_columns:
-                    columns_truncated = True
+                    v = '...'
+                elif v is None:
+                    v = ''
+                elif decimal_places[j] is not None:
+                    fraction = '0' * decimal_places[j]
+                    fmt = ''.join(['#,##0.', fraction, ';-#,##0.', fraction])
+                    v = format_decimal(v, format=fmt)
+                else:
+                    v = six.text_type(v)
 
-                    try:
-                        widths[j] = 3
-                    except IndexError:
-                        widths.append(3)
+                if len(v) > widths[j]:
+                    widths[j] = len(v)
 
+                formatted_row.append(v)
+
+                if j >= max_columns:
                     break
 
-                v = six.text_type(v)
+            formatted_data.append(formatted_row)
 
-                try:
-                    if len(v) > widths[j]:
-                        widths[j] = len(v)
-                except IndexError:
-                    widths.append(len(v))
-
-        def _format_row(row):
+        def _print_row(formatted_row, type_format=True):
             """
             Helper function that formats individual rows.
             """
             row_output = []
 
-            for j, d in enumerate(row):
-                if j >= max_columns:
-                    break
-
-                if d is None:
-                    d = ''
-                row_output.append(' %s ' % six.text_type(d).ljust(widths[j]))
-
-            if columns_truncated:
-                row_output.append(' %s ' % six.text_type('...').ljust(widths[j]))
+            for j, d in enumerate(formatted_row):
+                # Text is left-justified, all other values are right-justified
+                if isinstance(self._column_types[j], Text):
+                    row_output.append(' %s ' % d.ljust(widths[j]))
+                else:
+                    row_output.append(' %s ' % d.rjust(widths[j]))
 
             return '| %s |\n' % ('|'.join(row_output))
 
@@ -712,20 +745,17 @@ class Table(object):
         # Initial divider
         output.write(divider)
 
+        # Headers
+        output.write(_print_row(column_names, False))
+        output.write(divider)
+
         # Rows
-        for i, row in enumerate(chain([self._column_names], self._data)):
-            if i >= max_rows + 1:
-                break
-
-            output.write(_format_row(row))
-
-            # Divider under headers
-            if (i == 0):
-                output.write(divider)
+        for formatted_row in formatted_data:
+            output.write(_print_row(formatted_row))
 
         # Row indicating data was truncated
         if rows_truncated:
-            output.write(_format_row(['...' for n in self._column_names]))
+            output.write(_print_row(['...' for n in column_names], False))
 
         # Final divider
         output.write(divider)

@@ -177,8 +177,6 @@ class Min(Aggregation):
             isinstance(column.data_type, DateTime):
             return column.data_type
 
-        raise DataTypeError('Max can only be applied to columns containing DateTime or Number data.')
-
     def run(self, column):
         """
         :returns: :class:`datetime.date`
@@ -200,8 +198,6 @@ class Max(Aggregation):
             isinstance(column.data_type, Date) or \
             isinstance(column.data_type, DateTime):
             return column.data_type
-
-        raise DataTypeError('Max can only be applied to columns containing DateTime or Number data.')
 
     def run(self, column):
         """

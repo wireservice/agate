@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import six
+
 #: Default values which will be automatically cast to :code:`None`
 DEFAULT_NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
 
@@ -14,7 +16,14 @@ class DataType(object): #pragma: no cover
         self.null_values = null_values
 
     def test(self, d):
+        """
+        Test if a given string value could possibly be an instance of this
+        data type.
+        """
         raise NotImplementedError
 
     def cast(self, d):
+        """
+        Coerce a given string value into this column's data type.
+        """
         raise NotImplementedError

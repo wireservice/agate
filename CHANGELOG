@@ -1,6 +1,8 @@
 0.9.0
 -----
 
+* Table.pretty_print now displays consistent decimal places for each Number column.
+* Discrete data types (Number, Date etc) are now right-aligned in Table.pretty_print.
 * Implement aggregation result caching. (#245)
 * Reimplement Percentiles, Quartiles, etc as aggregations.
 * UnsupportedAggregationError is now used to disable TableSet aggregations.

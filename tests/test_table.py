@@ -440,7 +440,7 @@ class TestTable(unittest.TestCase):
         self.assertEqual(new_table._column_names, ('one', 'two'))
         self.assertSequenceEqual(new_table.columns['one'], (2,))
 
-    def test_format(self):
+    def test_pretty_print(self):
         table = Table(self.rows, self.columns)
 
         output = six.StringIO()
@@ -448,9 +448,9 @@ class TestTable(unittest.TestCase):
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 24)
+        self.assertEqual(len(lines[0]), 23)
 
-    def test_format_max_rows(self):
+    def test_pretty_print_max_rows(self):
         table = Table(self.rows, self.columns)
 
         output = six.StringIO()
@@ -460,7 +460,7 @@ class TestTable(unittest.TestCase):
         self.assertEqual(len(lines), 8)
         self.assertEqual(len(lines[0]), 23)
 
-    def test_format_max_columns(self):
+    def test_pretty_print_max_columns(self):
         table = Table(self.rows, self.columns)
 
         output = six.StringIO()
@@ -468,7 +468,7 @@ class TestTable(unittest.TestCase):
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 22)
+        self.assertEqual(len(lines[0]), 21)
 
 class TestTableGrouping(unittest.TestCase):
     def setUp(self):

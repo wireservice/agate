@@ -21,11 +21,15 @@ class Number(DataType):
 
     :param locale: A locale specification such as :code:`en_US` or
         :code:`de_DE` to use for parsing formatted numbers.
+    :param display_precision: An integer specifying how many decimal places to
+        include when formatting this column for display. (Such as when using
+        :class:`.Table.pretty_print`.)
     """
-    def __init__(self, locale='en_US', **kwargs):
+    def __init__(self, locale='en_US', display_precision=2, **kwargs):
         super(Number, self).__init__(**kwargs)
 
         self._locale = locale
+        self._display_precision = display_precision
 
     def test(self, d):
         """
