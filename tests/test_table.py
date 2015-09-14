@@ -77,8 +77,8 @@ class TestTable(unittest.TestCase):
         table1 = Table(self.rows, self.columns)
         table2 = Table.from_csv('examples/test.csv', self.columns)
 
-        self.assertSequenceEqual(table1.get_column_names(), table2.get_column_names())
-        self.assertSequenceEqual(table1.get_column_types(), table2.get_column_types())
+        self.assertSequenceEqual(table1.column_names, table2.column_names)
+        self.assertSequenceEqual(table1.column_types, table2.column_types)
 
         self.assertEqual(len(table1.columns), len(table2.columns))
         self.assertEqual(len(table1.rows), len(table2.rows))
@@ -96,8 +96,8 @@ class TestTable(unittest.TestCase):
         with open('examples/test.csv') as fh:
             table2 = Table.from_csv(fh, self.columns)
 
-            self.assertSequenceEqual(table1.get_column_names(), table2.get_column_names())
-            self.assertSequenceEqual(table1.get_column_types(), table2.get_column_types())
+            self.assertSequenceEqual(table1.column_names, table2.column_names)
+            self.assertSequenceEqual(table1.column_types, table2.column_types)
 
             self.assertEqual(len(table1.columns), len(table2.columns))
             self.assertEqual(len(table1.rows), len(table2.rows))
@@ -140,12 +140,12 @@ class TestTable(unittest.TestCase):
     def test_get_column_types(self):
         table = Table(self.rows, self.columns)
 
-        self.assertSequenceEqual(table.get_column_types(), [t for n, t in self.columns])
+        self.assertSequenceEqual(table.column_types, [t for n, t in self.columns])
 
     def test_get_column_names(self):
         table = Table(self.rows, self.columns)
 
-        self.assertSequenceEqual(table.get_column_names(), [n for n, t in self.columns])
+        self.assertSequenceEqual(table.column_names, [n for n, t in self.columns])
 
     def test_select(self):
         table = Table(self.rows, self.columns)
@@ -737,8 +737,8 @@ class TestTableMerge(unittest.TestCase):
         table_b = Table(self.rows, self.columns)
         table_c = Table.merge([table_a, table_b])
 
-        self.assertEqual(table_c.get_column_names(), table_a.get_column_names())
-        self.assertEqual(table_c.get_column_types(), table_a.get_column_types())
+        self.assertEqual(table_c.column_names, table_a.column_names)
+        self.assertEqual(table_c.column_types, table_a.column_types)
 
         self.assertEqual(len(table_c.rows), 6)
 
@@ -754,8 +754,8 @@ class TestTableMerge(unittest.TestCase):
         table_b = Table(self.rows, diff_columns)
         table_c = Table.merge([table_a, table_b])
 
-        self.assertEqual(table_c.get_column_names(), table_a.get_column_names())
-        self.assertEqual(table_c.get_column_types(), table_a.get_column_types())
+        self.assertEqual(table_c.column_names, table_a.column_names)
+        self.assertEqual(table_c.column_types, table_a.column_types)
 
         self.assertEqual(len(table_c.rows), 6)
 

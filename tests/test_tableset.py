@@ -66,8 +66,8 @@ class TestTableSet(unittest.TestCase):
         tableset1 = TableSet(self.tables)
         tableset2 = TableSet.from_csv('examples/tableset', self.columns)
 
-        self.assertSequenceEqual(tableset1.get_column_names(), tableset2.get_column_names())
-        self.assertSequenceEqual(tableset1.get_column_types(), tableset2.get_column_types())
+        self.assertSequenceEqual(tableset1.column_names, tableset2.column_names)
+        self.assertSequenceEqual(tableset1.column_types, tableset2.column_types)
 
         self.assertEqual(len(tableset1), len(tableset2))
 
@@ -98,12 +98,12 @@ class TestTableSet(unittest.TestCase):
     def test_get_column_types(self):
         tableset = TableSet(self.tables)
 
-        self.assertSequenceEqual(tableset.get_column_types(), [t for n, t in self.columns])
+        self.assertSequenceEqual(tableset.column_types, [t for n, t in self.columns])
 
     def test_get_column_names(self):
         tableset = TableSet(self.tables)
 
-        self.assertSequenceEqual(tableset.get_column_names(), [n for n, t in self.columns])
+        self.assertSequenceEqual(tableset.column_names, [n for n, t in self.columns])
 
     def test_select(self):
         tableset = TableSet(self.tables)

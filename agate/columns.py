@@ -68,8 +68,7 @@ class Column(Sequence):
     :param index: The index of this column in the table.
     """
     def __init__(self, data_type, table, index):
-        self.data_type = data_type
-
+        self._data_type = data_type
         self._table = table
         self._index = index
 
@@ -111,6 +110,10 @@ class Column(Sequence):
         Ensure inequality test with lists works.
         """
         return not self.__eq__(other)
+
+    @property
+    def data_type(self):
+        return self._data_type
 
     @memoize
     def get_data(self):

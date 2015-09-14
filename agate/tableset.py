@@ -81,8 +81,8 @@ class TableSet(Mapping):
         while isinstance(self._sample_table, TableSet):
             self._sample_table = list(self._sample_table.values())[0]
 
-        self._column_types = self._sample_table.get_column_types()
-        self._column_names = self._sample_table.get_column_names()
+        self._column_types = self._sample_table.column_types
+        self._column_names = self._sample_table.column_names
 
         for name, table in group.items():
             if table._column_types != self._column_types:
@@ -160,7 +160,7 @@ class TableSet(Mapping):
             table = Table.from_csv(path, column_info, header=header, **kwargs)
 
             if use_inference and not has_inferred_columns:
-                column_info = tuple(zip(table.get_column_names(), table.get_column_types()))
+                column_info = tuple(zip(table.column_names, table.column_types))
                 has_inferred_columns = True
 
             tables[name] = table
@@ -188,7 +188,8 @@ class TableSet(Mapping):
 
             table.to_csv(path, **kwargs)
 
-    def get_column_types(self):
+    @property
+    def column_types(self):
         """
         Get an ordered list of this :class:`.TableSet`'s column types.
 
@@ -196,7 +197,8 @@ class TableSet(Mapping):
         """
         return self._column_types
 
-    def get_column_names(self):
+    @property
+    def column_names(self):
         """
         Get an ordered list of this :class:`TableSet`'s column names.
 

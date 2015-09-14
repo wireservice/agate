@@ -305,8 +305,8 @@ class TestTypeInference(unittest.TestCase):
         else:
             table = Table.from_csv('examples/test.csv', self.tester)
 
-        self.assertSequenceEqual(table.get_column_names(), ['one', 'two', 'three'])
-        self.assertSequenceEqual(tuple(map(type, table.get_column_types())), [Number, Number, Text])
+        self.assertSequenceEqual(table.column_names, ['one', 'two', 'three'])
+        self.assertSequenceEqual(tuple(map(type, table.column_types)), [Number, Number, Text])
 
         self.assertEqual(len(table.columns), 3)
 
@@ -317,8 +317,8 @@ class TestTypeInference(unittest.TestCase):
     def test_tableset_from_csv(self):
         tableset = TableSet.from_csv('examples/tableset', self.tester)
 
-        self.assertSequenceEqual(tableset.get_column_names(), ['letter', 'number'])
-        self.assertSequenceEqual(tuple(map(type, tableset.get_column_types())), [Text, Number])
+        self.assertSequenceEqual(tableset.column_names, ['letter', 'number'])
+        self.assertSequenceEqual(tuple(map(type, tableset.column_types)), [Text, Number])
 
         self.assertEqual(len(tableset['table1'].columns), 2)
 

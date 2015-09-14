@@ -199,7 +199,8 @@ class Table(object):
         finally:
             f.close()
 
-    def get_column_types(self):
+    @property
+    def column_types(self):
         """
         Get an ordered list of this table's column types.
 
@@ -207,7 +208,8 @@ class Table(object):
         """
         return self._column_types
 
-    def get_column_names(self):
+    @property
+    def column_names(self):
         """
         Get an ordered list of this table's column names.
 
@@ -543,11 +545,11 @@ class Table(object):
         :param tables: An array of :class:`Table`.
         :returns: A new :class:`Table`.
         """
-        column_names = tables[0].get_column_names()
-        column_types = tables[0].get_column_types()
+        column_names = tables[0].column_names
+        column_types = tables[0].column_types
 
         for table in tables[1:]:
-            if table.get_column_types() != column_types:
+            if table.column_types != column_types:
                 raise ValueError('Only tables with identical column types may be merged.')
 
         rows = chain(*[table.rows for table in tables])
