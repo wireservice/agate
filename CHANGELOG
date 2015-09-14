@@ -1,6 +1,7 @@
 0.9.0
 -----
 
+* Table.rows and Table.columns are now behind properties. (#247)
 * Column.data_type is now a property. (#247)
 * Table[Set].get_column_types() is now the Table[Set].column_types property. (#247)
 * Table[Set].get_column_names() is now the Table[Set].column_names property. (#247)

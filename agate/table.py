@@ -69,8 +69,8 @@ class Table(object):
         self._cached_columns = {}
         self._cached_rows = {}
 
-        self.columns = ColumnMapping(self)
-        self.rows = RowSequence(self)
+        self._columns = ColumnMapping(self)
+        self._rows = RowSequence(self)
 
         cast_data = []
 
@@ -216,6 +216,20 @@ class Table(object):
         :returns: A :class:`tuple` of strings.
         """
         return self._column_names
+
+    @property
+    def rows(self):
+        """
+        Get this tables :class:`.RowSequence`.
+        """
+        return self._rows
+
+    @property
+    def columns(self):
+        """
+        Get this tables :class:`.ColumnMapping`.
+        """
+        return self._columns
 
     def select(self, column_names):
         """
