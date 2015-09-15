@@ -356,7 +356,7 @@ class Table(object):
         y = self.columns[column_two]
 
         if x.aggregate(HasNulls()) or y.aggregate(HasNulls()):
-            raise NullComputationError
+            raise NullCalculationError
 
         n = len(x)
 

@@ -256,6 +256,18 @@ class TestTable(unittest.TestCase):
         self.assertEqual(table.pearson_correlation('one', 'one'), Decimal('1'))
         self.assertAlmostEqual(table.pearson_correlation('one', 'two'), Decimal('3').sqrt() * Decimal('0.5'))
 
+    def test_pearson_correlation_nulls(self):
+        rows = (
+            (-1, 0, 'a'),
+            (0, 0, 'b'),
+            (1, None, 'c')
+        )
+
+        table = Table(rows, self.columns)
+
+        with self.assertRaises(NullCalculationError):
+            table.pearson_correlation('one', 'two')
+
     def test_pearson_correlation_zero(self):
         rows = (
             (-1, 3, 'a'),
@@ -440,6 +452,23 @@ class TestTable(unittest.TestCase):
         self.assertEqual(new_table._column_names, ('one', 'two'))
         self.assertSequenceEqual(new_table.columns['one'], (2,))
 
+class TestPrettyPrint(unittest.TestCase):
+    def setUp(self):
+        self.rows = (
+            ('1.7', 2, 'a'),
+            ('11.18', None, None),
+            ('0', 1, 'c')
+        )
+
+        self.number_type = Number()
+        self.text_type = Text()
+
+        self.columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            ('three', self.text_type)
+        )
+
     def test_pretty_print(self):
         table = Table(self.rows, self.columns)
 
@@ -448,7 +477,7 @@ class TestTable(unittest.TestCase):
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 23)
+        self.assertEqual(len(lines[0]), 25)
 
     def test_pretty_print_max_rows(self):
         table = Table(self.rows, self.columns)
@@ -458,7 +487,7 @@ class TestTable(unittest.TestCase):
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 23)
+        self.assertEqual(len(lines[0]), 25)
 
     def test_pretty_print_max_columns(self):
         table = Table(self.rows, self.columns)
@@ -468,7 +497,7 @@ class TestTable(unittest.TestCase):
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 21)
+        self.assertEqual(len(lines[0]), 23)
 
 class TestTableGrouping(unittest.TestCase):
     def setUp(self):
