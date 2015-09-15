@@ -1,5 +1,5 @@
 =======================
-agate.column_types
+agate.data_types
 =======================
 
 .. automodule:: agate.data_types

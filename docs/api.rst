@@ -13,3 +13,4 @@ API
     api/rows
     api/table
     api/tableset
+    api/utils
