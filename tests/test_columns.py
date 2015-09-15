@@ -94,6 +94,16 @@ class TestColumns(unittest.TestCase):
         with self.assertRaises(StopIteration):
             next(it)
 
+    def test_columns_equal(self):
+        table2 = Table(self.rows, self.columns)
+
+        self.assertTrue(self.table.columns['one'] == table2.columns['one'])
+
+    def test_columns_not_equal(self):
+        table2 = Table(self.rows, self.columns)
+
+        self.assertFalse(self.table.columns['one'] != table2.columns['one'])
+
     def test_immutable(self):
         with self.assertRaises(TypeError):
             self.table.columns['one'] = 'foo'

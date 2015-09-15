@@ -44,7 +44,7 @@ class Column(Sequence):
         if six.PY2:
             return str(self.__unicode__().encode('utf8'))
 
-        return str(self.__unicode__())
+        return str(self.__unicode__())  #pragma: no cover
 
     def __getitem__(self, j):
         return self.get_data()[j]
