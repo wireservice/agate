@@ -1,6 +1,7 @@
 0.9.0
 -----
 
+* Add many missing unit tests. Up to 99% coverage.
 * Add property accessors for TableSet.key_name and TableSet.key_type. (#247)
 * Table.rows and Table.columns are now behind properties. (#247)
 * Column.data_type is now a property. (#247)
