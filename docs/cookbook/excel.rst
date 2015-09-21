@@ -23,7 +23,7 @@ agate:
         return (row['a'] + row['b']) / row['c']
 
     new_table = table.compute([
-        ('new_column', Formula(f))
+        (Formula(f), 'new_column')
     ])
 
 If this still isn't enough flexibility, you can also create your own subclass of :class:`.Computation`.
@@ -43,7 +43,7 @@ SUM
     formula = agate.Formula(number_type, five_year_total)
 
     new_table = table.compute([
-        ('five_year_total', formula)
+        (formula, 'five_year_total')
     ])
 
 TRIM
@@ -52,7 +52,7 @@ TRIM
 .. code-block:: python
 
     new_table = table.compute([
-        ('name_stripped', Formula(text_type, lambda r: r['name'].strip()))
+        (Formula(text_type, lambda r: r['name'].strip()), 'name_stripped')
     ])
 
 CONCATENATE
@@ -61,7 +61,7 @@ CONCATENATE
 .. code-block:: python
 
     new_table = table.compute([
-        ('full_name', Formula(text_type, lambda r: '%(first_name)s %(middle_name)s %(last_name)s' % r))
+        (Formula(text_type, lambda r: '%(first_name)s %(middle_name)s %(last_name)s' % r), 'full_name')
     ])
 
 IF
@@ -70,7 +70,7 @@ IF
 .. code-block:: python
 
     new_table = table.compute([
-        ('mvp_candidate', Formula(boolean_type, lambda r: row['batting_average'] > 0.3))
+        (Formula(boolean_type, lambda r: row['batting_average'] > 0.3), 'mvp_candidate')
     ])
 
 
@@ -87,7 +87,7 @@ VLOOKUP
     }
 
     new_table = table.compute([
-        ('mvp_candidate', Formula(text_type, lambda r: states[row['state_abbr']]))
+        (Formula(text_type, lambda r: states[row['state_abbr']]), 'mvp_candidate')
     ])
 
 Pivot tables

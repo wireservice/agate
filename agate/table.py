@@ -639,11 +639,11 @@ class Table(object):
         column_names = list(copy(self._column_names))
         column_types = list(copy(self._column_types))
 
-        for name, computation in computations:
+        for computation, new_column_name in computations:
             if not isinstance(computation, Computation):
-                raise ValueError('The second element in pair must be a Computation instance.')
+                raise ValueError('The first element in pair must be a Computation instance.')
 
-            column_names.append(name)
+            column_names.append(new_column_name)
             column_types.append(computation.get_computed_data_type(self))
 
             computation.prepare(self)
@@ -651,7 +651,7 @@ class Table(object):
         new_rows = []
 
         for row in self.rows:
-            new_columns = tuple(c.run(row) for n, c in computations)
+            new_columns = tuple(c.run(row) for c, n in computations)
             new_rows.append(tuple(row) + new_columns)
 
         return self._fork(new_rows, zip(column_names, column_types))

@@ -55,7 +55,7 @@ def median_age(data):
 
 def years_in_prison(data):
     data['with_years_in_prison'] = data['exonerations'].compute([
-        ('years_in_prison', agate.Change('convicted', 'exonerated'))
+        (agate.Change('convicted', 'exonerated'), 'years_in_prison')
     ])
 
 def youth(data):

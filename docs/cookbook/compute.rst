@@ -10,9 +10,9 @@ You could use a :class:`.Formula` to calculate percent change, however, for your
 .. code-block:: python
 
     new_table = table.compute([
-        ('2000_change', Change('2000', '2001'),
-        ('2001_change', Change('2001', '2002'),
-        ('2002_change', Change('2002', '2003')
+        (Change('2000', '2001'), '2000_change'),
+        (Change('2001', '2002'), '2001_change'),
+        (Change('2002', '2003'), '2002_change')
     ])
 
 Or, better yet, compute the whole decade using a loop:
@@ -23,7 +23,7 @@ Or, better yet, compute the whole decade using a loop:
 
     for year in range(2000, 2010):
         change = Change(year, year + 1)
-        computations.append(('%i_change' % year, change))
+        computations.append((change, '%i_change' % year))
 
     new_table = table.compute(computations)
 
@@ -38,7 +38,7 @@ Want percent change instead of value change? Just swap out the :class:`.Aggregat
 
     for year in range(2000, 2010):
         change = PercentChange(year, year + 1)
-        computations.append(('%i_change' % year, change))
+        computations.append((change, '%i_change' % year))
 
     new_table = table.compute(computations)
 
@@ -53,7 +53,7 @@ Need your change indexed to a starting year? Just fix the first argument:
 
     for year in range(2000, 2010):
         change = Change(2000, year + 1)
-        computations.append(('%i_change' % year, change))
+        computations.append((change, '%i_change' % year))
 
     new_table = table.compute(computations)
 
@@ -76,7 +76,7 @@ We can use :meth:`.Table.compute` to apply the quantize to generate a rounded co
         return row['price'].quantize(Decimal('0.01'))
 
     new_table = table.compute([
-        ('price_rounded', Formula(number_type, round_price))
+        (Formula(number_type, round_price), 'price_rounded')
     ])
 
 To round to one decimal place you would simply change :code:`0.01` to :code:`0.1`.
@@ -91,7 +91,7 @@ Calculating the difference between dates (or dates and times) works exactly the 
 .. code-block:: python
 
     new_table = table.compute([
-        ('age_at_death', Change('born', 'died')
+        (Change('born', 'died'), 'age_at_death')
     ])
 
 Levenshtein edit distance
@@ -146,7 +146,7 @@ This code can now be applied to any :class:`.Table` just as any other :class:`.C
 .. code-block:: python
 
     new_table = table.compute([
-        ('distance', LevenshteinDistance('column_name', 'string to compare'))
+        (LevenshteinDistance('column_name', 'string to compare'), 'distance')
     ])
 
 The resulting column will contain an integer measuring the edit distance between the value in the column and the comparison string.
@@ -180,5 +180,5 @@ We apply the diversity index like any other computation:
 .. code-block:: Python
 
     with_index = table.compute([
-        ('diversity_index', USATodayDiversityIndex())
+        (USATodayDiversityIndex(), 'diversity_index')
     ])

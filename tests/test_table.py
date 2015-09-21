@@ -626,8 +626,8 @@ class TestTableCompute(unittest.TestCase):
 
     def test_compute(self):
         new_table = self.table.compute([
-            ('number', Formula(self.number_type, lambda r: r['two'] + r['three'])),
-            ('text', Formula(self.text_type, lambda r: (r['one'] or '-') + six.text_type(r['three'])))
+            (Formula(self.number_type, lambda r: r['two'] + r['three']), 'number'),
+            (Formula(self.text_type, lambda r: (r['one'] or '-') + six.text_type(r['three'])), 'text')
         ])
 
         self.assertIsNot(new_table, self.table)
@@ -640,7 +640,7 @@ class TestTableCompute(unittest.TestCase):
 
     def test_compute_multiple(self):
         new_table = self.table.compute([
-            ('test', Formula(self.number_type, lambda r: r['two'] + r['three']))
+            (Formula(self.number_type, lambda r: r['two'] + r['three']), 'test')
         ])
 
         self.assertIsNot(new_table, self.table)
@@ -904,10 +904,10 @@ class TestTableData(unittest.TestCase):
     def test_compute_creates_rows(self):
         table = Table(self.rows, self.columns)
         table2 = table.compute([
-            ('new2', Formula(self.number_type, lambda r: r['one']))
+            (Formula(self.number_type, lambda r: r['one']), 'new2')
         ])
         table3 = table2.compute([
-            ('new3', Formula(self.number_type, lambda r: r['one']))
+            (Formula(self.number_type, lambda r: r['one']), 'new3')
         ])
 
         self.assertIsNot(table._data[0], table2._data[0])

@@ -127,11 +127,11 @@ class TestTableSet(unittest.TestCase):
         self.assertIsInstance(table.column_types[0], Text)
         self.assertSequenceEqual(table.column_types[1:], [self.text_type, self.number_type])
 
-    def test_select(self):
+    def test_compute(self):
         tableset = TableSet(self.tables)
 
         new_tableset = tableset.compute([
-            ('new_column', Formula(self.text_type, lambda r: '%(letter)s-%(number)i' % r))
+            (Formula(self.text_type, lambda r: '%(letter)s-%(number)i' % r), 'new_column')
         ])
 
         new_table = new_tableset['table1']
@@ -157,7 +157,7 @@ class TestTableSet(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[1], ('a', 2, 'a-2'))
         self.assertSequenceEqual(new_table.rows[2], ('c', 3, 'c-3'))
 
-    def test_compute(self):
+    def test_select(self):
         tableset = TableSet(self.tables)
 
         new_tableset = tableset.select(['number'])

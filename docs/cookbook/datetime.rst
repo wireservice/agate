@@ -95,5 +95,5 @@ If you load data from a spreadsheet in one timezone and you need to convert it t
     timezone_shifter = agate.Formula(lambda r: r['when'].astimezone(rome))
 
     table = agate.Table.compute([
-        ('when_in_rome', timezone_shifter)
+        (timezone_shifter, 'when_in_rome')
     ])

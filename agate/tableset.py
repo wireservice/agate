@@ -19,8 +19,10 @@ in the set and the result is a new :class:`TableSet` instance made up of
 entirely new :class:`.Table` instances.
 
 :class:`TableSet` instances can also contain other TableSet's. This means you
-can chain calls to :class:`.Table.aggregate` and :class:`TableSet.aggregeate`
-and end up with data aggregated across multiple dimensions.
+can chain calls to :meth:`.Table.group_by` and :meth:`TableSet.group_by`
+and end up with data grouped across multiple dimensions.
+:meth:`TableSet.aggregate` on nested TableSets will then group across multiple
+dimensions.
 """
 
 from collections import Mapping
@@ -105,9 +107,6 @@ class TableSet(Mapping):
         self.join = TableMethodProxy(self, 'join')
         self.group_by = TableMethodProxy(self, 'group_by')
         self.compute = TableMethodProxy(self, 'compute')
-        self.percent_change = TableMethodProxy(self, 'percent_change')
-        self.rank = TableMethodProxy(self, 'rank')
-        self.z_scores = TableMethodProxy(self, 'z_scores')
 
     def __getitem__(self, k):
         return self._tables.__getitem__(k)
@@ -221,6 +220,29 @@ class TableSet(Mapping):
         """
         return self._column_names
 
+    def merge(self):
+        """
+        Convert this TableSet into a single table. This is the inverse of
+        :meth:`.Table.group_by`.
+
+        :returns: A new :class:`Table`.
+        """
+        from agate.table import Table
+
+        column_names = list(self.column_names)
+        column_types = list(self.column_types)
+
+        column_names.insert(0, self.key_name)
+        column_types.insert(0, self.key_type)
+
+        rows = []
+
+        for key, table in self.items():
+            for row in table.rows:
+                rows.append([key] + list(row))
+
+        return Table(rows, zip(column_names, column_types))
+
     def _aggregate(self, aggregations=[]):
         """
         Recursive aggregation allowing for TableSet's to be nested inside
@@ -264,28 +286,6 @@ class TableSet(Mapping):
                 output.append(new_row)
 
         return column_names, column_types, output
-
-    def merge(self):
-        """
-        Convert this TableSet into a single table.
-
-        :returns: A new :class:`Table`.
-        """
-        from agate.table import Table
-        
-        column_names = list(self.column_names)
-        column_types = list(self.column_types)
-
-        column_names.insert(0, self.key_name)
-        column_types.insert(0, self.key_type)
-
-        rows = []
-
-        for key, table in self.items():
-            for row in table.rows:
-                rows.append([key] + list(row))
-
-        return Table(rows, zip(column_names, column_types))
 
     def aggregate(self, aggregations=[]):
         """

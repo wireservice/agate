@@ -234,7 +234,7 @@ So, what **is** the median age of these individuals?
 
     26
 
-Computing new columns
+w new columns
 =====================
 
 In addition to "column-wise" calculations there are also "row-wise" calculations. These calculations go through a :class:`.Table` row-by-row and derive a new column using the existing data. To perform row calculations in agate we use subclasses of :class:`.Computation`.
@@ -248,7 +248,7 @@ To answer this question we will apply the :class:`.Change` computation to the ``
 .. code-block:: python
 
     with_years_in_prison = exonerations.compute([
-        ('years_in_prison', agate.Change('convicted', 'exonerated'))
+        (agate.Change('convicted', 'exonerated'), 'years_in_prison')
     ])
 
     median_years = with_years_in_prison.columns['years_in_prison'].aggregate(agate.Median())
@@ -268,7 +268,7 @@ For instance, this example will create a ``full_name`` column from the ``first_n
 .. code-block:: python
 
     full_names = exonerations.compute([
-        ('full_name', agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row))
+        (agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row), 'full_name')
     ])
 
 For efficiencies sake, agate allows you to perform several computations at once.
@@ -276,8 +276,8 @@ For efficiencies sake, agate allows you to perform several computations at once.
 .. code-block:: python
 
     with_computations = exonerations.compute([
-        ('full_name', agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row)),
-        ('years_in_prison', agate.Change('convicted', 'exonerated'))
+        (agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row), 'full_name'),
+        (agate.Change('convicted', 'exonerated'), 'years_in_prison')
     ])
 
 If :class:`.Formula` still is not flexible enough (for instance, if you need to compute a new row based on the distribution of data in a column) you can always implement your own subclass of :class:`.Computation`. See the API documentation for :mod:`.computations` to see all of the supported ways to compute new data.
@@ -375,7 +375,7 @@ This is a much more complicated question that's going to pull together a lot of 
 .. code-block:: python
 
     with_years_in_prison = exonerations.compute([
-        ('years_in_prison', agate.Change('convicted', 'exonerated'))
+        (agate.Change('convicted', 'exonerated'), 'years_in_prison')
     ])
 
     state_totals = with_years_in_prison.group_by('state')
