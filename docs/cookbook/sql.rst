@@ -87,7 +87,7 @@ agate:
 
 .. code-block:: python
 
-    joined = patients.inner_join('doctor', doctors, 'id')
+    joined = patients.join(doctors, 'doctor', 'id', inner=True)
 
 LEFT OUTER JOIN
 ===============
@@ -102,7 +102,7 @@ agate:
 
 .. code-block:: python
 
-    joined = patients.left_outer_join('doctor', doctors, 'id')
+    joined = patients.join(doctors, 'doctor', 'id')
 
 GROUP BY
 ========

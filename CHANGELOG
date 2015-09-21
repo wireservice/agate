@@ -1,7 +1,11 @@
 0.10.0
 ------
 
-
+* Columns with identical names are now suffixed "2" after a Table.join.
+* Duplicate key columns are no longer included in the result of a Table.join. (#250)
+* Table.join right_key no longer necessary if identical to left_key. (#254)
+* Table.inner_join is now more. Use `inner` keyword to Table.join.
+* Table.left_outer_join is now Table.join.
 
 0.9.0
 -----

@@ -682,8 +682,50 @@ class TestTableJoin(unittest.TestCase):
         self.left = Table(self.left_rows, self.left_columns)
         self.right = Table(self.right_rows, self.right_columns)
 
-    def test_inner_join(self):
-        new_table = self.left.inner_join('one', self.right, 'four')
+    def test_join(self):
+        new_table = self.left.join(self.right, 'one', 'four')
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 4, 'a'))
+        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 3, 'b'))
+        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', 2, 'c'))
+
+    def test_join2(self):
+        new_table = self.left.join(self.right, 'one', 'five')
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', None, None))
+        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', None, 'c'))
+        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, None))
+
+    def test_join_same_column_name(self):
+        right_columns = (
+            ('four', self.number_type),
+            ('one', self.number_type),
+            ('six', self.text_type)
+        )
+
+        right = Table(self.right_rows, right_columns)
+
+        new_table = self.left.join(right, 'one')
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', None, None))
+        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', None, 'c'))
+        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, None))
+
+    def test_join_func(self):
+        new_table = self.left.join(
+            self.right,
+            lambda left: '%i%s' % (left['two'], left['three']),
+            lambda right: '%i%s' % (right['five'], right['six'])
+        )
 
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 6)
@@ -691,58 +733,51 @@ class TestTableJoin(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 1, 4, 'a'))
         self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 2, 3, 'b'))
         self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, 2, 'c'))
+
+    def test_inner_join(self):
+        new_table = self.left.join(self.right, 'one', 'four', inner=True)
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 4, 'a'))
+        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 3, 'b'))
+        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', 2, 'c'))
 
     def test_inner_join2(self):
-        new_table = self.left.inner_join('one', self.right, 'five')
+        new_table = self.left.join(self.right, 'one', 'five', inner=True)
 
         self.assertEqual(len(new_table.rows), 1)
-        self.assertEqual(len(new_table.columns), 6)
+        self.assertEqual(len(new_table.columns), 5)
 
-        self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b', None, 2, 'c'))
+        self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b', None, 'c'))
+
+    def test_inner_join_same_column_name(self):
+        right_columns = (
+            ('four', self.number_type),
+            ('one', self.number_type),
+            ('six', self.text_type)
+        )
+
+        right = Table(self.right_rows, right_columns)
+
+        new_table = self.left.join(right, 'one', inner=True)
+
+        self.assertEqual(len(new_table.rows), 1)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b', None, 'c'))
 
     def test_inner_join_func(self):
-        new_table = self.left.inner_join(
-            lambda left: '%i%s' % (left['two'], left['three']),
+        new_table = self.left.join(
             self.right,
-            lambda right: '%i%s' % (right['five'], right['six'])
+            lambda left: '%i%s' % (left['two'], left['three']),
+            lambda right: '%i%s' % (right['five'], right['six']),
+            inner=True
         )
 
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 6)
-
-    def test_left_outer_join(self):
-        new_table = self.left.left_outer_join('one', self.right, 'four')
-
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 6)
-
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 1, 4, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 2, 3, 'b'))
-        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, 2, 'c'))
-
-    def test_left_outer_join2(self):
-        new_table = self.left.left_outer_join('one', self.right, 'five')
-
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 6)
-
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', None, None, None))
-        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', None, 2, 'c'))
-        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, None, None))
-
-    def test_left_outer_func(self):
-        new_table = self.left.left_outer_join(
-            lambda left: '%i%s' % (left['two'], left['three']),
-            self.right,
-            lambda right: '%i%s' % (right['five'], right['six'])
-        )
-
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 6)
-
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 1, 4, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 2, 3, 'b'))
-        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, 2, 'c'))
 
 class TestTableMerge(unittest.TestCase):
     def setUp(self):

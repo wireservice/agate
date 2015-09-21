@@ -452,99 +452,99 @@ class Table(object):
 
         return self._fork(rows)
 
-    def inner_join(self, left_key, table, right_key):
+    def join(self, right_table, left_key, right_key=None, inner=False):
         """
-        Performs an "inner join", combining columns from this table
-        and from :code:`table` anywhere that the output of :code:`left_key`
-        and :code:`right_key` are equivalent.
+        Performs the equivalent of SQL's "left outer join", combining columns
+        from this table and from :code:`right_table` anywhere that the output of
+        :code:`left_key` and :code:`right_key` are equivalent.
 
+        Where there is no match for :code:`left_key` the left columns will
+        be included with the right columns set to :code:`None` unless
+        the :code:`inner` argument is specified. (See arguments for more.)
+
+        If :code:`left_key` and :code:`right_key` are column names, only
+        the left column will be included in the output table.
+
+        Column names from the right table which also exist in this table will
+        be suffixed "2" in the new table.
+
+        :param right_table: The "right" table to join to.
         :param left_key: Either the name of a column from the this table
             to join on, or a :class:`function` that takes a row and returns
             a value to join on.
-        :param table: The "right" table to join to.
         :param right_key: Either the name of a column from :code:table`
             to join on, or a :class:`function` that takes a row and returns
-            a value to join on.
+            a value to join on. If :code:`None` then :code:`left_key` will be
+            used for both.
+        :param inner: Perform a SQL-style "inner join" instead of a left outer
+            join. Rows which have no match for :code:`left_key` will not be
+            included in the output table.
         :returns: A new :class:`Table`.
         """
         left_key_is_row_function = hasattr(left_key, '__call__')
+
+        if right_key is None:
+            right_key = left_key
+
         right_key_is_row_function = hasattr(right_key, '__call__')
 
-        left = []
-        right = []
+        # Get join columns
+        left_key_index = None
+        right_key_index = None
 
         if left_key_is_row_function:
-            left = [left_key(row) for row in self.rows]
+            left_column = [left_key(row) for row in self.rows]
         else:
-            c = self._column_names.index(left_key)
-            left = self._get_column(c)
+            left_key_index = self._column_names.index(left_key)
+            left_column = self._get_column(left_key_index)
 
         if right_key_is_row_function:
-            right = [right_key(row) for row in table.rows]
+            right_column = [right_key(row) for row in right_table.rows]
         else:
-            c = table._column_names.index(right_key)
-            right = table._get_column(c)
+            right_key_index = right_table._column_names.index(right_key)
+            right_column = right_table._get_column(right_key_index)
 
-        rows = []
+        # Build names and type lists
+        column_names = list(self._column_names)
+        column_types = list(self._column_types)
 
-        for i, l in enumerate(left):
-            for j, r in enumerate(right):
-                if l == r:
-                    rows.append(tuple(self.rows[i]) + tuple(table.rows[j]))
+        for i, name in enumerate(right_table.column_names):
+            if i == right_key_index:
+                continue
 
-        column_types = self._column_types + table._column_types
-        column_names = self._column_names + table._column_names
-
-        return self._fork(rows, zip(column_names, column_types))
-
-    def left_outer_join(self, left_key, table, right_key):
-        """
-        Performs an "left outer join", combining columns from this table
-        and from :code:`table` anywhere that the output of :code:`left_key`
-        and :code:`right_key` are equivalent.
-
-        Where there is no match for :code:`left_key`the left columns will
-        be included with the right columns set to :code:`None`.
-
-        :param left_key: Either the name of a column from the this table
-            to join on, or a :class:`function` that takes a row and returns
-            a value to join on.
-        :param table: The "right" table to join to.
-        :param right_key: Either the name of a column from :code:table`
-            to join on, or a :class:`function` that takes a row and returns
-            a value to join on.
-        :returns: A new :class:`Table`.
-        """
-        left_key_is_row_function = hasattr(left_key, '__call__')
-        right_key_is_row_function = hasattr(right_key, '__call__')
-
-        left = []
-        right = []
-
-        if left_key_is_row_function:
-            left = [left_key(row) for row in self.rows]
-        else:
-            c = self._column_names.index(left_key)
-            left = self._get_column(c)
-
-        if right_key_is_row_function:
-            right = [right_key(row) for row in table.rows]
-        else:
-            c = table._column_names.index(right_key)
-            right = table._get_column(c)
-
-        rows = []
-
-        for i, l in enumerate(left):
-            if l in right:
-                for j, r in enumerate(right):
-                    if l == r:
-                        rows.append(tuple(list(self.rows[i]) + list(table.rows[j])))
+            if name in self._column_names:
+                column_names.append('%s2' % name)
             else:
-                rows.append(tuple(list(self.rows[i]) + [None] * len(table.columns)))
+                column_names.append(name)
 
-        column_types = self._column_types + table._column_types
-        column_names = self._column_names + table._column_names
+            column_types.append(self._column_types[i])
+
+        # Collect new rows
+        rows = []
+
+        for i, l in enumerate(left_column):
+            if l in right_column:
+                for j, r in enumerate(right_column):
+                    if l == r:
+                        row = list(self.rows[i])
+
+                        for k, v in enumerate(right_table.rows[j]):
+                            if k == right_key_index:
+                                continue
+
+                            row.append(v)
+
+                        rows.append(row)
+            elif not inner:
+                row = list(self.rows[i])
+
+                for k, v in enumerate(right_table.column_names):
+                    if k == right_key_index:
+                        continue
+
+                    row.append(None)
+
+                rows.append(row)
 
         return self._fork(rows, zip(column_names, column_types))
 
