@@ -1,6 +1,7 @@
 0.10.0
 ------
 
+* TableSet.merge method can be used to ungroup data. (#253)
 * Columns with identical names are now suffixed "2" after a Table.join.
 * Duplicate key columns are no longer included in the result of a Table.join. (#250)
 * Table.join right_key no longer necessary if identical to left_key. (#254)

@@ -553,7 +553,7 @@ class Table(object):
         """
         Merge an array of tables with identical columns into a single table.
         Each table must have exactly the same column types. Their column names
-        need not be identical.T he first table's column names will be the ones
+        need not be identical. The first table's column names will be the ones
         which are used.
 
         :param tables: An array of :class:`Table`.

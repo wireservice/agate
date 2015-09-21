@@ -105,6 +105,28 @@ class TestTableSet(unittest.TestCase):
 
         self.assertSequenceEqual(tableset.column_names, [n for n, t in self.columns])
 
+    def test_merge(self):
+        tableset = TableSet(self.tables)
+
+        table = tableset.merge()
+
+        self.assertSequenceEqual(table.column_names, ['group', 'letter', 'number'])
+        self.assertIsInstance(table.column_types[0], Text)
+        self.assertSequenceEqual(table.column_types[1:], [self.text_type, self.number_type])
+
+        self.assertEqual(len(table.rows), 9)
+        self.assertSequenceEqual(table.rows[0], ['table1', 'a', 1])
+        self.assertSequenceEqual(table.rows[8], ['table3', 'c', 3])
+
+    def test_merge_key_name(self):
+        tableset = TableSet(self.tables, key_name='foo')
+
+        table = tableset.merge()
+
+        self.assertSequenceEqual(table.column_names, ['foo', 'letter', 'number'])
+        self.assertIsInstance(table.column_types[0], Text)
+        self.assertSequenceEqual(table.column_types[1:], [self.text_type, self.number_type])
+
     def test_select(self):
         tableset = TableSet(self.tables)
 

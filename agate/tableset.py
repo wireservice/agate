@@ -102,8 +102,7 @@ class TableSet(Mapping):
         self.order_by = TableMethodProxy(self, 'order_by')
         self.limit = TableMethodProxy(self, 'limit')
         self.distinct = TableMethodProxy(self, 'distinct')
-        self.inner_join = TableMethodProxy(self, 'inner_join')
-        self.left_outer_join = TableMethodProxy(self, 'left_outer_join')
+        self.join = TableMethodProxy(self, 'join')
         self.group_by = TableMethodProxy(self, 'group_by')
         self.compute = TableMethodProxy(self, 'compute')
         self.percent_change = TableMethodProxy(self, 'percent_change')
@@ -265,6 +264,28 @@ class TableSet(Mapping):
                 output.append(new_row)
 
         return column_names, column_types, output
+
+    def merge(self):
+        """
+        Convert this TableSet into a single table.
+
+        :returns: A new :class:`Table`.
+        """
+        from agate.table import Table
+        
+        column_names = list(self.column_names)
+        column_types = list(self.column_types)
+
+        column_names.insert(0, self.key_name)
+        column_types.insert(0, self.key_type)
+
+        rows = []
+
+        for key, table in self.items():
+            for row in table.rows:
+                rows.append([key] + list(row))
+
+        return Table(rows, zip(column_names, column_types))
 
     def aggregate(self, aggregations=[]):
         """
