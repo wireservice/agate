@@ -6,7 +6,8 @@ This is the release process for agate:
 
 1. Verify all unit tests pass with fresh environments: ``tox -r``.
 2. Verify 100% test coverage: ``nosetests --with-coverage --cover-package=agate``.
-3. Make sure the example script still works: ``python example.py``.
+3. Ensure any new modules have been added to setup.py's ``packages`` list.
+#. Make sure the example script still works: ``python example.py``.
 #. Ensure ``CHANGELOG`` is up to date.
 #. Create a release tag: ``git tag -a x.y.z -m "x.y.z release."``
 #. Push tags upstream: ``git push --tags``
