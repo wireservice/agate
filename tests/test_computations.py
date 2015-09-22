@@ -131,7 +131,7 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(len(new_table.columns), 5)
         self.assertSequenceEqual(new_table.columns['rank'], (3, 1, 3, 1))
 
-    def test_rank_number_cmp(self):
+    def test_rank_number_key(self):
         new_table = self.table.compute([
             (Rank('two', cmp=lambda x,y: int(y - x)), 'rank')
         ])
@@ -139,6 +139,15 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 4)
         self.assertEqual(len(new_table.columns), 5)
         self.assertSequenceEqual(new_table.columns['rank'], (3, 1, 3, 1))
+
+    def test_rank_number_reverse_key(self):
+        new_table = self.table.compute([
+            (Rank('two', cmp=lambda x,y: int(y - x), reverse=True), 'rank')
+        ])
+
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+        self.assertSequenceEqual(new_table.columns['rank'], (1, 3, 1, 3))
 
     def test_rank_text(self):
         new_table = self.table.compute([

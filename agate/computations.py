@@ -16,6 +16,11 @@ data in each row. If this is still not suitable, :class:`Computation` can be
 subclassed to fully customize it's behavior.
 """
 
+import six
+
+if six.PY3:
+    from functools import cmp_to_key
+
 from agate.aggregations import HasNulls, Mean, StDev, Percentiles
 from agate.columns import *
 from agate.data_types import *
@@ -164,15 +169,12 @@ class Rank(Computation):
     :param column_name: The name of the column to rank.
     :param cmp: An optional comparison function. If not specified ranking will
         be ascending, with nulls ranked last.
-    :param reverse: Sort descending. Not valid with :code:`cmp`.
+    :param reverse: Reverse sort order before ranking.
     """
     def __init__(self, column_name, cmp=None, reverse=None):
         self._column_name = column_name
         self._cmp = cmp
         self._reverse = reverse
-
-        if cmp is not None and reverse is not None:
-            raise ValueError('reverse is not valid when also specifying cmp')
 
     def get_computed_data_type(self, table):
         return Number()
@@ -181,12 +183,15 @@ class Rank(Computation):
         column = table.columns[self._column_name]
 
         if self._cmp:
-            data_sorted = sorted(column.get_data(), cmp=self._cmp)
-        elif self._reverse:
-            data_sorted = column.get_data_sorted()
-            data_sorted.reverse()
+            if six.PY3:
+                data_sorted = sorted(column.get_data(), key=cmp_to_key(self._cmp))
+            else:
+                data_sorted = sorted(column.get_data(), cmp=self._cmp)
         else:
             data_sorted = column.get_data_sorted()
+
+        if self._reverse:
+            data_sorted.reverse()
 
         self._ranks = {}
         rank = 0
