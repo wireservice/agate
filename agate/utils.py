@@ -35,6 +35,11 @@ class Patchable(object):
     """
     @classmethod
     def monkeypatch(cls, patch_cls):
+        """
+        Dynamically add :code:`patch_cls` as a base class of this class.
+
+        :param patch_cls: The class to be patched on.
+        """
         cls.__bases__ += (patch_cls, )
 
 class NullOrder(object):

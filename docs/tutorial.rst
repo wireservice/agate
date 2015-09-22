@@ -234,7 +234,7 @@ So, what **is** the median age of these individuals?
 
     26
 
-w new columns
+Computing new columns
 =====================
 
 In addition to "column-wise" calculations there are also "row-wise" calculations. These calculations go through a :class:`.Table` row-by-row and derive a new column using the existing data. To perform row calculations in agate we use subclasses of :class:`.Computation`.

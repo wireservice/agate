@@ -33,6 +33,7 @@ Table of contents
     install
     tutorial
     cookbook
+    extensions
     api
     contributing
     release_process
