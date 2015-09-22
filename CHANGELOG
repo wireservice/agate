@@ -1,6 +1,9 @@
 0.10.0
 ------
 
+* Add reverese and cmp arguments to Rank computation. (#248)
+* Document how to use agate-sql to read/write SQL tables. (#238, #241)
+* Document how to write extensions.
 * Add monkeypatching extensibility pattern via utils.Patchable.
 * Reversed order of argument pairs for Table.compute. (#249)
 * TableSet.merge method can be used to ungroup data. (#253)

@@ -160,18 +160,38 @@ class Rank(Computation):
     middle two are tied, then the output will be :code:`[1, 2, 2, 4]`.
 
     Null values will always be ranked last.
+
+    :param column_name: The name of the column to rank.
+    :param cmp: An optional comparison function. If not specified ranking will
+        be ascending, with nulls ranked last.
+    :param reverse: Sort descending. Not valid with :code:`cmp`.
     """
-    def __init__(self, column_name):
+    def __init__(self, column_name, cmp=None, reverse=None):
         self._column_name = column_name
+        self._cmp = cmp
+        self._reverse = reverse
+
+        if cmp is not None and reverse is not None:
+            raise ValueError('reverse is not valid when also specifying cmp')
 
     def get_computed_data_type(self, table):
         return Number()
 
     def prepare(self, table):
+        column = table.columns[self._column_name]
+
+        if self._cmp:
+            data_sorted = sorted(column.get_data(), cmp=self._cmp)
+        elif self._reverse:
+            data_sorted = column.get_data_sorted()
+            data_sorted.reverse()
+        else:
+            data_sorted = column.get_data_sorted()
+
         self._ranks = {}
         rank = 0
 
-        for c in table.columns[self._column_name].get_data_sorted():
+        for c in data_sorted:
             rank += 1
 
             if c in self._ranks:

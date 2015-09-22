@@ -15,6 +15,17 @@ The basic rank supported by agate is standard "competition ranking". In this mod
         (agate.Rank('value'), 'rank')
     ])
 
+Rank descending
+===============
+
+Descending competition ranking is specified using the :code:`reverse` argument.
+
+.. code-block:: python
+
+    new_table = table.compute([
+        (agate.Rank('value', reverse=True), 'rank')
+    ])
+
 Rank change
 ===========
 
