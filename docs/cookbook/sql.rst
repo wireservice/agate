@@ -8,6 +8,8 @@ agate's command structure is very similar to SQL. The primary difference between
 
     All examples in this section use the `PostgreSQL <http://www.postgresql.org/>`_ dialect for comparison.
 
+If you want to read and write data from SQL, see :ref:`load_a_table_from_a_sql_database`.
+
 SELECT
 ======
 

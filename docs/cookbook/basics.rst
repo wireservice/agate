@@ -35,9 +35,33 @@ If your file does not have headers:
 Write a table to a CSV
 ======================
 
-    .. code-block:: python
+.. code-block:: python
 
     table.to_csv('output.csv')
+
+.. _load_a_table_from_a_sql_database:
+
+Load a table from a SQL database
+================================
+
+Use the `agate-sql <http://agate-sql.readthedocs.org/>`_ extension.
+
+.. code-block:: python
+
+    import agatesql
+
+    table = agate.Table.from_sql('postgresql:///database', 'input_table')
+
+Write a table to a SQL database
+===============================
+
+Use the `agate-sql <http://agate-sql.readthedocs.org/>`_ extension.
+
+.. code-block:: python
+
+    import agatesql
+
+    table.to_sql('postgresql:///database', 'output_table')
 
 Guess column types
 ==================
