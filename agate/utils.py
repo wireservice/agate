@@ -6,7 +6,10 @@ This module contains common utilities used in agate.
 
 from collections import Sequence
 from functools import wraps
+import inspect
 import math
+
+import six
 
 def memoize(func):
     """
@@ -32,6 +35,9 @@ class Patchable(object):
     Calling :code:`Class.monkeypatch(AnotherClass)` will dynamically add
     :code:`AnotherClass` as a base class of :code:`Class`. This effective is
     global--even existing instances of the class will have the new methods.
+
+    This can only be used to add new methods. It can not be used to override
+    the implementation of an existing method on the patched class.
     """
     @classmethod
     def monkeypatch(cls, patch_cls):

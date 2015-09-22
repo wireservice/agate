@@ -42,6 +42,10 @@ Writing your own extensions is straightforward. Create a class that acts as your
 
 The same pattern also works for adding methods to :class:`.TableSet`.
 
+.. warning::
+
+    Extensions are added as **base classes** of :class:`.Table` so you can not use them to override the implementation of an existing method. They are perfect for adding features, but if you need to modify how agate works, then you'll need to subclass. Any shadowed method will be ignored.
+
 List of known extensions
 ========================
 

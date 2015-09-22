@@ -17,6 +17,13 @@ class TryPatch(object):
     def testcls(cls, n):
         return n
 
+class TryPatchShadow(object):
+    def __init__(self):
+        self.foo = 'foo'
+
+    def _get_row_count(self):
+        return 1111
+
 class TestMonkeyPatching(unittest.TestCase):
     def test_monkeypatch(self):
         before_table = Table([], [('foo', Text())])
@@ -34,6 +41,19 @@ class TestMonkeyPatching(unittest.TestCase):
         self.assertEqual(before_table.test(5), 5)
         self.assertEqual(after_table.test(5), 5)
         self.assertEqual(Table.testcls(5), 5)
+
+    def test_monkeypatch_shadow(self):
+        before_table = Table([], [('foo', Text())])
+
+        Table.monkeypatch(TryPatchShadow)
+
+        after_table = Table([], [('foo', Text())])
+
+        self.assertEqual(before_table._get_row_count(), 0)
+        self.assertEqual(after_table._get_row_count(), 0)
+
+        with self.assertRaises(AttributeError):
+            after_table.foo == 'foo'
 
 class TestQuantiles(unittest.TestCase):
     def setUp(self):
