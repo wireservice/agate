@@ -15,7 +15,7 @@ if sys.version_info == (2, 6):
 
 setup(
     name='agate',
-    version='0.10.0',
+    version='0.11.0',
     description='A Python data analysis library designed for humans working in the real world.',
     long_description=open('README').read(),
     author='Christopher Groskopf',
