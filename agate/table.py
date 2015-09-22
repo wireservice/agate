@@ -44,7 +44,7 @@ from agate.rows import *
 from agate.tableset import *
 from agate.utils import *
 
-class Table(object):
+class Table(Patchable):
     """
     A dataset consisting of rows and columns.
 

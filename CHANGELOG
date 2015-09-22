@@ -1,6 +1,7 @@
 0.10.0
 ------
 
+* Add monkeypatching extensibility pattern via utils.Patchable.
 * Reversed order of argument pairs for Table.compute. (#249)
 * TableSet.merge method can be used to ungroup data. (#253)
 * Columns with identical names are now suffixed "2" after a Table.join.

@@ -39,6 +39,7 @@ from agate.aggregations import Aggregation
 from agate.data_types import Text, TypeTester
 from agate.exceptions import ColumnDoesNotExistError
 from agate.rows import RowSequence
+from agate.utils import Patchable
 
 class TableMethodProxy(object):
     """
@@ -57,7 +58,7 @@ class TableMethodProxy(object):
 
         return TableSet(groups, key_name=self.tableset._key_name)
 
-class TableSet(Mapping):
+class TableSet(Mapping, Patchable):
     """
     An group of named tables with identical column definitions. Supports
     (almost) all the same operations as :class:`.Table`. When executed on a

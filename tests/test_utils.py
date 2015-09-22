@@ -5,7 +5,35 @@ try:
 except ImportError:
     import unittest
 
-from agate.utils import Quantiles
+from agate.data_types import Text
+from agate.table import Table
+from agate.utils import Patchable, Quantiles
+
+class TryPatch(object):
+    def test(self, n):
+        return n
+
+    @classmethod
+    def testcls(cls, n):
+        return n
+
+class TestMonkeyPatching(unittest.TestCase):
+    def test_monkeypatch(self):
+        before_table = Table([], [('foo', Text())])
+
+        Table.monkeypatch(TryPatch)
+
+        after_table = Table([], [('foo', Text())])
+
+        self.assertIsNotNone(getattr(before_table, 'test'))
+        self.assertIsNotNone(getattr(before_table, 'testcls'))
+
+        self.assertIsNotNone(getattr(after_table, 'test'))
+        self.assertIsNotNone(getattr(after_table, 'testcls'))
+
+        self.assertEqual(before_table.test(5), 5)
+        self.assertEqual(after_table.test(5), 5)
+        self.assertEqual(Table.testcls(5), 5)
 
 class TestQuantiles(unittest.TestCase):
     def setUp(self):
