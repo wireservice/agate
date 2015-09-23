@@ -15,14 +15,12 @@ Why use agate?
 * A clean, readable API.
 * Self-documenting code patterns.
 * A full set of SQL-like operations.
-* Full unicode support.
+* Unicode support everywhere.
 * Decimal precision everywhere.
 * Pure Python. It runs everywhere.
 * 100% test coverage.
-* Extensive user documentation.
-* Access to the full power of Python in every command.
-* Well-documented implementations of common analytical techniques.
-* Modular and extensible for custom analysis.
+* Exhaustive user documentation.
+* Optional extensions that add support for `SQL integration <http://agate-sql.readthedocs.org/>`_, `charting <http://agate-charts.readthedocs.org>`_ and more.
 
 Table of contents
 =================
