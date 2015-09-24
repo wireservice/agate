@@ -2,6 +2,7 @@
 ------
 
 * Add agate-charts references to docs. (#259)
+* Prevent issues with applying patches multiple times. (#258)
 
 0.10.0
 ------
