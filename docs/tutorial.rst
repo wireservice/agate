@@ -468,6 +468,6 @@ Well, what are you waiting for? It's your turn!
 Where to go next
 ================
 
-This tutorial only scratches the surface of agate's features. For many more ideas on how to apply agate, check out the :doc:`cookbook`, which includes dozens of examples showing how to substitute agate for common patterns used in Excel, SQL, R and more.
+This tutorial only scratches the surface of agate's features. For many more ideas on how to apply agate, check out the :doc:`cookbook`, which includes dozens of examples showing how to substitute agate for common patterns used in Excel, SQL, R and more. Also check out the agate's :doc:`extensions` which add support for reading/writing SQL tables, rendering charts and more.
 
 Also, if you're going to be doing data processing in Python you really ought to check out `proof <http://proof.readthedocs.org/en/latest/>`_, a library for building data processing pipelines that are repeatable and self-documenting. It will make your code cleaner and save you tons of time.

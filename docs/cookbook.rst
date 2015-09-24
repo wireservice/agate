@@ -18,5 +18,4 @@ Cookbook
     cookbook/excel
     cookbook/r
     cookbook/underscore
-    cookbook/matplotlib
-    cookbook/pygal
+    cookbook/charting

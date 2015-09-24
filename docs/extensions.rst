@@ -17,6 +17,14 @@ In order to support these use-cases, but not make things excessively complicated
     table = agate.Table.from_sql('postgresql:///database', 'input_table')
     table.to_sql('postgresql:///database', 'output_table')
 
+List of extensions
+==================
+
+Here is a list of actively supported agate extensions:
+
+* `agate-sql <http://agate-sql.rtfd.org/>`_: Read and write tables in SQL databases
+* `agate-charts <http://agate-charts.rtfd.org/>`_: Quickly render exploratory charts
+
 Writing your own extensions
 ===========================
 
@@ -45,11 +53,3 @@ The same pattern also works for adding methods to :class:`.TableSet`.
 .. warning::
 
     Extensions are added as **base classes** of :class:`.Table` so you can not use them to override the implementation of an existing method. They are perfect for adding features, but if you need to modify how agate works, then you'll need to subclass. Any shadowed method will be ignored.
-
-List of known extensions
-========================
-
-Here is a list of current agate extensions:
-
-* `agate-sql <http://agate-sql.rtfd.org/>`_: Read and write tables in SQL databases
-* `agate-charts <http://agate-charts.rtfd.org/>`_: Quickly render exploratory charts
