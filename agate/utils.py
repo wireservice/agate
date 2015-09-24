@@ -46,6 +46,9 @@ class Patchable(object):
 
         :param patch_cls: The class to be patched on.
         """
+        if patch_cls in cls.__bases__:
+            return
+
         cls.__bases__ += (patch_cls, )
 
 class NullOrder(object):

@@ -32,6 +32,8 @@ class TestMonkeyPatching(unittest.TestCase):
 
         after_table = Table([], [('foo', Text())])
 
+        self.assertSequenceEqual(Table.__bases__, [Patchable, TryPatch])
+
         self.assertIsNotNone(getattr(before_table, 'test'))
         self.assertIsNotNone(getattr(before_table, 'testcls'))
 
@@ -54,6 +56,13 @@ class TestMonkeyPatching(unittest.TestCase):
 
         with self.assertRaises(AttributeError):
             after_table.foo == 'foo'
+
+    def test_monkeypatch_double(self):
+        Table.monkeypatch(TryPatch)
+        Table.monkeypatch(TryPatch)
+        Table.monkeypatch(TryPatch)
+
+        self.assertSequenceEqual(Table.__bases__, [Patchable, TryPatch])
 
 class TestQuantiles(unittest.TestCase):
     def setUp(self):
