@@ -18,7 +18,6 @@ the set.
 """
 
 from collections import defaultdict
-import datetime
 import math
 
 from agate.data_types import *

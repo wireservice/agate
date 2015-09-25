@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import six
-
 #: Default values which will be automatically cast to :code:`None`
 DEFAULT_NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
 

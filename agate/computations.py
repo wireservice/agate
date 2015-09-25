@@ -25,7 +25,6 @@ from agate.aggregations import HasNulls, Mean, StDev, Percentiles
 from agate.columns import *
 from agate.data_types import *
 from agate.exceptions import *
-from agate.utils import NullOrder
 
 class Computation(object): #pragma: no cover
     """

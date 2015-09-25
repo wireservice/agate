@@ -3,7 +3,6 @@
 import six
 
 from agate.data_types.base import *
-from agate.exceptions import CastError
 
 class Text(DataType):
     """

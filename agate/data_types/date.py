@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import datetime
-import time
 
 import parsedatetime
 import six

@@ -6,10 +6,6 @@ This module contains common utilities used in agate.
 
 from collections import Sequence
 from functools import wraps
-import inspect
-import math
-
-import six
 
 def memoize(func):
     """
