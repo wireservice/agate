@@ -35,10 +35,8 @@ try:
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
-from agate.aggregations import Aggregation
 from agate.data_types import Text, TypeTester
-from agate.exceptions import ColumnDoesNotExistError
-from agate.rows import RowSequence
+from agate.table import Table
 from agate.utils import Patchable
 
 class TableMethodProxy(object):
@@ -96,16 +94,6 @@ class TableSet(Mapping, Patchable):
 
         self._tables = copy(group)
 
-        self.select = TableMethodProxy(self, 'select')
-        self.where = TableMethodProxy(self, 'where')
-        self.find = TableMethodProxy(self, 'find')
-        self.order_by = TableMethodProxy(self, 'order_by')
-        self.limit = TableMethodProxy(self, 'limit')
-        self.distinct = TableMethodProxy(self, 'distinct')
-        self.join = TableMethodProxy(self, 'join')
-        self.group_by = TableMethodProxy(self, 'group_by')
-        self.compute = TableMethodProxy(self, 'compute')
-
     def __getitem__(self, k):
         return self._tables.__getitem__(k)
 
@@ -114,6 +102,17 @@ class TableSet(Mapping, Patchable):
 
     def __len__(self):
         return self._tables.__len__()
+
+    def __getattr__(self, name):
+        if name in self.__dict__:
+            return self.__dict__[name]
+
+        # Proxy table methods
+        if name in Table.__dict__:
+            if Table.__dict__[name].allow_tableset_proxy:
+                return TableMethodProxy(self, name)
+
+        return super(TableSet, self).__getattr__(name)
 
     @property
     def key_name(self):

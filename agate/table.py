@@ -41,8 +41,15 @@ from agate.data_types import *
 from agate.computations import *
 from agate.exceptions import *
 from agate.rows import *
-from agate.tableset import *
 from agate.utils import *
+
+def allow_tableset_proxy(func):
+    """
+    Decorator to flag that a given Table method can be proxied as a :class:`TableSet` method.
+    """
+    func.allow_tableset_proxy = True
+
+    return func
 
 class Table(Patchable):
     """
@@ -231,6 +238,7 @@ class Table(Patchable):
         """
         return self._columns
 
+    @allow_tableset_proxy
     def select(self, column_names):
         """
         Reduce this table to only the specified columns.
@@ -248,6 +256,7 @@ class Table(Patchable):
 
         return self._fork(new_rows, zip(column_names, column_types))
 
+    @allow_tableset_proxy
     def where(self, test):
         """
         Filter a to only those rows where the row passes a truth test.
@@ -261,6 +270,7 @@ class Table(Patchable):
 
         return self._fork(rows)
 
+    @allow_tableset_proxy
     def find(self, test):
         """
         Find the first row that passes a truth test.
@@ -276,6 +286,7 @@ class Table(Patchable):
 
         return None
 
+    @allow_tableset_proxy
     def order_by(self, key, reverse=False):
         """
         Sort this table by the :code:`key`. This can be either a
@@ -304,6 +315,7 @@ class Table(Patchable):
 
         return self._fork(rows)
 
+    @allow_tableset_proxy
     def limit(self, start_or_stop=None, stop=None, step=None):
         """
         Filter data to a subset of all rows.
@@ -322,6 +334,7 @@ class Table(Patchable):
 
         return self._fork(self.rows[:start_or_stop])
 
+    @allow_tableset_proxy
     def distinct(self, key=None):
         """
         Filter data to only rows that are unique.
@@ -351,6 +364,7 @@ class Table(Patchable):
 
         return self._fork(rows)
 
+    @allow_tableset_proxy
     def join(self, right_table, left_key, right_key=None, inner=False):
         """
         Performs the equivalent of SQL's "left outer join", combining columns
@@ -469,6 +483,7 @@ class Table(Patchable):
 
         return Table(rows, zip(column_names, column_types))
 
+    @allow_tableset_proxy
     def group_by(self, key, key_name=None, key_type=None):
         """
         Create a new :class:`Table` for unique value and return them as a
@@ -491,6 +506,8 @@ class Table(Patchable):
             instances containing the grouped rows.
         :raises: :exc:`.ColumnDoesNotExistError`
         """
+        from agate.tableset import TableSet
+
         key_is_row_function = hasattr(key, '__call__')
 
         if key_is_row_function:
@@ -526,6 +543,7 @@ class Table(Patchable):
 
         return TableSet(output, key_name=key_name, key_type=key_type)
 
+    @allow_tableset_proxy
     def compute(self, computations):
         """
         Compute new columns by applying one or more :class:`.Computation` to
