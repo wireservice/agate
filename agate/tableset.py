@@ -85,7 +85,7 @@ class TableSet(Mapping, Patchable):
         self._column_types = self._sample_table.column_types
         self._column_names = self._sample_table.column_names
 
-        for name, table in group.items():
+        for table in group.values():
             if table._column_types != self._column_types:
                 raise ValueError('Not all tables have the same column types!')
 
@@ -150,8 +150,6 @@ class TableSet(Mapping, Patchable):
         :param header: If `True`, the first row of the CSV is assumed to contains
             headers and will be skipped.
         """
-        from agate.table import Table
-
         use_inference = isinstance(column_info, TypeTester)
 
         if use_inference and not header:
@@ -224,8 +222,6 @@ class TableSet(Mapping, Patchable):
 
         :returns: A new :class:`Table`.
         """
-        from agate.table import Table
-
         column_names = list(self.column_names)
         column_types = list(self.column_types)
 

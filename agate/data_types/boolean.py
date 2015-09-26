@@ -2,7 +2,7 @@
 
 import six
 
-from agate.data_types.base import *
+from agate.data_types.base import DataType, DEFAULT_NULL_VALUES
 from agate.exceptions import CastError
 
 #: Default values which will be automatically cast to :code:`True`.

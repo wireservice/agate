@@ -2,11 +2,6 @@
 
 from collections import Mapping, Sequence
 
-try:
-    from collections import OrderedDict
-except ImportError: #pragma: no cover
-    from ordereddict import OrderedDict
-
 import six
 
 from agate.exceptions import ColumnDoesNotExistError
@@ -21,6 +16,8 @@ class Column(Sequence):
     :param table: The table that contains this column.
     :param index: The index of this column in the table.
     """
+    #pylint: disable=W0212
+
     def __init__(self, data_type, table, index):
         self._data_type = data_type
         self._table = table
@@ -123,6 +120,8 @@ class ColumnMapping(Mapping):
 
     :param table: :class:`.Table`.
     """
+    #pylint: disable=W0212
+
     def __init__(self, table):
         self._table = table
 
@@ -147,6 +146,8 @@ class ColumnIterator(six.Iterator):
 
     :param table: :class:`.Table`.
     """
+    #pylint: disable=W0212
+
     def __init__(self, table):
         self._table = table
         self._i = 0

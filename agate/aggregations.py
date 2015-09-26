@@ -20,8 +20,8 @@ the set.
 from collections import defaultdict
 import math
 
-from agate.data_types import *
-from agate.exceptions import *
+from agate.data_types import Boolean, Date, DateTime, Number, Text
+from agate.exceptions import DataTypeError, NullCalculationError, UnsupportedAggregationError
 from agate.utils import Quantiles
 
 class Aggregation(object): #pragma: no cover

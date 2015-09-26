@@ -2,14 +2,14 @@
 # -*- coding: utf8 -*-
 
 try:
-    from cdecimal import Decimal, InvalidOperation
+    from cdecimal import Decimal
 except ImportError: #pragma: no cover
-    from decimal import Decimal, InvalidOperation
+    from decimal import Decimal
 
 from babel.numbers import parse_decimal
 import six
 
-from agate.data_types.base import *
+from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
 #: A list of currency symbols sourced from `Xe <http://www.xe.com/symbols.php>`_.

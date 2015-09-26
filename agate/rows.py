@@ -11,6 +11,7 @@ from collections import Mapping, Sequence
 import six
 
 if six.PY3: #pragma: no cover
+    #pylint: disable=W0622
     xrange = range
 
 from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
@@ -26,6 +27,8 @@ class Row(Mapping):
     :param table: The :class:`Table` that contains this row.
     :param i: The index of this row in the :class:`Table`.
     """
+    #pylint: disable=W0212
+
     def __init__(self, table, i):
         self._table = table
         self._i = i
@@ -81,6 +84,8 @@ class RowSequence(Sequence):
 
     :param table: The :class:`.Table` that contains the rows.
     """
+    #pylint: disable=W0212
+
     def __init__(self, table):
         self._table = table
 
@@ -101,13 +106,15 @@ class RowSequence(Sequence):
     @memoize
     def __len__(self):
         return self._table._get_row_count()
-        
+
 class RowIterator(six.Iterator):
     """
     Iterator over row proxies.
 
     :param table: The :class:`.Table` of which to iterate.
     """
+    #pylint: disable=W0212
+
     def __init__(self, table):
         self._table = table
         self._i = 0
@@ -128,6 +135,8 @@ class CellIterator(six.Iterator):
 
     :param row: The class:`Row` over which to iterate.
     """
+    #pylint: disable=W0212
+
     def __init__(self, row):
         self._row = row
         self._i = 0

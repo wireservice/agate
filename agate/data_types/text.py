@@ -2,7 +2,7 @@
 
 import six
 
-from agate.data_types.base import *
+from agate.data_types.base import DataType
 
 class Text(DataType):
     """

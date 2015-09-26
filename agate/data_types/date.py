@@ -5,7 +5,7 @@ import datetime
 import parsedatetime
 import six
 
-from agate.data_types.base import *
+from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
 class Date(DataType):
