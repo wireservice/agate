@@ -35,13 +35,12 @@ except ImportError: #pragma: no cover
 from babel.numbers import format_decimal
 import six
 
-from agate.aggregations import *
-from agate.columns import *
-from agate.data_types import *
-from agate.computations import *
-from agate.exceptions import *
-from agate.rows import *
-from agate.utils import *
+from agate.columns import Column, ColumnMapping
+from agate.data_types import TypeTester, Number, Text
+from agate.computations import Computation
+from agate.exceptions import ColumnDoesNotExistError
+from agate.rows import Row, RowSequence
+from agate.utils import NullOrder, Patchable
 
 def allow_tableset_proxy(func):
     """
@@ -414,7 +413,7 @@ class Table(Patchable):
         if right_key_is_row_function:
             right_column = [right_key(row) for row in right_table.rows]
         else:
-            right_key_index = right_table._column_names.index(right_key)
+            right_key_index = right_table.column_names.index(right_key)
             right_column = right_table._get_column(right_key_index)
 
         # Build names and type lists
@@ -656,7 +655,7 @@ class Table(Patchable):
 
             formatted_data.append(formatted_row)
 
-        def _print_row(formatted_row, type_format=True):
+        def _print_row(formatted_row):
             """
             Helper function that formats individual rows.
             """
@@ -679,7 +678,7 @@ class Table(Patchable):
         output.write(divider)
 
         # Headers
-        output.write(_print_row(column_names, False))
+        output.write(_print_row(column_names))
         output.write(divider)
 
         # Rows
@@ -688,7 +687,7 @@ class Table(Patchable):
 
         # Row indicating data was truncated
         if rows_truncated:
-            output.write(_print_row(['...' for n in column_names], False))
+            output.write(_print_row(['...' for n in column_names]))
 
         # Final divider
         output.write(divider)
