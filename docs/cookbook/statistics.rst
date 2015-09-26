@@ -40,9 +40,13 @@ The resulting table will have four columns: ``doctor``, ``patient_count``, ``age
 Identify outliers
 =================
 
-agate includes two builtin methods for identifying outliers. The first, and most widely known, is by identifying values which are more than some number of standard deviations from the mean (typically 3).
+Use the `agate-stats <http://agate-stats.readthedocs.org/>`_ extension to add methods for finding outliers.
 
 .. code-block:: python
+
+    import agatestats
+
+    agatestats.patch()
 
     outliers = table.stdev_outliers('salary', deviations=3, reject=False)
 

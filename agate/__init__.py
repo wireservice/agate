@@ -6,7 +6,7 @@ from agate.data_types import *
 from agate.computations import *
 from agate.exceptions import *
 from agate.table import Table
-from agate.tableset import TableSet
+from agate.tableset import TableSet, TableMethodProxy
 
 def save():
     raise NotImplementedError
