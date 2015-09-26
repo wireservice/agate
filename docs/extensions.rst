@@ -7,13 +7,16 @@ agate's core featureset is designed rely on as few dependencies as possible. How
 How extensions work
 ===================
 
-In order to support these use-cases, but not make things excessively complicated, :class:`.Table` and :class:`.TableSet` support a simple extensibility pattern based on `monkey patching <https://en.wikipedia.org/wiki/Monkey_patch>`_. Libraries can be created that patch automatically when they are imported. For example, `agate-sql <http://agate-sql.rtfd.org/>`_ adds the ability to read and write tables from a SQL database:
+In order to support these use-cases, but not make things excessively complicated, agate support's a simple extensibility pattern based on `monkey patching <https://en.wikipedia.org/wiki/Monkey_patch>`_. Libraries can be created that patch new methods on :class:`.Table` and :class:`.TableSet`. For example, `agate-sql <http://agate-sql.rtfd.org/>`_ adds the ability to read and write tables from a SQL database:
 
 .. code-block:: python
 
     import agate
     import agatesql
 
+    agatesql.patch()
+
+    # After calling patch the from_sql and to_sql methods are now part of the Table class
     table = agate.Table.from_sql('postgresql:///database', 'input_table')
     table.to_sql('postgresql:///database', 'output_table')
 
@@ -38,12 +41,20 @@ Writing your own extensions is straightforward. Create a class that acts as your
         def new_method(self):
             print('I do something to a Table when you call me.')
 
-    agate.Table.monkeypatch(ExamplePatch)
-
-:class:`.Table` will now have all the methods of :code:`ExamplePatch` as though they were defined as part of it.
+Then create a function that applies your patch:
 
 .. code-block:: python
 
+    def patch()
+        agate.Table.monkeypatch(ExamplePatch)
+
+The :class:`.Table` class will now have all the methods of :code:`ExamplePatch` as though they were defined as part of it.
+
+.. code-block:: python
+
+    >>> import agate
+    >>> import myextension
+    >>> myextension.patch()
     >>> table = agate.Table(rows, columns)
     >>> table.new_method()
     'I do something to a Table when you call me.'
@@ -52,4 +63,4 @@ The same pattern also works for adding methods to :class:`.TableSet`.
 
 .. warning::
 
-    Extensions are added as **base classes** of :class:`.Table` so you can not use them to override the implementation of an existing method. They are perfect for adding features, but if you need to modify how agate works, then you'll need to subclass. Any shadowed method will be ignored.
+    Extensions are added as **base classes** of :class:`.Table` so you can not use them to override the implementation of an existing method. They are perfect for adding features, but if you need to actually modify how agate works, then you'll need to use a subclass. Any shadowed method will be ignored.
