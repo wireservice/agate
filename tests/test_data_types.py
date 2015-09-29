@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+import datetime
+from decimal import Decimal
+
 try:
     import unittest2 as unittest
 except ImportError:
@@ -10,6 +13,7 @@ import pytz
 
 from agate.columns import *
 from agate.data_types import *
+from agate.exceptions import CastError
 from agate.table import Table
 from agate.tableset import TableSet
 

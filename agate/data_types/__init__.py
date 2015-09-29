@@ -11,20 +11,13 @@ types from column data.
 
 from copy import copy
 
-try:
-    from collections import OrderedDict
-except ImportError: # pragma: no cover
-    from ordereddict import OrderedDict
-
-from agate.data_types.base import *
-from agate.data_types.boolean import *
-from agate.data_types.date import *
-from agate.data_types.date_time import *
-from agate.data_types.number import *
-from agate.data_types.text import *
-from agate.data_types.time_delta import *
-
-from agate.exceptions import *
+from agate.data_types.base import DataType
+from agate.data_types.boolean import Boolean
+from agate.data_types.date import Date
+from agate.data_types.date_time import DateTime
+from agate.data_types.number import Number
+from agate.data_types.text import Text
+from agate.data_types.time_delta import TimeDelta
 
 class TypeTester(object):
     """

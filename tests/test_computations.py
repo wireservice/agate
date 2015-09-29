@@ -1,9 +1,7 @@
 #!/usr/bin/env Python
 
-try:
-    from cdecimal import Decimal
-except ImportError: #pragma: no cover
-    from decimal import Decimal
+import datetime
+from decimal import Decimal
 
 try:
     import unittest2 as unittest
