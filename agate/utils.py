@@ -139,3 +139,12 @@ def max_precision(values):
             max_places = places
 
     return max_places
+
+def make_number_formatter(decimal_places):
+    """
+    Given a number of decimal places creates a formatting string that will
+    display numbers with that precision.
+    """
+    fraction = '0' * decimal_places
+
+    return ''.join(['#,##0.', fraction, ';-#,##0.', fraction])

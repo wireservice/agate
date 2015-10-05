@@ -36,7 +36,7 @@ from agate.columns import Column, ColumnMapping
 from agate.data_types import TypeTester, Text
 from agate.computations import Computation
 from agate.exceptions import ColumnDoesNotExistError
-from agate.preview import print_table, print_bar_chart
+from agate.preview import print_table, print_bars
 from agate.rows import Row, RowSequence
 from agate.utils import NullOrder, Patchable
 
@@ -603,4 +603,4 @@ class Table(Patchable):
         :param output: A file-like object to print to. Defaults to
             :code:`sys.stdout`.
         """
-        print_bar_chart(self, label_column_name, value_column_name, width, output)
+        print_bars(self, label_column_name, value_column_name, width, output)

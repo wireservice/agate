@@ -13,7 +13,7 @@ import six
 
 from agate.aggregations import Min, Max, MaxLength
 from agate.data_types import Number, Text
-from agate.utils import max_precision
+from agate.utils import max_precision, make_number_formatter
 
 #: Character to render for horizontal lines
 HORIZONTAL_LINE = u'-'
@@ -32,15 +32,6 @@ TICK_MARK = u'+'
 
 #: Characters to render for ellipsis
 ELLIPSIS = u'...'
-
-def make_number_formatter(decimal_places):
-    """
-    Given a number of decimal places creates a formatting string that will
-    display numbers with that precision.
-    """
-    fraction = '0' * decimal_places
-
-    return ''.join(['#,##0.', fraction, ';-#,##0.', fraction])
 
 def print_table(table, max_rows=None, max_columns=None, output=sys.stdout):
     """
@@ -155,7 +146,7 @@ def round_limit(n):
 
     return limit
 
-def print_bar_chart(table, label_column_name, value_column_name, width=120, output=sys.stdout):
+def print_bars(table, label_column_name, value_column_name, width=120, output=sys.stdout):
     """
     Print a bar chart representation of two columns.
     """
@@ -176,19 +167,17 @@ def print_bar_chart(table, label_column_name, value_column_name, width=120, outp
 
     # Format numbers
     decimal_places = max_precision(value_column)
-    number_formatter = make_number_formatter(decimal_places)
+    value_formatter = make_number_formatter(decimal_places)
 
     formatted_values = []
 
     for value in value_column:
-        formatted_values.append(format_decimal(value, format=number_formatter))
+        formatted_values.append(format_decimal(value, format=value_formatter))
 
-    available_width = width
     max_label_width = max(label_column.aggregate(MaxLength()), len(y_label))
     max_value_width = max(max([len(v) for v in formatted_values]), len(x_label))
-    available_width -= max_label_width + max_value_width + 2
 
-    plot_width = available_width
+    plot_width = width - (max_label_width + max_value_width + 2)
 
     # Calculate dimensions
     min_value = value_column.aggregate(Min())
@@ -227,20 +216,20 @@ def print_bar_chart(table, label_column_name, value_column_name, width=120, outp
     # Calculate ticks
     ticks = {}
 
-    # First tick
+    # First and last ticks
     ticks[0] = x_min
-
-    # Last tick
     ticks[plot_width - 1] = x_max
+
+    tick_fractions = [Decimal('0.25'), Decimal('0.5'), Decimal('0.75')]
 
     # All positive
     if x_min >= 0:
-        for fraction in [Decimal('0.25'), Decimal('0.5'), Decimal('0.75')]:
+        for fraction in tick_fractions:
             value = x_max * fraction
             ticks[project(value)] = value
     # All negative
     elif x_max <= 0:
-        for fraction in [Decimal('0.25'), Decimal('0.5'), Decimal('0.75')]:
+        for fraction in tick_fractions:
             value = x_min * fraction
             ticks[project(value)] = value
     # Mixed signs
@@ -268,7 +257,7 @@ def print_bar_chart(table, label_column_name, value_column_name, width=120, outp
         output.write(line + '\n')
 
     # Chart top
-    top_line = '%s %s' % (y_label.ljust(max_label_width), x_label.rjust(max_value_width))
+    top_line = u'%s %s' % (y_label.ljust(max_label_width), x_label.rjust(max_value_width))
     write(top_line)
 
     # Bars
@@ -290,22 +279,20 @@ def print_bar_chart(table, label_column_name, value_column_name, width=120, outp
             gap = (u' ' * plot_negative_width)
 
             # All positive
-            if x_min >= 0:
-                gap = ZERO_MARK + gap
+            if x_min <= 0:
+                bar = gap + ZERO_MARK + bar
             else:
-                gap += ZERO_MARK
+                bar = bar + gap + ZERO_MARK
         else:
-            gap = u' ' * (plot_negative_width - bar_width)
+            bar = u' ' * (plot_negative_width - bar_width) + bar
 
             # All negative or mixed signs
-            if x_max >= 0:
-                bar += ZERO_MARK
+            if x_max > value:
+                bar = bar + ZERO_MARK
 
-        bar_text = (gap + bar).ljust(plot_width)
+        bar = bar.ljust(plot_width)
 
-        line = '%s %s %s' % (label_text, value_text, bar_text)
-
-        write(line)
+        write('%s %s %s' % (label_text, value_text, bar))
 
     # Chart bottom
     plot_edge = ''
