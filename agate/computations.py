@@ -133,30 +133,7 @@ class PercentChange(Computation):
     def run(self, row):
         return (row[self._after_column_name] - row[self._before_column_name]) / row[self._before_column_name] * 100
 
-class ZScores(Computation):
-    """
-    Computes the z-scores (standard scores) of a given column.
-    """
-    def __init__(self, column_name):
-        self._column_name = column_name
 
-        self._mean = None
-        self._sd = None
-
-    def get_computed_data_type(self, table):
-        return Number()
-
-    def prepare(self, table):
-        column = table.columns[self._column_name]
-
-        if not isinstance(column.data_type, Number):
-            raise DataTypeError('ZScores column must contain Number data.')
-
-        self._mean = column.aggregate(Mean())
-        self._sd = column.aggregate(StDev())
-
-    def run(self, row):
-        return (row[self._column_name] - self._mean) / self._sd
 
 class Rank(Computation):
     """

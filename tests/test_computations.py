@@ -92,25 +92,6 @@ class TestTableComputation(unittest.TestCase):
                 (PercentChange('one', 'three'), 'test')
             ])
 
-    def test_z_scores(self):
-        new_table = self.table.compute([
-            (ZScores('two'), 'z-scores')
-        ])
-
-        self.assertEqual(len(new_table.rows), 4)
-        self.assertEqual(len(new_table.columns), 5)
-
-        self.assertEqual(new_table.columns['z-scores'][0].quantize(Decimal('0.01')), Decimal('-0.87'))
-        self.assertEqual(new_table.columns['z-scores'][1].quantize(Decimal('0.01')), Decimal('0.87'))
-        self.assertEqual(new_table.columns['z-scores'][2].quantize(Decimal('0.01')), Decimal('-0.87'))
-        self.assertEqual(new_table.columns['z-scores'][3].quantize(Decimal('0.01')), Decimal('0.87'))
-
-    def test_zscores_invalid_column(self):
-        with self.assertRaises(DataTypeError):
-            new_table = self.table.compute([
-                (ZScores('one'), 'test')
-            ])
-
     def test_rank_number(self):
         new_table = self.table.compute([
             (Rank('two'), 'rank')

@@ -1,6 +1,7 @@
 0.11.0
 ------
 
+* computations.ZScores moved into agate-stats.
 * computations.Rank cmp argument renamed comparer.
 * aggregations.MaxPrecision added. (#265)
 * Table.print_bars added.
