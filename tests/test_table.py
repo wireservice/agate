@@ -378,31 +378,31 @@ class TestPrettyPrint(unittest.TestCase):
             ('three', self.text_type)
         )
 
-    def test_pretty_print(self):
+    def test_print_table(self):
         table = Table(self.rows, self.columns)
 
         output = six.StringIO()
-        table.pretty_print(output=output)
+        table.print_table(output=output)
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 8)
         self.assertEqual(len(lines[0]), 25)
 
-    def test_pretty_print_max_rows(self):
+    def test_print_table_max_rows(self):
         table = Table(self.rows, self.columns)
 
         output = six.StringIO()
-        table.pretty_print(max_rows=2, output=output)
+        table.print_table(max_rows=2, output=output)
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 8)
         self.assertEqual(len(lines[0]), 25)
 
-    def test_pretty_print_max_columns(self):
+    def test_print_table_max_columns(self):
         table = Table(self.rows, self.columns)
 
         output = six.StringIO()
-        table.pretty_print(max_columns=2, output=output)
+        table.print_table(max_columns=2, output=output)
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 8)

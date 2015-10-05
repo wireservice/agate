@@ -26,7 +26,6 @@ List of extensions
 Here is a list of actively supported agate extensions:
 
 * `agate-sql <http://agate-sql.rtfd.org/>`_: Read and write tables in SQL databases
-* `agate-charts <http://agate-charts.rtfd.org/>`_: Quickly render exploratory charts
 * `agate-stats <http://agate-stats.rtfd.org/>`_: Additional statistical methods
 
 Writing your own extensions

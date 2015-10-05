@@ -14,7 +14,7 @@ kansas_city = table.where(lambda r: r['county'] in ('JACKSON', 'CLAY', 'CASS', '
 # Sum total_cost of four counties
 print('Total for Kansas City area: %i' % kansas_city.columns['total_cost'].aggregate(agate.Sum()))
 
-# Group by county
+# Group by countys
 counties = table.group_by('county')
 
 # Aggregate totals for all counties
@@ -23,17 +23,18 @@ totals = counties.aggregate([
 ])
 
 totals = totals.order_by('total_cost_sum', reverse=True)
+totals.limit(20).print_bars('county', 'total_cost_sum', width=120)
 
 print('Five most spendy counties:')
 
-totals.pretty_print(5)
+totals.print_table(5)
 
 # Get the most recent purchases
 recent = table.order_by('ship_date', reverse=True)
 
 print('Five most recent purchases:')
 
-recent.pretty_print(5, 5)
+recent.print_table(5, 5)
 
 # Calculate the standard of deviation for the total_costs
 stdev = table.columns['total_cost'].aggregate(agate.StDev())

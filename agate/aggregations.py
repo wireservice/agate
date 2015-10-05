@@ -22,7 +22,7 @@ import math
 
 from agate.data_types import Boolean, Date, DateTime, Number, Text
 from agate.exceptions import DataTypeError, NullCalculationError, UnsupportedAggregationError
-from agate.utils import Quantiles
+from agate.utils import Quantiles, median
 
 class Aggregation(object): #pragma: no cover
     """
@@ -431,18 +431,6 @@ class MAD(Aggregation):
     def get_cache_key(self):
         return 'MAD'
 
-    def _median(self, data_sorted):
-        length = len(data_sorted)
-
-        if length % 2 == 1:
-            return data_sorted[((length + 1) // 2) - 1]
-
-        half = length // 2
-        a = data_sorted[half - 1]
-        b = data_sorted[half]
-
-        return (a + b) / 2
-
     def run(self, column):
         """
         :returns: :class:`decimal.Decimal`.
@@ -456,7 +444,7 @@ class MAD(Aggregation):
         data = column.get_data_sorted()
         m = column.aggregate(Percentiles())[50]
 
-        return self._median(tuple(abs(n - m) for n in data))
+        return median(tuple(abs(n - m) for n in data))
 
 class Percentiles(Aggregation):
     """

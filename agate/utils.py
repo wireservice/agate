@@ -1,28 +1,12 @@
 #!/usr/bin/env python
 
 """
-This module contains common utilities used in agate.
+This module contains a collection of utility classes and functions used in
+agate.
 """
 
 from collections import Sequence
 from functools import wraps
-
-def memoize(func):
-    """
-    Dead-simple memoize decorator for instance methods that take no arguments.
-
-    This is especially useful since so many of our classes are immutable.
-    """
-    memo = None
-
-    @wraps(func)
-    def wrapper(self):
-        if memo is not None:
-            return memo
-
-        return func(self)
-
-    return wrapper
 
 class Patchable(object):
     """
@@ -101,3 +85,57 @@ class Quantiles(Sequence):
             i += 1
 
         return i
+
+def memoize(func):
+    """
+    Dead-simple memoize decorator for instance methods that take no arguments.
+
+    This is especially useful since so many of our classes are immutable.
+    """
+    memo = None
+
+    @wraps(func)
+    def wrapper(self):
+        if memo is not None:
+            return memo
+
+        return func(self)
+
+    return wrapper
+
+def median(data_sorted):
+    """
+    Finds the median value of a given series of values.
+
+    :param data_sorted: The values to find the median of. Must be sorted.
+    """
+    length = len(data_sorted)
+
+    if length % 2 == 1:
+        return data_sorted[((length + 1) // 2) - 1]
+
+    half = length // 2
+    a = data_sorted[half - 1]
+    b = data_sorted[half]
+
+    return (a + b) / 2
+
+def max_precision(values):
+    """
+    Given a series of values (such as a :class:`.Column`) returns the most
+    significant decimal places present in any value.
+
+    :param values: The values to analyze.
+    """
+    max_places = 0
+
+    for i, value in enumerate(values):
+        if value is None:
+            continue
+
+        places = value.normalize().as_tuple().exponent * -1
+
+        if places > max_places:
+            max_places = places
+
+    return max_places

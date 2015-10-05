@@ -1,10 +1,11 @@
 0.11.0
 ------
 
+* Added Table.print_bars.
+* Table.pretty_print renamed Table.print_table.
 * Reimplement Table method proxying via @allow_tableset_proxy decorator. (#263)
 * Add agate-stats references to docs.
 * Move stdev_outliers, mad_outliers and pearson_correlation into agate-stats. (#260)
-* Add agate-charts references to docs. (#259)
 * Prevent issues with applying patches multiple times. (#258)
 
 0.10.0
