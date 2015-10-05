@@ -2,6 +2,11 @@
 # -*- coding: utf8 -*-
 
 try:
+    from collections import OrderedDict
+except ImportError: # pragma: no cover
+    from ordereddict import OrderedDict
+
+try:
     from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING
 except ImportError: #pragma: no cover
     from decimal import Decimal, ROUND_FLOOR, ROUND_CEILING
@@ -214,9 +219,9 @@ def print_bars(table, label_column_name, value_column_name, width=120, output=sy
             return plot_negative_width - int((plot_negative_width * (value / x_min)).to_integral_value())
 
     # Calculate ticks
-    ticks = {}
+    ticks = OrderedDict()
 
-    # First and last ticks
+    # First tick
     ticks[0] = x_min
     ticks[plot_width - 1] = x_max
 
@@ -248,7 +253,7 @@ def print_bars(table, label_column_name, value_column_name, width=120, output=sy
     decimal_places = max_precision(ticks.values())
     tick_formatter = make_number_formatter(decimal_places)
 
-    ticks_formatted = {}
+    ticks_formatted = OrderedDict()
 
     for k, v in ticks.items():
         ticks_formatted[k] = format_decimal(v, format=tick_formatter)
@@ -294,23 +299,29 @@ def print_bars(table, label_column_name, value_column_name, width=120, output=sy
 
         write('%s %s %s' % (label_text, value_text, bar))
 
-    # Chart bottom
-    plot_edge = ''
-
-    for i in xrange(plot_width):
-        if i in ticks:
-            plot_edge += TICK_MARK
-        else:
-            plot_edge += HORIZONTAL_LINE
-
-    plot_edge = plot_edge.rjust(width)
-    write(plot_edge)
-
-    # Ticks
+    # Axis & ticks
+    axis = HORIZONTAL_LINE * plot_width
     tick_text = u' ' * width
 
-    for tick, label in ticks_formatted.items():
-        pos = (width - plot_width) + tick - (len(label) / 2)
-        tick_text = tick_text[:pos] + label + tick_text[pos + len(label):]
+    for i, (tick, label) in enumerate(ticks_formatted.items()):
+        # First tick
+        if tick == 0:
+            offset = 0
+        # Last tick
+        elif tick == plot_width - 1:
+            offset = -(len(label) - 1)
+        else:
+            offset = -(len(label) / 2)
 
+        pos = (width - plot_width) + tick + offset
+
+        # Don't print intermediate ticks that would overlap
+        if tick != 0 and tick != plot_width - 1:
+            if tick_text[pos - 1:pos + len(label) + 1] != ' ' * (len(label) + 2):
+                continue
+
+        tick_text = tick_text[:pos] + label + tick_text[pos + len(label):]
+        axis = axis[:tick] + TICK_MARK + axis[tick + 1:]
+
+    write(axis.rjust(width))
     write(tick_text)

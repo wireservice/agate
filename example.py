@@ -23,7 +23,7 @@ totals = counties.aggregate([
 ])
 
 totals = totals.order_by('total_cost_sum', reverse=True)
-totals.limit(20).print_bars('county', 'total_cost_sum', width=120)
+totals.limit(20).print_bars('county', 'total_cost_sum', width=80)
 
 print('Five most spendy counties:')
 
