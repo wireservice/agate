@@ -1,13 +1,18 @@
 #!/usr/bin/env python
 
 try:
+    from cdecimal import Decimal
+except ImportError: #pragma: no cover
+    from decimal import Decimal
+
+try:
     import unittest2 as unittest
 except ImportError:
     import unittest
 
 from agate.data_types import Text
 from agate.table import Table
-from agate.utils import Patchable, Quantiles
+from agate.utils import Patchable, Quantiles, round_to_magnitude
 
 class TryPatch(object):
     def test(self, n):
@@ -84,3 +89,12 @@ class TestQuantiles(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self.quantiles.locate(51)
+
+class TestMisc(unittest.TestCase):
+    def test_round_to_magnitude(self):
+        self.assertEqual(round_to_magnitude(Decimal('2.7')), Decimal('3'))
+        self.assertEqual(round_to_magnitude(Decimal('-2.7')), Decimal('-3'))
+        self.assertEqual(round_to_magnitude(Decimal('2.77')), Decimal('3'))
+        self.assertEqual(round_to_magnitude(Decimal('-2.77')), Decimal('3'))
+        self.assertEqual(round_to_magnitude(Decimal('27')), Decimal('30'))
+        self.assertEqual(round_to_magnitude(Decimal('27')), Decimal('30'))

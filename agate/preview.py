@@ -7,9 +7,9 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 try:
-    from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING
+    from cdecimal import Decimal
 except ImportError: #pragma: no cover
-    from decimal import Decimal, ROUND_FLOOR, ROUND_CEILING
+    from decimal import Decimal
 
 import sys
 
@@ -18,7 +18,7 @@ import six
 
 from agate.aggregations import Min, Max, MaxLength
 from agate.data_types import Number, Text
-from agate.utils import max_precision, make_number_formatter
+from agate.utils import max_precision, make_number_formatter, round_to_magnitude
 
 #: Character to render for horizontal lines
 HORIZONTAL_LINE = u'-'
@@ -139,20 +139,6 @@ def print_table(table, max_rows=None, max_columns=None, output=sys.stdout):
 
     # Final divider
     write(divider)
-
-def round_limit(n):
-    """
-    Round am axis minimum or maximum value to a reasonable break point.
-    """
-    if n == 0:
-        return n
-
-    magnitude = n.copy_abs().log10().to_integral_exact(rounding=ROUND_FLOOR)
-    fraction = (n / (10 ** magnitude))
-
-    limit = fraction.to_integral_exact(rounding=ROUND_CEILING) * (10 ** magnitude)
-
-    return limit
 
 def print_bars(table, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout):
     """

@@ -6,6 +6,12 @@ agate.
 """
 
 from collections import Sequence
+
+try:
+    from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING
+except ImportError: #pragma: no cover
+    from decimal import Decimal, ROUND_FLOOR, ROUND_CEILING
+
 from functools import wraps
 
 class Patchable(object):
@@ -140,6 +146,7 @@ def max_precision(values):
 
     return max_places
 
+
 def make_number_formatter(decimal_places):
     """
     Given a number of decimal places creates a formatting string that will
@@ -148,3 +155,16 @@ def make_number_formatter(decimal_places):
     fraction = '0' * decimal_places
 
     return ''.join(['#,##0.', fraction, ';-#,##0.', fraction])
+
+def round_to_magnitude(n):
+    """
+    Round a value to the nearest whole magnitude.
+    """
+    if n == 0:
+        return n
+
+    magnitude = n.copy_abs().log10().to_integral_exact(rounding=ROUND_FLOOR)
+    multiplier = Decimal('10') ** magnitude
+    fraction = (n / multiplier)
+
+    return fraction.to_integral_exact(rounding=ROUND_CEILING) * multiplier
