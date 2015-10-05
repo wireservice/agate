@@ -150,9 +150,19 @@ class TestNumberAggregation(unittest.TestCase):
 
         self.table = Table(self.rows, self.columns)
 
+    def test_max_precision(self):
+        self.assertEqual(self.table.columns['one'].aggregate(MaxPrecision()), 1)
+        self.assertEqual(self.table.columns['two'].aggregate(MaxPrecision()), 2)
+
+        with self.assertRaises(DataTypeError):
+            self.table.columns['three'].aggregate(MaxPrecision())
+
     def test_sum(self):
         self.assertEqual(self.table.columns['one'].aggregate(Sum()), Decimal('6.5'))
         self.assertEqual(self.table.columns['two'].aggregate(Sum()), Decimal('13.13'))
+
+        with self.assertRaises(DataTypeError):
+            self.table.columns['three'].aggregate(Sum())
 
     def test_min(self):
         with self.assertRaises(DataTypeError):

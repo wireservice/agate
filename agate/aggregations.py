@@ -22,7 +22,7 @@ import math
 
 from agate.data_types import Boolean, Date, DateTime, Number, Text
 from agate.exceptions import DataTypeError, NullCalculationError, UnsupportedAggregationError
-from agate.utils import Quantiles, median
+from agate.utils import Quantiles, max_precision, median
 
 class Aggregation(object): #pragma: no cover
     """
@@ -208,6 +208,25 @@ class Max(Aggregation):
             raise DataTypeError('Max can only be applied to columns containing DateTime or Number data.')
 
         return max(column.get_data_without_nulls())
+
+class MaxPrecision(Aggregation):
+    """
+    Compute the most decimal places present for any value in this column.
+    """
+    def get_aggregate_data_type(self, column):
+        return Number()
+
+    def get_cache_key(self):
+        return 'MaxPrecision'
+
+    def run(self, column):
+        """
+        :returns: :class:`decimal.Decimal`.
+        """
+        if not isinstance(column.data_type, Number):
+            raise DataTypeError('MaxPrecision can only be applied to columns containing Number data.')
+
+        return max_precision(column.get_data_without_nulls())
 
 class Sum(Aggregation):
     """

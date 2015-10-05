@@ -1,7 +1,8 @@
 0.11.0
 ------
 
-* Added Table.print_bars.
+* aggregations.MaxPrecision added. (#265)
+* Table.print_bars added.
 * Table.pretty_print renamed Table.print_table.
 * Reimplement Table method proxying via @allow_tableset_proxy decorator. (#263)
 * Add agate-stats references to docs.
