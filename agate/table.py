@@ -591,16 +591,19 @@ class Table(Patchable):
         """
         print_table(self, max_rows, max_columns, output)
 
-    def print_bars(self, label_column_name, value_column_name, width=120, output=sys.stdout):
+    def print_bars(self, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout):
         """
         Print a text-based bar chart of the columns names `label_column_name`
         and `value_column_name`.
 
         :param label_column_name: The column containing the label values.
         :param value_column_name: The column containing the bar values.
+        :param domain: A 2-tuple containing the minimum and maximum values for
+            the chart's x-axis. The domain must be large enough to contain all
+            values in the column.
         :param width: The width, in characters, to use for the bar chart.
             Defaults to `120`.
         :param output: A file-like object to print to. Defaults to
             :code:`sys.stdout`.
         """
-        print_bars(self, label_column_name, value_column_name, width, output)
+        print_bars(self, label_column_name, value_column_name, domain, width, output)

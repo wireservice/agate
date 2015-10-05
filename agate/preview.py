@@ -151,7 +151,7 @@ def round_limit(n):
 
     return limit
 
-def print_bars(table, label_column_name, value_column_name, width=120, output=sys.stdout):
+def print_bars(table, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout):
     """
     Print a bar chart representation of two columns.
     """
@@ -185,10 +185,20 @@ def print_bars(table, label_column_name, value_column_name, width=120, output=sy
     plot_width = width - (max_label_width + max_value_width + 2)
 
     # Calculate dimensions
-    min_value = value_column.aggregate(Min())
-    x_min = round_limit(min_value)
-    max_value = value_column.aggregate(Max())
-    x_max = round_limit(max_value)
+    if domain:
+        min_value = value_column.aggregate(Min())
+        max_value = value_column.aggregate(Max())
+
+        x_min = Decimal(domain[0])
+        x_max = Decimal(domain[1])
+
+        if min_value < x_min or max_value > x_max:
+            raise ValueError('Column contains values outside specified domain')
+    else:
+        min_value = value_column.aggregate(Min())
+        x_min = round_limit(min_value)
+        max_value = value_column.aggregate(Max())
+        x_max = round_limit(max_value)
 
     # All positive
     if x_min >= 0:
