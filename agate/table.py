@@ -250,8 +250,17 @@ class Table(Patchable):
         :param column_names: A sequence of names of columns to include in the new table.
         :returns: A new :class:`Table`.
         """
-        column_indices = tuple(self._column_names.index(n) for n in column_names)
-        column_types = tuple(self._column_types[i] for i in column_indices)
+        column_indices = []
+        column_types = []
+
+        for name in column_names:
+            try:
+                i = self._column_names.index(name)
+            except ValueError:
+                raise ColumnDoesNotExistError(name)
+
+            column_indices.append(i)
+            column_types.append(self._column_types[i])
 
         new_rows = []
 
@@ -412,13 +421,21 @@ class Table(Patchable):
         if left_key_is_row_function:
             left_column = [left_key(row) for row in self.rows]
         else:
-            left_key_index = self._column_names.index(left_key)
+            try:
+                left_key_index = self._column_names.index(left_key)
+            except ValueError:
+                raise ColumnDoesNotExistError(left_key)
+
             left_column = self._get_column(left_key_index)
 
         if right_key_is_row_function:
             right_column = [right_key(row) for row in right_table.rows]
         else:
-            right_key_index = right_table.column_names.index(right_key)
+            try:
+                right_key_index = right_table.column_names.index(right_key)
+            except ValueError:
+                raise ColumnDoesNotExistError(right_key)
+                
             right_column = right_table._get_column(right_key_index)
 
         # Build names and type lists

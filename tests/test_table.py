@@ -164,6 +164,12 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(new_table._column_names, ('three',))
         self.assertSequenceEqual(new_table.columns['three'], ('a', 'b', u'👍'))
 
+    def test_select_does_not_exist(self):
+        table = Table(self.rows, self.columns)
+
+        with self.assertRaises(ColumnDoesNotExistError):
+            table.select(('four',))
+
     def test_where(self):
         table = Table(self.rows, self.columns)
 
@@ -642,6 +648,10 @@ class TestTableJoin(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 1, 4, 'a'))
         self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 2, 3, 'b'))
         self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, 2, 'c'))
+
+    def test_join_column_does_not_exist(self):
+        with self.assertRaises(ColumnDoesNotExistError):
+            self.left.join(self.right, 'one', 'seven')
 
     def test_inner_join(self):
         new_table = self.left.join(self.right, 'one', 'four', inner=True)
