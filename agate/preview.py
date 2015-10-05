@@ -113,29 +113,32 @@ def print_table(table, max_rows=None, max_columns=None, output=sys.stdout):
 
         line = VERTICAL_LINE.join(row_output)
 
-        return '%s %s %s\n' % (VERTICAL_LINE, line, VERTICAL_LINE)
+        return '%s %s %s' % (VERTICAL_LINE, line, VERTICAL_LINE)
+
+    def write(line):
+        output.write(line + '\n')
 
     # Dashes span each width with '+' character at intersection of
     # horizontal and vertical dividers.
-    divider = '|--' + '-+-'.join('-' * w for w in widths) + '--|\n'
+    divider = '|--%s--|' % '-+-'.join('-' * w for w in widths)
 
     # Initial divider
-    output.write(divider)
+    write(divider)
 
     # Headers
-    output.write(_print_row(column_names))
-    output.write(divider)
+    write(_print_row(column_names))
+    write(divider)
 
     # Rows
     for formatted_row in formatted_data:
-        output.write(_print_row(formatted_row))
+        write(_print_row(formatted_row))
 
     # Row indicating data was truncated
     if rows_truncated:
-        output.write(_print_row([ELLIPSIS for n in column_names]))
+        write(_print_row([ELLIPSIS for n in column_names]))
 
     # Final divider
-    output.write(divider)
+    write(divider)
 
 def round_limit(n):
     """
