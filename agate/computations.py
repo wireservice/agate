@@ -22,9 +22,8 @@ if six.PY3:
     from functools import cmp_to_key
 
 from agate.aggregations import HasNulls, Mean, StDev, Percentiles
-from agate.columns import *
-from agate.data_types import *
-from agate.exceptions import *
+from agate.data_types import Date, DateTime, Number, TimeDelta
+from agate.exceptions import DataTypeError, NullCalculationError
 
 class Computation(object): #pragma: no cover
     """
@@ -88,12 +87,12 @@ class Change(Computation):
                 if after_column.aggregate(HasNulls()):
                     raise NullCalculationError
 
-                return (before_column, after_column)
+                return before_column
 
         raise DataTypeError('Change before and after columns must both contain data that is one of: Number, Date, DateTime or TimeDelta.')
 
     def get_computed_data_type(self, table):
-        before_column, after_column = self._validate(table)
+        before_column = self._validate(table)
 
         if isinstance(before_column.data_type, Date):
             return TimeDelta()
@@ -141,6 +140,9 @@ class ZScores(Computation):
     def __init__(self, column_name):
         self._column_name = column_name
 
+        self._mean = None
+        self._sd = None
+
     def get_computed_data_type(self, table):
         return Number()
 
@@ -166,14 +168,16 @@ class Rank(Computation):
     Null values will always be ranked last.
 
     :param column_name: The name of the column to rank.
-    :param cmp: An optional comparison function. If not specified ranking will
-        be ascending, with nulls ranked last.
+    :param comparer: An optional comparison function. If not specified ranking
+        will be ascending, with nulls ranked last.
     :param reverse: Reverse sort order before ranking.
     """
-    def __init__(self, column_name, cmp=None, reverse=None):
+    def __init__(self, column_name, comparer=None, reverse=None):
         self._column_name = column_name
-        self._cmp = cmp
+        self._comparer = comparer
         self._reverse = reverse
+
+        self._ranks = {}
 
     def get_computed_data_type(self, table):
         return Number()
@@ -181,11 +185,11 @@ class Rank(Computation):
     def prepare(self, table):
         column = table.columns[self._column_name]
 
-        if self._cmp:
+        if self._comparer:
             if six.PY3:
-                data_sorted = sorted(column.get_data(), key=cmp_to_key(self._cmp))
+                data_sorted = sorted(column.get_data(), key=cmp_to_key(self._comparer))
             else:
-                data_sorted = sorted(column.get_data(), cmp=self._cmp)
+                data_sorted = sorted(column.get_data(), cmp=self._comparer)
         else:
             data_sorted = column.get_data_sorted()
 
@@ -204,7 +208,7 @@ class Rank(Computation):
             self._ranks[c] = rank
 
     def run(self, row):
-         return self._ranks[row[self._column_name]]
+        return self._ranks[row[self._column_name]]
 
 class PercentileRank(Rank):
     """

@@ -1,6 +1,7 @@
 0.11.0
 ------
 
+* computations.Rank cmp argument renamed comparer.
 * aggregations.MaxPrecision added. (#265)
 * Table.print_bars added.
 * Table.pretty_print renamed Table.print_table.

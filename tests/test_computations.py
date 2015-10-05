@@ -131,7 +131,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_rank_number_key(self):
         new_table = self.table.compute([
-            (Rank('two', cmp=lambda x,y: int(y - x)), 'rank')
+            (Rank('two', comparer=lambda x,y: int(y - x)), 'rank')
         ])
 
         self.assertEqual(len(new_table.rows), 4)
@@ -140,7 +140,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_rank_number_reverse_key(self):
         new_table = self.table.compute([
-            (Rank('two', cmp=lambda x,y: int(y - x), reverse=True), 'rank')
+            (Rank('two', comparer=lambda x,y: int(y - x), reverse=True), 'rank')
         ])
 
         self.assertEqual(len(new_table.rows), 4)
