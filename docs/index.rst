@@ -20,7 +20,7 @@ Why use agate?
 * Pure Python. It runs everywhere.
 * 100% test coverage.
 * Exhaustive user documentation.
-* Optional extensions that add support for `SQL integration <http://agate-sql.readthedocs.org/>`_, `charting <http://agate-charts.readthedocs.org>`_ and more.
+* Optional extensions that add support for `SQL integration <http://agate-sql.readthedocs.org/>`_ and more.
 
 Table of contents
 =================
