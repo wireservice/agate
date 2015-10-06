@@ -1,6 +1,7 @@
 0.11.0
 ------
 
+* computations.Bins implemented. (#267, #227)
 * Table.join now raises ColumnDoesNotExistError. (#264)
 * Table.select now raises ColumnDoesNotExistError.
 * computations.ZScores moved into agate-stats.

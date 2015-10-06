@@ -167,4 +167,9 @@ def round_to_magnitude(n):
     multiplier = Decimal('10') ** magnitude
     fraction = (n / multiplier)
 
-    return fraction.to_integral_exact(rounding=ROUND_CEILING) * multiplier
+    if n >= 0:
+        rounding = ROUND_CEILING
+    else:
+        rounding = ROUND_FLOOR
+
+    return fraction.to_integral_exact(rounding=rounding) * multiplier
