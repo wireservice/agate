@@ -47,7 +47,7 @@ from agate.data_types import TypeTester, Text, Number
 from agate.computations import Computation
 from agate.preview import print_table, print_bars
 from agate.rows import Row, RowSequence
-from agate.utils import NullOrder, Patchable, max_precision, make_number_formatter, round_to_magnitude
+from agate.utils import NullOrder, Patchable, max_precision, make_number_formatter, round_limits
 
 def allow_tableset_proxy(func):
     """
@@ -666,14 +666,16 @@ class Table(Patchable):
         column = self.columns[column_name]
 
         if start is None or end is None:
-            start = round_to_magnitude(column.aggregate(Min()), rounding=ROUND_FLOOR)
-            end = round_to_magnitude(column.aggregate(Max()))
+            start, end = round_limits(
+                column.aggregate(Min()),
+                column.aggregate(Max())
+            )
         else:
             start = Decimal(start)
             end = Decimal(end)
 
         spread = abs(end - start)
-        size = round_to_magnitude(spread / count)
+        size = spread / count
 
         breaks = [start]
 

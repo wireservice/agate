@@ -12,7 +12,7 @@ except ImportError:
 
 from agate.data_types import Text
 from agate.table import Table
-from agate.utils import Patchable, Quantiles, round_to_magnitude
+from agate.utils import Patchable, Quantiles, round_limits
 
 class TryPatch(object):
     def test(self, n):
@@ -91,22 +91,36 @@ class TestQuantiles(unittest.TestCase):
             self.quantiles.locate(51)
 
 class TestMisc(unittest.TestCase):
-    def test_round_to_magnitude(self):
-        self.assertEqual(round_to_magnitude(Decimal('2.7')), Decimal('3'))
-        self.assertEqual(round_to_magnitude(Decimal('-2.7'), rounding=ROUND_FLOOR), Decimal('-3'))
-        self.assertEqual(round_to_magnitude(Decimal('2.2')), Decimal('3'))
-        self.assertEqual(round_to_magnitude(Decimal('-2.2'), rounding=ROUND_FLOOR), Decimal('-3'))
-        self.assertEqual(round_to_magnitude(Decimal('2.77')), Decimal('3'))
-        self.assertEqual(round_to_magnitude(Decimal('-2.77'), rounding=ROUND_FLOOR), Decimal('-3'))
-        self.assertEqual(round_to_magnitude(Decimal('2.22')), Decimal('3'))
-        self.assertEqual(round_to_magnitude(Decimal('-2.22'), rounding=ROUND_FLOOR), Decimal('-3'))
-        self.assertEqual(round_to_magnitude(Decimal('27')), Decimal('30'))
-        self.assertEqual(round_to_magnitude(Decimal('-27'), rounding=ROUND_FLOOR), Decimal('-30'))
-        self.assertEqual(round_to_magnitude(Decimal('22')), Decimal('30'))
-        self.assertEqual(round_to_magnitude(Decimal('-22'), rounding=ROUND_FLOOR), Decimal('-30'))
-        self.assertEqual(round_to_magnitude(Decimal('0.2')), Decimal('0.2'))
-        self.assertEqual(round_to_magnitude(Decimal('-0.2'), rounding=ROUND_FLOOR), Decimal('-0.2'))
-        self.assertEqual(round_to_magnitude(Decimal('0.22')), Decimal('0.3'))
-        self.assertEqual(round_to_magnitude(Decimal('-0.22'), rounding=ROUND_FLOOR), Decimal('-0.3'))
-        self.assertEqual(round_to_magnitude(Decimal('0.222')), Decimal('0.3'))
-        self.assertEqual(round_to_magnitude(Decimal('-0.222'), rounding=ROUND_FLOOR), Decimal('-0.3'))
+    def test_round_limits(self):
+        self.assertEqual(
+            round_limits(Decimal('-2.7'), Decimal('2.7')),
+            (Decimal('-3'), Decimal('3'))
+        )
+        self.assertEqual(
+            round_limits(Decimal('-2.2'), Decimal('2.2')),
+            (Decimal('-3'), Decimal('3'))
+        )
+        self.assertEqual(
+            round_limits(Decimal('-2.22'), Decimal('2.22')),
+            (Decimal('-3'), Decimal('3'))
+        )
+        self.assertEqual(
+            round_limits(Decimal('0'), Decimal('75')),
+            (Decimal('0'), Decimal('80'))
+        )
+        self.assertEqual(
+            round_limits(Decimal('45'), Decimal('300')),
+            (Decimal('0'), Decimal('300'))
+        )
+        self.assertEqual(
+            round_limits(Decimal('200.75'), Decimal('715.345')),
+            (Decimal('200'), Decimal('800'))
+        )
+        self.assertEqual(
+            round_limits(Decimal('0.75'), Decimal('0.800')),
+            (Decimal('0'), Decimal('1'))
+        )
+        self.assertEqual(
+            round_limits(Decimal('-0.505'), Decimal('0.47')),
+            (Decimal('-0.6'), Decimal('0.5'))
+        )

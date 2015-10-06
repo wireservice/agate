@@ -18,7 +18,7 @@ import six
 
 from agate.aggregations import Min, Max, MaxLength
 from agate.data_types import Number, Text
-from agate.utils import max_precision, make_number_formatter, round_to_magnitude
+from agate.utils import max_precision, make_number_formatter, round_limits
 
 #: Character to render for horizontal lines
 HORIZONTAL_LINE = u'-'
@@ -185,9 +185,9 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
             raise ValueError('Column contains values outside specified domain')
     else:
         min_value = value_column.aggregate(Min())
-        x_min = round_to_magnitude(min_value, rounding=ROUND_FLOOR)
         max_value = value_column.aggregate(Max())
-        x_max = round_to_magnitude(max_value)
+
+        x_min, x_max = round_limits(min_value, max_value)
 
     # All positive
     if x_min >= 0:

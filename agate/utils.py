@@ -146,7 +146,6 @@ def max_precision(values):
 
     return max_places
 
-
 def make_number_formatter(decimal_places):
     """
     Given a number of decimal places creates a formatting string that will
@@ -156,15 +155,42 @@ def make_number_formatter(decimal_places):
 
     return ''.join(['#,##0.', fraction, ';-#,##0.', fraction])
 
-def round_to_magnitude(n, rounding=ROUND_CEILING):
+def round_limits(minimum, maximum):
     """
-    Round a value to the nearest whole magnitude.
+    Rounds a pair of minimum and maximum values to form reasonable "round"
+    values suitable for use as axis minimum and maximum values.
+
+    Values are rounded "out": up for maximum and down for minimum, and "off":
+    to one higher than the first significant digit shared by both.
+
+    See unit tests for examples.
     """
-    if n == 0:
-        return n
+    min_bits = minimum.normalize().as_tuple()
+    max_bits = maximum.normalize().as_tuple()
 
-    magnitude = n.copy_abs().log10().to_integral_exact(rounding=ROUND_FLOOR)
-    multiplier = Decimal('10') ** magnitude
-    fraction = (n / multiplier)
+    max_digits = max(
+        len(min_bits.digits) + min_bits.exponent,
+        len(max_bits.digits) + max_bits.exponent
+    )
 
-    return fraction.to_integral_exact(rounding=rounding) * multiplier
+    # Whole number rounding
+    if max_digits > 0:
+        multiplier = Decimal('10') ** (max_digits - 1)
+
+        min_fraction = (minimum / multiplier).to_integral_value(rounding=ROUND_FLOOR)
+        max_fraction = (maximum / multiplier).to_integral_value(rounding=ROUND_CEILING)
+
+        return (
+            min_fraction * multiplier,
+            max_fraction * multiplier
+        )
+
+    max_exponent = max(min_bits.exponent, max_bits.exponent)
+
+    # Fractional rounding
+    q = Decimal('10') ** (max_exponent + 1)
+
+    return (
+        minimum.quantize(q, rounding=ROUND_FLOOR).normalize(),
+        maximum.quantize(q, rounding=ROUND_CEILING).normalize()
+    )
