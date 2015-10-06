@@ -659,7 +659,8 @@ class Table(Patchable):
         Bins may not be perfectly even if the spread of the data does not divide
         evenly, but all values will always be included in some bin.
 
-        :param column_name: The name of the column to bin.
+        :param column_name: The name of the column to bin. Must be of type
+            :class:`.Number`
         :param count: The number of bins to create. If not specified then each
             value will be counted as its own bin.
         :param start: The minimum value to start the bins at. If not specified the
