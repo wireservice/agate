@@ -1,6 +1,8 @@
 0.11.0
 ------
 
+* Implemented __repr__ for Table, TableSet, Column and Row. (#261)
+* Row.index property added.
 * Column constructor no longer takes a data_type argument.
 * Column.index and Column.name properties added.
 * Table.counts implemented. (#271)

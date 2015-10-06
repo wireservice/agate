@@ -29,21 +29,19 @@ class Row(Mapping):
     """
     #pylint: disable=W0212
 
-    def __init__(self, table, i):
+    def __init__(self, table, index):
         self._table = table
-        self._i = i
+        self._index = index
 
     def __unicode__(self):
-        data = self._table._data[self._i]
+        data = self._table._data[self._index]
 
-        sample = ', '.join(six.text_type(d) for d in data[:5])
+        sample = u', '.join(repr(d) for d in data[:5])
 
         if len(data) > 5:
-            sample = '%s, ...' % sample
+            sample = u'%s, ...' % sample
 
-        sample = '(%s)' % sample
-
-        return '<agate.rows.Row: %s>' % sample
+        return u'<agate.Row: (%s)>' % sample
 
     def __str__(self):
         if six.PY2:
@@ -52,12 +50,12 @@ class Row(Mapping):
         return str(self.__unicode__())
 
     def __repr__(self):
-        return str(self)
+        return u'<agate.Row: index=%i>' % self._index
 
     def __getitem__(self, k):
         if isinstance(k, int):
             try:
-                return self._table._data[self._i][k]
+                return self._table._data[self._index][k]
             except IndexError:
                 raise ColumnDoesNotExistError(k)
 
@@ -66,17 +64,21 @@ class Row(Mapping):
         except ValueError:
             raise ColumnDoesNotExistError(k)
 
-        return self._table._data[self._i][j]
+        return self._table._data[self._index][j]
 
     @memoize
     def __len__(self):
-        return len(self._table._data[self._i])
+        return len(self._table._data[self._index])
 
     def __iter__(self):
         return CellIterator(self)
 
     def __eq__(self, other):
-        return self._table._data[self._i] == other
+        return self._table._data[self._index] == other
+
+    @property
+    def index(self):
+        return self._index
 
 class RowSequence(Sequence):
     """
@@ -117,15 +119,15 @@ class RowIterator(six.Iterator):
 
     def __init__(self, table):
         self._table = table
-        self._i = 0
+        self._index = 0
 
     def __next__(self):
         try:
-            row = self._table._get_row(self._i)
+            row = self._table._get_row(self._index)
         except IndexError:
             raise StopIteration
 
-        self._i += 1
+        self._index += 1
 
         return row
 
@@ -139,14 +141,14 @@ class CellIterator(six.Iterator):
 
     def __init__(self, row):
         self._row = row
-        self._i = 0
+        self._index = 0
 
     def __next__(self):
         try:
-            v = self._row._table._data[self._row._i][self._i]
+            v = self._row._table._data[self._row.index][self._index]
         except IndexError:
             raise StopIteration
 
-        self._i += 1
+        self._index += 1
 
         return v

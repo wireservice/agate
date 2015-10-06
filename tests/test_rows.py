@@ -5,6 +5,8 @@ try:
 except ImportError:
     import unittest
 
+import six
+
 from agate import Table
 from agate.data_types import *
 from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
@@ -29,7 +31,10 @@ class TestRows(unittest.TestCase):
         self.table = Table(self.rows, self.columns)
 
     def test_stringify(self):
-        self.assertEqual(str(self.table.rows[0]), '<agate.rows.Row: (1, 2, a)>')
+        if six.PY2:
+            self.assertEqual(str(self.table.rows[0]), "<agate.Row: (Decimal('1'), Decimal('2'), u'a')>")
+        else:
+            self.assertEqual(str(self.table.rows[0]), "<agate.Row: (Decimal('1'), Decimal('2'), 'a')>")
 
     def test_stringify_long(self):
         rows = (
@@ -47,7 +52,15 @@ class TestRows(unittest.TestCase):
 
         self.table = Table(rows, columns)
 
-        self.assertEqual(str(self.table.rows[0]), "<agate.rows.Row: (1, 2, a, b, c, ...)>")
+        if six.PY2:
+            self.assertEqual(str(self.table.rows[0]), "<agate.Row: (Decimal('1'), Decimal('2'), u'a', u'b', u'c', ...)>")
+        else:
+            self.assertEqual(str(self.table.rows[0]), "<agate.Row: (Decimal('1'), Decimal('2'), 'a', 'b', 'c', ...)>")
+            
+    def test_repr(self):
+        self.table = Table(self.rows, self.columns)
+
+        self.assertEqual(repr(self.table.rows[0]), "<agate.Row: index=0>")
 
     def test_length(self):
         self.assertEqual(len(self.table.rows), 3)

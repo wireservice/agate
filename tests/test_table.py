@@ -38,6 +38,7 @@ class TestTable(unittest.TestCase):
             ('three', self.text_type)
         )
 
+
     def test_create_table(self):
         table = Table(self.rows, self.columns)
 
@@ -137,6 +138,11 @@ class TestTable(unittest.TestCase):
         self.assertEqual(contents1, contents2)
 
         os.remove('.test.csv')
+
+    def test_repr(self):
+        self.table = Table(self.rows, self.columns)
+
+        self.assertEqual(repr(self.table), "<agate.Table: columns=3 rows=3>")
 
     def test_get_column_types(self):
         table = Table(self.rows, self.columns)

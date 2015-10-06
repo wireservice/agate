@@ -104,6 +104,12 @@ class Table(Patchable):
 
         self._data = tuple(cast_data)
 
+    def __repr__(self):
+        return u'<agate.Table: columns=%i rows=%i>' % (
+            len(self.columns),
+            len(self.rows)
+        )
+
     def _get_column(self, i):
         """
         Get a :class:`.Column` of data, caching a copy for next request.

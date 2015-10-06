@@ -27,20 +27,25 @@ class Column(Sequence):
     def __unicode__(self):
         data = self.get_data()
 
-        sample = ', '.join(six.text_type(d) for d in data[:5])
+        sample = u', '.join(repr(d) for d in data[:5])
 
         if len(data) > 5:
-            sample = '%s, ...' % sample
+            sample = u'%s, ...' % sample
 
-        sample = '(%s)' % sample
-
-        return '<agate.columns.%s: %s>' % (self.__class__.__name__, sample)
+        return u'<agate.Column: (%s)>' % (sample)
 
     def __str__(self):
         if six.PY2:
             return str(self.__unicode__().encode('utf8'))
 
         return str(self.__unicode__())  #pragma: no cover
+
+    def __repr__(self):
+        return u'<agate.Column: index=%i name=\'%s\' data_type=%s>' % (
+            self.index,
+            self.name,
+            self.data_type.__class__.__name__
+        )
 
     def __getitem__(self, j):
         return self.get_data()[j]
