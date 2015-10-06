@@ -18,7 +18,7 @@ subclassed to fully customize it's behavior.
 
 import six
 
-if six.PY3:
+if six.PY3: #pragma: no cover
     from functools import cmp_to_key
 
 from agate.aggregations import HasNulls, Percentiles

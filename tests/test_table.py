@@ -547,6 +547,62 @@ class TestPrettyPrint(unittest.TestCase):
         self.assertEqual(len(lines), 8)
         self.assertEqual(len(lines[0]), 23)
 
+    def test_print_bars(self):
+        table = Table(self.rows, self.columns)
+
+        output = six.StringIO()
+        table.print_bars('three', 'one', output=output)
+        lines = output.getvalue().split('\n')
+
+    def test_print_bars_width(self):
+        table = Table(self.rows, self.columns)
+
+        output = six.StringIO()
+        table.print_bars('three', 'one', width=40, output=output)
+        lines = output.getvalue().split('\n')
+
+        self.assertEqual(max([len(l) for l in lines]), 40)
+
+    def test_print_bars_width_overlap(self):
+        table = Table(self.rows, self.columns)
+
+        output = six.StringIO()
+        table.print_bars('three', 'one', width=20, output=output)
+        lines = output.getvalue().split('\n')
+
+        self.assertEqual(max([len(l) for l in lines]), 20)
+
+    def test_print_bars_domain(self):
+        table = Table(self.rows, self.columns)
+
+        table.print_bars('three', 'one', domain=(0, 300))
+
+    def test_print_bars_domain_invalid(self):
+        table = Table(self.rows, self.columns)
+
+        with self.assertRaises(ValueError):
+            table.print_bars('three', 'one', domain=(5, 0))
+
+    def test_print_bars_negative(self):
+        rows = (
+            ('-1.7', 2, 'a'),
+            ('-11.18', None, None),
+            ('0', 1, 'c')
+        )
+
+        table = Table(rows, self.columns)
+        table.print_bars('three', 'one')
+
+    def test_print_bars_mixed_signs(self):
+        rows = (
+            ('-1.7', 2, 'a'),
+            ('11.18', None, None),
+            ('0', 1, 'c')
+        )
+
+        table = Table(rows, self.columns)
+        table.print_bars('three', 'one')
+
 class TestTableGrouping(unittest.TestCase):
     def setUp(self):
         self.rows = (

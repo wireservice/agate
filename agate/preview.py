@@ -275,7 +275,7 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
         elif value < 0:
             bar_width = plot_negative_width - project(value)
 
-        label_text = label.ljust(max_label_width)
+        label_text = six.text_type(label).ljust(max_label_width)
         value_text = formatted_values[i].rjust(max_value_width)
         bar = BAR_MARK * bar_width
 
@@ -310,7 +310,7 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
         elif tick == plot_width - 1:
             offset = -(len(label) - 1)
         else:
-            offset = -(len(label) / 2)
+            offset = int(-(len(label) / 2))
 
         pos = (width - plot_width) + tick + offset
 
