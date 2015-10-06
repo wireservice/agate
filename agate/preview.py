@@ -7,9 +7,9 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 try:
-    from cdecimal import Decimal
+    from cdecimal import Decimal, ROUND_FLOOR
 except ImportError: #pragma: no cover
-    from decimal import Decimal
+    from decimal import Decimal, ROUND_FLOOR
 
 import sys
 
@@ -185,7 +185,7 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
             raise ValueError('Column contains values outside specified domain')
     else:
         min_value = value_column.aggregate(Min())
-        x_min = round_to_magnitude(min_value)
+        x_min = round_to_magnitude(min_value, rounding=ROUND_FLOOR)
         max_value = value_column.aggregate(Max())
         x_max = round_to_magnitude(max_value)
 

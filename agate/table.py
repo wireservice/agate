@@ -28,9 +28,9 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 try:
-    from cdecimal import Decimal
+    from cdecimal import Decimal, ROUND_FLOOR
 except ImportError: #pragma: no cover
-    from decimal import Decimal
+    from decimal import Decimal, ROUND_FLOOR
 
 from babel.numbers import format_decimal
 
@@ -660,8 +660,8 @@ class Table(Patchable):
         column = self.columns[column_name]
 
         if start is None or end is None:
-            start = column.aggregate(Min())
-            end = column.aggregate(Max())
+            start = round_to_magnitude(column.aggregate(Min()), rounding=ROUND_FLOOR)
+            end = round_to_magnitude(column.aggregate(Max()))
         else:
             start = Decimal(start)
             end = Decimal(end)

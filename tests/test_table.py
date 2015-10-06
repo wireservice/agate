@@ -458,9 +458,9 @@ class TestBins(unittest.TestCase):
 
         new_table = Table(rows, columns).bins('number')
 
-        self.assertSequenceEqual(new_table.rows[0], ['[-49 - -39)', 10])
-        self.assertSequenceEqual(new_table.rows[3], ['[-19 - -9)', 10])
-        self.assertSequenceEqual(new_table.rows[9], ['[41 - 51]', 10])
+        self.assertSequenceEqual(new_table.rows[0], ['[-50 - -40)', 9])
+        self.assertSequenceEqual(new_table.rows[3], ['[-20 - -10)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[40 - 50]', 11])
 
     def test_bins_small_numbers(self):
         rows = []

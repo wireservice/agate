@@ -46,12 +46,15 @@ def confessions(data):
 
     print('False confessions: %i' % num_false_confessions)
 
+@proof.never_cache
 def median_age(data):
     with_age = data['exonerations'].where(lambda row: row['age'] is not None)
 
     median_age = with_age.columns['age'].aggregate(agate.Median())
 
     print('Median age at time of arrest: %i' % median_age)
+
+    with_age.bins('age', 8).print_bars('bin', 'count', width=80)
 
 def years_in_prison(data):
     data['with_years_in_prison'] = data['exonerations'].compute([
@@ -62,7 +65,7 @@ def youth(data):
     sorted_by_age = data['exonerations'].order_by('age')
     youngest_ten = sorted_by_age.limit(10)
 
-    youngest_ten.pretty_print(max_columns=7)
+    youngest_ten.print_table(max_columns=7)
 
 def states(data):
     state_totals = data['with_years_in_prison'].group_by('state')
@@ -73,7 +76,7 @@ def states(data):
 
     sorted_medians = medians.order_by('median_years_in_prison', reverse=True)
 
-    sorted_medians.pretty_print(max_rows=5)
+    sorted_medians.print_table(max_rows=5)
 
 def race_and_age(data):
     # Filters rows without age data
@@ -100,7 +103,7 @@ def race_and_age(data):
     sorted_groups = medians.order_by('median_years_in_prison', reverse=True)
 
     # Print out the results
-    sorted_groups.pretty_print(max_rows=10)
+    sorted_groups.print_table(max_rows=10)
 
 analysis = proof.Analysis(load_data)
 analysis.then(confessions)

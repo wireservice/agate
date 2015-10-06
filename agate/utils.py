@@ -156,7 +156,7 @@ def make_number_formatter(decimal_places):
 
     return ''.join(['#,##0.', fraction, ';-#,##0.', fraction])
 
-def round_to_magnitude(n):
+def round_to_magnitude(n, rounding=ROUND_CEILING):
     """
     Round a value to the nearest whole magnitude.
     """
@@ -166,10 +166,5 @@ def round_to_magnitude(n):
     magnitude = n.copy_abs().log10().to_integral_exact(rounding=ROUND_FLOOR)
     multiplier = Decimal('10') ** magnitude
     fraction = (n / multiplier)
-
-    if n >= 0:
-        rounding = ROUND_CEILING
-    else:
-        rounding = ROUND_FLOOR
 
     return fraction.to_integral_exact(rounding=rounding) * multiplier

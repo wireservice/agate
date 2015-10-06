@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 try:
-    from cdecimal import Decimal
+    from cdecimal import Decimal, ROUND_FLOOR
 except ImportError: #pragma: no cover
-    from decimal import Decimal
+    from decimal import Decimal, ROUND_FLOOR
 
 try:
     import unittest2 as unittest
@@ -93,20 +93,20 @@ class TestQuantiles(unittest.TestCase):
 class TestMisc(unittest.TestCase):
     def test_round_to_magnitude(self):
         self.assertEqual(round_to_magnitude(Decimal('2.7')), Decimal('3'))
-        self.assertEqual(round_to_magnitude(Decimal('-2.7')), Decimal('-3'))
+        self.assertEqual(round_to_magnitude(Decimal('-2.7'), rounding=ROUND_FLOOR), Decimal('-3'))
         self.assertEqual(round_to_magnitude(Decimal('2.2')), Decimal('3'))
-        self.assertEqual(round_to_magnitude(Decimal('-2.2')), Decimal('-3'))
+        self.assertEqual(round_to_magnitude(Decimal('-2.2'), rounding=ROUND_FLOOR), Decimal('-3'))
         self.assertEqual(round_to_magnitude(Decimal('2.77')), Decimal('3'))
-        self.assertEqual(round_to_magnitude(Decimal('-2.77')), Decimal('-3'))
+        self.assertEqual(round_to_magnitude(Decimal('-2.77'), rounding=ROUND_FLOOR), Decimal('-3'))
         self.assertEqual(round_to_magnitude(Decimal('2.22')), Decimal('3'))
-        self.assertEqual(round_to_magnitude(Decimal('-2.22')), Decimal('-3'))
+        self.assertEqual(round_to_magnitude(Decimal('-2.22'), rounding=ROUND_FLOOR), Decimal('-3'))
         self.assertEqual(round_to_magnitude(Decimal('27')), Decimal('30'))
-        self.assertEqual(round_to_magnitude(Decimal('-27')), Decimal('-30'))
+        self.assertEqual(round_to_magnitude(Decimal('-27'), rounding=ROUND_FLOOR), Decimal('-30'))
         self.assertEqual(round_to_magnitude(Decimal('22')), Decimal('30'))
-        self.assertEqual(round_to_magnitude(Decimal('-22')), Decimal('-30'))
+        self.assertEqual(round_to_magnitude(Decimal('-22'), rounding=ROUND_FLOOR), Decimal('-30'))
         self.assertEqual(round_to_magnitude(Decimal('0.2')), Decimal('0.2'))
-        self.assertEqual(round_to_magnitude(Decimal('-0.2')), Decimal('-0.2'))
+        self.assertEqual(round_to_magnitude(Decimal('-0.2'), rounding=ROUND_FLOOR), Decimal('-0.2'))
         self.assertEqual(round_to_magnitude(Decimal('0.22')), Decimal('0.3'))
-        self.assertEqual(round_to_magnitude(Decimal('-0.22')), Decimal('-0.3'))
+        self.assertEqual(round_to_magnitude(Decimal('-0.22'), rounding=ROUND_FLOOR), Decimal('-0.3'))
         self.assertEqual(round_to_magnitude(Decimal('0.222')), Decimal('0.3'))
-        self.assertEqual(round_to_magnitude(Decimal('-0.222')), Decimal('-0.3'))
+        self.assertEqual(round_to_magnitude(Decimal('-0.222'), rounding=ROUND_FLOOR), Decimal('-0.3'))
