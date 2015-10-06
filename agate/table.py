@@ -589,8 +589,13 @@ class Table(Patchable):
         """
         Count the number of occurrences of each distinct value in a column.
         Creates a new table with only the value and the count. This is
-        effectively equivalent to doing a group_by followed by an aggregation
-        with a :class:`.Length` aggregator.
+        effectively equivalent to doing a :meth:`Table.group_by` followed by an
+        :meth:`.TableSet.aggregate` with a :class:`.Length` aggregator.
+
+        The resulting table will have two columns. The first will have
+        the name and type of the specified :code:`key` column or
+        :code:`key_name` and :code:`key_type`, if specified. The second will be
+        named :code:`count` and will be of type :class:`.Number`.
 
         :param key: Either the name of a column from the this table
             to count, or a :class:`function` that takes a row and returns
@@ -638,6 +643,10 @@ class Table(Patchable):
         Bins may not be perfectly even if the spread of the data does not divide
         evenly, but all values will always be included in some bin.
 
+        The resulting table will have two columns. The first will be named
+        :code:`bin` and will be of type :class:`.Text`. The second will be named
+        :code:`count` and will be of type :class:`.Number`.
+
         :param column_name: The name of the column to bin. Must be of type
             :class:`.Number`
         :param count: The number of bins to create. If not specified then each
@@ -646,8 +655,7 @@ class Table(Patchable):
             minimum value in the column will be used.
         :param end: The maximum value to end the bins at. If not specified the
             maximum value in the column will be used.
-        :returns: A new :class:`Table` with `bin` (:class:`.Text`) and `count`
-            (:class:`.Number`) columns.
+        :returns: A new :class:`Table`.
         """
         column = self.columns[column_name]
 
