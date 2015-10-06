@@ -16,6 +16,11 @@ data in each row. If this is still not suitable, :class:`Computation` can be
 subclassed to fully customize it's behavior.
 """
 
+try:
+    from cdecimal import Decimal
+except ImportError: #pragma: no cover
+    from decimal import Decimal
+
 from babel.numbers import format_decimal
 import six
 
@@ -171,8 +176,6 @@ class Bins(Computation):
             self._start = Decimal(self._start)
             self._end = Decimal(self._end)
 
-        print self._start, self._end
-
         spread = abs(self._end - self._start)
         size = round_to_magnitude(spread / self._count)
 
@@ -186,8 +189,6 @@ class Bins(Computation):
         decimal_places = max_precision(self._breaks)
         self._break_formatter = make_number_formatter(decimal_places)
 
-        print self._breaks
-
     def run(self, row):
         value = row[self._column_name]
         i = 1
@@ -198,7 +199,7 @@ class Bins(Computation):
         inclusive = format_decimal(self._breaks[i - 1], format=self._break_formatter)
         exclusive = format_decimal(self._breaks[i], format=self._break_formatter)
 
-        return '[%s,%s)' % (inclusive, exclusive)
+        return '[%s - %s)' % (inclusive, exclusive)
 
 class Rank(Computation):
     """

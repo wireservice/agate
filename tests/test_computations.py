@@ -106,9 +106,9 @@ class TestTableComputation(unittest.TestCase):
             (Bins('number'), 'bins')
         ])
 
-        self.assertEqual(new_table.columns['bins'][5], '[0,10)')
-        self.assertEqual(new_table.columns['bins'][37], '[30,40)')
-        self.assertEqual(new_table.columns['bins'][99], '[90,100)')
+        self.assertEqual(new_table.columns['bins'][5], '[0 - 10)')
+        self.assertEqual(new_table.columns['bins'][37], '[30 - 40)')
+        self.assertEqual(new_table.columns['bins'][99], '[90 - 100)')
 
     def test_bins_negative(self):
         rows = []
@@ -124,9 +124,9 @@ class TestTableComputation(unittest.TestCase):
             (Bins('number'), 'bins')
         ])
 
-        self.assertEqual(new_table.columns['bins'][5], '[-10,0)')
-        self.assertEqual(new_table.columns['bins'][37], '[-40,-30)')
-        self.assertEqual(new_table.columns['bins'][99], '[-100,-90)')
+        self.assertEqual(new_table.columns['bins'][5], '[-10 - 0)')
+        self.assertEqual(new_table.columns['bins'][37], '[-40 - -30)')
+        self.assertEqual(new_table.columns['bins'][99], '[-100 - -90)')
 
     def test_bins_mixed_signs(self):
         rows = []
@@ -142,9 +142,9 @@ class TestTableComputation(unittest.TestCase):
             (Bins('number'), 'bins')
         ])
 
-        self.assertEqual(new_table.columns['bins'][5], '[40,50)')
-        self.assertEqual(new_table.columns['bins'][37], '[10,20)')
-        self.assertEqual(new_table.columns['bins'][99], '[-50,-40)')
+        self.assertEqual(new_table.columns['bins'][5], '[40 - 50)')
+        self.assertEqual(new_table.columns['bins'][37], '[10 - 20)')
+        self.assertEqual(new_table.columns['bins'][99], '[-50 - -40)')
 
     def test_bins_small_numbers(self):
         rows = []
@@ -160,9 +160,9 @@ class TestTableComputation(unittest.TestCase):
             (Bins('number'), 'bins')
         ])
 
-        self.assertEqual(new_table.columns['bins'][5], '[0,1)')
-        self.assertEqual(new_table.columns['bins'][37], '[3,4)')
-        self.assertEqual(new_table.columns['bins'][99], '[9,10)')
+        self.assertEqual(new_table.columns['bins'][5], '[0 - 1)')
+        self.assertEqual(new_table.columns['bins'][37], '[3 - 4)')
+        self.assertEqual(new_table.columns['bins'][99], '[9 - 10)')
 
     def test_bins_decimals(self):
         rows = []
@@ -178,9 +178,9 @@ class TestTableComputation(unittest.TestCase):
             (Bins('number'), 'bins')
         ])
 
-        self.assertEqual(new_table.columns['bins'][5], '[0.0,0.1)')
-        self.assertEqual(new_table.columns['bins'][37], '[0.3,0.4)')
-        self.assertEqual(new_table.columns['bins'][99], '[0.9,1.0)')
+        self.assertEqual(new_table.columns['bins'][5], '[0.0 - 0.1)')
+        self.assertEqual(new_table.columns['bins'][37], '[0.3 - 0.4)')
+        self.assertEqual(new_table.columns['bins'][99], '[0.9 - 1.0)')
 
     def test_rank_number(self):
         new_table = self.table.compute([
