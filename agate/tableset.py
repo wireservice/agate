@@ -86,10 +86,10 @@ class TableSet(Mapping, Patchable):
         self._column_names = self._sample_table.column_names
 
         for table in group.values():
-            if table._column_types != self._column_types:
+            if table.column_types != self.column_types:
                 raise ValueError('Not all tables have the same column types!')
 
-            if table._column_names != self._column_names:
+            if table.column_names != self.column_names:
                 raise ValueError('Not all tables have the same column names!')
 
         self._tables = copy(group)

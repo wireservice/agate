@@ -18,8 +18,7 @@ class Column(Sequence):
     """
     #pylint: disable=W0212
 
-    def __init__(self, data_type, table, index):
-        self._data_type = data_type
+    def __init__(self, table, index):
         self._table = table
         self._index = index
 
@@ -63,8 +62,25 @@ class Column(Sequence):
         return not self.__eq__(other)
 
     @property
+    def index(self):
+        """
+        This column's index in its parent table.
+        """
+        return self._index
+
+    @property
+    def name(self):
+        """
+        This column's name in its parent table.
+        """
+        return self._table.column_names[self._index]
+
+    @property
     def data_type(self):
-        return self._data_type
+        """
+        This column's data type.
+        """
+        return self._table.column_types[self._index]
 
     @memoize
     def get_data(self):
@@ -138,7 +154,7 @@ class ColumnMapping(Mapping):
 
     @memoize
     def __len__(self):
-        return len(self._table._column_names)
+        return len(self._table.column_names)
 
 class ColumnIterator(six.Iterator):
     """

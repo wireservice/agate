@@ -39,11 +39,12 @@ try:
 except ImportError: #pragma: no cover
     import csv
 
+from six.moves import range
+
 from agate.aggregations import Min, Max
 from agate.columns import Column, ColumnMapping
 from agate.data_types import TypeTester, Text, Number
 from agate.computations import Computation
-from agate.exceptions import ColumnDoesNotExistError
 from agate.preview import print_table, print_bars
 from agate.rows import Row, RowSequence
 from agate.utils import NullOrder, Patchable, max_precision, make_number_formatter, round_to_magnitude
@@ -108,9 +109,7 @@ class Table(Patchable):
         Get a :class:`.Column` of data, caching a copy for next request.
         """
         if i not in self._cached_columns:
-            column_type = self._column_types[i]
-
-            self._cached_columns[i] = Column(column_type, self, i)
+            self._cached_columns[i] = Column(self, i)
 
         return self._cached_columns[i]
 
@@ -262,13 +261,9 @@ class Table(Patchable):
         column_types = []
 
         for name in column_names:
-            try:
-                i = self._column_names.index(name)
-            except ValueError:
-                raise ColumnDoesNotExistError(name)
-
-            column_indices.append(i)
-            column_types.append(self._column_types[i])
+            column = self.columns[name]
+            column_indices.append(column.index)
+            column_types.append(column.data_type)
 
         new_rows = []
 
@@ -429,22 +424,13 @@ class Table(Patchable):
         if left_key_is_row_function:
             left_column = [left_key(row) for row in self.rows]
         else:
-            try:
-                left_key_index = self._column_names.index(left_key)
-            except ValueError:
-                raise ColumnDoesNotExistError(left_key)
-
-            left_column = self._get_column(left_key_index)
+            left_column = self.columns[left_key]
 
         if right_key_is_row_function:
             right_column = [right_key(row) for row in right_table.rows]
         else:
-            try:
-                right_key_index = right_table.column_names.index(right_key)
-            except ValueError:
-                raise ColumnDoesNotExistError(right_key)
-
-            right_column = right_table._get_column(right_key_index)
+            right_column = right_table.columns[right_key]
+            right_key_index = right_column.index
 
         # Build names and type lists
         column_names = list(self._column_names)
@@ -533,7 +519,6 @@ class Table(Patchable):
         :returns: A :class:`.TableSet` mapping where the keys are unique
             values from the :code:`key` and the values are new :class:`Table`
             instances containing the grouped rows.
-        :raises: :exc:`.ColumnDoesNotExistError`
         """
         from agate.tableset import TableSet
 
@@ -543,14 +528,11 @@ class Table(Patchable):
             key_name = key_name or 'group'
             key_type = key_type or Text()
         else:
-            key_name = key_name or key
+            column = self.columns[key]
+            index = column.index
 
-            try:
-                i = self._column_names.index(key)
-            except ValueError:
-                raise ColumnDoesNotExistError(key)
-
-            key_type = key_type or self._column_types[i]
+            key_name = key_name or column.name
+            key_type = key_type or column.data_type
 
         groups = OrderedDict()
 
@@ -558,7 +540,7 @@ class Table(Patchable):
             if key_is_row_function:
                 group_name = key_type.cast(key(row))
             else:
-                group_name = key_type.cast(row[i])
+                group_name = key_type.cast(row[index])
 
             if group_name not in groups:
                 groups[group_name] = []
@@ -625,14 +607,11 @@ class Table(Patchable):
             key_name = key_name or 'group'
             key_type = key_type or Text()
         else:
-            key_name = key_name or key
+            column = self.columns[key]
+            index = column.index
 
-            try:
-                i = self._column_names.index(key)
-            except ValueError:
-                raise ColumnDoesNotExistError(key)
-
-            key_type = key_type or self._column_types[i]
+            key_name = key_name or column.name
+            key_type = key_type or column.data_type
 
         output = OrderedDict()
 
@@ -640,7 +619,7 @@ class Table(Patchable):
             if key_is_row_function:
                 group_name = key_type.cast(key(row))
             else:
-                group_name = key_type.cast(row[i])
+                group_name = key_type.cast(row[index])
 
             if group_name not in output:
                 output[group_name] = 0
@@ -684,7 +663,7 @@ class Table(Patchable):
 
         breaks = [start]
 
-        for i in xrange(1, count + 1):
+        for i in range(1, count + 1):
             top = start + (size * i)
 
             breaks.append(top)
@@ -704,7 +683,7 @@ class Table(Patchable):
 
         bins = OrderedDict()
 
-        for i in xrange(1, len(breaks)):
+        for i in range(1, len(breaks)):
             last_exclusive = (i == len(breaks) - 1)
             name = name_bin(breaks[i - 1], breaks[i], last_exclusive=last_exclusive)
 

@@ -9,9 +9,9 @@ except ImportError:
     import unittest
 
 try:
-    from unittest.mock import Mock
+    from unittest.mock import MagicMock, Mock
 except:
-    from mock import Mock
+    from mock import MagicMock, Mock
 
 from agate import Table
 from agate.aggregations import *
@@ -94,7 +94,10 @@ class TestSimpleAggregation(unittest.TestCase):
 
 class TestBooleanAggregation(unittest.TestCase):
     def test_any(self):
-        column = Column(Boolean(), None, 'one')
+        table = MagicMock()
+        table.column_types = [Boolean()]
+
+        column = Column(table, 0)
         column.get_data = lambda: (True, False, None)
         self.assertEqual(column.aggregate(Any()), True)
 
@@ -102,7 +105,10 @@ class TestBooleanAggregation(unittest.TestCase):
         self.assertEqual(column.aggregate(Any()), False)
 
     def test_all(self):
-        column = Column(Boolean(), None, 'one')
+        table = MagicMock()
+        table.column_types = [Boolean()]
+
+        column = Column(table, 0)
         column.get_data = lambda: (True, True, None)
         self.assertEqual(column.aggregate(All()), False)
 
@@ -111,7 +117,10 @@ class TestBooleanAggregation(unittest.TestCase):
 
 class TestDateTimeAggregation(unittest.TestCase):
     def test_min(self):
-        column = Column(DateTime(), None, 'one')
+        table = MagicMock()
+        table.column_types = [DateTime()]
+
+        column = Column(table, 0)
         column.get_data_without_nulls = lambda: (
             datetime.datetime(1994, 3, 3, 6, 31),
             datetime.datetime(1994, 3, 3, 6, 30, 30),
@@ -121,7 +130,10 @@ class TestDateTimeAggregation(unittest.TestCase):
         self.assertEqual(column.aggregate(Min()), datetime.datetime(1994, 3, 3, 6, 30))
 
     def test_max(self):
-        column = Column(DateTime(), None, 'one')
+        table = MagicMock()
+        table.column_types = [DateTime()]
+
+        column = Column(table, 0)
         column.get_data_without_nulls = lambda: (
             datetime.datetime(1994, 3, 3, 6, 31),
             datetime.datetime(1994, 3, 3, 6, 30, 30),
@@ -426,12 +438,18 @@ class TestNumberAggregation(unittest.TestCase):
 
 class TestTextAggregation(unittest.TestCase):
     def test_max_length(self):
-        column = Column(Text(), None, 'one')
+        table = MagicMock()
+        table.column_types = [Text()]
+
+        column = Column(table, 0)
         column.get_data = lambda: ('a', 'gobble', 'wow')
         self.assertEqual(column.aggregate(MaxLength()), 6)
 
     def test_max_length_invalid(self):
-        column = Column(Number(), None, 'one')
+        table = MagicMock()
+        table.column_types = [Number()]
+
+        column = Column(table, 0)
         column.get_data = lambda: (1, 2, 3)
 
         with self.assertRaises(DataTypeError):

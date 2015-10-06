@@ -14,6 +14,7 @@ except ImportError:
     import unittest
 
 import six
+from six.moves import range
 
 from agate import Table, TableSet
 from agate.data_types import *
@@ -416,7 +417,7 @@ class TestBins(unittest.TestCase):
     def test_bins(self):
         rows = []
 
-        for i in xrange(0, 100):
+        for i in range(0, 100):
             rows.append([i]),
 
         columns = (
@@ -432,7 +433,7 @@ class TestBins(unittest.TestCase):
     def test_bins_negative(self):
         rows = []
 
-        for i in xrange(0, -100, -1):
+        for i in range(0, -100, -1):
             rows.append([i])
 
         columns = (
@@ -448,7 +449,7 @@ class TestBins(unittest.TestCase):
     def test_bins_mixed_signs(self):
         rows = []
 
-        for i in xrange(0, -100, -1):
+        for i in range(0, -100, -1):
             rows.append([i + 50])
 
         columns = (
@@ -464,7 +465,7 @@ class TestBins(unittest.TestCase):
     def test_bins_small_numbers(self):
         rows = []
 
-        for i in xrange(0, 100):
+        for i in range(0, 100):
             rows.append([Decimal(i) / Decimal('10')])
 
         columns = (
@@ -480,7 +481,7 @@ class TestBins(unittest.TestCase):
     def test_bins_decimals(self):
         rows = []
 
-        for i in xrange(0, 100):
+        for i in range(0, 100):
             rows.append([Decimal(i) / Decimal('100')])
 
         columns = (
