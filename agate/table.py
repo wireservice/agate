@@ -603,6 +603,56 @@ class Table(Patchable):
         return self._fork(new_rows, zip(column_names, column_types))
 
     @allow_tableset_proxy
+    def counts(self, key, key_name=None, key_type=None):
+        """
+        Count the number of occurrences of each distinct value in a column.
+        Creates a new table with only the value and the count. This is
+        effectively equivalent to doing a group_by followed by an aggregation
+        with a :class:`.Length` aggregator.
+
+        :param key: Either the name of a column from the this table
+            to count, or a :class:`function` that takes a row and returns
+            a value to count.
+        :param key_name: A name that describes the counted properties.
+            Defaults to the column name that was counted or "group" if
+            counting with a key function.
+        :param key_type: An instance some subclass of :class:`.DataType`. If
+            not provided it will default to a :class`.Text`.
+        """
+        key_is_row_function = hasattr(key, '__call__')
+
+        if key_is_row_function:
+            key_name = key_name or 'group'
+            key_type = key_type or Text()
+        else:
+            key_name = key_name or key
+
+            try:
+                i = self._column_names.index(key)
+            except ValueError:
+                raise ColumnDoesNotExistError(key)
+
+            key_type = key_type or self._column_types[i]
+
+        output = OrderedDict()
+
+        for row in self.rows:
+            if key_is_row_function:
+                group_name = key_type.cast(key(row))
+            else:
+                group_name = key_type.cast(row[i])
+
+            if group_name not in output:
+                output[group_name] = 0
+
+            output[group_name] += 1
+
+        column_names = [key_name, 'count']
+        column_types = [key_type, Number()]
+
+        return Table(output.items(), zip(column_names, column_types))
+
+    @allow_tableset_proxy
     def bins(self, column_name, count=10, start=None, end=None):
         """
         Generates (approximately) evenly sized bins for the values in a column.

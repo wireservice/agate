@@ -367,6 +367,48 @@ class TestTable(unittest.TestCase):
         self.assertEqual(new_table._column_names, ('one', 'two'))
         self.assertSequenceEqual(new_table.columns['one'], (2,))
 
+class TestCounts(unittest.TestCase):
+    def setUp(self):
+        self.rows = (
+            (1, 'Y'),
+            (2, 'N'),
+            (2, 'N'),
+            (1, 'N'),
+            (None, None),
+            (3, 'N')
+        )
+
+        self.number_type = Number()
+        self.text_type = Text()
+
+        self.columns = (
+            ('one', self.number_type),
+            ('two', self.text_type)
+        )
+
+    def test_counts_numbers(self):
+        table = Table(self.rows, self.columns)
+        new_table = table.counts('one')
+
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 2)
+
+        self.assertSequenceEqual(new_table.rows[0], [1, 2])
+        self.assertSequenceEqual(new_table.rows[1], [2, 2])
+        self.assertSequenceEqual(new_table.rows[2], [None, 1])
+        self.assertSequenceEqual(new_table.rows[3], [3, 1])
+
+    def test_counts_text(self):
+        table = Table(self.rows, self.columns)
+        new_table = table.counts('two')
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 2)
+
+        self.assertSequenceEqual(new_table.rows[0], ['Y', 1])
+        self.assertSequenceEqual(new_table.rows[1], ['N', 4])
+        self.assertSequenceEqual(new_table.rows[2], [None, 1])
+
 class TestBins(unittest.TestCase):
     def setUp(self):
         self.number_type = Number()
