@@ -28,17 +28,25 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 try:
+    from cdecimal import Decimal
+except ImportError: #pragma: no cover
+    from decimal import Decimal
+
+from babel.numbers import format_decimal
+
+try:
     import csvkit as csv
 except ImportError: #pragma: no cover
     import csv
 
+from agate.aggregations import Min, Max
 from agate.columns import Column, ColumnMapping
-from agate.data_types import TypeTester, Text
+from agate.data_types import TypeTester, Text, Number
 from agate.computations import Computation
 from agate.exceptions import ColumnDoesNotExistError
 from agate.preview import print_table, print_bars
 from agate.rows import Row, RowSequence
-from agate.utils import NullOrder, Patchable
+from agate.utils import NullOrder, Patchable, max_precision, make_number_formatter, round_to_magnitude
 
 def allow_tableset_proxy(func):
     """
@@ -435,7 +443,7 @@ class Table(Patchable):
                 right_key_index = right_table.column_names.index(right_key)
             except ValueError:
                 raise ColumnDoesNotExistError(right_key)
-                
+
             right_column = right_table._get_column(right_key_index)
 
         # Build names and type lists
@@ -593,6 +601,80 @@ class Table(Patchable):
             new_rows.append(tuple(row) + new_columns)
 
         return self._fork(new_rows, zip(column_names, column_types))
+
+    @allow_tableset_proxy
+    def bins(self, column_name, count=10, start=None, end=None):
+        """
+        Generates (approximately) evenly sized bins for the values in a column.
+        Bins may not be perfectly even if the spread of the data does not divide
+        evenly, but all values will always be included in some bin.
+
+        :param column_name: The name of the column to bin.
+        :param count: The number of bins to create. If not specified then each
+            value will be counted as its own bin.
+        :param start: The minimum value to start the bins at. If not specified the
+            minimum value in the column will be used.
+        :param end: The maximum value to end the bins at. If not specified the
+            maximum value in the column will be used.
+        :returns: A new :class:`Table` with `bin` (:class:`.Text`) and `count`
+            (:class:`.Number`) columns.
+        """
+        column = self.columns[column_name]
+
+        if start is None or end is None:
+            start = column.aggregate(Min())
+            end = column.aggregate(Max())
+        else:
+            start = Decimal(start)
+            end = Decimal(end)
+
+        spread = abs(end - start)
+        size = round_to_magnitude(spread / count)
+
+        breaks = [start]
+
+        for i in xrange(1, count + 1):
+            top = start + (size * i)
+
+            breaks.append(top)
+
+        decimal_places = max_precision(breaks)
+        break_formatter = make_number_formatter(decimal_places)
+
+        def name_bin(i, j, first_exclusive=True, last_exclusive=False):
+            inclusive = format_decimal(i, format=break_formatter)
+            exclusive = format_decimal(j, format=break_formatter)
+
+            output = u'[' if first_exclusive else u'('
+            output += u'%s - %s' % (inclusive, exclusive)
+            output += u']' if last_exclusive else u')'
+
+            return output
+
+        bins = OrderedDict()
+
+        for i in xrange(1, len(breaks)):
+            last_exclusive = (i == len(breaks) - 1)
+            name = name_bin(breaks[i - 1], breaks[i], last_exclusive=last_exclusive)
+
+            bins[name] = Decimal('0')
+
+        for row in self.rows:
+            value = row[column_name]
+            i = 1
+
+            try:
+                while value >= breaks[i]:
+                    i += 1
+            except IndexError:
+                i -= 1
+
+            last_exclusive = (i == len(breaks) - 1)
+            name = name_bin(breaks[i - 1], breaks[i], last_exclusive=last_exclusive)
+
+            bins[name] += 1
+
+        return Table(bins.items(), [('bin', Text()), ('count', Number())])
 
     def print_table(self, max_rows=None, max_columns=None, output=sys.stdout):
         """

@@ -16,21 +16,14 @@ data in each row. If this is still not suitable, :class:`Computation` can be
 subclassed to fully customize it's behavior.
 """
 
-try:
-    from cdecimal import Decimal
-except ImportError: #pragma: no cover
-    from decimal import Decimal
-
-from babel.numbers import format_decimal
 import six
 
 if six.PY3:
     from functools import cmp_to_key
 
-from agate.aggregations import HasNulls, Mean, Min, Max, StDev, Percentiles
-from agate.data_types import Date, DateTime, Number, Text, TimeDelta
+from agate.aggregations import HasNulls, Percentiles
+from agate.data_types import Date, DateTime, Number, TimeDelta
 from agate.exceptions import DataTypeError, NullCalculationError
-from agate.utils import max_precision, make_number_formatter, round_to_magnitude
 
 class Computation(object): #pragma: no cover
     """
@@ -139,67 +132,6 @@ class PercentChange(Computation):
 
     def run(self, row):
         return (row[self._after_column_name] - row[self._before_column_name]) / row[self._before_column_name] * 100
-
-class Bins(Computation):
-    """
-    Generates (approximately) evenly sized bins and assigns each row to one.
-    Bins may not be perfectly even if the spread of the data does not divide
-    evenly, but all values will always be included in some bin.
-
-    :param column_name: The name of the column to bin.
-    :param count: The number of bins to create.
-    :param start: The minimum value to start the bins at. If not specified the
-        minimum value in the column will be used.
-    :param end: The maximum value to end the bins at. If not specified the
-        maximum value in the column will be used.
-    """
-    def __init__(self, column_name, count=10, start=None, end=None):
-        self._column_name = column_name
-        self._count = count
-        self._start = start
-        self._end = end
-
-        self._breaks = []
-
-    def get_computed_data_type(self, table):
-        return Text()
-
-    def prepare(self, table):
-        column = table.columns[self._column_name]
-
-        self._breaks = []
-
-        if self._start is None or self._end is None:
-            self._start = column.aggregate(Min())
-            self._end = column.aggregate(Max())
-        else:
-            self._start = Decimal(self._start)
-            self._end = Decimal(self._end)
-
-        spread = abs(self._end - self._start)
-        size = round_to_magnitude(spread / self._count)
-
-        self._breaks.append(self._start)
-
-        for i in xrange(1, self._count + 1):
-            top = self._start + (size * i)
-
-            self._breaks.append(top)
-
-        decimal_places = max_precision(self._breaks)
-        self._break_formatter = make_number_formatter(decimal_places)
-
-    def run(self, row):
-        value = row[self._column_name]
-        i = 1
-
-        while value > self._breaks[i]:
-            i += 1
-
-        inclusive = format_decimal(self._breaks[i - 1], format=self._break_formatter)
-        exclusive = format_decimal(self._breaks[i], format=self._break_formatter)
-
-        return '[%s - %s)' % (inclusive, exclusive)
 
 class Rank(Computation):
     """

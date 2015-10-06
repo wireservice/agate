@@ -367,6 +367,90 @@ class TestTable(unittest.TestCase):
         self.assertEqual(new_table._column_names, ('one', 'two'))
         self.assertSequenceEqual(new_table.columns['one'], (2,))
 
+class TestBins(unittest.TestCase):
+    def setUp(self):
+        self.number_type = Number()
+
+    def test_bins(self):
+        rows = []
+
+        for i in xrange(0, 100):
+            rows.append([i]),
+
+        columns = (
+            ('number', self.number_type),
+        )
+
+        new_table = Table(rows, columns).bins('number')
+
+        self.assertSequenceEqual(new_table.rows[0], ['[0 - 10)', 10])
+        self.assertSequenceEqual(new_table.rows[3], ['[30 - 40)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[90 - 100]', 10])
+
+    def test_bins_negative(self):
+        rows = []
+
+        for i in xrange(0, -100, -1):
+            rows.append([i])
+
+        columns = (
+            ('number', self.number_type),
+        )
+
+        new_table = Table(rows, columns).bins('number', 10, -100, 0)
+
+        self.assertSequenceEqual(new_table.rows[0], ['[-100 - -90)', 9])
+        self.assertSequenceEqual(new_table.rows[3], ['[-70 - -60)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[-10 - 0]', 11])
+
+    def test_bins_mixed_signs(self):
+        rows = []
+
+        for i in xrange(0, -100, -1):
+            rows.append([i + 50])
+
+        columns = (
+            ('number', self.number_type),
+        )
+
+        new_table = Table(rows, columns).bins('number')
+
+        self.assertSequenceEqual(new_table.rows[0], ['[-49 - -39)', 10])
+        self.assertSequenceEqual(new_table.rows[3], ['[-19 - -9)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[41 - 51]', 10])
+
+    def test_bins_small_numbers(self):
+        rows = []
+
+        for i in xrange(0, 100):
+            rows.append([Decimal(i) / Decimal('10')])
+
+        columns = (
+            ('number', self.number_type),
+        )
+
+        new_table = Table(rows, columns).bins('number')
+
+        self.assertSequenceEqual(new_table.rows[0], ['[0 - 1)', 10])
+        self.assertSequenceEqual(new_table.rows[3], ['[3 - 4)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[9 - 10]', 10])
+
+    def test_bins_decimals(self):
+        rows = []
+
+        for i in xrange(0, 100):
+            rows.append([Decimal(i) / Decimal('100')])
+
+        columns = (
+            ('number', self.number_type),
+        )
+
+        new_table = Table(rows, columns).bins('number')
+
+        self.assertSequenceEqual(new_table.rows[0], ['[0.0 - 0.1)', 10])
+        self.assertSequenceEqual(new_table.rows[3], ['[0.3 - 0.4)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[0.9 - 1.0]', 10])
+
 class TestPrettyPrint(unittest.TestCase):
     def setUp(self):
         self.rows = (
