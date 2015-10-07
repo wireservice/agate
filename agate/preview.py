@@ -147,8 +147,8 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
     y_label = label_column_name
     label_column = table.columns[label_column_name]
 
-    if not isinstance(label_column.data_type, Text):
-        raise ValueError('Only Text data is supported for bar chart labels.')
+    # if not isinstance(label_column.data_type, Text):
+    #     raise ValueError('Only Text data is supported for bar chart labels.')
 
     x_label = value_column_name
     value_column = table.columns[value_column_name]
@@ -163,12 +163,17 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
     decimal_places = max_precision(value_column)
     value_formatter = make_number_formatter(decimal_places)
 
+    formatted_labels = []
+
+    for label in label_column:
+        formatted_labels.append(six.text_type(label))
+
     formatted_values = []
 
     for value in value_column:
         formatted_values.append(format_decimal(value, format=value_formatter))
 
-    max_label_width = max(label_column.aggregate(MaxLength()), len(y_label))
+    max_label_width = max(max([len(l) for l in formatted_labels]), len(y_label))
     max_value_width = max(max([len(v) for v in formatted_values]), len(x_label))
 
     plot_width = width - (max_label_width + max_value_width + 2)
@@ -265,7 +270,7 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
     write(top_line)
 
     # Bars
-    for i, label in enumerate(label_column):
+    for i, label in enumerate(formatted_labels):
         value = value_column[i]
 
         if value == 0:
@@ -275,7 +280,7 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
         elif value < 0:
             bar_width = plot_negative_width - project(value)
 
-        label_text = six.text_type(label).ljust(max_label_width)
+        label_text = label.ljust(max_label_width)
         value_text = formatted_values[i].rjust(max_value_width)
         bar = BAR_MARK * bar_width
 
