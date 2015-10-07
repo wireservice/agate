@@ -1,7 +1,8 @@
 0.12.0
 ------
 
-
+* Massive performance increases for joins (#277)
+* Add join benchmark. (#73)
 
 0.11.0
 ------

@@ -21,8 +21,8 @@ import agate
 
 class TestTableJoin(unittest.TestCase):
     def test_join(self):
-        left_rows = [(six.text_type(i), i) for i in range(1000)]
-        right_rows = [(six.text_type(i), i) for i in range(1000)]
+        left_rows = [(six.text_type(i), i) for i in range(100000)]
+        right_rows = [(six.text_type(i), i) for i in range(100000)]
 
         shuffle(left_rows)
         shuffle(right_rows)
