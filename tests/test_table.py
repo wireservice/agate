@@ -853,9 +853,9 @@ class TestTableJoin(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 6)
 
-        self.assertSequenceEqual(new_table.rows[0], (None, 2, 'c', None, 2, 'c'))
+        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 1, 4, 'a'))
         self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 2, 3, 'b'))
-        self.assertSequenceEqual(new_table.rows[2], (1, 4, 'a', 1, 4, 'a'))
+        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, 2, 'c'))
 
     def test_join_column_does_not_exist(self):
         with self.assertRaises(ColumnDoesNotExistError):

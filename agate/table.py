@@ -91,7 +91,7 @@ class Table(Patchable):
 
         for i, row in enumerate(rows):
             if len(row) != len_column_names:
-                raise ValueError('Row %i has length %i, but Table only has %i columns.' % (i, len(row), len_column_names))
+                raise ValueError('Row %i has length %i, but Table has %i columns.' % (i, len(row), len_column_names))
 
             # Forked tables can share data (because they are immutable)
             # but original data should be buffered so it can't be changed
@@ -400,8 +400,6 @@ class Table(Patchable):
         If :code:`left_key` and :code:`right_key` are column names, only
         the left column will be included in the output table.
 
-        Resulting table will be sorted by :code:`left_key`.
-
         Column names from the right table which also exist in this table will
         be suffixed "2" in the new table.
 
@@ -455,60 +453,42 @@ class Table(Patchable):
 
             column_types.append(right_table.column_types[i])
 
+        right_hash = {}
+
+        for i, value in enumerate(right_data):
+            if value not in []:
+                right_hash[value] = []
+
+            right_hash[value].append(self._rows[i])
+
         # Collect new rows
         rows = []
 
-        def null_handler(enumeration):
-            if enumeration[1] is None:
-                return NullOrder()
-
-            return enumeration[1]
-
-        left_enumerated = list(enumerate(left_data))
-        left_sorted = sorted(left_enumerated, key=null_handler)
-
-        right_enumerated = list(enumerate(right_data))
-        right_sorted = sorted(right_enumerated, key=null_handler)
-
-        last_matched = 0
-
         # Iterate over left column
-        for left_index, left_value in left_sorted:
-            matched = False
+        for left_index, left_value in enumerate(left_data):
+            new_row = list(self._rows[left_index])
 
-            right_possible = islice(enumerate(right_sorted), last_matched, len(right_sorted))
-            first_match = True
+            matching_rows = right_hash.get(left_value, None)
 
-            # Find matches in right column
-            for j, (right_index, right_value) in right_possible:
-                if left_value == right_value:
-                    row = list(self._rows[left_index])
-
-                    for k, v in enumerate(right_table._rows[right_index]):
+            # Rows with matches
+            if matching_rows:
+                for right_row in matching_rows:
+                    for k, v in enumerate(right_row):
                         if k == right_key_index:
                             continue
 
-                        row.append(v)
+                        new_row.append(v)
 
-                    rows.append(row)
-
-                    matched = True
-
-                    if first_match:
-                        last_matched = j
-                        first_match = False
-
-            # Non-matching rows
-            if not matched and not inner:
-                row = list(self._rows[left_index])
-
+                    rows.append(new_row)
+            # Rows without matches
+            elif not inner:
                 for k, v in enumerate(right_table.column_names):
                     if k == right_key_index:
                         continue
 
-                    row.append(None)
+                    new_row.append(None)
 
-                rows.append(row)
+                rows.append(new_row)
 
         return self._fork(rows, zip(column_names, column_types))
 
