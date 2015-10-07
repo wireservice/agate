@@ -187,10 +187,10 @@ htmlhelp_basename = 'agatedoc'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
-latex_documents = [
-  ('index', 'agate.tex', u'agate Documentation',
-   u'Christopher Groskopf', 'manual'),
-]
+# latex_documents = [
+#   ('index', 'agate.tex', u'agate Documentation',
+#    u'Christopher Groskopf', 'manual'),
+# ]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
@@ -220,5 +220,5 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-]
+# man_pages = [
+# ]
