@@ -2,6 +2,8 @@
 Statistics
 ==========
 
+Common descriptive and aggregate statistics are included with the core agate library. For additional statistical methods beyond the scope of agate consider using the `agate-stats <http://agate-stats.rtfd.org/>`_ extension or integrating with `scipy <http://www.scipy.org/>`_.
+
 Descriptive statistics
 ======================
 
@@ -40,7 +42,7 @@ The resulting table will have four columns: ``doctor``, ``patient_count``, ``age
 Identify outliers
 =================
 
-Use the `agate-stats <http://agate-stats.readthedocs.org/>`_ extension to add methods for finding outliers.
+The `agate-stats <http://agate-stats.readthedocs.org/>`_ extension adds methods for finding outliers.
 
 .. code-block:: python
 
