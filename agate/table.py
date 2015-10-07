@@ -544,9 +544,11 @@ class Table(Patchable):
 
         for row in self.rows:
             if key_is_row_function:
-                group_name = key_type.cast(key(row))
+                group_name = key(row)
             else:
-                group_name = key_type.cast(row[index])
+                group_name = row[index]
+
+            group_name = key_type.cast(group_name)
 
             if group_name not in groups:
                 groups[group_name] = []
@@ -632,8 +634,7 @@ class Table(Patchable):
             else:
                 group_name = row[index]
 
-            if group_name is not None:
-                group_name = key_type.cast(group_name)
+            group_name = key_type.cast(group_name)
 
             if group_name not in output:
                 output[group_name] = 0
