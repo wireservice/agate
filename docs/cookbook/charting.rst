@@ -34,7 +34,7 @@ Fast histograms
 
 .. code-block:: Python
 
-    table.bins('TOTAL', start=0, end=100000).print_bars('bin', 'count', width=80)
+    table.bins('TOTAL', start=0, end=100000).print_bars('TOTAL', 'count', width=80)
 
 .. code-block:: bash
 

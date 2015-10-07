@@ -328,6 +328,36 @@ If you find it impossible to believe that an eleven year-old was convicted of mu
 
     In the previous example we could have omitted the :meth:`.Table.limit` and passed a ``max_rows=10`` to :meth:`.Table.print_table` instead.
 
+What if we were more curious about the *distribution* of ages, rather than the highest or lowest? agate includes the :meth:`.Table.counts` and :meth:`.Table.bins` methods for counting data individually or by ranges. Let's try binning the ages. Then, instead of using :meth:`.Table.print_table`, we'll use :meth:`.Table.print_bars` to generate a simple, text bar chart.
+
+.. code-block:: python
+
+    binned_ages = table.bins('age', 10, 0, 100)
+    binned_ages.print_bars('age', 'count', width=80)
+
+::
+
+    age        count
+    [0 - 10)       0 ▓
+    [10 - 20)    307 ▓░░░░░░░░░░░░░░░░░░░░░░░░
+    [20 - 30)    718 ▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    [30 - 40)    377 ▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    [40 - 50)    176 ▓░░░░░░░░░░░░░░
+    [50 - 60)     53 ▓░░░░
+    [60 - 70)     10 ▓░
+    [70 - 80)      0 ▓
+    [80 - 90)      1 ▓
+    [90 - 100]     0 ▓
+    None           9 ▓░
+                     +---------------+--------------+--------------+---------------+
+                     0              200            400            600            800
+
+Notice that we specify we want :code:`10` bins spanning the range :code:`0` to :code:`100`. If these values are omitted agate will attempt to infer good defaults. We also specify that we want our bar chart to span a width of :code:`80` characters. This can be adjusted to a suitable width for your terminal or document.
+
+.. note::
+
+    If you use a monospaced font, such as Courier, you can copy and paste agate bar charts into emails or documents. No screenshots required.
+
 Grouping and aggregating
 ========================
 

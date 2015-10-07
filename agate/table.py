@@ -653,9 +653,10 @@ class Table(Patchable):
         Bins may not be perfectly even if the spread of the data does not divide
         evenly, but all values will always be included in some bin.
 
-        The resulting table will have two columns. The first will be named
-        :code:`bin` and will be of type :class:`.Text`. The second will be named
-        :code:`count` and will be of type :class:`.Number`.
+        The resulting table will have two columns. The first will have
+        the same name as the specified column, but will be type :class:`.Text`.
+        The second will be named :code:`count` and will be of type
+        :class:`.Number`.
 
         :param column_name: The name of the column to bin. Must be of type
             :class:`.Number`
@@ -733,7 +734,7 @@ class Table(Patchable):
 
             bins[name] += 1
 
-        return Table(bins.items(), [('bin', Text()), ('count', Number())])
+        return Table(bins.items(), [(column_name, Text()), ('count', Number())])
 
     def print_table(self, max_rows=None, max_columns=None, output=sys.stdout):
         """
