@@ -19,7 +19,7 @@ accessed via :attr:`Table.columns` and the rows via :attr:`Table.rows`.
 """
 
 from copy import copy
-from itertools import chain
+from itertools import chain, islice
 import sys
 
 try:
@@ -28,9 +28,9 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 try:
-    from cdecimal import Decimal, ROUND_FLOOR
+    from cdecimal import Decimal
 except ImportError: #pragma: no cover
-    from decimal import Decimal, ROUND_FLOOR
+    from decimal import Decimal
 
 from babel.numbers import format_decimal
 
@@ -400,6 +400,8 @@ class Table(Patchable):
         If :code:`left_key` and :code:`right_key` are column names, only
         the left column will be included in the output table.
 
+        Resulting table will be sorted by :code:`left_key`.
+
         Column names from the right table which also exist in this table will
         be suffixed "2" in the new table.
 
@@ -424,18 +426,18 @@ class Table(Patchable):
         right_key_is_row_function = hasattr(right_key, '__call__')
 
         # Get join columns
-        left_key_index = None
         right_key_index = None
 
         if left_key_is_row_function:
-            left_column = [left_key(row) for row in self.rows]
+            left_data = [left_key(row) for row in self.rows]
         else:
-            left_column = self.columns[left_key]
+            left_data = self.columns[left_key].get_data()
 
         if right_key_is_row_function:
-            right_column = [right_key(row) for row in right_table.rows]
+            right_data = [right_key(row) for row in right_table.rows]
         else:
             right_column = right_table.columns[right_key]
+            right_data = right_column.get_data()
             right_key_index = right_column.index
 
         # Build names and type lists
@@ -451,26 +453,54 @@ class Table(Patchable):
             else:
                 column_names.append(name)
 
-            column_types.append(right_table._column_types[i])
+            column_types.append(right_table.column_types[i])
 
         # Collect new rows
         rows = []
 
-        for i, l in enumerate(left_column):
-            if l in right_column:
-                for j, r in enumerate(right_column):
-                    if l == r:
-                        row = list(self.rows[i])
+        def null_handler(enumeration):
+            if enumeration[1] is None:
+                return NullOrder()
 
-                        for k, v in enumerate(right_table.rows[j]):
-                            if k == right_key_index:
-                                continue
+            return enumeration[1]
 
-                            row.append(v)
+        left_enumerated = list(enumerate(left_data))
+        left_sorted = sorted(left_enumerated, key=null_handler)
 
-                        rows.append(row)
-            elif not inner:
-                row = list(self.rows[i])
+        right_enumerated = list(enumerate(right_data))
+        right_sorted = sorted(right_enumerated, key=null_handler)
+
+        last_matched = 0
+
+        # Iterate over left column
+        for left_index, left_value in left_sorted:
+            matched = False
+
+            right_possible = islice(enumerate(right_sorted), last_matched, len(right_sorted))
+            first_match = True
+
+            # Find matches in right column
+            for j, (right_index, right_value) in right_possible:
+                if left_value == right_value:
+                    row = list(self._rows[left_index])
+
+                    for k, v in enumerate(right_table._rows[right_index]):
+                        if k == right_key_index:
+                            continue
+
+                        row.append(v)
+
+                    rows.append(row)
+
+                    matched = True
+
+                    if first_match:
+                        last_matched = j
+                        first_match = False
+
+            # Non-matching rows
+            if not matched and not inner:
+                row = list(self._rows[left_index])
 
                 for k, v in enumerate(right_table.column_names):
                     if k == right_key_index:
