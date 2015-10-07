@@ -500,6 +500,25 @@ class TestBins(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[3], ['[0.3 - 0.4)', 10])
         self.assertSequenceEqual(new_table.rows[9], ['[0.9 - 1.0]', 10])
 
+    def test_bins_nulls(self):
+        rows = []
+
+        for i in range(0, 100):
+            rows.append([Decimal(i) / Decimal('100')])
+
+        rows.append([None])
+
+        columns = (
+            ('number', self.number_type),
+        )
+
+        new_table = Table(rows, columns).bins('number')
+
+        self.assertSequenceEqual(new_table.rows[0], ['[0.0 - 0.1)', 10])
+        self.assertSequenceEqual(new_table.rows[3], ['[0.3 - 0.4)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[0.9 - 1.0]', 10])
+        self.assertSequenceEqual(new_table.rows[10], [None, 1])
+
 class TestPrettyPrint(unittest.TestCase):
     def setUp(self):
         self.rows = (

@@ -54,7 +54,8 @@ def median_age(data):
 
     print('Median age at time of arrest: %i' % median_age)
 
-    with_age.bins('age', 8).print_bars('bin', 'count', width=80)
+    data['exonerations'].bins('age', 10, 0, 100).print_bars('bin', 'count', width=80)
+    data['exonerations'].counts('age').print_bars('age', 'count', width=80)
 
 def years_in_prison(data):
     data['with_years_in_prison'] = data['exonerations'].compute([

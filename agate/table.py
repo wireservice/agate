@@ -707,6 +707,15 @@ class Table(Patchable):
 
         for row in self.rows:
             value = row[column_name]
+
+            if value is None:
+                try:
+                    bins[None] += 1
+                except KeyError:
+                    bins[None] = Decimal('1')
+
+                continue
+
             i = 1
 
             try:
