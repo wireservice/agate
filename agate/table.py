@@ -19,7 +19,7 @@ accessed via :attr:`Table.columns` and the rows via :attr:`Table.rows`.
 """
 
 from copy import copy
-from itertools import chain, islice
+from itertools import chain
 import sys
 
 try:

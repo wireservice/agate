@@ -54,7 +54,11 @@ class TableMethodProxy(object):
         for key, value in self.tableset._tables.items():
             groups[key] = getattr(value, self.method_name)(*args, **kwargs)
 
-        return TableSet(groups, key_name=self.tableset._key_name)
+        return TableSet(
+            groups,
+            key_name=self.tableset.key_name,
+            key_type=self.tableset.key_type
+        )
 
 class TableSet(Mapping, Patchable):
     """

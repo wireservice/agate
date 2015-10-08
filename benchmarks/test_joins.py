@@ -39,7 +39,7 @@ class TestTableJoin(unittest.TestCase):
         right = agate.Table(right_rows, columns)
 
         def test():
-            left.join(right, "text")
+            left.join(right, 'text')
 
         results = Timer(test).repeat(10, 1)
 

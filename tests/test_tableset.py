@@ -331,3 +331,16 @@ class TestTableSet(unittest.TestCase):
 
         self.assertSequenceEqual(results.rows[5], ('table3', 'a', 2, 3))
         self.assertSequenceEqual(results.rows[6], ('table3', 'c', 1, 3))
+
+    def test_proxy_maintains_key(self):
+        number_type = Number()
+
+        tableset = TableSet(self.tables, key_name='foo', key_type=number_type)
+
+        self.assertEqual(tableset.key_name, 'foo')
+        self.assertEqual(tableset.key_type, number_type)
+
+        new_tableset = tableset.select(['number'])
+
+        self.assertEqual(new_tableset.key_name, 'foo')
+        self.assertEqual(new_tableset.key_type, number_type)
