@@ -39,7 +39,7 @@ try:
 except ImportError: #pragma: no cover
     import csv
 
-from six.moves import range
+from six.moves import range #pylint: disable=W0622
 
 from agate.aggregations import Min, Max
 from agate.columns import Column, ColumnMapping
@@ -61,13 +61,11 @@ class Table(Patchable):
     """
     A dataset consisting of rows and columns.
 
-    :param rows: The data as a sequence of any sequences: tuples, lists, etc.
+    :param rows: The data as a sequence of any sequences: tuples, lists, etc. If
+        any row has fewer values than the number of columns, it will be filled
+        out with nulls. No row may have more values than the number of columns.
     :param column_info: A sequence of pairs of column names and types. The latter
         must be instances of :class:`.DataType`.
-
-    :attr columns: A :class:`.ColumnMapping` for accessing the columns in this
-        table.
-    :attr rows: A :class:`.RowSequence` for accessing the rows in this table.
     """
     def __init__(self, rows, column_info):
         column_names, column_types = zip(*column_info)
@@ -86,21 +84,22 @@ class Table(Patchable):
         self._rows = RowSequence(self)
 
         cast_data = []
-
         cast_funcs = [c.cast for c in self._column_types]
 
         for i, row in enumerate(rows):
-            if len(row) != len_column_names:
-                raise ValueError('Row %i has length %i, but Table has %i columns.' % (i, len(row), len_column_names))
+            len_row = len(row)
+
+            if len_row > len_column_names:
+                raise ValueError('Row %i has length %i, but Table has %i columns.' % (i, len_row, len_column_names))
+            elif len(row) < len_column_names:
+                row = chain(row, [None] * (len(self.column_names) - len_row))
 
             # Forked tables can share data (because they are immutable)
-            # but original data should be buffered so it can't be changed
             if isinstance(row, Row):
                 cast_data.append(row)
-
-                continue
-
-            cast_data.append(tuple(cast_funcs[i](d) for i, d in enumerate(row)))
+            # Original data should be buffered so it can't be changed
+            else:
+                cast_data.append(tuple(cast_funcs[i](d) for i, d in enumerate(row)))
 
         self._data = tuple(cast_data)
 

@@ -38,11 +38,11 @@ class TestTable(unittest.TestCase):
             ('three', self.text_type)
         )
 
-
     def test_create_table(self):
         table = Table(self.rows, self.columns)
 
         self.assertEqual(len(table.rows), 3)
+        self.assertEqual(len(table.columns), 3)
 
         self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
         self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
@@ -57,6 +57,22 @@ class TestTable(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             Table(self.rows, columns)
+
+    def test_create_variable_length_rows(self):
+        rows = (
+            (1, 4, 'a'),
+            (2,),
+            (None, 2)
+        )
+
+        table = Table(rows, self.columns)
+
+        self.assertEqual(len(table.rows), 3)
+        self.assertEqual(len(table.columns), 3)
+
+        self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
+        self.assertSequenceEqual(table.rows[1], (2, None, None))
+        self.assertSequenceEqual(table.rows[2], (None, 2, None))
 
     def test_from_csv_builtin(self):
         import csv
