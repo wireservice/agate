@@ -49,6 +49,10 @@ class TestSimpleAggregation(unittest.TestCase):
         self.assertEqual(self.table.columns['one'].aggregate(length), 33)
         self.assertEqual(length.run.call_count, 1)
 
+    def test_summary(self):
+        self.assertEqual(self.table.columns['one'].aggregate(Summary(Boolean(), lambda c: 2 in c)), True)
+        self.assertEqual(self.table.columns['one'].aggregate(Summary(Boolean(), lambda c: c.aggregate(Sum()) < 3)), False)
+
     def test_any(self):
         with self.assertRaises(ValueError):
             self.table.columns['one'].aggregate(Any())

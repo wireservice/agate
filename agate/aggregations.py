@@ -56,6 +56,24 @@ class Aggregation(object): #pragma: no cover
         """
         raise NotImplementedError()
 
+class Summary(Aggregation):
+    """
+    An aggregation that can apply any function to a column.
+    """
+    def __init__(self, data_type, func, cache_key=None):
+        self._data_type = data_type
+        self._func = func
+        self._cache_key = cache_key
+
+    def get_aggregate_data_type(self, column):
+        return self._data_type
+
+    def get_cache_key(self):
+        return self._cache_key
+
+    def run(self, column):
+        return self._func(column)
+
 class HasNulls(Aggregation):
     """
     Returns :code:`True` if the column contains null values.
