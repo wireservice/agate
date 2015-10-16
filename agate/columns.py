@@ -17,6 +17,9 @@ class Column(Sequence):
     not be constructed directly. They are created by :class:`.Table`
     instances.
 
+    Column instances are unique to the :class:`.Table` with which they are
+    associated.
+
     :param table: The table that contains this column.
     :param index: The index of this column in the table.
     """

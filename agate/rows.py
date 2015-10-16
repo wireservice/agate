@@ -24,6 +24,9 @@ class Row(Mapping):
     Values within a row can be accessed by column name or
     column index.
 
+    Row instances are immutable and may be shared between :class:`.Table`
+    instances.
+
     :param table: The :class:`Table` that contains this row.
     :param i: The index of this row in the :class:`Table`.
     """
