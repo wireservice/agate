@@ -145,7 +145,8 @@ class Column(Sequence):
 
 class ColumnMapping(Mapping):
     """
-    Proxy access to :class:`Column` instances for :class:`.Table`.
+    Proxy access to :class:`Column` instances for :class:`.Table`. Columns can
+    be accessed either by name or by index.
 
     :param table: :class:`.Table`.
     """
@@ -155,10 +156,16 @@ class ColumnMapping(Mapping):
         self._table = table
 
     def __getitem__(self, k):
-        try:
-            i = self._table._column_names.index(k)
-        except ValueError:
-            raise ColumnDoesNotExistError(k)
+        if isinstance(k, int):
+            if k < 0 or k > len(self) - 1:
+                raise ColumnDoesNotExistError(k)
+
+            i = k
+        else:
+            try:
+                i = self._table._column_names.index(k)
+            except ValueError:
+                raise ColumnDoesNotExistError(k)
 
         return self._table._get_column(i)
 

@@ -15,7 +15,7 @@ except ImportError:
 
 from agate import Table
 from agate.data_types import *
-from agate.exceptions import *
+from agate.exceptions import ColumnDoesNotExistError
 
 class TestColumns(unittest.TestCase):
     def setUp(self):
@@ -35,6 +35,22 @@ class TestColumns(unittest.TestCase):
         )
 
         self.table = Table(self.rows, self.columns)
+
+    def test_get_column(self):
+        a = self.table.columns['two']
+        b = self.table.columns[1]
+
+        self.assertIs(a, b)
+
+    def test_invalid_columns(self):
+        with self.assertRaises(ColumnDoesNotExistError):
+            self.table.columns['four']
+
+        with self.assertRaises(ColumnDoesNotExistError):
+            self.table.columns[3]
+
+        with self.assertRaises(ColumnDoesNotExistError):
+            self.table.columns[-1]
 
     def test_stringify(self):
         self.assertEqual(str(self.table.columns['one']), "<agate.Column: (Decimal('1'), Decimal('2'), None)>")
@@ -64,7 +80,7 @@ class TestColumns(unittest.TestCase):
     def test_get_column_data(self):
         self.assertSequenceEqual(self.table.columns['one'].get_data(), (1, 2, None))
 
-    def test_get_column(self):
+    def test_get_column_sequence(self):
         self.assertSequenceEqual(self.table.columns['one'], (1, 2, None))
 
     def test_get_column_cached(self):
