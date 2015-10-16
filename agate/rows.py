@@ -76,26 +76,6 @@ class Row(Mapping):
     def __eq__(self, other):
         return self._table._data[self._index] == other
 
-    @property
-    def table(self):
-        """
-        This row's parent table.
-        """
-        return self._table
-
-    @property
-    def index(self):
-        """
-        This row's index in its parent table.
-        """
-        return self._index
-
-    def compute(self, computation):
-        """
-        Apply a :class:`.Computation` to this row and return the result.
-        """
-        return computation.run(self)
-
 class RowSequence(Sequence):
     """
     Proxy access to rows by index.
@@ -112,11 +92,16 @@ class RowSequence(Sequence):
             indices = xrange(*i.indices(len(self)))
 
             return tuple(self._table._get_row(row) for row in indices)
-
-        try:
-            return self._table._get_row(i)
-        except IndexError:
-            raise RowDoesNotExistError(i)
+        elif isinstance(i, int):
+            try:
+                return self._table._get_row(i)
+            except IndexError:
+                raise RowDoesNotExistError(i)
+        else:
+            try:
+                return self._table._get_row_by_alias(i)
+            except KeyError:
+                raise RowDoesNotExistError(i)
 
     def __iter__(self):
         return RowIterator(self._table)
@@ -161,7 +146,7 @@ class CellIterator(six.Iterator):
 
     def __next__(self):
         try:
-            v = self._row._table._data[self._row.index][self._index]
+            v = self._row._table._data[self._row._index][self._index]
         except IndexError:
             raise StopIteration
 

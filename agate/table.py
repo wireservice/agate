@@ -68,8 +68,11 @@ class Table(Patchable):
     :param column_info: A sequence of pairs of column names and types. Column
         names must be strings and column types must be instances of
         :class:`.DataType`.
+    :param row_alias: Either the name of a column or a :class:`function`
+        that takes a row and returns a **unique string** which can then be used
+        to refer to the row instead of its index. Optional.
     """
-    def __init__(self, rows, column_info):
+    def __init__(self, rows, column_info, row_alias=None):
         column_names, column_types = zip(*column_info)
 
         for column_name in column_names:
@@ -113,6 +116,28 @@ class Table(Patchable):
 
         self._data = tuple(cast_data)
 
+        self._has_row_alias = False
+        self._alias_to_row = {}
+
+        if row_alias:
+            for i, row in enumerate(self.rows):
+                alias_is_row_function = hasattr(row_alias, '__call__')
+
+                if alias_is_row_function:
+                    alias = row_alias(row)
+                else:
+                    alias = row[row_alias]
+
+                if not isinstance(alias, six.string_types):
+                    raise ValueError(u'Row aliases must be strings, not: %s' % type(alias))
+
+                if alias in self._alias_to_row:
+                    raise ValueError(u'Row alias was not unique: %s' % alias)
+
+                self._alias_to_row[alias] = i
+
+            self._has_row_alias = True
+
     def __repr__(self):
         return u'<agate.Table: columns=%i rows=%i>' % (
             len(self.columns),
@@ -140,6 +165,18 @@ class Table(Patchable):
                 self._cached_rows[i] = Row(self, i)
 
         return self._cached_rows[i]
+
+    def _get_row_by_alias(self, alias):
+        """
+        Use this table's row alias to get a :class:`.Row` of data, caching a
+        copy for the next request.
+        """
+        if not self._has_row_alias:
+            raise ValueError(u'Table has no row alias defined.')
+
+        i = self._alias_to_row[alias]
+
+        return self._get_row(i)
 
     def _get_row_count(self):
         return len(self._data)
@@ -601,10 +638,12 @@ class Table(Patchable):
             column_names.append(new_column_name)
             column_types.append(computation.get_computed_data_type(self))
 
+            computation.prepare(self)
+
         new_rows = []
 
         for row in self.rows:
-            new_columns = tuple(row.compute(c) for c, n in computations)
+            new_columns = tuple(c.run(row) for c, n in computations)
             new_rows.append(tuple(row) + new_columns)
 
         return self._fork(new_rows, zip(column_names, column_types))

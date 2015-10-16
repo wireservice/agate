@@ -94,6 +94,28 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table.rows[1], (2, None, None))
         self.assertSequenceEqual(table.rows[2], (None, 2, None))
 
+    def test_row_alias(self):
+        table = Table(self.rows, self.columns, row_alias='three')
+
+        self.assertSequenceEqual(table.rows['a'], (1, 4, 'a'))
+        self.assertSequenceEqual(table.rows['b'], (2, 3, 'b'))
+        self.assertSequenceEqual(table.rows[u'👍'], (None, 2, u'👍'))
+
+    def test_row_alias_non_string(self):
+        with self.assertRaises(ValueError):
+            table = Table(self.rows, self.columns, row_alias='one')
+
+    def test_row_alias_func(self):
+        table = Table(self.rows, self.columns, row_alias=lambda r: str(r['two']))
+
+        self.assertSequenceEqual(table.rows['4'], (1, 4, 'a'))
+        self.assertSequenceEqual(table.rows['3'], (2, 3, 'b'))
+        self.assertSequenceEqual(table.rows['2'], (None, 2, u'👍'))
+
+    def test_row_alias_func_non_string(self):
+        with self.assertRaises(ValueError):
+            table = Table(self.rows, self.columns, row_alias=lambda r: r['two'])
+
     def test_from_csv_builtin(self):
         import csv
         from agate import table

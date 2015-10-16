@@ -4,6 +4,10 @@ from collections import Mapping, Sequence
 
 import six
 
+if six.PY3: #pragma: no cover
+    #pylint: disable=W0622
+    xrange = range
+
 from agate.exceptions import ColumnDoesNotExistError
 from agate.utils import NullOrder, memoize
 
@@ -156,8 +160,14 @@ class ColumnMapping(Mapping):
         self._table = table
 
     def __getitem__(self, k):
-        if isinstance(k, int):
-            if k < 0 or k > len(self) - 1:
+        if isinstance(k, slice):
+            indices = xrange(*k.indices(len(self)))
+
+            return tuple(self._table._get_column(i) for i in indices)
+        elif isinstance(k, int):
+            try:
+                self._table._column_names[k]
+            except IndexError:
                 raise ColumnDoesNotExistError(k)
 
             i = k

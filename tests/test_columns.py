@@ -42,15 +42,21 @@ class TestColumns(unittest.TestCase):
 
         self.assertIs(a, b)
 
+    def test_get_column_slice(self):
+        a = self.table.columns[1]
+        b = self.table.columns[2]
+        columns = self.table.columns[1:3]
+
+        self.assertEqual(len(columns), 2)
+        self.assertIs(columns[0], a)
+        self.assertIs(columns[1], b)
+
     def test_invalid_columns(self):
         with self.assertRaises(ColumnDoesNotExistError):
             self.table.columns['four']
 
         with self.assertRaises(ColumnDoesNotExistError):
             self.table.columns[3]
-
-        with self.assertRaises(ColumnDoesNotExistError):
-            self.table.columns[-1]
 
     def test_stringify(self):
         self.assertEqual(str(self.table.columns['one']), "<agate.Column: (Decimal('1'), Decimal('2'), None)>")
