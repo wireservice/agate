@@ -78,19 +78,23 @@ class Row(Mapping):
 
     @property
     def table(self):
+        """
+        This row's parent table.
+        """
         return self._table
 
     @property
     def index(self):
+        """
+        This row's index in its parent table.
+        """
         return self._index
 
     def compute(self, computation):
         """
         Apply a :class:`.Computation` to this row and return the result.
         """
-        result = computation.run(self)
-
-        return result
+        return computation.run(self)
 
 class RowSequence(Sequence):
     """

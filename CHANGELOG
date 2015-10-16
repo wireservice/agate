@@ -1,6 +1,8 @@
 0.12.0
 ------
 
+* Added Column.table and Row.table properties. (#284)
+* Added column name and type validation to Table constructor. (#285)
 * Added Row.compute method to parallel Column.aggregate. (#280)
 * Computation.prepare is now private and invoked automatically. (#280)
 * Table now supports variable-length rows during construction. (#39)

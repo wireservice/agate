@@ -140,3 +140,9 @@ class TestRows(unittest.TestCase):
         result = row.compute(Formula(Number, lambda r: r['one'] + r['two']))
 
         self.assertEqual(result, 3)
+
+    def test_properties(self):
+        row = self.table.rows[0]
+
+        self.assertIs(row.table, self.table)
+        self.assertEqual(row.index, 0)

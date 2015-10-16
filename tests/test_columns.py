@@ -115,3 +115,11 @@ class TestColumns(unittest.TestCase):
 
         with self.assertRaises(TypeError):
             self.table.columns['one'][0] = 100
+
+    def test_properties(self):
+        column = self.table.columns['one']
+
+        self.assertIs(column.table, self.table)
+        self.assertEqual(column.index, 0)
+        self.assertEqual(column.name, 'one')
+        self.assertIs(column.data_type, self.number_type)

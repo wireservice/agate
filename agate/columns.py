@@ -67,6 +67,13 @@ class Column(Sequence):
         return not self.__eq__(other)
 
     @property
+    def table(self):
+        """
+        This column's parent table.
+        """
+        return self._table
+
+    @property
     def index(self):
         """
         This column's index in its parent table.
