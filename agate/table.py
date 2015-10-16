@@ -591,12 +591,10 @@ class Table(Patchable):
             column_names.append(new_column_name)
             column_types.append(computation.get_computed_data_type(self))
 
-            computation.prepare(self)
-
         new_rows = []
 
         for row in self.rows:
-            new_columns = tuple(c.run(row) for c, n in computations)
+            new_columns = tuple(row.compute(c) for c, n in computations)
             new_rows.append(tuple(row) + new_columns)
 
         return self._fork(new_rows, zip(column_names, column_types))

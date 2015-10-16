@@ -8,6 +8,7 @@ except ImportError:
 import six
 
 from agate import Table
+from agate.computations import Formula
 from agate.data_types import *
 from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 
@@ -56,7 +57,7 @@ class TestRows(unittest.TestCase):
             self.assertEqual(str(self.table.rows[0]), "<agate.Row: (Decimal('1'), Decimal('2'), u'a', u'b', u'c', ...)>")
         else:
             self.assertEqual(str(self.table.rows[0]), "<agate.Row: (Decimal('1'), Decimal('2'), 'a', 'b', 'c', ...)>")
-            
+
     def test_repr(self):
         self.table = Table(self.rows, self.columns)
 
@@ -132,3 +133,10 @@ class TestRows(unittest.TestCase):
 
         with self.assertRaises(ColumnDoesNotExistError):
             row[3]
+
+    def test_compute(self):
+        row = self.table.rows[0]
+
+        result = row.compute(Formula(Number, lambda r: r['one'] + r['two']))
+
+        self.assertEqual(result, 3)

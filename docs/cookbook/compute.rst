@@ -115,13 +115,15 @@ Implementing Levenshtein requires writing a custom :class:`.Computation`. To sav
             self._column_name = column_name
             self._compare_string = compare_string
 
+            super(LevenshteinDistance, self).__init__()
+
         def get_computed_column_type(self, table):
             """
             The return value is a numerical distance.
             """
             return agate.Number()
 
-        def prepare(self, table):
+        def _prepare(self, table):
             """
             Verify the column is text.
             """
@@ -130,10 +132,14 @@ Implementing Levenshtein requires writing a custom :class:`.Computation`. To sav
             if not isinstance(column.data_type, agate.Text):
                 raise agate.DataTypeError('Can only be applied to Text data.')
 
+            super(LevenshteinDistance, self)._prepare(table)
+
         def run(self, row):
             """
             Find the distance, returning null when the input column was null.
             """
+            super(LevenshteinDistance, self).run(row)
+
             val = row[self._column_name]
 
             if val is None:
@@ -165,6 +171,8 @@ Assuming that your data has a column for the total population, another for the p
             return agate.Number()
 
         def run(self, row):
+            super(USATodayDiversityIndex, self).run(row)
+
             race_squares = 0
 
             for race in ['white', 'black', 'asian', 'american_indian', 'pacific_islander']:

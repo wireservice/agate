@@ -29,6 +29,9 @@ class Computation(object): #pragma: no cover
     """
     Base class for row-wise computations on a :class:`.Table`.
     """
+    def __init__(self):
+        self._prepared_table = None
+
     def get_computed_data_type(self, table):
         """
         Returns an instantiated :class:`.DataType` which will be appended to
@@ -36,19 +39,20 @@ class Computation(object): #pragma: no cover
         """
         raise NotImplementedError()
 
-    def prepare(self, table):
+    def _prepare(self, table):
         """
-        Called with the table immediately prior to invoking the computation with
-        rows. Can be used to compute column-level statistics for computations.
-        By default, this does nothing.
+        Each time this computation is invoked on a :class:`.Row` from a new
+        table this method is automatically invoked. It can be used to compute
+        column-level statistics for computations. By default, it does nothing.
         """
-        pass
+        self._prepared_table = table
 
     def run(self, row):
         """
         When invoked with a row, returns the computed new column value.
         """
-        raise NotImplementedError()
+        if row.table is not self._prepared_table:
+            self._prepare(row.table)
 
 class Formula(Computation):
     """
@@ -58,10 +62,14 @@ class Formula(Computation):
         self._data_type = data_type
         self._func = func
 
+        super(Formula, self).__init__()
+
     def get_computed_data_type(self, table):
         return self._data_type
 
     def run(self, row):
+        super(Formula, self).run(row)
+
         return self._func(row)
 
 class Change(Computation):
@@ -71,6 +79,8 @@ class Change(Computation):
     def __init__(self, before_column_name, after_column_name):
         self._before_column_name = before_column_name
         self._after_column_name = after_column_name
+
+        super(Change, self).__init__()
 
     def _validate(self, table):
         before_column = table.columns[self._before_column_name]
@@ -103,10 +113,14 @@ class Change(Computation):
         elif isinstance(before_column.data_type, Number):
             return Number()
 
-    def prepare(self, table):
+    def _prepare(self, table):
         self._validate(table)
 
+        super(Change, self)._prepare(table)
+
     def run(self, row):
+        super(Change, self).run(row)
+
         return row[self._after_column_name] - row[self._before_column_name]
 
 class PercentChange(Computation):
@@ -117,10 +131,12 @@ class PercentChange(Computation):
         self._before_column_name = before_column_name
         self._after_column_name = after_column_name
 
+        super(PercentChange, self).__init__()
+
     def get_computed_data_type(self, table):
         return Number()
 
-    def prepare(self, table):
+    def _prepare(self, table):
         before_column = table.columns[self._before_column_name]
         after_column = table.columns[self._after_column_name]
 
@@ -130,7 +146,11 @@ class PercentChange(Computation):
         if not isinstance(after_column.data_type, Number):
             raise DataTypeError('PercentChange after column must contain Number data.')
 
+        super(PercentChange, self)._prepare(table)
+
     def run(self, row):
+        super(PercentChange, self).run(row)
+
         return (row[self._after_column_name] - row[self._before_column_name]) / row[self._before_column_name] * 100
 
 class Rank(Computation):
@@ -154,10 +174,12 @@ class Rank(Computation):
 
         self._ranks = {}
 
+        super(Rank, self).__init__()
+
     def get_computed_data_type(self, table):
         return Number()
 
-    def prepare(self, table):
+    def _prepare(self, table):
         column = table.columns[self._column_name]
 
         if self._comparer:
@@ -182,7 +204,11 @@ class Rank(Computation):
 
             self._ranks[c] = rank
 
+        super(Rank, self)._prepare(table)
+
     def run(self, row):
+        super(Rank, self).run(row)
+
         return self._ranks[row[self._column_name]]
 
 class PercentileRank(Rank):
@@ -191,7 +217,7 @@ class PercentileRank(Rank):
 
     See :class:`.Percentiles` for implementation details.
     """
-    def prepare(self, table):
+    def _prepare(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
@@ -199,5 +225,9 @@ class PercentileRank(Rank):
 
         self._percentiles = column.aggregate(Percentiles())
 
+        super(PercentileRank, self)._prepare(table)
+
     def run(self, row):
+        super(PercentileRank, self).run(row)
+
         return self._percentiles.locate(row[self._column_name])

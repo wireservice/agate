@@ -77,8 +77,20 @@ class Row(Mapping):
         return self._table._data[self._index] == other
 
     @property
+    def table(self):
+        return self._table
+
+    @property
     def index(self):
         return self._index
+
+    def compute(self, computation):
+        """
+        Apply a :class:`.Computation` to this row and return the result.
+        """
+        result = computation.run(self)
+
+        return result
 
 class RowSequence(Sequence):
     """

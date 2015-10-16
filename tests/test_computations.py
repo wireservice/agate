@@ -34,6 +34,20 @@ class TestTableComputation(unittest.TestCase):
 
         self.table = Table(self.rows, self.columns)
 
+    def test_preparation(self):
+        change = Change('two', 'three')
+        self.assertIs(change._prepared_table, None)
+
+        self.table.rows[0].compute(change)
+        self.assertIs(change._prepared_table, self.table)
+
+        self.table.rows[1].compute(change)
+        self.assertIs(change._prepared_table, self.table)
+
+        table2 = Table(self.rows, self.columns)
+        table2.rows[0].compute(change)
+        self.assertIs(change._prepared_table, table2)
+
     def test_change(self):
         new_table = self.table.compute([
             (Change('two', 'three'), 'test')

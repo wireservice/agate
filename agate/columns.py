@@ -120,7 +120,8 @@ class Column(Sequence):
     def aggregate(self, aggregation):
         """
         Apply a :class:`.Aggregation` to this column and return the result. If
-        the aggregation defines a
+        the aggregation defines a `cache_key` the result will be cached for
+        future requests.
         """
         cache_key = aggregation.get_cache_key()
 
