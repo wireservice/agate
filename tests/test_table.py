@@ -48,6 +48,26 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[2], (None, 2, u'👍'))
 
+    def test_create_table_non_string_columns(self):
+        columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            (3, self.text_type)
+        )
+
+        with self.assertRaises(ValueError):
+            Table(self.rows, columns)
+
+    def test_create_table_non_datatype_columns(self):
+        columns = (
+            ('one', self.number_type),
+            ('two', self.number_type),
+            ('three', 'foo')
+        )
+
+        with self.assertRaises(ValueError):
+            Table(self.rows, columns)
+
     def test_create_duplicate_column_names(self):
         columns = (
             ('one', self.number_type),

@@ -39,11 +39,12 @@ try:
 except ImportError: #pragma: no cover
     import csv
 
+import six
 from six.moves import range #pylint: disable=W0622
 
 from agate.aggregations import Min, Max
 from agate.columns import Column, ColumnMapping
-from agate.data_types import TypeTester, Text, Number
+from agate.data_types import TypeTester, DataType, Text, Number
 from agate.computations import Computation
 from agate.preview import print_table, print_bars
 from agate.rows import Row, RowSequence
@@ -64,11 +65,20 @@ class Table(Patchable):
     :param rows: The data as a sequence of any sequences: tuples, lists, etc. If
         any row has fewer values than the number of columns, it will be filled
         out with nulls. No row may have more values than the number of columns.
-    :param column_info: A sequence of pairs of column names and types. The latter
-        must be instances of :class:`.DataType`.
+    :param column_info: A sequence of pairs of column names and types. Column
+        names must be strings and column types must be instances of
+        :class:`.DataType`.
     """
     def __init__(self, rows, column_info):
         column_names, column_types = zip(*column_info)
+
+        for column_name in column_names:
+            if not isinstance(column_name, six.string_types):
+                raise ValueError('Column names must be strings.')
+
+        for column_type in column_types:
+            if not isinstance(column_type, DataType):
+                raise ValueError('Column types must be instances of DataType.')
 
         len_column_names = len(column_names)
 
