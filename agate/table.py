@@ -19,6 +19,7 @@ accessed via :attr:`Table.columns` and the rows via :attr:`Table.rows`.
 """
 
 from copy import copy
+from functools import partial
 from itertools import chain
 import sys
 
@@ -75,26 +76,23 @@ class Table(Patchable):
         is propogated from an existing table.
     """
     def __init__(self, rows, column_info, row_alias=None, _is_fork=False):
-        column_names, column_types = zip(*column_info)
+        self._column_names, self._column_types = zip(*column_info)
 
-        for column_name in column_names:
+        # Validation
+        for column_name in self._column_names:
             if not isinstance(column_name, six.string_types):
                 raise ValueError('Column names must be strings.')
 
-        for column_type in column_types:
+        for column_type in self._column_types:
             if not isinstance(column_type, DataType):
                 raise ValueError('Column types must be instances of DataType.')
 
-        len_column_names = len(column_names)
+        len_column_names = len(self._column_names)
 
-        if len(set(column_names)) != len_column_names:
+        if len(set(self._column_names)) != len_column_names:
             raise ValueError('Duplicate column names are not allowed.')
 
-        self._column_types = tuple(column_types)
-        self._column_names = tuple(column_names)
-        self._columns = [Column(self, i) for i in range(len(column_names))]
-        self._column_mapping = ColumnMapping(self)
-
+        # Build rows
         cast_funcs = [c.cast for c in self._column_types]
 
         if not _is_fork:
@@ -114,11 +112,16 @@ class Table(Patchable):
 
         self._row_sequence = RowSequence(new_rows, row_alias)
 
-    def _get_column(self, i):
-        """
-        Get a :class:`.Column` of data, caching a copy for next request.
-        """
-        return self._columns[i]
+        # Build columns
+        new_columns = []
+
+        for i, name in enumerate(self._column_names):
+            data_func = partial(self._row_sequence.get_column_data, i)
+            data_type = self._column_types[i]
+
+            new_columns.append(Column(i, name, data_type, data_func))
+
+        self._column_mapping = ColumnMapping(self._column_names, new_columns)
 
     def _fork(self, rows, column_info=None):
         """
@@ -235,17 +238,18 @@ class Table(Patchable):
         return self._row_sequence
 
     @allow_tableset_proxy
-    def select(self, column_names):
+    def select(self, selected_names):
         """
         Reduce this table to only the specified columns.
 
-        :param column_names: A sequence of names of columns to include in the new table.
+        :param selected_names: A sequence of names of columns to include in the
+            new table.
         :returns: A new :class:`Table`.
         """
         column_indices = []
         column_types = []
 
-        for name in column_names:
+        for name in selected_names:
             column = self.columns[name]
             column_indices.append(column.index)
             column_types.append(column.data_type)
@@ -255,7 +259,7 @@ class Table(Patchable):
         for row in self.rows:
             new_rows.append(tuple(row[i] for i in column_indices))
 
-        return Table(new_rows, zip(column_names, column_types), row_alias=self.rows.row_alias)
+        return Table(new_rows, zip(selected_names, column_types), row_alias=self.rows.row_alias)
 
     @allow_tableset_proxy
     def where(self, test):

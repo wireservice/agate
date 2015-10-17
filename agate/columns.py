@@ -20,15 +20,18 @@ class Column(Sequence):
     Column instances are unique to the :class:`.Table` with which they are
     associated.
 
-    :param table: The table that contains this column.
     :param index: The index of this column in the table.
+    :param name: The name of this column.
+    :param data_type: An instance of :class:`.DataType`.
+    :param data_func: A function which returns the data for this column.
     """
     #pylint: disable=W0212
 
-    def __init__(self, table, index):
-        self._table = table
+    def __init__(self, index, name, data_type, data_func):
         self._index = index
-
+        self._name = name
+        self._data_type = data_type
+        self._data_func = data_func
         self._aggregate_cache = {}
 
     def __unicode__(self):
@@ -67,17 +70,7 @@ class Column(Sequence):
         return not self.__eq__(other)
 
     @property
-    def table(self):
-        """
-        This column's parent table.
-        """
-        return self._table
-
-    @property
     def index(self):
-        """
-        This column's index in its parent table.
-        """
         return self._index
 
     @property
@@ -85,21 +78,21 @@ class Column(Sequence):
         """
         This column's name in its parent table.
         """
-        return self._table.column_names[self._index]
+        return self._name
 
     @property
     def data_type(self):
         """
         This column's data type.
         """
-        return self._table.column_types[self._index]
+        return self._data_type
 
     @memoize
     def get_data(self):
         """
         Get the data contained in this column as a :class:`tuple`.
         """
-        return tuple(r[self._index] for r in self._table.rows)
+        return self._data_func()
 
     @memoize
     def get_data_without_nulls(self):
@@ -152,35 +145,36 @@ class ColumnMapping(Mapping):
     """
     #pylint: disable=W0212
 
-    def __init__(self, table):
-        self._table = table
+    def __init__(self, column_names, columns):
+        self._column_names = column_names
+        self._columns = columns
 
     def __getitem__(self, k):
         if isinstance(k, slice):
             indices = xrange(*k.indices(len(self)))
 
-            return tuple(self._table._get_column(i) for i in indices)
+            return tuple(self._columns[i] for i in indices)
         elif isinstance(k, int):
             try:
-                self._table._column_names[k]
+                self._column_names[k]
             except IndexError:
                 raise ColumnDoesNotExistError(k)
 
             i = k
         else:
             try:
-                i = self._table._column_names.index(k)
+                i = self._column_names.index(k)
             except ValueError:
                 raise ColumnDoesNotExistError(k)
 
-        return self._table._get_column(i)
+        return self._columns[i]
 
     def __iter__(self):
-        return ColumnIterator(self._table)
+        return ColumnIterator(self)
 
     @memoize
     def __len__(self):
-        return len(self._table.column_names)
+        return len(self._column_names)
 
 class ColumnIterator(six.Iterator):
     """
@@ -190,18 +184,16 @@ class ColumnIterator(six.Iterator):
     """
     #pylint: disable=W0212
 
-    def __init__(self, table):
-        self._table = table
-        self._i = 0
+    def __init__(self, column_mapping):
+        self._column_mapping = column_mapping
+        self._index = 0
 
     def __next__(self):
         try:
-            self._table._column_names[self._i]
-        except IndexError:
+            column = self._column_mapping[self._index]
+        except ColumnDoesNotExistError:
             raise StopIteration
 
-        column = self._table._get_column(self._i)
-
-        self._i += 1
+        self._index += 1
 
         return column

@@ -10,6 +10,7 @@ try:
 except ImportError:
     import unittest
 
+from agate.columns import ColumnMapping
 from agate.data_types import Text
 from agate.table import Table
 from agate.utils import Patchable, Quantiles, round_limits
@@ -26,8 +27,8 @@ class TryPatchShadow(object):
     def __init__(self):
         self.foo = 'foo'
 
-    def _get_column(self, i):
-        return i
+    def column_names(self):
+        return 'foo'
 
 class TestMonkeyPatching(unittest.TestCase):
     def test_monkeypatch(self):
@@ -56,8 +57,8 @@ class TestMonkeyPatching(unittest.TestCase):
 
         after_table = Table([['blah'], ], [('foo', Text())])
 
-        self.assertSequenceEqual(before_table._get_column(0), ['blah'])
-        self.assertSequenceEqual(after_table._get_column(0), ['blah'])
+        self.assertIsInstance(before_table.columns, ColumnMapping)
+        self.assertIsInstance(after_table.columns, ColumnMapping)
 
         with self.assertRaises(AttributeError):
             after_table.foo == 'foo'

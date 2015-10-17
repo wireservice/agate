@@ -124,6 +124,12 @@ class RowSequence(Sequence):
     def row_alias(self):
         return self._row_alias
 
+    def get_column_data(self, i):
+        """
+        Iterates over the rows and returns the data for a given column index.
+        """
+        return tuple(row[i] for row in self._rows)
+
 class RowIterator(six.Iterator):
     """
     Iterator over :class:`Row` instances.

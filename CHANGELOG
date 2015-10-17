@@ -1,6 +1,8 @@
 0.12.0
 ------
 
+* Removed Row.table.
+* Migrated column-related functionality from Table to ColumnMapping. (#293)
 * Performance improvements for Table "forks". (where, limit, etc)
 * TableSet keys are now converted to row aliases during aggregation. (#291)
 * Migrated row-related functionality from Table to RowSequence.
@@ -11,7 +13,6 @@
 * Added row_alias argument to Table constructor. (#282)
 * Removed Row.index property as it violated immutability of rows. (#287)
 * ColumnMapping can now be accessed by index as well as name. (#281)
-* Added Column.table property. (#284)
 * Added column name and type validation to Table constructor. (#285)
 * Table now supports variable-length rows during construction. (#39)
 * aggregations.Summary implemented for generic aggregations. (#181)

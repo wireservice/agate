@@ -136,7 +136,5 @@ class TestColumns(unittest.TestCase):
     def test_properties(self):
         column = self.table.columns['one']
 
-        self.assertIs(column.table, self.table)
-        self.assertEqual(column.index, 0)
         self.assertEqual(column.name, 'one')
         self.assertIs(column.data_type, self.number_type)
