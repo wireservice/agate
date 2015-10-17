@@ -297,6 +297,10 @@ class TableSet(Mapping, Patchable):
         parts: a :code:`column_name`, a :class:`.Aggregation` instance and a
         :code:`new_column_name`.
 
+        The resulting table will have the keys from this :class:`TableSet` (and
+        any nested TableSets) set as its :code:`row_alias`. See
+        :meth:`.Table.__init__` for more details.
+
         :param aggregations: An list of triples in the format
             :code:`(column_name, aggregation, new_column_name)`.
         :returns: A new :class:`.Table`.
