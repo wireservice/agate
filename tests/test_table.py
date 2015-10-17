@@ -1049,10 +1049,6 @@ class TestTableData(unittest.TestCase):
         table = Table(self.rows, self.columns)
         table2 = table._fork(table.rows)
 
-        self.assertIs(table.rows[0], table2._data[0])
-        self.assertIs(table.rows[1], table2._data[1])
-        self.assertIs(table.rows[2], table2._data[2])
-
         self.assertIs(table.rows[0], table2.rows[0])
         self.assertIs(table.rows[1], table2.rows[1])
         self.assertIs(table.rows[2], table2.rows[2])
@@ -1062,24 +1058,24 @@ class TestTableData(unittest.TestCase):
         table2 = table.where(lambda r: r['one'] == 1)
         table3 = table2.where(lambda r: r['one'] == 1)
 
-        self.assertIsNot(table._data[0], table2._data[0])
-        self.assertIs(table2._data[0], table3._data[0])
+        self.assertIs(table.rows[0], table2.rows[0])
+        self.assertIs(table2.rows[0], table3.rows[0])
 
     def test_order_by_preserves_rows(self):
         table = Table(self.rows, self.columns)
         table2 = table.order_by(lambda r: r['one'])
         table3 = table2.order_by(lambda r: r['one'])
 
-        self.assertIsNot(table._data[0], table2._data[0])
-        self.assertIs(table2._data[0], table3._data[0])
+        self.assertIs(table.rows[0], table2.rows[0])
+        self.assertIs(table2.rows[0], table3.rows[0])
 
     def test_limit_preserves_rows(self):
         table = Table(self.rows, self.columns)
         table2 = table.limit(2)
         table3 = table2.limit(2)
 
-        self.assertIsNot(table._data[0], table2._data[0])
-        self.assertIs(table2._data[0], table3._data[0])
+        self.assertIs(table.rows[0], table2.rows[0])
+        self.assertIs(table2.rows[0], table3.rows[0])
 
     def test_compute_creates_rows(self):
         table = Table(self.rows, self.columns)
@@ -1090,8 +1086,8 @@ class TestTableData(unittest.TestCase):
             (Formula(self.number_type, lambda r: r['one']), 'new3')
         ])
 
-        self.assertIsNot(table._data[0], table2._data[0])
-        self.assertNotEqual(table._data[0], table2._data[0])
-        self.assertIsNot(table2._data[0], table3._data[0])
-        self.assertNotEqual(table2._data[0], table3._data[0])
-        self.assertSequenceEqual(table._data[0], (1, 4, 'a'))
+        self.assertIsNot(table.rows[0], table2.rows[0])
+        self.assertNotEqual(table.rows[0], table2.rows[0])
+        self.assertIsNot(table2.rows[0], table3.rows[0])
+        self.assertNotEqual(table2.rows[0], table3.rows[0])
+        self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))

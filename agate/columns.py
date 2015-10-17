@@ -99,7 +99,7 @@ class Column(Sequence):
         """
         Get the data contained in this column as a :class:`tuple`.
         """
-        return tuple(r[self._index] for r in self._table._data)
+        return tuple(r[self._index] for r in self._table.rows)
 
     @memoize
     def get_data_without_nulls(self):

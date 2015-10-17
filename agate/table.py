@@ -90,14 +90,12 @@ class Table(Patchable):
 
         self._column_types = tuple(column_types)
         self._column_names = tuple(column_names)
-        self._cached_columns = {}
-        self._cached_rows = {}
+        self._columns = [Column(self, i) for i in range(len(column_names))]
+        self._column_mapping = ColumnMapping(self)
 
-        self._columns = ColumnMapping(self)
-        self._rows = RowSequence(self)
-
-        cast_data = []
         cast_funcs = [c.cast for c in self._column_types]
+
+        new_rows = []
 
         for i, row in enumerate(rows):
             len_row = len(row)
@@ -109,71 +107,18 @@ class Table(Patchable):
 
             # Forked tables can share data (because they are immutable)
             if isinstance(row, Row):
-                cast_data.append(row)
+                new_rows.append(row)
             # Original data should be buffered so it can't be changed
             else:
-                cast_data.append(tuple(cast_funcs[i](d) for i, d in enumerate(row)))
+                new_rows.append(Row(self._column_names, tuple(cast_funcs[i](d) for i, d in enumerate(row))))
 
-        self._data = tuple(cast_data)
-
-        self._has_row_alias = False
-        self._alias_to_row = {}
-
-        if row_alias:
-            for i, row in enumerate(self.rows):
-                alias_is_row_function = hasattr(row_alias, '__call__')
-
-                if alias_is_row_function:
-                    alias = row_alias(row)
-                else:
-                    alias = row[row_alias]
-
-                if not isinstance(alias, six.string_types):
-                    raise ValueError(u'Row aliases must be strings, not: %s' % type(alias))
-
-                if alias in self._alias_to_row:
-                    raise ValueError(u'Row alias was not unique: %s' % alias)
-
-                self._alias_to_row[alias] = i
-
-            self._has_row_alias = True
+        self._row_sequence = RowSequence(new_rows, row_alias)
 
     def _get_column(self, i):
         """
         Get a :class:`.Column` of data, caching a copy for next request.
         """
-        if i not in self._cached_columns:
-            self._cached_columns[i] = Column(self, i)
-
-        return self._cached_columns[i]
-
-    def _get_row(self, i):
-        """
-        Get a :class:`.Row` of data, caching a copy for the next request.
-        """
-        if i not in self._cached_rows:
-            # If rows are from a fork, they are safe to access directly
-            if isinstance(self._data[i], Row):
-                self._cached_rows[i] = self._data[i]
-            else:
-                self._cached_rows[i] = Row(self.column_names, self._data[i])
-
-        return self._cached_rows[i]
-
-    def _get_row_by_alias(self, alias):
-        """
-        Use this table's row alias to get a :class:`.Row` of data, caching a
-        copy for the next request.
-        """
-        if not self._has_row_alias:
-            raise ValueError(u'Table has no row alias defined.')
-
-        i = self._alias_to_row[alias]
-
-        return self._get_row(i)
-
-    def _get_row_count(self):
-        return len(self._data)
+        return self._columns[i]
 
     def _fork(self, rows, column_info=None):
         """
@@ -251,7 +196,7 @@ class Table(Patchable):
 
             writer.writerow(self._column_names)
 
-            for row in self._data:
+            for row in self.rows:
                 writer.writerow(row)
         finally:
             f.close()
@@ -275,25 +220,18 @@ class Table(Patchable):
         return self._column_names
 
     @property
-    def rows(self):
-        """
-        Get this tables :class:`.RowSequence`.
-        """
-        return self._rows
-
-    @property
     def columns(self):
         """
         Get this tables :class:`.ColumnMapping`.
         """
-        return self._columns
+        return self._column_mapping
 
     @property
-    def data(self):
+    def rows(self):
         """
-        Get the data underlying this table.
+        Get this tables :class:`.RowSequence`.
         """
-        return self._data
+        return self._row_sequence
 
     @allow_tableset_proxy
     def select(self, column_names):
@@ -499,14 +437,14 @@ class Table(Patchable):
             if value not in []:
                 right_hash[value] = []
 
-            right_hash[value].append(self._rows[i])
+            right_hash[value].append(self.rows[i])
 
         # Collect new rows
         rows = []
 
         # Iterate over left column
         for left_index, left_value in enumerate(left_data):
-            new_row = list(self._rows[left_index])
+            new_row = list(self.rows[left_index])
 
             matching_rows = right_hash.get(left_value, None)
 

@@ -48,7 +48,7 @@ def print_table(table, max_rows=None, max_columns=None, output=sys.stdout):
     if max_columns is None:
         max_columns = len(table.columns)
 
-    rows_truncated = max_rows < len(table.data)
+    rows_truncated = max_rows < len(table.rows)
     columns_truncated = max_columns < len(table.column_names)
 
     column_names = list(table.column_names[:max_columns])
@@ -72,7 +72,7 @@ def print_table(table, max_rows=None, max_columns=None, output=sys.stdout):
             number_formatters.append(None)
 
     # Format data and display column widths
-    for i, row in enumerate(table.data):
+    for i, row in enumerate(table.rows):
         if i >= max_rows:
             break
 

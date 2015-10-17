@@ -26,8 +26,8 @@ class TryPatchShadow(object):
     def __init__(self):
         self.foo = 'foo'
 
-    def _get_row_count(self):
-        return 1111
+    def _get_column(self, i):
+        return i
 
 class TestMonkeyPatching(unittest.TestCase):
     def test_monkeypatch(self):
@@ -50,14 +50,14 @@ class TestMonkeyPatching(unittest.TestCase):
         self.assertEqual(Table.testcls(5), 5)
 
     def test_monkeypatch_shadow(self):
-        before_table = Table([], [('foo', Text())])
+        before_table = Table([['blah'], ], [('foo', Text())])
 
         Table.monkeypatch(TryPatchShadow)
 
-        after_table = Table([], [('foo', Text())])
+        after_table = Table([['blah'], ], [('foo', Text())])
 
-        self.assertEqual(before_table._get_row_count(), 0)
-        self.assertEqual(after_table._get_row_count(), 0)
+        self.assertSequenceEqual(before_table._get_column(0), ['blah'])
+        self.assertSequenceEqual(after_table._get_column(0), ['blah'])
 
         with self.assertRaises(AttributeError):
             after_table.foo == 'foo'

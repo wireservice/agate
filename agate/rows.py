@@ -74,54 +74,76 @@ class Row(Mapping):
 
 class RowSequence(Sequence):
     """
-    Proxy access to rows by index.
+    A sequence of :class:`Row` instances. Instances can be accessed by numeric
+    index or row alias (if specified).
 
-    :param table: The :class:`.Table` that contains the rows.
+    :param rows: A sequence of :class:`Row` instances.
     """
     #pylint: disable=W0212
 
-    def __init__(self, table):
-        self._table = table
+    def __init__(self, rows, row_alias=None):
+        self._rows = rows
+        self._has_row_alias = False
+        self._alias_to_row = {}
+
+        if row_alias:
+            for i, row in enumerate(self._rows):
+                alias_is_row_function = hasattr(row_alias, '__call__')
+
+                if alias_is_row_function:
+                    alias = row_alias(row)
+                else:
+                    alias = row[row_alias]
+
+                if not isinstance(alias, six.string_types):
+                    raise ValueError(u'Row aliases must be strings, not: %s' % type(alias))
+
+                if alias in self._alias_to_row:
+                    raise ValueError(u'Row alias was not unique: %s' % alias)
+
+                self._alias_to_row[alias] = i
+
+            self._has_row_alias = True
 
     def __getitem__(self, i):
         if isinstance(i, slice):
             indices = xrange(*i.indices(len(self)))
 
-            return tuple(self._table._get_row(row) for row in indices)
+            return tuple(self._rows[row] for row in indices)
         elif isinstance(i, int):
             try:
-                return self._table._get_row(i)
+                return self._rows[i]
             except IndexError:
                 raise RowDoesNotExistError(i)
         else:
             try:
-                return self._table._get_row_by_alias(i)
+                return self._rows[self._alias_to_row[i]]
             except KeyError:
                 raise RowDoesNotExistError(i)
 
     def __iter__(self):
-        return RowIterator(self._table)
+        return RowIterator(self)
 
     @memoize
     def __len__(self):
-        return self._table._get_row_count()
+        return len(self._rows)
 
 class RowIterator(six.Iterator):
     """
-    Iterator over row proxies.
+    Iterator over :class:`Row` instances.
 
-    :param table: The :class:`.Table` of which to iterate.
+    :param row_sequence: The :class:`RowSequence` over which to iterate.
     """
     #pylint: disable=W0212
 
-    def __init__(self, table):
-        self._table = table
+    def __init__(self, row_sequence):
+        self._row_sequence = row_sequence
         self._index = 0
 
     def __next__(self):
         try:
-            row = self._table._get_row(self._index)
-        except IndexError:
+            row = self._row_sequence[self._index]
+        except RowDoesNotExistError:
             raise StopIteration
 
         self._index += 1
