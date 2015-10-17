@@ -59,7 +59,7 @@ class RowDoesNotExistError(Exception):  # pragma: no cover
         self._i = i
 
     def __unicode__(self):
-        return 'Row `%i` does not exist.' % (self._i)
+        return 'Row `%s` does not exist.' % (self._i)
 
     def __str__(self):
         return str(self.__unicode__())

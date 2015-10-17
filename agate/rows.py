@@ -80,8 +80,6 @@ class RowSequence(Sequence):
     :param rows: A sequence of :class:`Row` instances.
     :param row_alias: See :meth:`.Table.__init__`.
     """
-    #pylint: disable=W0212
-
     def __init__(self, rows, row_alias=None):
         self._rows = rows
         self._has_row_alias = False

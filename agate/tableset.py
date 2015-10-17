@@ -253,7 +253,7 @@ class TableSet(Mapping, Patchable):
         # Process nested TableSet's
         if isinstance(list(self._tables.values())[0], TableSet):
             for key, tableset in self._tables.items():
-                column_names, column_types, nested_output = tableset._aggregate(aggregations)
+                column_names, column_types, nested_output, alias_columns = tableset._aggregate(aggregations)
 
                 for row in nested_output:
                     row.insert(0, key)
@@ -262,10 +262,12 @@ class TableSet(Mapping, Patchable):
 
             column_names.insert(0, self._key_name)
             column_types.insert(0, self._key_type)
+            alias_columns.insert(0, self._key_name)
         # Regular Tables
         else:
             column_names = [self._key_name]
             column_types = [self._key_type]
+            alias_columns = [self._key_name]
 
             for column_name, aggregation, new_column_name in aggregations:
                 c = self._sample_table.columns[column_name]
@@ -283,7 +285,7 @@ class TableSet(Mapping, Patchable):
 
                 output.append(new_row)
 
-        return column_names, column_types, output
+        return column_names, column_types, output, alias_columns
 
     def aggregate(self, aggregations=[]):
         """
@@ -299,6 +301,11 @@ class TableSet(Mapping, Patchable):
             :code:`(column_name, aggregation, new_column_name)`.
         :returns: A new :class:`.Table`.
         """
-        column_names, column_types, output = self._aggregate(aggregations)
+        column_names, column_types, output, alias_columns = self._aggregate(aggregations)
 
-        return self._sample_table._fork(output, zip(column_names, column_types))
+        if len(alias_columns) == 1:
+            key_alias = alias_columns[0]
+        else:
+            key_alias = lambda r: tuple([r[c] for c in alias_columns])
+
+        return Table(output, zip(column_names, column_types), row_alias=key_alias)

@@ -202,6 +202,19 @@ class TestTableSet(unittest.TestCase):
         self.assertIsInstance(new_table._column_types[0], Number)
         self.assertIsInstance(new_table._column_types[1], Number)
 
+    def test_aggregate_row_alias(self):
+        tableset = TableSet(self.tables, key_name='test')
+
+        new_table = tableset.aggregate([
+            ('number', Length(), 'count')
+        ])
+
+        self.assertTrue(new_table.rows._has_row_alias)
+        self.assertEqual(len(new_table.rows._alias_to_row), 3)
+        self.assertSequenceEqual(new_table.rows['table1'], ['table1', 3])
+        self.assertSequenceEqual(new_table.rows['table2'], ['table2', 3])
+        self.assertSequenceEqual(new_table.rows['table3'], ['table3', 3])
+
     def test_aggregate_sum(self):
         tableset = TableSet(self.tables)
 
@@ -326,6 +339,21 @@ class TestTableSet(unittest.TestCase):
 
         self.assertSequenceEqual(results.rows[5], ('table3', 'a', 2, 3))
         self.assertSequenceEqual(results.rows[6], ('table3', 'c', 1, 3))
+
+    def test_nested_aggregate_row_alias(self):
+        tableset = TableSet(self.tables, key_name='test')
+
+        nested = tableset.group_by('letter')
+
+        results = nested.aggregate([
+            ('letter', Length(), 'count'),
+            ('number', Sum(), 'number_sum')
+        ])
+
+        self.assertTrue(results.rows._has_row_alias)
+        self.assertEqual(len(results.rows._alias_to_row), 7)
+        self.assertSequenceEqual(results.rows[('table1', 'a')], ('table1', 'a', 2, 4))
+        self.assertSequenceEqual(results.rows[('table2', 'c')], ('table2', 'c', 1, 5))
 
     def test_proxy_maintains_key(self):
         number_type = Number()
