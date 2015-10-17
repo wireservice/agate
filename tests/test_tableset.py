@@ -209,7 +209,7 @@ class TestTableSet(unittest.TestCase):
             ('number', Length(), 'count')
         ])
 
-        self.assertTrue(new_table.rows._has_row_alias)
+        self.assertSequenceEqual(new_table.rows.row_alias, 'test')
         self.assertEqual(len(new_table.rows._alias_to_row), 3)
         self.assertSequenceEqual(new_table.rows['table1'], ['table1', 3])
         self.assertSequenceEqual(new_table.rows['table2'], ['table2', 3])
@@ -350,7 +350,7 @@ class TestTableSet(unittest.TestCase):
             ('number', Sum(), 'number_sum')
         ])
 
-        self.assertTrue(results.rows._has_row_alias)
+        self.assertSequenceEqual(results.rows.row_alias, ['test', 'letter'])
         self.assertEqual(len(results.rows._alias_to_row), 7)
         self.assertSequenceEqual(results.rows[('table1', 'a')], ('table1', 'a', 2, 4))
         self.assertSequenceEqual(results.rows[('table2', 'c')], ('table2', 'c', 1, 5))

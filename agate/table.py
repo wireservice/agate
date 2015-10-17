@@ -68,25 +68,26 @@ class Table(Patchable):
     :param column_info: A sequence of pairs of column names and types. Column
         names must be strings and column types must be instances of
         :class:`.DataType`.
-    :param row_alias: Either the name of a column or a :class:`function`
-        that takes a row and returns a **unique, hashable value** which can then
-        be used to refer to the row instead of its index. Optional.
+    :param row_alias: Either a single column names or a sequence of column names
+        which uniquely identify any given row. When provided, these values can
+        be used to refer to the row instead of its index.
     """
-    def __init__(self, rows, column_info, row_alias=None):
+    def __init__(self, rows, column_info, row_alias=None, _fork=False):
         column_names, column_types = zip(*column_info)
 
-        for column_name in column_names:
-            if not isinstance(column_name, six.string_types):
-                raise ValueError('Column names must be strings.')
+        if not _fork:
+            for column_name in column_names:
+                if not isinstance(column_name, six.string_types):
+                    raise ValueError('Column names must be strings.')
 
-        for column_type in column_types:
-            if not isinstance(column_type, DataType):
-                raise ValueError('Column types must be instances of DataType.')
+            for column_type in column_types:
+                if not isinstance(column_type, DataType):
+                    raise ValueError('Column types must be instances of DataType.')
 
-        len_column_names = len(column_names)
+            len_column_names = len(column_names)
 
-        if len(set(column_names)) != len_column_names:
-            raise ValueError('Duplicate column names are not allowed.')
+            if len(set(column_names)) != len_column_names:
+                raise ValueError('Duplicate column names are not allowed.')
 
         self._column_types = tuple(column_types)
         self._column_names = tuple(column_names)
@@ -95,22 +96,20 @@ class Table(Patchable):
 
         cast_funcs = [c.cast for c in self._column_types]
 
-        new_rows = []
+        if not _fork:
+            new_rows = []
 
-        for i, row in enumerate(rows):
-            len_row = len(row)
+            for i, row in enumerate(rows):
+                len_row = len(row)
 
-            if len_row > len_column_names:
-                raise ValueError('Row %i has length %i, but Table has %i columns.' % (i, len_row, len_column_names))
-            elif len(row) < len_column_names:
-                row = chain(row, [None] * (len(self.column_names) - len_row))
+                if len_row > len_column_names:
+                    raise ValueError('Row %i has length %i, but Table has %i columns.' % (i, len_row, len_column_names))
+                elif len(row) < len_column_names:
+                    row = chain(row, [None] * (len(self.column_names) - len_row))
 
-            # Forked tables can share data (because they are immutable)
-            if isinstance(row, Row):
-                new_rows.append(row)
-            # Original data should be buffered so it can't be changed
-            else:
                 new_rows.append(Row(self._column_names, tuple(cast_funcs[i](d) for i, d in enumerate(row))))
+        else:
+            new_rows = rows
 
         self._row_sequence = RowSequence(new_rows, row_alias)
 
@@ -128,7 +127,7 @@ class Table(Patchable):
         if not column_info:
             column_info = zip(self._column_names, self._column_types)
 
-        return Table(rows, column_info)
+        return Table(rows, column_info, row_alias=self.rows.row_alias, _fork=True)
 
     @classmethod
     def from_csv(cls, path, column_info, row_alias=None, header=True, **kwargs):
@@ -255,7 +254,7 @@ class Table(Patchable):
         for row in self.rows:
             new_rows.append(tuple(row[i] for i in column_indices))
 
-        return self._fork(new_rows, zip(column_names, column_types))
+        return Table(new_rows, zip(column_names, column_types), row_alias=self.rows.row_alias)
 
     @allow_tableset_proxy
     def where(self, test):
@@ -469,7 +468,7 @@ class Table(Patchable):
 
                 rows.append(new_row)
 
-        return self._fork(rows, zip(column_names, column_types))
+        return Table(rows, zip(column_names, column_types), row_alias=self.rows.row_alias)
 
     @classmethod
     def merge(cls, tables):
@@ -491,7 +490,7 @@ class Table(Patchable):
 
         rows = chain(*[table.rows for table in tables])
 
-        return Table(rows, zip(column_names, column_types))
+        return Table(rows, zip(column_names, column_types), row_alias=tables[0].rows.row_alias)
 
     @allow_tableset_proxy
     def group_by(self, key, key_name=None, key_type=None):
@@ -579,7 +578,7 @@ class Table(Patchable):
             new_columns = tuple(c.run(row) for c, n in computations)
             new_rows.append(tuple(row) + new_columns)
 
-        return self._fork(new_rows, zip(column_names, column_types))
+        return Table(new_rows, zip(column_names, column_types), row_alias=self.rows.row_alias)
 
     @allow_tableset_proxy
     def counts(self, key, key_name=None, key_type=None):

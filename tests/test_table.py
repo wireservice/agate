@@ -97,6 +97,7 @@ class TestTable(unittest.TestCase):
     def test_row_alias(self):
         table = Table(self.rows, self.columns, row_alias='three')
 
+        self.assertSequenceEqual(table.rows.row_alias, 'three')
         self.assertSequenceEqual(table.rows['a'], (1, 4, 'a'))
         self.assertSequenceEqual(table.rows['b'], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[u'👍'], (None, 2, u'👍'))
@@ -104,27 +105,18 @@ class TestTable(unittest.TestCase):
     def test_row_alias_non_string(self):
         table = Table(self.rows, self.columns, row_alias='one')
 
+        self.assertSequenceEqual(table.rows.row_alias, 'one')
         self.assertSequenceEqual(table.rows[Decimal('1')], (1, 4, 'a'))
         self.assertSequenceEqual(table.rows[Decimal('2')], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[None], (None, 2, u'👍'))
 
-    def test_row_alias_func(self):
-        table = Table(self.rows, self.columns, row_alias=lambda r: str(r['two']))
+    def test_row_alias_multiple(self):
+        table = Table(self.rows, self.columns, row_alias=['one', 'three'])
 
-        self.assertSequenceEqual(table.rows['4'], (1, 4, 'a'))
-        self.assertSequenceEqual(table.rows['3'], (2, 3, 'b'))
-        self.assertSequenceEqual(table.rows['2'], (None, 2, u'👍'))
-
-    def test_row_alias_func_non_string(self):
-        table = Table(self.rows, self.columns, row_alias=lambda r: r['two'])
-
-        self.assertSequenceEqual(table.rows[Decimal('4')], (1, 4, 'a'))
-        self.assertSequenceEqual(table.rows[Decimal('3')], (2, 3, 'b'))
-        self.assertSequenceEqual(table.rows[Decimal('2')], (None, 2, u'👍'))
-
-    def test_row_alias_func_int(self):
-        with self.assertRaises(ValueError):
-            Table(self.rows, self.columns, row_alias=lambda r: int(r['two']))
+        self.assertSequenceEqual(table.rows.row_alias, ['one', 'three'])
+        self.assertSequenceEqual(table.rows[(Decimal('1'), 'a')], (1, 4, 'a'))
+        self.assertSequenceEqual(table.rows[(Decimal('2'), 'b')], (2, 3, 'b'))
+        self.assertSequenceEqual(table.rows[(None, u'👍')], (None, 2, u'👍'))
 
     def test_from_csv_builtin(self):
         import csv
@@ -426,6 +418,9 @@ class TestTable(unittest.TestCase):
 
     def test_chain_select_where(self):
         table = Table(self.rows, self.columns)
+
+        print table.rows
+        print table.rows[0]
 
         new_table = table.select(('one', 'two')).where(lambda r: r['two'] == 3)
 

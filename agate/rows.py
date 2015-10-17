@@ -82,28 +82,20 @@ class RowSequence(Sequence):
     """
     def __init__(self, rows, row_alias=None):
         self._rows = rows
-        self._has_row_alias = False
+        self._row_alias = row_alias
         self._alias_to_row = {}
 
-        if row_alias:
+        if self._row_alias:
             for i, row in enumerate(self._rows):
-                alias_is_row_function = hasattr(row_alias, '__call__')
-
-                if alias_is_row_function:
-                    alias = row_alias(row)
-                else:
+                if isinstance(row_alias, six.string_types):
                     alias = row[row_alias]
-
-                # Prevent collisions between aliases and indices
-                if isinstance(alias, int):
-                    raise ValueError('Row aliases may not be of type int.')
+                else:
+                    alias = tuple([row[k] for k in row_alias])
 
                 if alias in self._alias_to_row:
                     raise ValueError(u'Row alias was not unique: %s' % alias)
 
                 self._alias_to_row[alias] = i
-
-            self._has_row_alias = True
 
     def __getitem__(self, i):
         if isinstance(i, slice):
@@ -127,6 +119,10 @@ class RowSequence(Sequence):
     @memoize
     def __len__(self):
         return len(self._rows)
+
+    @property
+    def row_alias(self):
+        return self._row_alias
 
 class RowIterator(six.Iterator):
     """

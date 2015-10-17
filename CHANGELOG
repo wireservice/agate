@@ -1,6 +1,7 @@
 0.12.0
 ------
 
+* Performance improvements for Table "forks". (where, limit, etc)
 * TableSet keys are now converted to row aliases during aggregation. (#291)
 * Migrated row-related functionality from Table to RowSequence.
 * Simplified implementation of Row for speed and consistency. No API changes.
