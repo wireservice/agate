@@ -19,29 +19,25 @@ from agate.utils import memoize
 
 class Row(Mapping):
     """
-    Proxy to row data.
-
-    Values within a row can be accessed by column name or
-    column index.
+    A row of data. Values within a row can be accessed by column name or column
+    index.
 
     Row instances are immutable and may be shared between :class:`.Table`
     instances.
 
-    :param table: The :class:`Table` that contains this row.
-    :param i: The index of this row in the :class:`Table`.
+    :param column_names: The "keys" for this row.
+    :param data: The "values" for this row.
     """
     #pylint: disable=W0212
 
-    def __init__(self, table, index):
-        self._table = table
-        self._index = index
+    def __init__(self, column_names, data):
+        self._column_names = column_names
+        self._data = data
 
     def __unicode__(self):
-        data = self._table._data[self._index]
+        sample = u', '.join(repr(d) for d in self._data[:5])
 
-        sample = u', '.join(repr(d) for d in data[:5])
-
-        if len(data) > 5:
+        if len(self._data) > 5:
             sample = u'%s, ...' % sample
 
         return u'<agate.Row: (%s)>' % sample
@@ -52,32 +48,29 @@ class Row(Mapping):
 
         return str(self.__unicode__())
 
-    def __repr__(self):
-        return u'<agate.Row: index=%i>' % self._index
-
     def __getitem__(self, k):
         if isinstance(k, int):
             try:
-                return self._table._data[self._index][k]
+                return self._data[k]
             except IndexError:
                 raise ColumnDoesNotExistError(k)
 
         try:
-            j = self._table._column_names.index(k)
+            j = self._column_names.index(k)
         except ValueError:
             raise ColumnDoesNotExistError(k)
 
-        return self._table._data[self._index][j]
+        return self._data[j]
 
     @memoize
     def __len__(self):
-        return len(self._table._data[self._index])
+        return len(self._data)
 
     def __iter__(self):
         return CellIterator(self)
 
     def __eq__(self, other):
-        return self._table._data[self._index] == other
+        return self._data == other
 
 class RowSequence(Sequence):
     """
@@ -149,7 +142,7 @@ class CellIterator(six.Iterator):
 
     def __next__(self):
         try:
-            v = self._row._table._data[self._row._index][self._index]
+            v = self._row._data[self._index]
         except IndexError:
             raise StopIteration
 

@@ -75,11 +75,6 @@ class TestColumns(unittest.TestCase):
 
         self.assertEqual(str(self.table.columns['one']), "<agate.Column: (Decimal('1'), Decimal('2'), None, Decimal('1'), Decimal('2'), ...)>")
 
-    def test_repr(self):
-        self.table = Table(self.rows, self.columns)
-
-        self.assertEqual(repr(self.table.columns['one']), "<agate.Column: index=0 name='one' data_type=Number>")
-
     def test_length(self):
         self.assertEqual(len(self.table.columns), 3)
 

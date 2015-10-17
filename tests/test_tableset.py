@@ -95,11 +95,6 @@ class TestTableSet(unittest.TestCase):
 
         shutil.rmtree('.test-tableset')
 
-    def test_repr(self):
-        tableset = TableSet(self.tables)
-
-        self.assertEqual(repr(tableset), "<agate.TableSet: tables=3 key_name='group' key_type=Text>")
-
     def test_get_column_types(self):
         tableset = TableSet(self.tables)
 

@@ -11,8 +11,57 @@ from agate import Table
 from agate.computations import Formula
 from agate.data_types import *
 from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
+from agate.rows import Row
 
-class TestRows(unittest.TestCase):
+class TestRow(unittest.TestCase):
+    def setUp(self):
+        self.column_names = ('one', 'two', 'three')
+        self.data = (u'a', u'b', u'c')
+        self.row = Row(self.column_names, self.data)
+
+    def test_stringify(self):
+        if six.PY2:
+            self.assertEqual(str(self.row), "<agate.Row: (u'a', u'b', u'c')>")
+        else:
+            self.assertEqual(str(self.row), "<agate.Row: ('a', 'b', 'c')>")
+
+    def test_stringify_long(self):
+        column_names = ('one', 'two', 'three', 'four', 'five', 'six')
+        data = (u'a', u'b', u'c', u'd', u'e', u'f')
+        row = Row(column_names, data)
+
+        if six.PY2:
+            self.assertEqual(str(row), "<agate.Row: (u'a', u'b', u'c', u'd', u'e', ...)>")
+        else:
+            self.assertEqual(str(row), "<agate.Row: ('a', 'b', 'c', 'd', 'e', ...)>")
+
+    def test_row_length(self):
+        self.assertEqual(len(self.row), 3)
+
+    def test_column_in_row(self):
+        self.assertEqual(self.row['one'], 'a')
+        self.assertEqual(self.row[0], 'a')
+
+    def test_column_in_row_invalid(self):
+        with self.assertRaises(ColumnDoesNotExistError):
+            self.row['four']
+
+        with self.assertRaises(ColumnDoesNotExistError):
+            self.row[3]
+
+    def test_immutable(self):
+        with self.assertRaises(TypeError):
+            self.row[0] = 'foo'
+
+        with self.assertRaises(TypeError):
+            self.row[0][0] = 100
+
+    def test_get_cell(self):
+        self.assertEqual(self.row['one'], 'a')
+        self.assertEqual(self.row['two'], 'b')
+        self.assertEqual(self.row['three'], 'c')
+
+class TestRowSequence(unittest.TestCase):
     def setUp(self):
         self.rows = (
             (1, 2, 'a'),
@@ -31,38 +80,6 @@ class TestRows(unittest.TestCase):
 
         self.table = Table(self.rows, self.columns)
 
-    def test_stringify(self):
-        if six.PY2:
-            self.assertEqual(str(self.table.rows[0]), "<agate.Row: (Decimal('1'), Decimal('2'), u'a')>")
-        else:
-            self.assertEqual(str(self.table.rows[0]), "<agate.Row: (Decimal('1'), Decimal('2'), 'a')>")
-
-    def test_stringify_long(self):
-        rows = (
-            (1, 2, 'a', 'b', 'c', 'd'),
-        )
-
-        columns = (
-            ('one', self.number_type),
-            ('two', self.number_type),
-            ('three', self.text_type),
-            ('four', self.text_type),
-            ('five', self.text_type),
-            ('six', self.text_type),
-        )
-
-        self.table = Table(rows, columns)
-
-        if six.PY2:
-            self.assertEqual(str(self.table.rows[0]), "<agate.Row: (Decimal('1'), Decimal('2'), u'a', u'b', u'c', ...)>")
-        else:
-            self.assertEqual(str(self.table.rows[0]), "<agate.Row: (Decimal('1'), Decimal('2'), 'a', 'b', 'c', ...)>")
-
-    def test_repr(self):
-        self.table = Table(self.rows, self.columns)
-
-        self.assertEqual(repr(self.table.rows[0]), "<agate.Row: index=0>")
-
     def test_length(self):
         self.assertEqual(len(self.table.rows), 3)
 
@@ -78,12 +95,9 @@ class TestRows(unittest.TestCase):
         self.assertIs(r, r2)
         self.assertIsNot(r, r3)
 
-    def test_get_invalid_column(self):
+    def test_get_invalid_row(self):
         with self.assertRaises(RowDoesNotExistError):
             self.table.rows[3]
-
-    def test_row_length(self):
-        self.assertEqual(len(self.table.rows[0]), 3)
 
     def test_iterate_rows(self):
         it = iter(self.table.rows)
@@ -94,18 +108,6 @@ class TestRows(unittest.TestCase):
 
         with self.assertRaises(StopIteration):
             next(it)
-
-    def test_immutable(self):
-        with self.assertRaises(TypeError):
-            self.table.rows[0] = 'foo'
-
-        with self.assertRaises(TypeError):
-            self.table.rows[0][0] = 100
-
-    def test_get_cell(self):
-        self.assertEqual(self.table.rows[0]['one'], 1)
-        self.assertEqual(self.table.rows[1]['two'], 3)
-        self.assertEqual(self.table.rows[2]['three'], 'c')
 
     def test_slice(self):
         s = self.table.rows[1:]
@@ -119,17 +121,3 @@ class TestRows(unittest.TestCase):
 
         self.assertEqual(len(s), 1)
         self.assertSequenceEqual(s[0], (None, 4, 'c'))
-
-    def test_column_in_row(self):
-        row = self.table.rows[0]
-
-        self.assertEqual(row['one'], 1)
-
-    def test_column_in_row_invalid(self):
-        row = self.table.rows[0]
-
-        with self.assertRaises(ColumnDoesNotExistError):
-            row['four']
-
-        with self.assertRaises(ColumnDoesNotExistError):
-            row[3]

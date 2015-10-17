@@ -47,13 +47,6 @@ class Column(Sequence):
 
         return str(self.__unicode__())  #pragma: no cover
 
-    def __repr__(self):
-        return u'<agate.Column: index=%i name=\'%s\' data_type=%s>' % (
-            self.index,
-            self.name,
-            self.data_type.__class__.__name__
-        )
-
     def __getitem__(self, j):
         return self.get_data()[j]
 

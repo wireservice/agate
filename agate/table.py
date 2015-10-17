@@ -138,12 +138,6 @@ class Table(Patchable):
 
             self._has_row_alias = True
 
-    def __repr__(self):
-        return u'<agate.Table: columns=%i rows=%i>' % (
-            len(self.columns),
-            len(self.rows)
-        )
-
     def _get_column(self, i):
         """
         Get a :class:`.Column` of data, caching a copy for next request.
@@ -162,7 +156,7 @@ class Table(Patchable):
             if isinstance(self._data[i], Row):
                 self._cached_rows[i] = self._data[i]
             else:
-                self._cached_rows[i] = Row(self, i)
+                self._cached_rows[i] = Row(self.column_names, self._data[i])
 
         return self._cached_rows[i]
 

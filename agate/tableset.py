@@ -98,13 +98,6 @@ class TableSet(Mapping, Patchable):
 
         self._tables = copy(group)
 
-    def __repr__(self):
-        return u'<agate.TableSet: tables=%i key_name=%s key_type=%s>' % (
-            len(self),
-            repr(self.key_name),
-            self.key_type.__class__.__name__
-        )
-
     def __getitem__(self, k):
         return self._tables.__getitem__(k)
 
