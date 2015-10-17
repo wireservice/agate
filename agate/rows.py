@@ -78,6 +78,7 @@ class RowSequence(Sequence):
     index or row alias (if specified).
 
     :param rows: A sequence of :class:`Row` instances.
+    :param row_alias: See :meth:`.Table.__init__`.
     """
     #pylint: disable=W0212
 
@@ -95,8 +96,9 @@ class RowSequence(Sequence):
                 else:
                     alias = row[row_alias]
 
-                if not isinstance(alias, six.string_types):
-                    raise ValueError(u'Row aliases must be strings, not: %s' % type(alias))
+                # Prevent collisions between aliases and indices
+                if isinstance(alias, int):
+                    raise ValueError('Row aliases may not be of type int.')
 
                 if alias in self._alias_to_row:
                     raise ValueError(u'Row alias was not unique: %s' % alias)

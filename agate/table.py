@@ -69,8 +69,8 @@ class Table(Patchable):
         names must be strings and column types must be instances of
         :class:`.DataType`.
     :param row_alias: Either the name of a column or a :class:`function`
-        that takes a row and returns a **unique string** which can then be used
-        to refer to the row instead of its index. Optional.
+        that takes a row and returns a **unique, hashable value** which can then
+        be used to refer to the row instead of its index. Optional.
     """
     def __init__(self, rows, column_info, row_alias=None):
         column_names, column_types = zip(*column_info)
@@ -131,7 +131,7 @@ class Table(Patchable):
         return Table(rows, column_info)
 
     @classmethod
-    def from_csv(cls, path, column_info, header=True, **kwargs):
+    def from_csv(cls, path, column_info, row_alias=None, header=True, **kwargs):
         """
         Create a new table for a CSV. This method will use csvkit if it is
         available, otherwise it will use Python's builtin csv module.
@@ -145,6 +145,7 @@ class Table(Patchable):
         :param column_info: A sequence of pairs of column names and types. The latter
             must be instances of :class:`.DataType`. Or, an instance of
             :class:`.TypeTester` to infer types.
+        :param row_alias: See :meth:`Table.__init__`.
         :param header: If `True`, the first row of the CSV is assumed to contains
             headers and will be skipped.
         """
@@ -169,7 +170,7 @@ class Table(Patchable):
                 # TKTK Better Error
                 raise ValueError('CSV contains more columns than were specified.')
 
-        return Table(rows, column_info)
+        return Table(rows, column_info, row_alias=row_alias)
 
     def to_csv(self, path, **kwargs):
         """

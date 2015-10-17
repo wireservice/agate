@@ -135,7 +135,7 @@ class TableSet(Mapping, Patchable):
         return self._key_type
 
     @classmethod
-    def from_csv(cls, dir_path, column_info, header=True, **kwargs):
+    def from_csv(cls, dir_path, column_info, row_alias=None, header=True, **kwargs):
         """
         Create a new :class:`TableSet` from a directory of CSVs. This method
         will use csvkit if it is available, otherwise it will use Python's
@@ -151,6 +151,7 @@ class TableSet(Mapping, Patchable):
         :param column_info: A sequence of pairs of column names and types. The latter
             must be instances of :class:`.DataType`. Or, an instance of
             :class:`.TypeTester` to infer types.
+        :param row_alias: See :meth:`Table.__init__`.
         :param header: If `True`, the first row of the CSV is assumed to contains
             headers and will be skipped.
         """
@@ -170,7 +171,7 @@ class TableSet(Mapping, Patchable):
         for path in glob(os.path.join(dir_path, '*.csv')):
             name = os.path.split(path)[1].strip('.csv')
 
-            table = Table.from_csv(path, column_info, header=header, **kwargs)
+            table = Table.from_csv(path, column_info, row_alias=row_alias, header=header, **kwargs)
 
             if use_inference and not has_inferred_columns:
                 column_info = tuple(zip(table.column_names, table.column_types))
