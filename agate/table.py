@@ -71,23 +71,24 @@ class Table(Patchable):
     :param row_alias: Either a single column names or a sequence of column names
         which uniquely identify any given row. When provided, these values can
         be used to refer to the row instead of its index.
+    :param _is_fork: Used internally to skip certain validation steps when data
+        is propogated from an existing table.
     """
-    def __init__(self, rows, column_info, row_alias=None, _fork=False):
+    def __init__(self, rows, column_info, row_alias=None, _is_fork=False):
         column_names, column_types = zip(*column_info)
 
-        if not _fork:
-            for column_name in column_names:
-                if not isinstance(column_name, six.string_types):
-                    raise ValueError('Column names must be strings.')
+        for column_name in column_names:
+            if not isinstance(column_name, six.string_types):
+                raise ValueError('Column names must be strings.')
 
-            for column_type in column_types:
-                if not isinstance(column_type, DataType):
-                    raise ValueError('Column types must be instances of DataType.')
+        for column_type in column_types:
+            if not isinstance(column_type, DataType):
+                raise ValueError('Column types must be instances of DataType.')
 
-            len_column_names = len(column_names)
+        len_column_names = len(column_names)
 
-            if len(set(column_names)) != len_column_names:
-                raise ValueError('Duplicate column names are not allowed.')
+        if len(set(column_names)) != len_column_names:
+            raise ValueError('Duplicate column names are not allowed.')
 
         self._column_types = tuple(column_types)
         self._column_names = tuple(column_names)
@@ -96,7 +97,7 @@ class Table(Patchable):
 
         cast_funcs = [c.cast for c in self._column_types]
 
-        if not _fork:
+        if not _is_fork:
             new_rows = []
 
             for i, row in enumerate(rows):
@@ -127,7 +128,7 @@ class Table(Patchable):
         if not column_info:
             column_info = zip(self._column_names, self._column_types)
 
-        return Table(rows, column_info, row_alias=self.rows.row_alias, _fork=True)
+        return Table(rows, column_info, row_alias=self.rows.row_alias, _is_fork=True)
 
     @classmethod
     def from_csv(cls, path, column_info, row_alias=None, header=True, **kwargs):
