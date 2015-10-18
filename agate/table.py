@@ -44,7 +44,7 @@ import six
 from six.moves import range #pylint: disable=W0622
 
 from agate.aggregations import Min, Max
-from agate.columns import Column, ColumnMapping
+from agate.columns import Column, ColumnSequence
 from agate.data_types import TypeTester, DataType, Text, Number
 from agate.computations import Computation
 from agate.preview import print_table, print_bars
@@ -110,18 +110,18 @@ class Table(Patchable):
         else:
             new_rows = rows
 
-        self._row_sequence = RowSequence(new_rows, row_alias)
+        self._rows = RowSequence(new_rows, row_alias)
 
         # Build columns
         new_columns = []
 
         for i, name in enumerate(self._column_names):
-            data_func = partial(self._row_sequence.get_column_data, i)
+            data_func = partial(self._rows.get_column_data, i)
             data_type = self._column_types[i]
 
             new_columns.append(Column(i, name, data_type, data_func))
 
-        self._column_mapping = ColumnMapping(self._column_names, new_columns)
+        self._columns = ColumnSequence(self._column_names, new_columns)
 
     def _fork(self, rows, column_info=None):
         """
@@ -226,16 +226,16 @@ class Table(Patchable):
     @property
     def columns(self):
         """
-        Get this tables :class:`.ColumnMapping`.
+        Get this tables :class:`.ColumnSequence`.
         """
-        return self._column_mapping
+        return self._columns
 
     @property
     def rows(self):
         """
         Get this tables :class:`.RowSequence`.
         """
-        return self._row_sequence
+        return self._rows
 
     @allow_tableset_proxy
     def select(self, selected_names):

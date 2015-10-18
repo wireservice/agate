@@ -1,6 +1,7 @@
 0.12.0
 ------
 
+* Renamed ColumnMapping to ColumnSequence. (#299)
 * Removed unnecessary custom RowIterator, ColumnIterator and CellIterator.
 * Removed Row.table.
 * Migrated column-related functionality from Table to ColumnMapping. (#293)
@@ -19,7 +20,7 @@
 * aggregations.Summary implemented for generic aggregations. (#181)
 * Fix TableSet.key_type being lost after proxying Table methods. (#278)
 * Massive performance increases for joins. (#277)
-* Add join benchmark. (#73)
+* Added join benchmark. (#73)
 
 0.11.0
 ------

@@ -136,7 +136,7 @@ class Column(Sequence):
 
         return result
 
-class ColumnMapping(Mapping):
+class ColumnSequence(Sequence):
     """
     Proxy access to :class:`Column` instances for :class:`.Table`. Columns can
     be accessed either by name or by index.
@@ -156,18 +156,14 @@ class ColumnMapping(Mapping):
             return tuple(self._columns[i] for i in indices)
         elif isinstance(k, int):
             try:
-                self._column_names[k]
+                return self._columns[k]
             except IndexError:
                 raise ColumnDoesNotExistError(k)
-
-            i = k
         else:
             try:
-                i = self._column_names.index(k)
+                return self._columns[self._column_names.index(k)]
             except ValueError:
                 raise ColumnDoesNotExistError(k)
-
-        return self._columns[i]
 
     def __iter__(self):
         return iter(self._columns)

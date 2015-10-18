@@ -97,21 +97,21 @@ class RowSequence(Sequence):
 
                 self._alias_to_row[alias] = i
 
-    def __getitem__(self, i):
-        if isinstance(i, slice):
-            indices = xrange(*i.indices(len(self)))
+    def __getitem__(self, k):
+        if isinstance(k, slice):
+            indices = xrange(*k.indices(len(self)))
 
             return tuple(self._rows[row] for row in indices)
-        elif isinstance(i, int):
+        elif isinstance(k, int):
             try:
-                return self._rows[i]
+                return self._rows[k]
             except IndexError:
-                raise RowDoesNotExistError(i)
+                raise RowDoesNotExistError(k)
         else:
             try:
-                return self._rows[self._alias_to_row[i]]
+                return self._rows[self._alias_to_row[k]]
             except KeyError:
-                raise RowDoesNotExistError(i)
+                raise RowDoesNotExistError(k)
 
     def __iter__(self):
         return iter(self._rows)

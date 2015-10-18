@@ -10,7 +10,7 @@ try:
 except ImportError:
     import unittest
 
-from agate.columns import ColumnMapping
+from agate.columns import ColumnSequence
 from agate.data_types import Text
 from agate.table import Table
 from agate.utils import Patchable, Quantiles, round_limits
@@ -57,8 +57,8 @@ class TestMonkeyPatching(unittest.TestCase):
 
         after_table = Table([['blah'], ], [('foo', Text())])
 
-        self.assertIsInstance(before_table.columns, ColumnMapping)
-        self.assertIsInstance(after_table.columns, ColumnMapping)
+        self.assertIsInstance(before_table.columns, ColumnSequence)
+        self.assertIsInstance(after_table.columns, ColumnSequence)
 
         with self.assertRaises(AttributeError):
             after_table.foo == 'foo'
