@@ -148,6 +148,10 @@ class ColumnSequence(Sequence):
     def __init__(self, column_names, columns):
         self._column_names = column_names
         self._columns = columns
+        self._column_map = {}
+
+        for i, name in enumerate(self._column_names):
+            self._column_map[name] = i
 
     def __getitem__(self, k):
         if isinstance(k, slice):
@@ -161,8 +165,8 @@ class ColumnSequence(Sequence):
                 raise ColumnDoesNotExistError(k)
         else:
             try:
-                return self._columns[self._column_names.index(k)]
-            except ValueError:
+                return self._columns[self._column_map[k]]
+            except KeyError:
                 raise ColumnDoesNotExistError(k)
 
     def __iter__(self):

@@ -83,7 +83,7 @@ class RowSequence(Sequence):
     def __init__(self, rows, row_alias=None):
         self._rows = rows
         self._row_alias = row_alias
-        self._alias_to_row = {}
+        self._row_map = {}
 
         if self._row_alias:
             for i, row in enumerate(self._rows):
@@ -92,10 +92,10 @@ class RowSequence(Sequence):
                 else:
                     alias = tuple([row[k] for k in row_alias])
 
-                if alias in self._alias_to_row:
+                if alias in self._row_map:
                     raise ValueError(u'Row alias was not unique: %s' % alias)
 
-                self._alias_to_row[alias] = i
+                self._row_map[alias] = i
 
     def __getitem__(self, k):
         if isinstance(k, slice):
@@ -109,7 +109,7 @@ class RowSequence(Sequence):
                 raise RowDoesNotExistError(k)
         else:
             try:
-                return self._rows[self._alias_to_row[k]]
+                return self._rows[self._row_map[k]]
             except KeyError:
                 raise RowDoesNotExistError(k)
 
