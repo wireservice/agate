@@ -14,6 +14,56 @@ except ImportError: #pragma: no cover
 
 from functools import wraps
 
+def memoize(func):
+    """
+    Dead-simple memoize decorator for instance methods that take no arguments.
+
+    This is especially useful since so many of our classes are immutable.
+    """
+    memo = None
+
+    @wraps(func)
+    def wrapper(self):
+        if memo is not None:
+            return memo
+
+        return func(self)
+
+    return wrapper
+
+class MappedSequence(Sequence):
+    """
+    A generic container of data that can be accessed either by numeric index
+    or by name.
+
+    :param rows: A sequence of :class:`Row` instances.
+    :param row_alias: See :meth:`.Table.__init__`.
+    """
+    def __init__(self, values, keys=None):
+        self._values = values
+        self._keys = keys
+        self._map = {}
+
+        if keys:
+            self._map = dict(zip(keys, values))
+
+    def __getitem__(self, k):
+        if isinstance(k, slice):
+            indices = xrange(*k.indices(len(self)))
+
+            return tuple(self._values[i] for i in indices)
+        elif isinstance(k, int):
+            return self._values[k]
+        else:
+            return self._map[k]
+
+    def __iter__(self):
+        return iter(self._values)
+
+    @memoize
+    def __len__(self):
+        return len(self._values)
+
 class Patchable(object):
     """
     Adds a monkeypatching extensibility pattern to subclasses.
@@ -91,23 +141,6 @@ class Quantiles(Sequence):
             i += 1
 
         return i
-
-def memoize(func):
-    """
-    Dead-simple memoize decorator for instance methods that take no arguments.
-
-    This is especially useful since so many of our classes are immutable.
-    """
-    memo = None
-
-    @wraps(func)
-    def wrapper(self):
-        if memo is not None:
-            return memo
-
-        return func(self)
-
-    return wrapper
 
 def median(data_sorted):
     """

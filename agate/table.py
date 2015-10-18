@@ -19,7 +19,6 @@ accessed via :attr:`Table.columns` and the rows via :attr:`Table.rows`.
 """
 
 from copy import copy
-from functools import partial
 from itertools import chain
 import sys
 
@@ -110,13 +109,14 @@ class Table(Patchable):
         else:
             new_rows = rows
 
+        self._row_alias = row_alias
         self._rows = RowSequence(new_rows, row_alias)
 
         # Build columns
         new_columns = []
 
         for i, name in enumerate(self._column_names):
-            column = Column(i, name, self._column_types[i], self._rows)
+            column = Column(name, self._column_types[i], self._rows)
             new_columns.append(column)
 
         self._columns = ColumnSequence(self._column_names, new_columns)
@@ -129,7 +129,7 @@ class Table(Patchable):
         if not column_info:
             column_info = zip(self._column_names, self._column_types)
 
-        return Table(rows, column_info, row_alias=self.rows.row_alias, _is_fork=True)
+        return Table(rows, column_info, row_alias=self._row_alias, _is_fork=True)
 
     @classmethod
     def from_csv(cls, path, column_info, row_alias=None, header=True, **kwargs):
@@ -235,6 +235,13 @@ class Table(Patchable):
         """
         return self._rows
 
+    @property
+    def row_alias(self):
+        """
+        Returns the key used to alias rows in this table.
+        """
+        return self._row_alias
+
     @allow_tableset_proxy
     def select(self, selected_names):
         """
@@ -244,20 +251,17 @@ class Table(Patchable):
             new table.
         :returns: A new :class:`Table`.
         """
-        column_indices = []
         column_types = []
 
         for name in selected_names:
-            column = self.columns[name]
-            column_indices.append(column.index)
-            column_types.append(column.data_type)
+            column_types.append(self.columns[name].data_type)
 
         new_rows = []
 
         for row in self.rows:
-            new_rows.append(tuple(row[i] for i in column_indices))
+            new_rows.append(tuple(row[n] for n in selected_names))
 
-        return Table(new_rows, zip(selected_names, column_types), row_alias=self.rows.row_alias)
+        return Table(new_rows, zip(selected_names, column_types), row_alias=self._row_alias)
 
     @allow_tableset_proxy
     def where(self, test):
@@ -417,22 +421,22 @@ class Table(Patchable):
         else:
             right_column = right_table.columns[right_key]
             right_data = right_column.get_data()
-            right_key_index = right_column.index
+            right_key_index = right_table.columns._keys.index(right_key)
 
         # Build names and type lists
         column_names = list(self._column_names)
         column_types = list(self._column_types)
 
-        for i, name in enumerate(right_table.column_names):
-            if i == right_key_index:
+        for column in right_table.columns:
+            if column.name == right_key:
                 continue
 
-            if name in self._column_names:
+            if column.name in self._column_names:
                 column_names.append('%s2' % name)
             else:
-                column_names.append(name)
+                column_names.append(column.name)
 
-            column_types.append(right_table.column_types[i])
+            column_types.append(column.data_type)
 
         right_hash = {}
 
@@ -471,7 +475,7 @@ class Table(Patchable):
 
                 rows.append(new_row)
 
-        return Table(rows, zip(column_names, column_types), row_alias=self.rows.row_alias)
+        return Table(rows, zip(column_names, column_types), row_alias=self._row_alias)
 
     @classmethod
     def merge(cls, tables):
@@ -493,7 +497,7 @@ class Table(Patchable):
 
         rows = chain(*[table.rows for table in tables])
 
-        return Table(rows, zip(column_names, column_types), row_alias=tables[0].rows.row_alias)
+        return Table(rows, zip(column_names, column_types), row_alias=tables[0].row_alias)
 
     @allow_tableset_proxy
     def group_by(self, key, key_name=None, key_type=None):
@@ -526,7 +530,6 @@ class Table(Patchable):
             key_type = key_type or Text()
         else:
             column = self.columns[key]
-            index = column.index
 
             key_name = key_name or column.name
             key_type = key_type or column.data_type
@@ -537,7 +540,7 @@ class Table(Patchable):
             if key_is_row_function:
                 group_name = key(row)
             else:
-                group_name = row[index]
+                group_name = row[column.name]
 
             group_name = key_type.cast(group_name)
 
@@ -581,7 +584,7 @@ class Table(Patchable):
             new_columns = tuple(c.run(row) for c, n in computations)
             new_rows.append(tuple(row) + new_columns)
 
-        return Table(new_rows, zip(column_names, column_types), row_alias=self.rows.row_alias)
+        return Table(new_rows, zip(column_names, column_types), row_alias=self._row_alias)
 
     @allow_tableset_proxy
     def counts(self, key, key_name=None, key_type=None):
@@ -612,7 +615,6 @@ class Table(Patchable):
             key_type = key_type or Text()
         else:
             column = self.columns[key]
-            index = column.index
 
             key_name = key_name or column.name
             key_type = key_type or column.data_type
@@ -623,7 +625,7 @@ class Table(Patchable):
             if key_is_row_function:
                 group_name = key(row)
             else:
-                group_name = row[index]
+                group_name = row[key_name]
 
             group_name = key_type.cast(group_name)
 

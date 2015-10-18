@@ -19,7 +19,6 @@ from six.moves import range
 from agate import Table, TableSet
 from agate.data_types import *
 from agate.computations import Formula
-from agate.exceptions import ColumnDoesNotExistError
 
 class TestTable(unittest.TestCase):
     def setUp(self):
@@ -97,7 +96,7 @@ class TestTable(unittest.TestCase):
     def test_row_alias(self):
         table = Table(self.rows, self.columns, row_alias='three')
 
-        self.assertSequenceEqual(table.rows.row_alias, 'three')
+        self.assertSequenceEqual(table.row_alias, 'three')
         self.assertSequenceEqual(table.rows['a'], (1, 4, 'a'))
         self.assertSequenceEqual(table.rows['b'], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[u'👍'], (None, 2, u'👍'))
@@ -105,7 +104,7 @@ class TestTable(unittest.TestCase):
     def test_row_alias_non_string(self):
         table = Table(self.rows, self.columns, row_alias='one')
 
-        self.assertSequenceEqual(table.rows.row_alias, 'one')
+        self.assertSequenceEqual(table.row_alias, 'one')
         self.assertSequenceEqual(table.rows[Decimal('1')], (1, 4, 'a'))
         self.assertSequenceEqual(table.rows[Decimal('2')], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[None], (None, 2, u'👍'))
@@ -113,7 +112,7 @@ class TestTable(unittest.TestCase):
     def test_row_alias_multiple(self):
         table = Table(self.rows, self.columns, row_alias=['one', 'three'])
 
-        self.assertSequenceEqual(table.rows.row_alias, ['one', 'three'])
+        self.assertSequenceEqual(table.row_alias, ['one', 'three'])
         self.assertSequenceEqual(table.rows[(Decimal('1'), 'a')], (1, 4, 'a'))
         self.assertSequenceEqual(table.rows[(Decimal('2'), 'b')], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[(None, u'👍')], (None, 2, u'👍'))
@@ -229,7 +228,7 @@ class TestTable(unittest.TestCase):
     def test_select_does_not_exist(self):
         table = Table(self.rows, self.columns)
 
-        with self.assertRaises(ColumnDoesNotExistError):
+        with self.assertRaises(KeyError):
             table.select(('four',))
 
     def test_where(self):
@@ -781,7 +780,7 @@ class TestTableGrouping(unittest.TestCase):
     def test_group_by_bad_column(self):
         table = Table(self.rows, self.columns)
 
-        with self.assertRaises(ColumnDoesNotExistError):
+        with self.assertRaises(KeyError):
             table.group_by('bad')
 
 class TestTableCompute(unittest.TestCase):
@@ -916,7 +915,7 @@ class TestTableJoin(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, 2, 'c'))
 
     def test_join_column_does_not_exist(self):
-        with self.assertRaises(ColumnDoesNotExistError):
+        with self.assertRaises(KeyError):
             self.left.join(self.right, 'one', 'seven')
 
     def test_inner_join(self):

@@ -10,7 +10,6 @@ import six
 from agate import Table
 from agate.computations import Formula
 from agate.data_types import *
-from agate.exceptions import ColumnDoesNotExistError, RowDoesNotExistError
 from agate.rows import Row
 
 class TestRow(unittest.TestCase):
@@ -43,10 +42,10 @@ class TestRow(unittest.TestCase):
         self.assertEqual(self.row[0], 'a')
 
     def test_column_in_row_invalid(self):
-        with self.assertRaises(ColumnDoesNotExistError):
+        with self.assertRaises(KeyError):
             self.row['four']
 
-        with self.assertRaises(ColumnDoesNotExistError):
+        with self.assertRaises(IndexError):
             self.row[3]
 
     def test_immutable(self):
@@ -96,8 +95,11 @@ class TestRowSequence(unittest.TestCase):
         self.assertIsNot(r, r3)
 
     def test_get_invalid_row(self):
-        with self.assertRaises(RowDoesNotExistError):
+        with self.assertRaises(IndexError):
             self.table.rows[3]
+
+        with self.assertRaises(KeyError):
+            self.table.rows['foo']
 
     def test_iterate_rows(self):
         it = iter(self.table.rows)

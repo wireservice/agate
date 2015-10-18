@@ -18,6 +18,7 @@ from agate.aggregations import *
 from agate.columns import Column
 from agate.data_types import *
 from agate.exceptions import *
+from agate.rows import Row
 
 class TestSimpleAggregation(unittest.TestCase):
     def setUp(self):
@@ -98,36 +99,58 @@ class TestSimpleAggregation(unittest.TestCase):
 
 class TestBooleanAggregation(unittest.TestCase):
     def test_any(self):
-        column = Column(0, 'test', Boolean(), ([True], [False], [None]))
+        rows = [
+            Row(['test'], [True]),
+            Row(['test'], [False]),
+            Row(['test'], [None]),
+        ]
+        column = Column('test', Boolean(), rows)
         self.assertEqual(column.aggregate(Any()), True)
 
-        column = Column(0, 'test', Boolean(), ([False], [False], [None]))
+        rows = [
+            Row(['test'], [False]),
+            Row(['test'], [False]),
+            Row(['test'], [None]),
+        ]
+        column = Column('test', Boolean(), rows)
         self.assertEqual(column.aggregate(Any()), False)
 
     def test_all(self):
-        column = Column(0, 'test', Boolean(), ([True], [True], [None]))
+        rows = [
+            Row(['test'], [True]),
+            Row(['test'], [True]),
+            Row(['test'], [None]),
+        ]
+        column = Column('test', Boolean(), rows)
         self.assertEqual(column.aggregate(All()), False)
 
-        column = Column(0, 'test', Boolean(), ([True], [True], [True]))
+        rows = [
+            Row(['test'], [True]),
+            Row(['test'], [True]),
+            Row(['test'], [True]),
+        ]
+        column = Column('test', Boolean(), rows)
         self.assertEqual(column.aggregate(All()), True)
 
 class TestDateTimeAggregation(unittest.TestCase):
     def test_min(self):
-        column = Column(0, 'test', DateTime(), (
-            [datetime.datetime(1994, 3, 3, 6, 31)],
-            [datetime.datetime(1994, 3, 3, 6, 30, 30)],
-            [datetime.datetime(1994, 3, 3, 6, 30)]
-        ))
+        rows = [
+            Row(['test'], [datetime.datetime(1994, 3, 3, 6, 31)]),
+            Row(['test'], [datetime.datetime(1994, 3, 3, 6, 30, 30)]),
+            Row(['test'], [datetime.datetime(1994, 3, 3, 6, 30)]),
+        ]
 
+        column = Column('test', DateTime(), rows)
         self.assertEqual(column.aggregate(Min()), datetime.datetime(1994, 3, 3, 6, 30))
 
     def test_max(self):
-        column = Column(0, 'test', DateTime(), (
-            [datetime.datetime(1994, 3, 3, 6, 31)],
-            [datetime.datetime(1994, 3, 3, 6, 30, 30)],
-            [datetime.datetime(1994, 3, 3, 6, 30)]
-        ))
+        rows = [
+            Row(['test'], [datetime.datetime(1994, 3, 3, 6, 31)]),
+            Row(['test'], [datetime.datetime(1994, 3, 3, 6, 30, 30)]),
+            Row(['test'], [datetime.datetime(1994, 3, 3, 6, 30)]),
+        ]
 
+        column = Column('test', DateTime(), rows)
         self.assertEqual(column.aggregate(Max()), datetime.datetime(1994, 3, 3, 6, 31))
 
 class TestNumberAggregation(unittest.TestCase):
@@ -426,11 +449,17 @@ class TestNumberAggregation(unittest.TestCase):
 
 class TestTextAggregation(unittest.TestCase):
     def test_max_length(self):
-        column = Column(0, 'test', Text(), (['a'], ['gobble'], ['wow']))
+        rows = [
+            Row(['test'], ['a']),
+            Row(['test'], ['gobble']),
+            Row(['test'], ['w']),
+        ]
+
+        column = Column('test', Text(), rows)
         self.assertEqual(column.aggregate(MaxLength()), 6)
 
     def test_max_length_invalid(self):
-        column = Column(0, 'test', Number(), ([1], [2], [3]))
+        column = Column('test', Number(), ([1], [2], [3]))
 
         with self.assertRaises(DataTypeError):
             column.aggregate(MaxLength())

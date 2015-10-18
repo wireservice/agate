@@ -21,7 +21,6 @@ from agate import Table, TableSet
 from agate.aggregations import *
 from agate.data_types import *
 from agate.computations import Formula
-from agate.exceptions import ColumnDoesNotExistError
 
 class TestTableSet(unittest.TestCase):
     def setUp(self):
@@ -209,8 +208,8 @@ class TestTableSet(unittest.TestCase):
             ('number', Length(), 'count')
         ])
 
-        self.assertSequenceEqual(new_table.rows.row_alias, 'test')
-        self.assertEqual(len(new_table.rows._row_map), 3)
+        self.assertSequenceEqual(new_table.row_alias, 'test')
+        self.assertEqual(len(new_table.rows._map), 3)
         self.assertSequenceEqual(new_table.rows['table1'], ['table1', 3])
         self.assertSequenceEqual(new_table.rows['table2'], ['table2', 3])
         self.assertSequenceEqual(new_table.rows['table3'], ['table3', 3])
@@ -290,10 +289,10 @@ class TestTableSet(unittest.TestCase):
     def test_aggregeate_bad_column(self):
         tableset = TableSet(self.tables)
 
-        with self.assertRaises(ColumnDoesNotExistError):
+        with self.assertRaises(KeyError):
             tableset.aggregate([('one', Sum(), 'one_sum')])
 
-        with self.assertRaises(ColumnDoesNotExistError):
+        with self.assertRaises(KeyError):
             tableset.aggregate([('bad', Sum(), 'bad_sum')])
 
     def test_nested(self):
@@ -350,8 +349,8 @@ class TestTableSet(unittest.TestCase):
             ('number', Sum(), 'number_sum')
         ])
 
-        self.assertSequenceEqual(results.rows.row_alias, ['test', 'letter'])
-        self.assertEqual(len(results.rows._row_map), 7)
+        self.assertSequenceEqual(results.row_alias, ['test', 'letter'])
+        self.assertEqual(len(results.rows._map), 7)
         self.assertSequenceEqual(results.rows[('table1', 'a')], ('table1', 'a', 2, 4))
         self.assertSequenceEqual(results.rows[('table2', 'c')], ('table2', 'c', 1, 5))
 

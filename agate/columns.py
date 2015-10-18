@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from collections import Mapping, Sequence
+from collections import Sequence
 
 import six
 
@@ -8,8 +8,7 @@ if six.PY3: #pragma: no cover
     #pylint: disable=W0622
     xrange = range
 
-from agate.exceptions import ColumnDoesNotExistError
-from agate.utils import NullOrder, memoize
+from agate.utils import MappedSequence, NullOrder, memoize
 
 class Column(Sequence):
     """
@@ -25,10 +24,7 @@ class Column(Sequence):
     :param data_type: An instance of :class:`.DataType`.
     :param data_func: A function which returns the data for this column.
     """
-    #pylint: disable=W0212
-
-    def __init__(self, index, name, data_type, rows):
-        self._index = index
+    def __init__(self, name, data_type, rows):
         self._name = name
         self._data_type = data_type
         self._rows = rows
@@ -50,8 +46,8 @@ class Column(Sequence):
 
         return str(self.__unicode__())  #pragma: no cover
 
-    def __getitem__(self, j):
-        return self.get_data()[j]
+    def __getitem__(self, k):
+        return self.get_data()[k]
 
     @memoize
     def __len__(self):
@@ -68,10 +64,6 @@ class Column(Sequence):
         Ensure inequality test with lists works.
         """
         return not self.__eq__(other)
-
-    @property
-    def index(self):
-        return self._index
 
     @property
     def name(self):
@@ -92,7 +84,7 @@ class Column(Sequence):
         """
         Get the data contained in this column as a :class:`tuple`.
         """
-        return tuple(row[self._index] for row in self._rows)
+        return tuple(row[self._name] for row in self._rows)
 
     @memoize
     def get_data_without_nulls(self):
@@ -136,42 +128,13 @@ class Column(Sequence):
 
         return result
 
-class ColumnSequence(Sequence):
+class ColumnSequence(MappedSequence):
     """
     Proxy access to :class:`Column` instances for :class:`.Table`. Columns can
     be accessed either by name or by index.
 
-    :param table: :class:`.Table`.
+    :param column_names: The names of the columns.
+    :param columns: The :class:`.Column` instances.
     """
-    #pylint: disable=W0212
-
     def __init__(self, column_names, columns):
-        self._column_names = column_names
-        self._columns = columns
-        self._column_map = {}
-
-        for i, name in enumerate(self._column_names):
-            self._column_map[name] = i
-
-    def __getitem__(self, k):
-        if isinstance(k, slice):
-            indices = xrange(*k.indices(len(self)))
-
-            return tuple(self._columns[i] for i in indices)
-        elif isinstance(k, int):
-            try:
-                return self._columns[k]
-            except IndexError:
-                raise ColumnDoesNotExistError(k)
-        else:
-            try:
-                return self._columns[self._column_map[k]]
-            except KeyError:
-                raise ColumnDoesNotExistError(k)
-
-    def __iter__(self):
-        return iter(self._columns)
-
-    @memoize
-    def __len__(self):
-        return len(self._column_names)
+        super(ColumnSequence, self).__init__(columns, column_names)
