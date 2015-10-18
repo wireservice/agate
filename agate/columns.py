@@ -19,10 +19,9 @@ class Column(Sequence):
     Column instances are unique to the :class:`.Table` with which they are
     associated.
 
-    :param index: The index of this column in the table.
     :param name: The name of this column.
     :param data_type: An instance of :class:`.DataType`.
-    :param data_func: A function which returns the data for this column.
+    :param rows: The :class:`.RowSequence` that contains data for this column.
     """
     def __init__(self, name, data_type, rows):
         self._name = name
@@ -68,7 +67,7 @@ class Column(Sequence):
     @property
     def name(self):
         """
-        This column's name in its parent table.
+        This column's name.
         """
         return self._name
 
@@ -130,8 +129,8 @@ class Column(Sequence):
 
 class ColumnSequence(MappedSequence):
     """
-    Proxy access to :class:`Column` instances for :class:`.Table`. Columns can
-    be accessed either by name or by index.
+    A sequence of :class:`Column` instances. Instances can be accessed either by
+    numeric index or by column name.
 
     :param column_names: The names of the columns.
     :param columns: The :class:`.Column` instances.
