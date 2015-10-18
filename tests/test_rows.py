@@ -60,6 +60,9 @@ class TestRow(unittest.TestCase):
         self.assertEqual(self.row['two'], 'b')
         self.assertEqual(self.row['three'], 'c')
 
+    def test_slice(self):
+        self.assertSequenceEqual(self.row[1:], ('b', 'c'))
+
 class TestRowSequence(unittest.TestCase):
     def setUp(self):
         self.rows = (

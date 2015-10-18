@@ -1,6 +1,7 @@
 0.12.0
 ------
 
+* Row objects can now be sliced. (#303)
 * Replaced RowSequence and ColumnSequence with MappedSequence.
 * Replaced ColumnDoesNotExistError and RowDoesNotExistError with IndexError and KeyError.
 * Removed unnecessary custom RowIterator, ColumnIterator and CellIterator.
