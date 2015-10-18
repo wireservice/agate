@@ -5,7 +5,6 @@
 * Replaced RowSequence and ColumnSequence with MappedSequence.
 * Replaced ColumnDoesNotExistError and RowDoesNotExistError with IndexError and KeyError.
 * Removed unnecessary custom RowIterator, ColumnIterator and CellIterator.
-* Removed Row.table property.
 * Performance improvements for Table "forks". (where, limit, etc)
 * TableSet keys are now converted to row aliases during aggregation. (#291)
 * Migrated row-related functionality from Table to RowSequence.
@@ -13,7 +12,7 @@
 * Removed fancy __repr__ implementations. Use __str__ instead. (#290)
 * Rows can now be accessed by alias as well as index. (#282)
 * Added row_alias argument to Table constructor. (#282)
-* Removed Row.index property as it violated portability of rows. (#287)
+* Removed Row.table and Row.index properties. (#287)
 * Columns can now be accessed by index as well as name. (#281)
 * Added column name and type validation to Table constructor. (#285)
 * Table now supports variable-length rows during construction. (#39)
