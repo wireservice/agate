@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+"""
+This module contains the :class:`Column` class, which defines a "vertical"
+array of tabular data. Whereas :class:`.Row` instances are independent of their
+parent :class:`.Table`, columns depend on knowledge of both their position in
+the parent (column name, data type) as well as the rows that contain their data.
+"""
+
 from collections import Sequence
 
 import six
@@ -8,7 +15,16 @@ if six.PY3: #pragma: no cover
     #pylint: disable=W0622
     xrange = range
 
-from agate.utils import MappedSequence, NullOrder, memoize
+from agate.utils import NullOrder, memoize
+
+def null_handler(k):
+    """
+    Key method for sorting nulls correctly.
+    """
+    if k is None:
+        return NullOrder()
+
+    return k
 
 class Column(Sequence):
     """
@@ -92,21 +108,12 @@ class Column(Sequence):
         """
         return tuple(d for d in self.get_data() if d is not None)
 
-    def _null_handler(self, k):
-        """
-        Key method for sorting nulls correctly.
-        """
-        if k is None:
-            return NullOrder()
-
-        return k
-
     @memoize
     def get_data_sorted(self):
         """
         Get the data contained in this column sorted.
         """
-        return sorted(self.get_data(), key=self._null_handler)
+        return sorted(self.get_data(), key=null_handler)
 
     def aggregate(self, aggregation):
         """
@@ -126,14 +133,3 @@ class Column(Sequence):
             self._aggregate_cache[cache_key] = result
 
         return result
-
-class ColumnSequence(MappedSequence):
-    """
-    A sequence of :class:`Column` instances. Instances can be accessed either by
-    numeric index or by column name.
-
-    :param column_names: The names of the columns.
-    :param columns: The :class:`.Column` instances.
-    """
-    def __init__(self, column_names, columns):
-        super(ColumnSequence, self).__init__(columns, column_names)

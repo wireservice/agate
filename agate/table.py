@@ -4,8 +4,8 @@
 This module contains the :class:`Table` object, which is the central data
 structure in :code:`agate`. Tables are created by supplying row data, column
 names and subclasses of :class:`.DataType` to the constructor. Once
-instantiated tables are **immutable**. This concept is central to agate. The
-table of the data may not be accessed or modified directly.
+instantiated, tables are **immutable**. This concept is central to agate. The
+data of the table may not be accessed or modified directly.
 
 Various methods on the :class:`Table` simulate "SQL-like" operations. For
 example, the :meth:`Table.select` method reduces the table to only the
@@ -15,7 +15,9 @@ the rows in the table. In all of these cases the output is new :class:`Table`
 and the existing table remains unmodified.
 
 Tables are not themselves iterable, but the columns of the table can be
-accessed via :attr:`Table.columns` and the rows via :attr:`Table.rows`.
+accessed via :attr:`Table.columns` and the rows via :attr:`Table.rows`. Both
+sequences can be accessed either by numeric index or by name. (In the case of
+rows, row names are optional.)
 """
 
 from copy import copy
@@ -43,12 +45,12 @@ import six
 from six.moves import range #pylint: disable=W0622
 
 from agate.aggregations import Min, Max
-from agate.columns import Column, ColumnSequence
+from agate.columns import Column
 from agate.data_types import TypeTester, DataType, Text, Number
 from agate.computations import Computation
 from agate.preview import print_table, print_bars
-from agate.rows import Row, RowSequence
-from agate.utils import NullOrder, Patchable, max_precision, make_number_formatter, round_limits
+from agate.rows import Row
+from agate.utils import MappedSequence, NullOrder, Patchable, max_precision, make_number_formatter, round_limits
 
 def allow_tableset_proxy(func):
     """
@@ -110,7 +112,22 @@ class Table(Patchable):
             new_rows = rows
 
         self._row_alias = row_alias
-        self._rows = RowSequence(new_rows, row_alias)
+
+        aliases = []
+
+        if row_alias:
+            for i, row in enumerate(new_rows):
+                if isinstance(row_alias, six.string_types):
+                    alias = row[row_alias]
+                else:
+                    alias = tuple([row[k] for k in row_alias])
+
+                if alias in aliases:
+                    raise ValueError(u'Row alias was not unique: %s' % alias)
+
+                aliases.append(alias)
+
+        self._rows = MappedSequence(new_rows, aliases)
 
         # Build columns
         new_columns = []
@@ -119,7 +136,7 @@ class Table(Patchable):
             column = Column(name, self._column_types[i], self._rows)
             new_columns.append(column)
 
-        self._columns = ColumnSequence(self._column_names, new_columns)
+        self._columns = MappedSequence(new_columns, self._column_names)
 
     def _fork(self, rows, column_info=None):
         """
@@ -428,13 +445,15 @@ class Table(Patchable):
         column_types = list(self._column_types)
 
         for column in right_table.columns:
-            if column.name == right_key:
+            name = column.name
+
+            if name == right_key:
                 continue
 
-            if column.name in self._column_names:
+            if name in self._column_names:
                 column_names.append('%s2' % name)
             else:
-                column_names.append(column.name)
+                column_names.append(name)
 
             column_types.append(column.data_type)
 
