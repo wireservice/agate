@@ -98,34 +98,34 @@ class TestSimpleAggregation(unittest.TestCase):
 
 class TestBooleanAggregation(unittest.TestCase):
     def test_any(self):
-        column = Column(0, 'test', Boolean(), lambda: (True, False, None))
+        column = Column(0, 'test', Boolean(), ([True], [False], [None]))
         self.assertEqual(column.aggregate(Any()), True)
 
-        column = Column(0, 'test', Boolean(), lambda: (False, False, None))
+        column = Column(0, 'test', Boolean(), ([False], [False], [None]))
         self.assertEqual(column.aggregate(Any()), False)
 
     def test_all(self):
-        column = Column(0, 'test', Boolean(), lambda: (True, True, None))
+        column = Column(0, 'test', Boolean(), ([True], [True], [None]))
         self.assertEqual(column.aggregate(All()), False)
 
-        column = Column(0, 'test', Boolean(), lambda: (True, True, True))
+        column = Column(0, 'test', Boolean(), ([True], [True], [True]))
         self.assertEqual(column.aggregate(All()), True)
 
 class TestDateTimeAggregation(unittest.TestCase):
     def test_min(self):
-        column = Column(0, 'test', DateTime(), lambda: (
-            datetime.datetime(1994, 3, 3, 6, 31),
-            datetime.datetime(1994, 3, 3, 6, 30, 30),
-            datetime.datetime(1994, 3, 3, 6, 30)
+        column = Column(0, 'test', DateTime(), (
+            [datetime.datetime(1994, 3, 3, 6, 31)],
+            [datetime.datetime(1994, 3, 3, 6, 30, 30)],
+            [datetime.datetime(1994, 3, 3, 6, 30)]
         ))
 
         self.assertEqual(column.aggregate(Min()), datetime.datetime(1994, 3, 3, 6, 30))
 
     def test_max(self):
-        column = Column(0, 'test', DateTime(), lambda: (
-            datetime.datetime(1994, 3, 3, 6, 31),
-            datetime.datetime(1994, 3, 3, 6, 30, 30),
-            datetime.datetime(1994, 3, 3, 6, 30)
+        column = Column(0, 'test', DateTime(), (
+            [datetime.datetime(1994, 3, 3, 6, 31)],
+            [datetime.datetime(1994, 3, 3, 6, 30, 30)],
+            [datetime.datetime(1994, 3, 3, 6, 30)]
         ))
 
         self.assertEqual(column.aggregate(Max()), datetime.datetime(1994, 3, 3, 6, 31))
@@ -426,11 +426,11 @@ class TestNumberAggregation(unittest.TestCase):
 
 class TestTextAggregation(unittest.TestCase):
     def test_max_length(self):
-        column = Column(0, 'test', Text(), lambda: ('a', 'gobble', 'wow'))
+        column = Column(0, 'test', Text(), (['a'], ['gobble'], ['wow']))
         self.assertEqual(column.aggregate(MaxLength()), 6)
 
     def test_max_length_invalid(self):
-        column = Column(0, 'test', Number(), lambda: (1, 2, 3))
+        column = Column(0, 'test', Number(), ([1], [2], [3]))
 
         with self.assertRaises(DataTypeError):
             column.aggregate(MaxLength())

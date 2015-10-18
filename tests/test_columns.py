@@ -2,6 +2,7 @@
 # -*- coding: utf8 -*-
 
 import datetime
+import pickle
 
 try:
     from cdecimal import Decimal
@@ -138,3 +139,6 @@ class TestColumns(unittest.TestCase):
 
         self.assertEqual(column.name, 'one')
         self.assertIs(column.data_type, self.number_type)
+
+    def test_pickleable(self):
+        pickle.dumps(self.table.columns['one'])

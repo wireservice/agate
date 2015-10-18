@@ -116,10 +116,8 @@ class Table(Patchable):
         new_columns = []
 
         for i, name in enumerate(self._column_names):
-            data_func = partial(self._rows.get_column_data, i)
-            data_type = self._column_types[i]
-
-            new_columns.append(Column(i, name, data_type, data_func))
+            column = Column(i, name, self._column_types[i], self._rows)
+            new_columns.append(column)
 
         self._columns = ColumnSequence(self._column_names, new_columns)
 

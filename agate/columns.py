@@ -27,11 +27,11 @@ class Column(Sequence):
     """
     #pylint: disable=W0212
 
-    def __init__(self, index, name, data_type, data_func):
+    def __init__(self, index, name, data_type, rows):
         self._index = index
         self._name = name
         self._data_type = data_type
-        self._data_func = data_func
+        self._rows = rows
         self._aggregate_cache = {}
 
     def __unicode__(self):
@@ -92,7 +92,7 @@ class Column(Sequence):
         """
         Get the data contained in this column as a :class:`tuple`.
         """
-        return self._data_func()
+        return tuple(row[self._index] for row in self._rows)
 
     @memoize
     def get_data_without_nulls(self):
