@@ -1,6 +1,7 @@
 0.12.0
 ------
 
+* Removed unnecessary custom RowIterator, ColumnIterator and CellIterator.
 * Removed Row.table.
 * Migrated column-related functionality from Table to ColumnMapping. (#293)
 * Performance improvements for Table "forks". (where, limit, etc)

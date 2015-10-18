@@ -67,7 +67,7 @@ class Row(Mapping):
         return len(self._data)
 
     def __iter__(self):
-        return CellIterator(self)
+        return iter(self._data)
 
     def __eq__(self, other):
         return self._data == other
@@ -114,7 +114,7 @@ class RowSequence(Sequence):
                 raise RowDoesNotExistError(i)
 
     def __iter__(self):
-        return RowIterator(self)
+        return iter(self._rows)
 
     @memoize
     def __len__(self):
@@ -129,47 +129,3 @@ class RowSequence(Sequence):
         Iterates over the rows and returns the data for a given column index.
         """
         return tuple(row[i] for row in self._rows)
-
-class RowIterator(six.Iterator):
-    """
-    Iterator over :class:`Row` instances.
-
-    :param row_sequence: The :class:`RowSequence` over which to iterate.
-    """
-    #pylint: disable=W0212
-
-    def __init__(self, row_sequence):
-        self._row_sequence = row_sequence
-        self._index = 0
-
-    def __next__(self):
-        try:
-            row = self._row_sequence[self._index]
-        except RowDoesNotExistError:
-            raise StopIteration
-
-        self._index += 1
-
-        return row
-
-class CellIterator(six.Iterator):
-    """
-    Iterator over row cells.
-
-    :param row: The class:`Row` over which to iterate.
-    """
-    #pylint: disable=W0212
-
-    def __init__(self, row):
-        self._row = row
-        self._index = 0
-
-    def __next__(self):
-        try:
-            v = self._row._data[self._index]
-        except IndexError:
-            raise StopIteration
-
-        self._index += 1
-
-        return v

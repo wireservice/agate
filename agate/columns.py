@@ -170,30 +170,8 @@ class ColumnMapping(Mapping):
         return self._columns[i]
 
     def __iter__(self):
-        return ColumnIterator(self)
+        return iter(self._columns)
 
     @memoize
     def __len__(self):
         return len(self._column_names)
-
-class ColumnIterator(six.Iterator):
-    """
-    Iterator over :class:`Column` instances within a :class:`.Table`.
-
-    :param table: :class:`.Table`.
-    """
-    #pylint: disable=W0212
-
-    def __init__(self, column_mapping):
-        self._column_mapping = column_mapping
-        self._index = 0
-
-    def __next__(self):
-        try:
-            column = self._column_mapping[self._index]
-        except ColumnDoesNotExistError:
-            raise StopIteration
-
-        self._index += 1
-
-        return column
