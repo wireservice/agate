@@ -6,12 +6,11 @@
 * Replaced ColumnDoesNotExistError and RowDoesNotExistError with IndexError and KeyError.
 * Removed unnecessary custom RowIterator, ColumnIterator and CellIterator.
 * Performance improvements for Table "forks". (where, limit, etc)
-* TableSet keys are now converted to row aliases during aggregation. (#291)
-* Migrated row-related functionality from Table to RowSequence.
+* TableSet keys are now converted to row names during aggregation. (#291)
 * Simplified implementation of Row for speed and consistency. No API changes.
 * Removed fancy __repr__ implementations. Use __str__ instead. (#290)
-* Rows can now be accessed by alias as well as index. (#282)
-* Added row_alias argument to Table constructor. (#282)
+* Rows can now be accessed by name as well as index. (#282)
+* Added row_names argument to Table constructor. (#282)
 * Removed Row.table and Row.index properties. (#287)
 * Columns can now be accessed by index as well as name. (#281)
 * Added column name and type validation to Table constructor. (#285)

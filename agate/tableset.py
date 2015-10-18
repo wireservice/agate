@@ -135,7 +135,7 @@ class TableSet(Mapping, Patchable):
         return self._key_type
 
     @classmethod
-    def from_csv(cls, dir_path, column_info, row_alias=None, header=True, **kwargs):
+    def from_csv(cls, dir_path, column_info, row_names=None, header=True, **kwargs):
         """
         Create a new :class:`TableSet` from a directory of CSVs. This method
         will use csvkit if it is available, otherwise it will use Python's
@@ -151,7 +151,7 @@ class TableSet(Mapping, Patchable):
         :param column_info: A sequence of pairs of column names and types. The latter
             must be instances of :class:`.DataType`. Or, an instance of
             :class:`.TypeTester` to infer types.
-        :param row_alias: See :meth:`Table.__init__`.
+        :param row_names: See :meth:`Table.__init__`.
         :param header: If `True`, the first row of the CSV is assumed to contains
             headers and will be skipped.
         """
@@ -171,7 +171,7 @@ class TableSet(Mapping, Patchable):
         for path in glob(os.path.join(dir_path, '*.csv')):
             name = os.path.split(path)[1].strip('.csv')
 
-            table = Table.from_csv(path, column_info, row_alias=row_alias, header=header, **kwargs)
+            table = Table.from_csv(path, column_info, row_names=row_names, header=header, **kwargs)
 
             if use_inference and not has_inferred_columns:
                 column_info = tuple(zip(table.column_names, table.column_types))
@@ -253,7 +253,7 @@ class TableSet(Mapping, Patchable):
         # Process nested TableSet's
         if isinstance(list(self._tables.values())[0], TableSet):
             for key, tableset in self._tables.items():
-                column_names, column_types, nested_output, row_alias = tableset._aggregate(aggregations)
+                column_names, column_types, nested_output, row_name_columns = tableset._aggregate(aggregations)
 
                 for row in nested_output:
                     row.insert(0, key)
@@ -262,12 +262,12 @@ class TableSet(Mapping, Patchable):
 
             column_names.insert(0, self._key_name)
             column_types.insert(0, self._key_type)
-            row_alias.insert(0, self._key_name)
+            row_name_columns.insert(0, self._key_name)
         # Regular Tables
         else:
             column_names = [self._key_name]
             column_types = [self._key_type]
-            row_alias = [self._key_name]
+            row_name_columns = [self._key_name]
 
             for column_name, aggregation, new_column_name in aggregations:
                 c = self._sample_table.columns[column_name]
@@ -285,7 +285,7 @@ class TableSet(Mapping, Patchable):
 
                 output.append(new_row)
 
-        return column_names, column_types, output, row_alias
+        return column_names, column_types, output, row_name_columns
 
     def aggregate(self, aggregations=[]):
         """
@@ -305,9 +305,11 @@ class TableSet(Mapping, Patchable):
             :code:`(column_name, aggregation, new_column_name)`.
         :returns: A new :class:`.Table`.
         """
-        column_names, column_types, output, row_alias = self._aggregate(aggregations)
+        column_names, column_types, output, row_name_columns = self._aggregate(aggregations)
 
-        if len(row_alias) == 1:
-            row_alias = row_alias[0]
+        if len(row_name_columns) == 1:
+            row_names = row_name_columns[0]
+        else:
+            row_names = lambda r: tuple(r[n] for n in row_name_columns)
 
-        return Table(output, zip(column_names, column_types), row_alias=row_alias)
+        return Table(output, zip(column_names, column_types), row_names=row_names)

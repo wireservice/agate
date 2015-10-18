@@ -20,6 +20,7 @@ sequences can be accessed either by numeric index or by name. (In the case of
 rows, row names are optional.)
 """
 
+from collections import Sequence
 from copy import copy
 from itertools import chain
 import sys
@@ -62,7 +63,17 @@ def allow_tableset_proxy(func):
 
 class Table(Patchable):
     """
-    A dataset consisting of rows and columns.
+    A dataset consisting of rows and columns. Columns refer to "vertical" slices
+    of data that must all be of the same type. Rows refer to "horizontal" slices
+    of data that may (and usually do) contain mixed types.
+
+    The sequence of :class:`.Column` instances are retrieved via the
+    :attr:`Table.columns` property. They may be accessed by either numeric
+    index or by unique column name.
+
+    The sequence of :class:`.Row` instances are retrieved via the
+    :attr:`Table.rows` property. They maybe be accessed by either numeric index
+    or, if specified, unique row names.
 
     :param rows: The data as a sequence of any sequences: tuples, lists, etc. If
         any row has fewer values than the number of columns, it will be filled
@@ -70,13 +81,15 @@ class Table(Patchable):
     :param column_info: A sequence of pairs of column names and types. Column
         names must be strings and column types must be instances of
         :class:`.DataType`.
-    :param row_alias: Either a single column names or a sequence of column names
-        which uniquely identify any given row. When provided, these values can
-        be used to refer to the row instead of its index.
+    :param row_names: Specifies unique names for each row. This parameter is
+        optional. If specified it may be 1) the name of a single column that
+        contains a unique identifier for each row, 2) a key function that takes
+        a :class:`.Row` and returns a unique identifier or 3) a sequence of
+        unique identifiers of the same length as the sequence of rows.
     :param _is_fork: Used internally to skip certain validation steps when data
-        is propogated from an existing table.
+        is propagated from an existing table.
     """
-    def __init__(self, rows, column_info, row_alias=None, _is_fork=False):
+    def __init__(self, rows, column_info, row_names=None, _is_fork=False):
         self._column_names, self._column_types = zip(*column_info)
 
         # Validation
@@ -103,7 +116,7 @@ class Table(Patchable):
                 len_row = len(row)
 
                 if len_row > len_column_names:
-                    raise ValueError('Row %i has length %i, but Table has %i columns.' % (i, len_row, len_column_names))
+                    raise ValueError('Row %i has %i values, but Table only has %i columns.' % (i, len_row, len_column_names))
                 elif len(row) < len_column_names:
                     row = chain(row, [None] * (len(self.column_names) - len_row))
 
@@ -111,23 +124,22 @@ class Table(Patchable):
         else:
             new_rows = rows
 
-        self._row_alias = row_alias
+        self._row_names = []
 
-        aliases = []
+        if row_names:
+            if isinstance(row_names, six.string_types):
+                for row in new_rows:
+                    self._row_names.append(row[row_names])
+            elif isinstance(row_names, Sequence):
+                if (len(row_names) != len(new_rows)):
+                    raise ValueError('Number of row names in sequence must be equal to the number of rows.')
 
-        if row_alias:
-            for i, row in enumerate(new_rows):
-                if isinstance(row_alias, six.string_types):
-                    alias = row[row_alias]
-                else:
-                    alias = tuple([row[k] for k in row_alias])
+                self._row_names = row_names
+            elif hasattr(row_names, '__call__'):
+                for row in new_rows:
+                    self._row_names.append(row_names(row))
 
-                if alias in aliases:
-                    raise ValueError(u'Row alias was not unique: %s' % alias)
-
-                aliases.append(alias)
-
-        self._rows = MappedSequence(new_rows, aliases)
+        self._rows = MappedSequence(new_rows, self._row_names)
 
         # Build columns
         new_columns = []
@@ -146,10 +158,10 @@ class Table(Patchable):
         if not column_info:
             column_info = zip(self._column_names, self._column_types)
 
-        return Table(rows, column_info, row_alias=self._row_alias, _is_fork=True)
+        return Table(rows, column_info, row_names=self.row_names, _is_fork=True)
 
     @classmethod
-    def from_csv(cls, path, column_info, row_alias=None, header=True, **kwargs):
+    def from_csv(cls, path, column_info, row_names=None, header=True, **kwargs):
         """
         Create a new table for a CSV. This method will use csvkit if it is
         available, otherwise it will use Python's builtin csv module.
@@ -163,7 +175,7 @@ class Table(Patchable):
         :param column_info: A sequence of pairs of column names and types. The latter
             must be instances of :class:`.DataType`. Or, an instance of
             :class:`.TypeTester` to infer types.
-        :param row_alias: See :meth:`Table.__init__`.
+        :param row_names: See :meth:`Table.__init__`.
         :param header: If `True`, the first row of the CSV is assumed to contains
             headers and will be skipped.
         """
@@ -188,7 +200,7 @@ class Table(Patchable):
                 # TKTK Better Error
                 raise ValueError('CSV contains more columns than were specified.')
 
-        return Table(rows, column_info, row_alias=row_alias)
+        return Table(rows, column_info, row_names=row_names)
 
     def to_csv(self, path, **kwargs):
         """
@@ -253,11 +265,11 @@ class Table(Patchable):
         return self._rows
 
     @property
-    def row_alias(self):
+    def row_names(self):
         """
-        Returns the key used to alias rows in this table.
+        Returns the unique names computed for rows in this Table, if any.
         """
-        return self._row_alias
+        return self._row_names
 
     @allow_tableset_proxy
     def select(self, selected_names):
@@ -278,7 +290,7 @@ class Table(Patchable):
         for row in self.rows:
             new_rows.append(tuple(row[n] for n in selected_names))
 
-        return Table(new_rows, zip(selected_names, column_types), row_alias=self._row_alias)
+        return Table(new_rows, zip(selected_names, column_types), row_names=self.row_names)
 
     @allow_tableset_proxy
     def where(self, test):
@@ -494,7 +506,7 @@ class Table(Patchable):
 
                 rows.append(new_row)
 
-        return Table(rows, zip(column_names, column_types), row_alias=self._row_alias)
+        return Table(rows, zip(column_names, column_types), row_names=self.row_names)
 
     @classmethod
     def merge(cls, tables):
@@ -516,7 +528,7 @@ class Table(Patchable):
 
         rows = chain(*[table.rows for table in tables])
 
-        return Table(rows, zip(column_names, column_types), row_alias=tables[0].row_alias)
+        return Table(rows, zip(column_names, column_types), row_names=tables[0].row_names)
 
     @allow_tableset_proxy
     def group_by(self, key, key_name=None, key_type=None):
@@ -603,7 +615,7 @@ class Table(Patchable):
             new_columns = tuple(c.run(row) for c, n in computations)
             new_rows.append(tuple(row) + new_columns)
 
-        return Table(new_rows, zip(column_names, column_types), row_alias=self._row_alias)
+        return Table(new_rows, zip(column_names, column_types), row_names=self.row_names)
 
     @allow_tableset_proxy
     def counts(self, key, key_name=None, key_type=None):

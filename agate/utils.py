@@ -6,13 +6,15 @@ agate.
 """
 
 from collections import Sequence
+from functools import wraps
 
 try:
     from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING
 except ImportError: #pragma: no cover
     from decimal import Decimal, ROUND_FLOOR, ROUND_CEILING
 
-from functools import wraps
+import six
+from six.moves import range #pylint: disable=W0622
 
 def memoize(func):
     """
@@ -49,7 +51,7 @@ class MappedSequence(Sequence):
 
     def __getitem__(self, k):
         if isinstance(k, slice):
-            indices = xrange(*k.indices(len(self)))
+            indices = range(*k.indices(len(self)))
 
             return tuple(self._values[i] for i in indices)
         elif isinstance(k, int):
