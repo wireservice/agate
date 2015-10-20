@@ -80,14 +80,17 @@ class Table(Patchable):
         out with nulls. No row may have more values than the number of columns.
     :param column_info: A sequence of pairs of column names and types. Column
         names must be strings and column types must be instances of
-        :class:`.DataType`.
+        :class:`.DataType`. Alternately, a sequence of :class:`.Column`
+        instances. New column instances will be created reusing the name and
+        data type from each column.
     :param row_names: Specifies unique names for each row. This parameter is
         optional. If specified it may be 1) the name of a single column that
         contains a unique identifier for each row, 2) a key function that takes
         a :class:`.Row` and returns a unique identifier or 3) a sequence of
         unique identifiers of the same length as the sequence of rows.
     :param _is_fork: Used internally to skip certain validation steps when data
-        is propagated from an existing table.
+        is propagated from an existing table. When :code:`True`, rows are
+        assumed to be :class:`.Row` instances, rather than raw data.
     """
     def __init__(self, rows, column_info, row_names=None, _is_fork=False):
         column_info = list(column_info)
@@ -401,7 +404,7 @@ class Table(Patchable):
         rows = self._rows[s]
 
         if self._row_names:
-            row_names = self.row_names[s]
+            row_names = self._row_names[s]
         else:
             row_names = None
 
@@ -428,7 +431,7 @@ class Table(Patchable):
         else:
             row_names = None
 
-        for i, row in enumerate(self.rows):
+        for i, row in enumerate(self._rows):
             if key_is_row_function:
                 k = key(row)
             elif key is None:
@@ -488,7 +491,7 @@ class Table(Patchable):
         if left_key_is_row_function:
             left_data = [left_key(row) for row in self.rows]
         else:
-            left_data = self.columns[left_key].get_data()
+            left_data = self._columns[left_key].get_data()
 
         if right_key_is_row_function:
             right_data = [right_key(row) for row in right_table.rows]
@@ -520,14 +523,19 @@ class Table(Patchable):
             if value not in []:
                 right_hash[value] = []
 
-            right_hash[value].append(self.rows[i])
+            right_hash[value].append(self._rows[i])
 
         # Collect new rows
         rows = []
 
+        if self._row_names:
+            row_names = []
+        else:
+            row_names = None
+
         # Iterate over left column
         for left_index, left_value in enumerate(left_data):
-            new_row = list(self.rows[left_index])
+            new_row = list(self._rows[left_index])
 
             matching_rows = right_hash.get(left_value, None)
 
@@ -540,7 +548,10 @@ class Table(Patchable):
 
                         new_row.append(v)
 
-                    rows.append(new_row)
+                    rows.append(Row(column_names, new_row))
+
+                    if self._row_names:
+                        row_names.append(self._row_names[left_index])
             # Rows without matches
             elif not inner:
                 for k, v in enumerate(right_table.column_names):
@@ -549,9 +560,12 @@ class Table(Patchable):
 
                     new_row.append(None)
 
-                rows.append(new_row)
+                rows.append(Row(column_names, new_row))
 
-        return Table(rows, zip(column_names, column_types))
+                if self._row_names:
+                    row_names.append(self._row_names[left_index])
+
+        return Table(rows, zip(column_names, column_types), row_names=row_names, _is_fork=True)
 
     @classmethod
     def merge(cls, tables):
@@ -571,9 +585,9 @@ class Table(Patchable):
             if table.column_types != column_types:
                 raise ValueError('Only tables with identical column types may be merged.')
 
-        rows = chain(*[table.rows for table in tables])
+        rows = list(chain(*[table.rows for table in tables]))
 
-        return Table(rows, zip(column_names, column_types))
+        return Table(rows, tables[0].columns, row_names=tables[0].row_names, _is_fork=True)
 
     @allow_tableset_proxy
     def group_by(self, key, key_name=None, key_type=None):
@@ -605,14 +619,14 @@ class Table(Patchable):
             key_name = key_name or 'group'
             key_type = key_type or Text()
         else:
-            column = self.columns[key]
+            column = self._columns[key]
 
             key_name = key_name or column.name
             key_type = key_type or column.data_type
 
         groups = OrderedDict()
 
-        for row in self.rows:
+        for row in self._rows:
             if key_is_row_function:
                 group_name = key(row)
             else:
@@ -656,11 +670,11 @@ class Table(Patchable):
 
         new_rows = []
 
-        for row in self.rows:
+        for row in self._rows:
             new_columns = tuple(c.run(row) for c, n in computations)
-            new_rows.append(tuple(row) + new_columns)
+            new_rows.append(Row(column_names, tuple(row) + new_columns))
 
-        return Table(new_rows, zip(column_names, column_types))
+        return self._fork(new_rows, zip(column_names, column_types), row_names=self._row_names)
 
     @allow_tableset_proxy
     def counts(self, key, key_name=None, key_type=None):
@@ -690,14 +704,14 @@ class Table(Patchable):
             key_name = key_name or 'group'
             key_type = key_type or Text()
         else:
-            column = self.columns[key]
+            column = self._columns[key]
 
             key_name = key_name or column.name
             key_type = key_type or column.data_type
 
         output = OrderedDict()
 
-        for row in self.rows:
+        for row in self._rows:
             if key_is_row_function:
                 group_name = key(row)
             else:
@@ -737,7 +751,7 @@ class Table(Patchable):
             maximum value in the column will be used.
         :returns: A new :class:`Table`.
         """
-        column = self.columns[column_name]
+        column = self._columns[column_name]
 
         if start is None or end is None:
             start, end = round_limits(
@@ -779,7 +793,7 @@ class Table(Patchable):
 
             bins[name] = Decimal('0')
 
-        for row in self.rows:
+        for row in self._rows:
             value = row[column_name]
 
             if value is None:

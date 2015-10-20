@@ -1027,7 +1027,7 @@ class TestTableJoin(unittest.TestCase):
 
     def test_join_with_row_names(self):
         left = Table(self.left_rows, self.left_columns, row_names='three')
-        new_table = self.left.join(self.right, 'one', 'four')
+        new_table = left.join(self.right, 'one', 'four')
 
         self.assertSequenceEqual(new_table.rows['a'], (1, 4, 'a', 4, 'a'))
         self.assertSequenceEqual(new_table.row_names, ('a', 'b', 'c'))
@@ -1091,7 +1091,11 @@ class TestTableMerge(unittest.TestCase):
             table_c = Table.merge([table_a, table_b])
 
     def test_merge_with_row_names(self):
-        raise Exception ('TODO')
+        table_a = Table(self.rows, self.columns, row_names='three')
+        table_b = Table(self.rows, self.columns)
+        table_c = Table.merge([table_a, table_b])
+
+        self.assertEqual(table_a.row_names, table_c.row_names)
 
 class TestTableData(unittest.TestCase):
     def setUp(self):

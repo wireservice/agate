@@ -36,6 +36,7 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 from agate.data_types import Text, TypeTester
+from agate.rows import Row
 from agate.table import Table
 from agate.utils import Patchable
 
@@ -237,7 +238,7 @@ class TableSet(Mapping, Patchable):
 
         for key, table in self.items():
             for row in table.rows:
-                rows.append([key] + list(row))
+                rows.append(Row(column_names, (key,) + tuple(row)))
 
         return Table(rows, zip(column_names, column_types))
 
