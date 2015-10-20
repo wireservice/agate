@@ -126,6 +126,8 @@ class TestTableSet(unittest.TestCase):
         self.assertIsInstance(table.column_types[0], Text)
         self.assertSequenceEqual(table.column_types[1:], [self.text_type, self.number_type])
 
+        raise('TODO: Should set row_names')
+
     def test_compute(self):
         tableset = TableSet(self.tables)
 
