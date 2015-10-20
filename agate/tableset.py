@@ -82,10 +82,10 @@ class TableSet(Mapping, Patchable):
         self._key_type = key_type or Text()
 
         # Note: list call is a workaround for Python 3 "ValuesView"
-        self._sample_table = list(group.values())[0]
+        self._sample_table = tuple(group.values())[0]
 
         while isinstance(self._sample_table, TableSet):
-            self._sample_table = list(self._sample_table.values())[0]
+            self._sample_table = tuple(self._sample_table.values())[0]
 
         self._column_types = self._sample_table.column_types
         self._column_names = self._sample_table.column_names

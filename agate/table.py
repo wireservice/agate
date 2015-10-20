@@ -145,7 +145,7 @@ class Table(Patchable):
             elif isinstance(row_names, Sequence):
                 self._row_names = row_names
             else:
-                raise ValueError('row_names must be a column name or function')
+                raise ValueError('row_names must be a column name, function or sequence')
 
             self._row_names = tuple(self._row_names)
         else:
@@ -725,7 +725,7 @@ class Table(Patchable):
         column_names = [key_name, 'count']
         column_types = [key_type, Number()]
 
-        return Table(output.items(), zip(column_names, column_types), row_names=output.keys())
+        return Table(output.items(), zip(column_names, column_types), row_names=tuple(output.keys()))
 
     @allow_tableset_proxy
     def bins(self, column_name, count=10, start=None, end=None):
@@ -815,7 +815,7 @@ class Table(Patchable):
 
             bins[name] += 1
 
-        return Table(bins.items(), [(column_name, Text()), ('count', Number())], row_names=bins.keys())
+        return Table(bins.items(), [(column_name, Text()), ('count', Number())], row_names=tuple(bins.keys()))
 
     def print_table(self, max_rows=None, max_columns=None, output=sys.stdout):
         """
