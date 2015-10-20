@@ -226,6 +226,9 @@ class TableSet(Mapping, Patchable):
         Convert this TableSet into a single table. This is the inverse of
         :meth:`.Table.group_by`.
 
+        Any :code:`row_names` set on the merged tables will be lost in this
+        process.
+
         :returns: A new :class:`Table`.
         """
         column_names = list(self.column_names)
@@ -299,7 +302,7 @@ class TableSet(Mapping, Patchable):
         :code:`new_column_name`.
 
         The resulting table will have the keys from this :class:`TableSet` (and
-        any nested TableSets) set as its :code:`row_alias`. See
+        any nested TableSets) set as its :code:`row_names`. See
         :meth:`.Table.__init__` for more details.
 
         :param aggregations: An list of triples in the format

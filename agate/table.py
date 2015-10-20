@@ -252,7 +252,7 @@ class Table(Patchable):
         """
         Get an ordered sequence of this table's column types.
 
-        :returns: A :class:`tuple` of :class:`.DataType` instances.
+        :returns: A sequence of :class:`.DataType` instances.
         """
         return self._column_types
 
@@ -260,8 +260,6 @@ class Table(Patchable):
     def column_names(self):
         """
         Get an ordered sequence of this table's column names.
-
-        :returns: A :class:`tuple` of strings.
         """
         return self._column_names
 
@@ -275,14 +273,14 @@ class Table(Patchable):
     @property
     def columns(self):
         """
-        Get this tables :class:`.ColumnSequence`.
+        Get this tables' :class:`.MappedSequence` of columns.
         """
         return self._columns
 
     @property
     def rows(self):
         """
-        Get this tables :class:`.RowSequence`.
+        Get this tables' :class:`.MappedSequence` of rows.
         """
         return self._rows
 
@@ -565,7 +563,7 @@ class Table(Patchable):
                 if self._row_names:
                     row_names.append(self._row_names[left_index])
 
-        return Table(rows, zip(column_names, column_types), row_names=row_names, _is_fork=True)
+        return self._fork(rows, zip(column_names, column_types), row_names=row_names)
 
     @classmethod
     def merge(cls, tables):
@@ -674,7 +672,7 @@ class Table(Patchable):
             new_columns = tuple(c.run(row) for c, n in computations)
             new_rows.append(Row(column_names, tuple(row) + new_columns))
 
-        return self._fork(new_rows, zip(column_names, column_types), row_names=self._row_names)
+        return self._fork(new_rows, zip(column_names, column_types))
 
     @allow_tableset_proxy
     def counts(self, key, key_name=None, key_type=None):
@@ -727,7 +725,7 @@ class Table(Patchable):
         column_names = [key_name, 'count']
         column_types = [key_type, Number()]
 
-        return Table(output.items(), zip(column_names, column_types))
+        return Table(output.items(), zip(column_names, column_types), row_names=output.keys())
 
     @allow_tableset_proxy
     def bins(self, column_name, count=10, start=None, end=None):
@@ -817,7 +815,7 @@ class Table(Patchable):
 
             bins[name] += 1
 
-        return Table(bins.items(), [(column_name, Text()), ('count', Number())])
+        return Table(bins.items(), [(column_name, Text()), ('count', Number())], row_names=bins.keys())
 
     def print_table(self, max_rows=None, max_columns=None, output=sys.stdout):
         """

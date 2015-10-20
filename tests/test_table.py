@@ -524,6 +524,8 @@ class TestCounts(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[1], ['N', 4])
         self.assertSequenceEqual(new_table.rows[2], [None, 1])
 
+        self.assertSequenceEqual(new_table.row_names, ['Y', 'N', None])
+
 class TestBins(unittest.TestCase):
     def setUp(self):
         self.number_type = Number()
@@ -543,6 +545,19 @@ class TestBins(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[0], ['[0 - 10)', 10])
         self.assertSequenceEqual(new_table.rows[3], ['[30 - 40)', 10])
         self.assertSequenceEqual(new_table.rows[9], ['[90 - 100]', 10])
+
+        self.assertSequenceEqual(new_table.row_names, [
+            '[0 - 10)',
+            '[10 - 20)',
+            '[20 - 30)',
+            '[30 - 40)',
+            '[40 - 50)',
+            '[50 - 60)',
+            '[60 - 70)',
+            '[70 - 80)',
+            '[80 - 90)',
+            '[90 - 100]',
+        ])
 
     def test_bins_negative(self):
         rows = []
