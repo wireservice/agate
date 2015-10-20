@@ -18,7 +18,7 @@ subclassed to fully customize it's behavior.
 
 import six
 
-if six.PY3: #pragma: no cover
+if six.PY3:
     from functools import cmp_to_key
 
 from agate.aggregations import HasNulls, Percentiles
@@ -163,7 +163,7 @@ class Rank(Computation):
         if self._comparer:
             if six.PY3:
                 data_sorted = sorted(column.values(), key=cmp_to_key(self._comparer))
-            else:
+            else:   #pragma: no cover
                 data_sorted = sorted(column.values(), cmp=self._comparer)
         else:
             data_sorted = column.values_sorted()

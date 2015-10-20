@@ -14,6 +14,7 @@ except ImportError:
     import unittest
 
 from agate import Table
+from agate.aggregations import HasNulls
 from agate.data_types import *
 
 class TestColumn(unittest.TestCase):
@@ -82,10 +83,25 @@ class TestColumn(unittest.TestCase):
         })
 
     def test_values_without_nulls(self):
-        raise Exception('TODO')
+        self.assertSequenceEqual(
+            self.table.columns['one'].values_without_nulls(),
+            [Decimal('1'), Decimal('2')]
+        )
 
     def test_values_sorted(self):
-        raise Exception('TODO')
+        rows = (
+            (2, 2, 'a'),
+            (None, 3, 'b'),
+            (1, 4, 'c')
+        )
+
+        table = Table(rows, self.columns)
+
+        self.assertSequenceEqual(
+            table.columns['one'].values_sorted(),
+            [Decimal('1'), Decimal('2'), None]
+        )
 
     def test_aggregate(self):
-        raise Exception('TODO')
+        self.assertTrue(self.table.columns['one'].aggregate(HasNulls()))
+        self.assertFalse(self.table.columns['two'].aggregate(HasNulls()))

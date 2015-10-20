@@ -41,10 +41,10 @@ class MappedSequence(Sequence):
         """
         Print a non-unicode sample of the contents of this sequence.
         """
-        if six.PY2:
+        if six.PY2: #pragma: no cover
             return str(self.__unicode__().encode('utf8'))
 
-        return str(self.__unicode__())  #pragma: no cover
+        return str(self.__unicode__())
 
     def __getitem__(self, k):
         """

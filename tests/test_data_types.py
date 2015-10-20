@@ -66,7 +66,7 @@ class TestDataTypes(unittest.TestCase):
 
     def test_date_cast_format(self):
         date_type = Date(date_format='%m-%d-%Y')
-#
+
         values = ('03-01-1994', '02-17-2011', None, '01-05-1984', 'n/a')
         casted = tuple(date_type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
