@@ -74,13 +74,19 @@ class MappedSequence(Sequence):
         """
         Equality test with other sequences.
         """
-        return self.values() == other
+        if not isinstance(other, Sequence):
+            return False
+
+        return self.values() == tuple(other)
 
     def __ne__(self, other):
         """
         Inequality test with other sequences.
         """
         return not self.__eq__(other)
+
+    def __contains__(self, value):
+        return self.values().__contains__(value)
 
     def keys(self):
         return self._keys

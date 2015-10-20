@@ -30,7 +30,7 @@ class Column(MappedSequence):
     not be constructed directly. They are created by :class:`.Table`
     instances and are unique to them.
 
-    Columns are implemented as wrapper around :class:`.MappedSequence`. They
+    Columns are implemented as subclass of :class:`.MappedSequence`. They
     deviate from the underlying implementation in that loading of their data
     is deferred until it is needed.
 

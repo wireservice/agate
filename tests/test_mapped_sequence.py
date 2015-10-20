@@ -18,6 +18,13 @@ class TestMappedSequence(unittest.TestCase):
         self.data = (u'a', u'b', u'c')
         self.row = MappedSequence(self.data, self.column_names)
 
+    def test_is_immutable(self):
+        with self.assertRaises(TypeError):
+            self.row[0] = 'foo'
+
+        with self.assertRaises(TypeError):
+            self.row['one'] = 100
+
     def test_stringify(self):
         if six.PY2:
             self.assertEqual(str(self.row), "<agate.MappedSequence: (u'a', u'b', u'c')>")
@@ -37,12 +44,27 @@ class TestMappedSequence(unittest.TestCase):
     def test_length(self):
         self.assertEqual(len(self.row), 3)
 
-    def test_is_immutable(self):
-        with self.assertRaises(TypeError):
-            self.row[0] = 'foo'
+    def test_eq(self):
+        row2 = MappedSequence(self.data, self.column_names)
 
-        with self.assertRaises(TypeError):
-            self.row['one'] = 100
+        self.assertTrue(self.row == (u'a', u'b', u'c'))
+        self.assertTrue(self.row == [u'a', u'b', u'c'])
+        self.assertTrue(self.row == row2)
+        self.assertFalse(self.row == (u'a', u'b', u'c', u'd'))
+        self.assertFalse(self.row == 1)
+
+    def test_ne(self):
+        row2 = MappedSequence(self.data, self.column_names)
+
+        self.assertFalse(self.row != (u'a', u'b', u'c'))
+        self.assertFalse(self.row != [u'a', u'b', u'c'])
+        self.assertFalse(self.row != row2)
+        self.assertTrue(self.row != (u'a', u'b', u'c', u'd'))
+        self.assertTrue(self.row != 1)
+
+    def test_contains(self):
+        self.assertTrue('a' in self.row)
+        self.assertFalse('d' in self.row)
 
     def test_get_item(self):
         self.assertEqual(self.row['one'], 'a')
@@ -75,6 +97,13 @@ class TestMappedSequence(unittest.TestCase):
             ('two', 'b'),
             ('three', 'c')
         ])
+
+    def test_dict(self):
+        self.assertDictEqual(self.row.dict(), {
+            'one': 'a',
+            'two': 'b',
+            'three': 'c'
+        })
 
     def test_iterate(self):
         it = iter(self.row)

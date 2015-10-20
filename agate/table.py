@@ -168,10 +168,10 @@ class Table(Patchable):
         Create a new table using the metadata from this one.
         Used internally by functions like :meth:`order_by`.
         """
-        if not column_info:
+        if column_info is None:
             column_info = self._columns
 
-        if not row_names:
+        if row_names is None:
             row_names = self._row_names
 
         return Table(rows, column_info, row_names=row_names, _is_fork=True)
@@ -314,7 +314,7 @@ class Table(Patchable):
         """
         rows = []
 
-        if self._row_names:
+        if self._row_names is not None:
             row_names = []
         else:
             row_names = None
@@ -323,7 +323,7 @@ class Table(Patchable):
             if test(row):
                 rows.append(row)
 
-                if self._row_names:
+                if self._row_names is not None:
                     row_names.append(self._row_names[i])
 
         return self._fork(rows, row_names=row_names)
@@ -375,7 +375,7 @@ class Table(Patchable):
 
         indices, rows = zip(*results)
 
-        if self._row_names:
+        if self._row_names is not None:
             row_names = [self._row_names[i] for i in indices]
         else:
             row_names = None
@@ -402,7 +402,7 @@ class Table(Patchable):
             s = slice(start_or_stop)
         rows = self._rows[s]
 
-        if self._row_names:
+        if self._row_names is not None:
             row_names = self._row_names[s]
         else:
             row_names = None
@@ -425,7 +425,7 @@ class Table(Patchable):
         uniques = []
         rows = []
 
-        if self._row_names:
+        if self._row_names is not None:
             row_names = []
         else:
             row_names = None
@@ -442,7 +442,7 @@ class Table(Patchable):
                 uniques.append(k)
                 rows.append(row)
 
-                if self._row_names:
+                if self._row_names is not None:
                     row_names.append(self._row_names[i])
 
         return self._fork(rows, row_names=row_names)
@@ -527,7 +527,7 @@ class Table(Patchable):
         # Collect new rows
         rows = []
 
-        if self._row_names:
+        if self._row_names is not None:
             row_names = []
         else:
             row_names = None
@@ -549,7 +549,7 @@ class Table(Patchable):
 
                     rows.append(Row(new_row, column_names))
 
-                    if self._row_names:
+                    if self._row_names is not None:
                         row_names.append(self._row_names[left_index])
             # Rows without matches
             elif not inner:
@@ -561,7 +561,7 @@ class Table(Patchable):
 
                 rows.append(Row(new_row, column_names))
 
-                if self._row_names:
+                if self._row_names is not None:
                     row_names.append(self._row_names[left_index])
 
         return self._fork(rows, zip(column_names, column_types), row_names=row_names)
