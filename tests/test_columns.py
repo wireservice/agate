@@ -146,7 +146,7 @@ class TestColumnSequence(unittest.TestCase):
         self.assertEqual(len(self.table.columns), 3)
 
     def test_get_column_data(self):
-        self.assertSequenceEqual(self.table.columns['one'].get_data(), (1, 2, None))
+        self.assertSequenceEqual(self.table.columns['one'].values(), (1, 2, None))
 
     def test_get_column_sequence(self):
         self.assertSequenceEqual(self.table.columns['one'], (1, 2, None))

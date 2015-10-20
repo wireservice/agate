@@ -1,12 +1,17 @@
 0.12.0
 ------
 
+* Rows and Columns are now subclasses of MappedSequence.
+* Column.get_data_without_nulls() renamed Column.values_without_nulls().
+* Column.get_data_sorted() renamed Column.values_sorted().
+* Column.get_data() renamed Column.values().
 * Columns can now be sliced.
 * Columns can now be indexed by row name. (#301)
-* Add support for Python 3.5.
+* Added support for Python 3.5.
 * Row objects can now be sliced. (#303)
 * Replaced RowSequence and ColumnSequence with MappedSequence.
-* Replaced ColumnDoesNotExistError and RowDoesNotExistError with IndexError and KeyError.
+* Replace RowDoesNotExistError with KeyError.
+* Replaced ColumnDoesNotExistError with IndexError.
 * Removed unnecessary custom RowIterator, ColumnIterator and CellIterator.
 * Performance improvements for Table "forks". (where, limit, etc)
 * TableSet keys are now converted to row names during aggregation. (#291)

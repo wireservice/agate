@@ -209,7 +209,6 @@ class TestTableSet(unittest.TestCase):
         ])
 
         self.assertSequenceEqual(new_table.row_names, ['table1', 'table2', 'table3'])
-        self.assertEqual(len(new_table.rows._map), 3)
         self.assertSequenceEqual(new_table.rows['table1'], ['table1', 3])
         self.assertSequenceEqual(new_table.rows['table2'], ['table2', 3])
         self.assertSequenceEqual(new_table.rows['table3'], ['table3', 3])
@@ -358,7 +357,6 @@ class TestTableSet(unittest.TestCase):
             ('table3', 'a'),
             ('table3', 'c'),
         ])
-        self.assertEqual(len(results.rows._map), 7)
         self.assertSequenceEqual(results.rows[('table1', 'a')], ('table1', 'a', 2, 4))
         self.assertSequenceEqual(results.rows[('table2', 'c')], ('table2', 'c', 1, 5))
 

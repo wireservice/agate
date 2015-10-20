@@ -5,7 +5,7 @@ This module contains a collection of utility classes and functions used in
 agate.
 """
 
-from collections import Sequence
+from collections import OrderedDict, Sequence
 from functools import wraps
 
 try:
@@ -44,27 +44,78 @@ class MappedSequence(Sequence):
     def __init__(self, values, keys=None):
         self._values = values
         self._keys = keys
-        self._map = {}
 
-        if keys:
-            self._map = dict(zip(keys, values))
+    def __unicode__(self):
+        """
+        Print a unicode sample of the contents of this sequence.
+        """
+        sample = u', '.join(repr(d) for d in self.values()[:5])
+
+        if len(self) > 5:
+            sample = u'%s, ...' % sample
+
+        return u'<agate.%s: (%s)>' % (type(self).__name__, sample)
+
+    def __str__(self):
+        """
+        Print a non-unicode sample of the contents of this sequence.
+        """
+        if six.PY2:
+            return str(self.__unicode__().encode('utf8'))
+
+        return str(self.__unicode__())  #pragma: no cover
 
     def __getitem__(self, k):
+        """
+        Retrieve values from this array by index, by slice or by key.
+        """
         if isinstance(k, slice):
             indices = range(*k.indices(len(self)))
+            values = self.values()
 
-            return tuple(self._values[i] for i in indices)
+            return tuple(values[i] for i in indices)
         elif isinstance(k, int):
-            return self._values[k]
+            return self.values()[k]
         else:
-            return self._map[k]
+            return self.dict()[k]
 
     def __iter__(self):
-        return iter(self._values)
+        """
+        Iterate over values.
+        """
+        return iter(self.values())
 
     @memoize
     def __len__(self):
-        return len(self._values)
+        return len(self.values())
+
+    def __eq__(self, other):
+        """
+        Equality test with other sequences.
+        """
+        return self.values() == other
+
+    def __ne__(self, other):
+        """
+        Inequality test with other sequences.
+        """
+        return not self.__eq__(other)
+
+    def keys(self):
+        return self._keys
+
+    def values(self):
+        return self._values
+
+    @memoize
+    def dict(self):
+        """
+        Get the contents of this column as an :class:`collections.OrderedDict`.
+        """
+        if not self._keys:
+            raise KeyError
+
+        return OrderedDict(zip(self._keys, self._values))
 
 class Patchable(object):
     """

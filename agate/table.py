@@ -131,23 +131,23 @@ class Table(Patchable):
         else:
             new_rows = rows
 
-        self._row_names = []
-
         if row_names:
+            computed_row_names = []
+
             if isinstance(row_names, six.string_types):
                 for row in new_rows:
                     name = row[row_names]
-                    self._row_names.append(name)
+                    computed_row_names.append(name)
             elif hasattr(row_names, '__call__'):
                 for row in new_rows:
                     name = row_names(row)
-                    self._row_names.append(name)
+                    computed_row_names.append(name)
             elif isinstance(row_names, Sequence):
-                self._row_names = row_names
+                computed_row_names = row_names
             else:
                 raise ValueError('row_names must be a column name, function or sequence')
 
-            self._row_names = tuple(self._row_names)
+            self._row_names = tuple(computed_row_names)
         else:
             self._row_names = None
 
@@ -489,13 +489,13 @@ class Table(Patchable):
         if left_key_is_row_function:
             left_data = [left_key(row) for row in self.rows]
         else:
-            left_data = self._columns[left_key].get_data()
+            left_data = self._columns[left_key].values()
 
         if right_key_is_row_function:
             right_data = [right_key(row) for row in right_table.rows]
         else:
             right_column = right_table.columns[right_key]
-            right_data = right_column.get_data()
+            right_data = right_column.values()
             right_key_index = right_table.columns._keys.index(right_key)
 
         # Build names and type lists

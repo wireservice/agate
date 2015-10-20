@@ -162,11 +162,11 @@ class Rank(Computation):
 
         if self._comparer:
             if six.PY3:
-                data_sorted = sorted(column.get_data(), key=cmp_to_key(self._comparer))
+                data_sorted = sorted(column.values(), key=cmp_to_key(self._comparer))
             else:
-                data_sorted = sorted(column.get_data(), cmp=self._comparer)
+                data_sorted = sorted(column.values(), cmp=self._comparer)
         else:
-            data_sorted = column.get_data_sorted()
+            data_sorted = column.values_sorted()
 
         if self._reverse:
             data_sorted.reverse()

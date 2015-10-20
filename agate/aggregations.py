@@ -88,7 +88,7 @@ class HasNulls(Aggregation):
         """
         :returns: :class:`bool`
         """
-        return None in column.get_data()
+        return None in column.values()
 
 class Any(Aggregation):
     """
@@ -108,7 +108,7 @@ class Any(Aggregation):
         """
         :returns: :class:`bool`
         """
-        data = column.get_data()
+        data = column.values()
 
         if isinstance(column.data_type, Boolean):
             return any(data)
@@ -135,7 +135,7 @@ class All(Aggregation):
         """
         :returns: :class:`bool`
         """
-        data = column.get_data()
+        data = column.values()
 
         if isinstance(column.data_type, Boolean):
             return all(data)
@@ -181,7 +181,7 @@ class Count(Aggregation):
         """
         :returns: :class:`int`
         """
-        return column.get_data().count(self._value)
+        return column.values().count(self._value)
 
 class Min(Aggregation):
     """
@@ -203,7 +203,7 @@ class Min(Aggregation):
             isinstance(column.data_type, DateTime)):
             raise DataTypeError('Min can only be applied to columns containing DateTime orNumber data.')
 
-        return min(column.get_data_without_nulls())
+        return min(column.values_without_nulls())
 
 class Max(Aggregation):
     """
@@ -225,7 +225,7 @@ class Max(Aggregation):
             isinstance(column.data_type, DateTime)):
             raise DataTypeError('Max can only be applied to columns containing DateTime or Number data.')
 
-        return max(column.get_data_without_nulls())
+        return max(column.values_without_nulls())
 
 class MaxPrecision(Aggregation):
     """
@@ -244,7 +244,7 @@ class MaxPrecision(Aggregation):
         if not isinstance(column.data_type, Number):
             raise DataTypeError('MaxPrecision can only be applied to columns containing Number data.')
 
-        return max_precision(column.get_data_without_nulls())
+        return max_precision(column.values_without_nulls())
 
 class Sum(Aggregation):
     """
@@ -263,7 +263,7 @@ class Sum(Aggregation):
         if not isinstance(column.data_type, Number):
             raise DataTypeError('Sum can only be applied to columns containing Number data.')
 
-        return sum(column.get_data_without_nulls())
+        return sum(column.values_without_nulls())
 
 class Mean(Aggregation):
     """
@@ -332,7 +332,7 @@ class Mode(Aggregation):
         if column.aggregate(HasNulls()):
             raise NullCalculationError
 
-        data = column.get_data()
+        data = column.values()
         state = defaultdict(int)
 
         for n in data:
@@ -386,7 +386,7 @@ class Variance(Aggregation):
         if column.aggregate(HasNulls()):
             raise NullCalculationError
 
-        data = column.get_data()
+        data = column.values()
         mean = column.aggregate(Mean())
 
         return sum((n - mean) ** 2 for n in data) / (len(column) - 1)
@@ -412,7 +412,7 @@ class PopulationVariance(Variance):
         if column.aggregate(HasNulls()):
             raise NullCalculationError
 
-        data = column.get_data()
+        data = column.values()
         mean = column.aggregate(Mean())
 
         return sum((n - mean) ** 2 for n in data) / len(column)
@@ -478,7 +478,7 @@ class MAD(Aggregation):
         if column.aggregate(HasNulls()):
             raise NullCalculationError
 
-        data = column.get_data_sorted()
+        data = column.values_sorted()
         m = column.aggregate(Percentiles())[50]
 
         return median(tuple(abs(n - m) for n in data))
@@ -509,7 +509,7 @@ class Percentiles(Aggregation):
         if column.aggregate(HasNulls()):
             raise NullCalculationError
 
-        data = column.get_data_sorted()
+        data = column.values_sorted()
 
         # Zeroth percentile is first datum
         quantiles = [data[0]]
@@ -610,4 +610,4 @@ class MaxLength(Aggregation):
         if not isinstance(column.data_type, Text):
             raise DataTypeError('MaxLength can only be applied to columns containing Text data.')
 
-        return max([len(d) for d in column.get_data_without_nulls()])
+        return max([len(d) for d in column.values_without_nulls()])
