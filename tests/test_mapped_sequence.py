@@ -63,6 +63,19 @@ class TestMappedSequence(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.row['foo']
 
+    def test_keys(self):
+        self.assertIs(self.row.keys(), self.column_names)
+
+    def test_values(self):
+        self.assertIs(self.row.values(), self.data)
+
+    def test_items(self):
+        self.assertSequenceEqual(self.row.items(), [
+            ('one', 'a'),
+            ('two', 'b'),
+            ('three', 'c')
+        ])
+
     def test_iterate(self):
         it = iter(self.row)
 

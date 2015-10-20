@@ -70,10 +70,6 @@ class Column(MappedSequence):
         return tuple(row[self._name] for row in self._rows)
 
     @memoize
-    def dict(self):
-        return dict(zip(self.keys(), self.values()))
-
-    @memoize
     def values_without_nulls(self):
         """
         Get the data contained in this column with any null values removed.

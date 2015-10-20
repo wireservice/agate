@@ -17,7 +17,7 @@ class MappedSequence(Sequence):
     """
     A generic container for data that can be accessed either by numeric index
     or by name. This is similar to an :class:`collections.OrderedDict` except
-    that iteration over it returns values rather than keys.
+    that the keys are optional and iteration over it returns the values.
 
     :param rows: A sequence of :class:`Row` instances.
     :param row_alias: See :meth:`.Table.__init__`.
@@ -89,11 +89,15 @@ class MappedSequence(Sequence):
         return self._values
 
     @memoize
+    def items(self):
+        return tuple(zip(self.keys(), self.values()))
+
+    @memoize
     def dict(self):
         """
         Get the contents of this column as an :class:`collections.OrderedDict`.
         """
-        if not self._keys:
+        if not self.keys():
             raise KeyError
 
-        return OrderedDict(zip(self._keys, self._values))
+        return OrderedDict(self.items())
