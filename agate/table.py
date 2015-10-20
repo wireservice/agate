@@ -90,6 +90,8 @@ class Table(Patchable):
         is propagated from an existing table.
     """
     def __init__(self, rows, column_info, row_names=None, _is_fork=False):
+        column_info = list(column_info)
+
         if isinstance(column_info[0], Column):
             self._column_names = tuple(c.name for c in column_info)
             self._column_types = tuple(c.data_type for c in column_info)

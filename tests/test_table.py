@@ -840,7 +840,7 @@ class TestTableCompute(unittest.TestCase):
             ('a', 2, 3, 4),
             (None, 3, 5, None),
             ('a', 2, 4, None),
-            ('b', 3, 4, None)
+            ('b', 3, 6, None)
         )
 
         self.number_type = Number()
@@ -866,8 +866,8 @@ class TestTableCompute(unittest.TestCase):
         self.assertEqual(len(new_table.columns), 6)
 
         self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 5, 'a3'))
-        self.assertSequenceEqual(new_table.columns['number'], (5, 8, 6, 7))
-        self.assertSequenceEqual(new_table.columns['text'], ('a3', '-5', 'a4', 'b4'))
+        self.assertSequenceEqual(new_table.columns['number'], (5, 8, 6, 9))
+        self.assertSequenceEqual(new_table.columns['text'], ('a3', '-5', 'a4', 'b6'))
 
     def test_compute_multiple(self):
         new_table = self.table.compute([
@@ -879,7 +879,18 @@ class TestTableCompute(unittest.TestCase):
         self.assertEqual(len(new_table.columns), 5)
 
         self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 5))
-        self.assertSequenceEqual(new_table.columns['test'], (5, 8, 6, 7))
+        self.assertSequenceEqual(new_table.columns['test'], (5, 8, 6, 9))
+
+    def test_compute_with_row_names(self):
+        table = Table(self.rows, self.columns, row_names='three')
+
+        new_table = table.compute([
+            (Formula(self.number_type, lambda r: r['two'] + r['three']), 'number'),
+            (Formula(self.text_type, lambda r: (r['one'] or '-') + six.text_type(r['three'])), 'text')
+        ])
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 5, 'a3'))
+        self.assertSequenceEqual(new_table.row_names, (3, 5, 4, 6))
 
 class TestTableJoin(unittest.TestCase):
     def setUp(self):
@@ -1014,6 +1025,13 @@ class TestTableJoin(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 6)
 
+    def test_join_with_row_names(self):
+        left = Table(self.left_rows, self.left_columns, row_names='three')
+        new_table = self.left.join(self.right, 'one', 'four')
+
+        self.assertSequenceEqual(new_table.rows['a'], (1, 4, 'a', 4, 'a'))
+        self.assertSequenceEqual(new_table.row_names, ('a', 'b', 'c'))
+
 class TestTableMerge(unittest.TestCase):
     def setUp(self):
         self.rows = (
@@ -1071,6 +1089,9 @@ class TestTableMerge(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             table_c = Table.merge([table_a, table_b])
+
+    def test_merge_with_row_names(self):
+        raise Exception ('TODO')
 
 class TestTableData(unittest.TestCase):
     def setUp(self):
