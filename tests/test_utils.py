@@ -11,8 +11,9 @@ except ImportError:
     import unittest
 
 from agate.data_types import Text
+from agate.mapped_sequence import MappedSequence
 from agate.table import Table
-from agate.utils import MappedSequence, Patchable, Quantiles, round_limits
+from agate.utils import Patchable, Quantiles, round_limits
 
 class TryPatch(object):
     def test(self, n):

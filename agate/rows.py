@@ -4,10 +4,10 @@
 This module contains agate's :class:`Row` implementation. Rows are independent
 of both the :class:`.Table` that contains them as well as the :class:`.Columns`
 that access their data. This independence, combined with rows immutability
-allows them to be shared between table instances.
+allows them to be safely shared between table instances.
 """
 
-from agate.utils import MappedSequence
+from agate.mapped_sequence import MappedSequence
 
 class Row(MappedSequence):
     """

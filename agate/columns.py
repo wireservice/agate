@@ -6,16 +6,14 @@ array of tabular data. Whereas :class:`.Row` instances are independent of their
 parent :class:`.Table`, columns depend on knowledge of both their position in
 the parent (column name, data type) as well as the rows that contain their data.
 """
-
-from collections import Sequence
-
 import six
 
 if six.PY3: #pragma: no cover
     #pylint: disable=W0622
     xrange = range
 
-from agate.utils import MappedSequence, NullOrder, memoize
+from agate.mapped_sequence import MappedSequence
+from agate.utils import NullOrder, memoize
 
 def null_handler(k):
     """
@@ -30,14 +28,17 @@ class Column(MappedSequence):
     """
     Proxy access to column data. Instances of :class:`Column` should
     not be constructed directly. They are created by :class:`.Table`
-    instances.
+    instances and are unique to them.
 
-    Column instances are unique to the :class:`.Table` with which they are
-    associated.
+    Columns are implemented as wrapper around :class:`.MappedSequence`. They
+    deviate from the underlying implementation in that loading of their data
+    is deferred until it is needed.
 
     :param name: The name of this column.
     :param data_type: An instance of :class:`.DataType`.
-    :param rows: The :class:`.RowSequence` that contains data for this column.
+    :param rows: A :class:`.MappedSequence` that contains the :class:`.Row`
+        instances containing the data for this column.
+    :param row_names: An optional list of row names (keys) for this column.
     """
     def __init__(self, name, data_type, rows, row_names=None):
         self._name = name

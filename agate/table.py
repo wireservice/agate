@@ -49,9 +49,10 @@ from agate.aggregations import Min, Max
 from agate.columns import Column
 from agate.data_types import TypeTester, DataType, Text, Number
 from agate.computations import Computation
+from agate.mapped_sequence import MappedSequence
 from agate.preview import print_table, print_bars
 from agate.rows import Row
-from agate.utils import MappedSequence, NullOrder, Patchable, max_precision, make_number_formatter, round_limits
+from agate.utils import NullOrder, Patchable, max_precision, make_number_formatter, round_limits
 
 def allow_tableset_proxy(func):
     """
