@@ -88,6 +88,19 @@ class TestColumn(unittest.TestCase):
     def test_pickleable(self):
         pickle.dumps(self.table.columns['one'])
 
+    def test_column_slice(self):
+        column = self.table.columns['one']
+
+        self.assertSequenceEqual(column[1:], [Decimal('2'), None])
+        self.assertSequenceEqual(column[:2], [Decimal('1'), Decimal('2')])
+
+    def test_row_names(self):
+        table = Table(self.rows, self.columns, row_names='three')
+        column = table.columns['one']
+
+        self.assertSequenceEqual(column._row_names, ['a', 'b', 'c'])
+        self.assertEqual(column['b'], 2)
+
 class TestColumnSequence(unittest.TestCase):
     def setUp(self):
         self.rows = (

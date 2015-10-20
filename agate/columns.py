@@ -39,10 +39,11 @@ class Column(Sequence):
     :param data_type: An instance of :class:`.DataType`.
     :param rows: The :class:`.RowSequence` that contains data for this column.
     """
-    def __init__(self, name, data_type, rows):
+    def __init__(self, name, data_type, rows, row_names=None):
         self._name = name
         self._data_type = data_type
         self._rows = rows
+        self._row_names = row_names
         self._aggregate_cache = {}
 
     def __unicode__(self):
@@ -62,7 +63,21 @@ class Column(Sequence):
         return str(self.__unicode__())  #pragma: no cover
 
     def __getitem__(self, k):
-        return self.get_data()[k]
+        data = self.get_data()
+
+        if isinstance(k, slice):
+            indices = range(*k.indices(len(self)))
+
+            return tuple(data[i] for i in indices)
+        elif isinstance(k, int):
+            return data[k]
+        else:
+            if self._row_names:
+                i = self._row_names.index(k)
+            else:
+                raise KeyError
+
+            return data[i]
 
     @memoize
     def __len__(self):
