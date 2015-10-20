@@ -100,34 +100,34 @@ class TestSimpleAggregation(unittest.TestCase):
 class TestBooleanAggregation(unittest.TestCase):
     def test_any(self):
         rows = [
-            Row(['test'], [True]),
-            Row(['test'], [False]),
-            Row(['test'], [None]),
+            Row([True], ['test']),
+            Row([False], ['test']),
+            Row([None], ['test']),
         ]
         column = Column('test', Boolean(), rows)
         self.assertEqual(column.aggregate(Any()), True)
 
         rows = [
-            Row(['test'], [False]),
-            Row(['test'], [False]),
-            Row(['test'], [None]),
+            Row([False], ['test']),
+            Row([False], ['test']),
+            Row([None], ['test']),
         ]
         column = Column('test', Boolean(), rows)
         self.assertEqual(column.aggregate(Any()), False)
 
     def test_all(self):
         rows = [
-            Row(['test'], [True]),
-            Row(['test'], [True]),
-            Row(['test'], [None]),
+            Row([True], ['test']),
+            Row([True], ['test']),
+            Row([None], ['test']),
         ]
         column = Column('test', Boolean(), rows)
         self.assertEqual(column.aggregate(All()), False)
 
         rows = [
-            Row(['test'], [True]),
-            Row(['test'], [True]),
-            Row(['test'], [True]),
+            Row([True], ['test']),
+            Row([True], ['test']),
+            Row([True], ['test']),
         ]
         column = Column('test', Boolean(), rows)
         self.assertEqual(column.aggregate(All()), True)
@@ -135,9 +135,9 @@ class TestBooleanAggregation(unittest.TestCase):
 class TestDateTimeAggregation(unittest.TestCase):
     def test_min(self):
         rows = [
-            Row(['test'], [datetime.datetime(1994, 3, 3, 6, 31)]),
-            Row(['test'], [datetime.datetime(1994, 3, 3, 6, 30, 30)]),
-            Row(['test'], [datetime.datetime(1994, 3, 3, 6, 30)]),
+            Row([datetime.datetime(1994, 3, 3, 6, 31)], ['test']),
+            Row([datetime.datetime(1994, 3, 3, 6, 30, 30)], ['test']),
+            Row([datetime.datetime(1994, 3, 3, 6, 30)], ['test']),
         ]
 
         column = Column('test', DateTime(), rows)
@@ -145,9 +145,9 @@ class TestDateTimeAggregation(unittest.TestCase):
 
     def test_max(self):
         rows = [
-            Row(['test'], [datetime.datetime(1994, 3, 3, 6, 31)]),
-            Row(['test'], [datetime.datetime(1994, 3, 3, 6, 30, 30)]),
-            Row(['test'], [datetime.datetime(1994, 3, 3, 6, 30)]),
+            Row([datetime.datetime(1994, 3, 3, 6, 31)], ['test']),
+            Row([datetime.datetime(1994, 3, 3, 6, 30, 30)], ['test']),
+            Row([datetime.datetime(1994, 3, 3, 6, 30)], ['test']),
         ]
 
         column = Column('test', DateTime(), rows)
@@ -450,9 +450,9 @@ class TestNumberAggregation(unittest.TestCase):
 class TestTextAggregation(unittest.TestCase):
     def test_max_length(self):
         rows = [
-            Row(['test'], ['a']),
-            Row(['test'], ['gobble']),
-            Row(['test'], ['w']),
+            Row(['a'], ['test']),
+            Row(['gobble'], ['test']),
+            Row(['w'], ['test']),
         ]
 
         column = Column('test', Text(), rows)

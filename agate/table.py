@@ -127,7 +127,7 @@ class Table(Patchable):
                 elif len(row) < len_column_names:
                     row = chain(row, [None] * (len(self.column_names) - len_row))
 
-                new_rows.append(Row(self._column_names, tuple(cast_funcs[i](d) for i, d in enumerate(row))))
+                new_rows.append(Row(tuple(cast_funcs[i](d) for i, d in enumerate(row)), self._column_names))
         else:
             new_rows = rows
 
@@ -297,7 +297,7 @@ class Table(Patchable):
         new_rows = []
 
         for row in self._rows:
-            new_rows.append(Row(selected_names, tuple(row[n] for n in selected_names)))
+            new_rows.append(Row(tuple(row[n] for n in selected_names), selected_names))
 
         return self._fork(new_rows, new_columns)
 
@@ -546,7 +546,7 @@ class Table(Patchable):
 
                         new_row.append(v)
 
-                    rows.append(Row(column_names, new_row))
+                    rows.append(Row(new_row, column_names))
 
                     if self._row_names:
                         row_names.append(self._row_names[left_index])
@@ -558,7 +558,7 @@ class Table(Patchable):
 
                     new_row.append(None)
 
-                rows.append(Row(column_names, new_row))
+                rows.append(Row(new_row, column_names))
 
                 if self._row_names:
                     row_names.append(self._row_names[left_index])
@@ -670,7 +670,7 @@ class Table(Patchable):
 
         for row in self._rows:
             new_columns = tuple(c.run(row) for c, n in computations)
-            new_rows.append(Row(column_names, tuple(row) + new_columns))
+            new_rows.append(Row(tuple(row) + new_columns, column_names))
 
         return self._fork(new_rows, zip(column_names, column_types))
 

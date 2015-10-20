@@ -241,7 +241,7 @@ class TableSet(Mapping, Patchable):
 
         for key, table in self.items():
             for row in table.rows:
-                rows.append(Row(column_names, (key,) + tuple(row)))
+                rows.append(Row((key,) + tuple(row), column_names))
 
         return Table(rows, zip(column_names, column_types))
 

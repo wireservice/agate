@@ -16,7 +16,7 @@ class TestRow(unittest.TestCase):
     def setUp(self):
         self.column_names = ('one', 'two', 'three')
         self.data = (u'a', u'b', u'c')
-        self.row = Row(self.column_names, self.data)
+        self.row = Row(self.data, self.column_names)
 
     def test_stringify(self):
         if six.PY2:
@@ -27,7 +27,7 @@ class TestRow(unittest.TestCase):
     def test_stringify_long(self):
         column_names = ('one', 'two', 'three', 'four', 'five', 'six')
         data = (u'a', u'b', u'c', u'd', u'e', u'f')
-        row = Row(column_names, data)
+        row = Row(data, column_names)
 
         if six.PY2:
             self.assertEqual(str(row), "<agate.Row: (u'a', u'b', u'c', u'd', u'e', ...)>")
