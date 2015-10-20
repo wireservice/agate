@@ -43,7 +43,7 @@ except ImportError: #pragma: no cover
     import csv
 
 import six
-from six.moves import range #pylint: disable=W0622
+from six.moves import range, zip #pylint: disable=W0622
 
 from agate.aggregations import Min, Max
 from agate.columns import Column
@@ -90,27 +90,29 @@ class Table(Patchable):
         is propagated from an existing table.
     """
     def __init__(self, rows, column_info, row_names=None, _is_fork=False):
-        self._column_names, self._column_types = zip(*column_info)
+        if isinstance(column_info[0], Column):
+            self._column_names = tuple(c.name for c in column_info)
+            self._column_types = tuple(c.data_type for c in column_info)
+        else:
+            self._column_names, self._column_types = zip(*column_info)
 
-        # Validation
-        for column_name in self._column_names:
-            if not isinstance(column_name, six.string_types):
-                raise ValueError('Column names must be strings.')
+            # Validation
+            for column_name in self._column_names:
+                if not isinstance(column_name, six.string_types):
+                    raise ValueError('Column names must be strings.')
 
-        for column_type in self._column_types:
-            if not isinstance(column_type, DataType):
-                raise ValueError('Column types must be instances of DataType.')
+            for column_type in self._column_types:
+                if not isinstance(column_type, DataType):
+                    raise ValueError('Column types must be instances of DataType.')
 
-        len_column_names = len(self._column_names)
+            len_column_names = len(self._column_names)
 
-        if len(set(self._column_names)) != len_column_names:
-            raise ValueError('Duplicate column names are not allowed.')
-
-        # Build rows
-        cast_funcs = [c.cast for c in self._column_types]
+            if len(set(self._column_names)) != len_column_names:
+                raise ValueError('Duplicate column names are not allowed.')
 
         if not _is_fork:
             new_rows = []
+            cast_funcs = [c.cast for c in self._column_types]
 
             for i, row in enumerate(rows):
                 len_row = len(row)
@@ -129,36 +131,44 @@ class Table(Patchable):
         if row_names:
             if isinstance(row_names, six.string_types):
                 for row in new_rows:
-                    self._row_names.append(row[row_names])
-            elif isinstance(row_names, Sequence):
-                if (len(row_names) != len(new_rows)):
-                    raise ValueError('Number of row names in sequence must be equal to the number of rows.')
-
-                self._row_names = row_names
+                    name = row[row_names]
+                    self._row_names.append(name)
             elif hasattr(row_names, '__call__'):
                 for row in new_rows:
-                    self._row_names.append(row_names(row))
+                    name = row_names(row)
+                    self._row_names.append(name)
+            elif isinstance(row_names, Sequence):
+                self._row_names = row_names
+            else:
+                raise ValueError('row_names must be a column name or function')
+
+            self._row_names = tuple(self._row_names)
+        else:
+            self._row_names = None
 
         self._rows = MappedSequence(new_rows, self._row_names)
 
         # Build columns
         new_columns = []
 
-        for i, name in enumerate(self._column_names):
-            column = Column(name, self._column_types[i], self._rows)
+        for name, data_type in zip(self._column_names, self._column_types):
+            column = Column(name, data_type, self._rows)
             new_columns.append(column)
 
         self._columns = MappedSequence(new_columns, self._column_names)
 
-    def _fork(self, rows, column_info=None):
+    def _fork(self, rows, column_info=None, row_names=None):
         """
         Create a new table using the metadata from this one.
         Used internally by functions like :meth:`order_by`.
         """
         if not column_info:
-            column_info = zip(self._column_names, self._column_types)
+            column_info = self._columns
 
-        return Table(rows, column_info, row_names=self.row_names, _is_fork=True)
+        if not row_names:
+            row_names = self._row_names
+
+        return Table(rows, column_info, row_names=row_names, _is_fork=True)
 
     @classmethod
     def from_csv(cls, path, column_info, row_names=None, header=True, **kwargs):
@@ -227,7 +237,7 @@ class Table(Patchable):
 
             writer.writerow(self._column_names)
 
-            for row in self.rows:
+            for row in self._rows:
                 writer.writerow(row)
         finally:
             f.close()
@@ -235,20 +245,27 @@ class Table(Patchable):
     @property
     def column_types(self):
         """
-        Get an ordered list of this table's column types.
+        Get an ordered sequence of this table's column types.
 
-        :returns: A :class:`tuple` of :class:`.Column` instances.
+        :returns: A :class:`tuple` of :class:`.DataType` instances.
         """
         return self._column_types
 
     @property
     def column_names(self):
         """
-        Get an ordered list of this table's column names.
+        Get an ordered sequence of this table's column names.
 
         :returns: A :class:`tuple` of strings.
         """
         return self._column_names
+
+    @property
+    def row_names(self):
+        """
+        Get an ordered sequence of this table's row names.
+        """
+        return self._row_names
 
     @property
     def columns(self):
@@ -264,13 +281,6 @@ class Table(Patchable):
         """
         return self._rows
 
-    @property
-    def row_names(self):
-        """
-        Returns the unique names computed for rows in this Table, if any.
-        """
-        return self._row_names
-
     @allow_tableset_proxy
     def select(self, selected_names):
         """
@@ -280,17 +290,13 @@ class Table(Patchable):
             new table.
         :returns: A new :class:`Table`.
         """
-        column_types = []
-
-        for name in selected_names:
-            column_types.append(self.columns[name].data_type)
-
+        new_columns = [self.columns[name] for name in selected_names]
         new_rows = []
 
-        for row in self.rows:
-            new_rows.append(tuple(row[n] for n in selected_names))
+        for row in self._rows:
+            new_rows.append(Row(selected_names, tuple(row[n] for n in selected_names)))
 
-        return Table(new_rows, zip(selected_names, column_types), row_names=self.row_names)
+        return self._fork(new_rows, new_columns)
 
     @allow_tableset_proxy
     def where(self, test):
@@ -302,9 +308,21 @@ class Table(Patchable):
         :type test: :class:`function`
         :returns: A new :class:`Table`.
         """
-        rows = [row for row in self.rows if test(row)]
+        rows = []
 
-        return self._fork(rows)
+        if self._row_names:
+            row_names = []
+        else:
+            row_names = None
+
+        for i, row in enumerate(self._rows):
+            if test(row):
+                rows.append(row)
+
+                if self._row_names:
+                    row_names.append(self._row_names[i])
+
+        return self._fork(rows, row_names=row_names)
 
     @allow_tableset_proxy
     def find(self, test):
@@ -316,7 +334,7 @@ class Table(Patchable):
         :type test: :class:`function`
         :returns: A single :class:`.Row` or :code:`None` if not found.
         """
-        for row in self.rows:
+        for row in self._rows:
             if test(row):
                 return row
 
@@ -336,7 +354,9 @@ class Table(Patchable):
         """
         key_is_row_function = hasattr(key, '__call__')
 
-        def null_handler(row):
+        def sort_key(data):
+            row = data[1]
+
             if key_is_row_function:
                 k = key(row)
             else:
@@ -347,9 +367,16 @@ class Table(Patchable):
 
             return k
 
-        rows = sorted(self.rows, key=null_handler, reverse=reverse)
+        results = sorted(enumerate(self._rows), key=sort_key, reverse=reverse)
 
-        return self._fork(rows)
+        indices, rows = zip(*results)
+
+        if self._row_names:
+            row_names = [self._row_names[i] for i in indices]
+        else:
+            row_names = None
+
+        return self._fork(rows, row_names=row_names)
 
     @allow_tableset_proxy
     def limit(self, start_or_stop=None, stop=None, step=None):
@@ -366,9 +393,17 @@ class Table(Patchable):
         :returns: A new :class:`Table`.
         """
         if stop or step:
-            return self._fork(self.rows[slice(start_or_stop, stop, step)])
+            s = slice(start_or_stop, stop, step)
+        else:
+            s = slice(start_or_stop)
+        rows = self._rows[s]
 
-        return self._fork(self.rows[:start_or_stop])
+        if self._row_names:
+            row_names = self.row_names[s]
+        else:
+            row_names = None
+
+        return self._fork(rows, row_names=row_names)
 
     @allow_tableset_proxy
     def distinct(self, key=None):
@@ -386,7 +421,12 @@ class Table(Patchable):
         uniques = []
         rows = []
 
-        for row in self.rows:
+        if self._row_names:
+            row_names = []
+        else:
+            row_names = None
+
+        for i, row in enumerate(self.rows):
             if key_is_row_function:
                 k = key(row)
             elif key is None:
@@ -398,7 +438,10 @@ class Table(Patchable):
                 uniques.append(k)
                 rows.append(row)
 
-        return self._fork(rows)
+                if self._row_names:
+                    row_names.append(self._row_names[i])
+
+        return self._fork(rows, row_names=row_names)
 
     @allow_tableset_proxy
     def join(self, right_table, left_key, right_key=None, inner=False):
@@ -506,7 +549,7 @@ class Table(Patchable):
 
                 rows.append(new_row)
 
-        return Table(rows, zip(column_names, column_types), row_names=self.row_names)
+        return Table(rows, zip(column_names, column_types))
 
     @classmethod
     def merge(cls, tables):
@@ -528,7 +571,7 @@ class Table(Patchable):
 
         rows = chain(*[table.rows for table in tables])
 
-        return Table(rows, zip(column_names, column_types), row_names=tables[0].row_names)
+        return Table(rows, zip(column_names, column_types))
 
     @allow_tableset_proxy
     def group_by(self, key, key_name=None, key_type=None):
@@ -615,7 +658,7 @@ class Table(Patchable):
             new_columns = tuple(c.run(row) for c, n in computations)
             new_rows.append(tuple(row) + new_columns)
 
-        return Table(new_rows, zip(column_names, column_types), row_names=self.row_names)
+        return Table(new_rows, zip(column_names, column_types))
 
     @allow_tableset_proxy
     def counts(self, key, key_name=None, key_type=None):

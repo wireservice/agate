@@ -25,6 +25,8 @@ class Row(MappedSequence):
 
     :param column_names: The "keys" for this row.
     :param data: The "values" for this row.
+    :param name: A unique name used to refer to this access this row from its
+        :class:`.MappedSequence`.
     """
     #pylint: disable=E1101
 
