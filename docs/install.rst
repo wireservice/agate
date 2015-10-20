@@ -11,7 +11,7 @@ If you only want to use agate, install it this way::
 
 .. note::
 
-    Need more speed? If you're running Python 2.6, 2.7 or 3.2, you can :code:`pip install cdecimal` for a significant speed boost. This isn't installed automatically because it can create additional complications.
+    Need more speed? If you're running Python 2.6 or 2.7 or you can :code:`pip install cdecimal` for a significant speed boost. This isn't installed automatically because it can create additional complications.
 
 Developers
 ----------
@@ -36,10 +36,11 @@ Supported platforms
 
 agate supports the following versions of Python:
 
-* Python 2.6 (tests pass, but some dependencies claim not to support it)
+* Python 2.6 (provisional support: agate's tests pass, but some dependencies claim not to support it)
 * Python 2.7
 * Python 3.3
 * Python 3.4
-* Latest `PyPy <http://pypy.org/>`_
+* Python 3.5
+* `PyPy <http://pypy.org/>`_
 
 It is tested on OSX, but due to it's minimal dependencies should work fine on both Linux and Windows.
