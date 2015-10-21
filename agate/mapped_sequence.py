@@ -46,19 +46,19 @@ class MappedSequence(Sequence):
 
         return str(self.__unicode__())
 
-    def __getitem__(self, k):
+    def __getitem__(self, key):
         """
         Retrieve values from this array by index, by slice or by key.
         """
-        if isinstance(k, slice):
-            indices = range(*k.indices(len(self)))
+        if isinstance(key, slice):
+            indices = range(*key.indices(len(self)))
             values = self.values()
 
             return tuple(values[i] for i in indices)
-        elif isinstance(k, int):
-            return self.values()[k]
+        elif isinstance(key, int):
+            return self.values()[key]
         else:
-            return self.dict()[k]
+            return self.dict()[key]
 
     def __iter__(self):
         """
@@ -97,6 +97,15 @@ class MappedSequence(Sequence):
     @memoize
     def items(self):
         return tuple(zip(self.keys(), self.values()))
+
+    def get(self, key, default=None):
+        try:
+            return self.dict()[key]
+        except KeyError:
+            if default:
+                return default
+
+            raise
 
     @memoize
     def dict(self):
