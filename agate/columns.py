@@ -91,6 +91,14 @@ class Column(MappedSequence):
         """
         return sorted(self.values(), key=null_handler)
 
+    @memoize
+    def values_without_nulls_sorted(self):
+        """
+        Get the data contained in this column with any null values removed and
+        sorted.
+        """
+        return sorted(self.values_without_nulls(), key=null_handler)
+
     def aggregate(self, aggregation):
         """
         Apply a :class:`.Aggregation` to this column and return the result. If

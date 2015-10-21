@@ -21,8 +21,9 @@ from collections import defaultdict
 import math
 
 from agate.data_types import Boolean, Date, DateTime, Number, Text
-from agate.exceptions import DataTypeError, NullCalculationError, UnsupportedAggregationError
+from agate.exceptions import DataTypeError, UnsupportedAggregationError
 from agate.utils import Quantiles, max_precision, median
+from agate.warnings import warn_null_calculation
 
 class Aggregation(object): #pragma: no cover
     """
@@ -283,7 +284,7 @@ class Mean(Aggregation):
             raise DataTypeError('Mean can only be applied to columns containing Number data.')
 
         if column.aggregate(HasNulls()):
-            raise NullCalculationError
+            warn_null_calculation(self, column)
 
         return column.aggregate(Sum()) / len(column)
 
@@ -308,7 +309,7 @@ class Median(Aggregation):
             raise DataTypeError('Median can only be applied to columns containing Number data.')
 
         if column.aggregate(HasNulls()):
-            raise NullCalculationError
+            warn_null_calculation(self, column)
 
         return column.aggregate(Percentiles())[50]
 
@@ -330,9 +331,9 @@ class Mode(Aggregation):
             raise DataTypeError('Mode can only be applied to columns containing Number data.')
 
         if column.aggregate(HasNulls()):
-            raise NullCalculationError
+            warn_null_calculation(self, column)
 
-        data = column.values()
+        data = column.values_without_nulls()
         state = defaultdict(int)
 
         for n in data:
@@ -359,7 +360,7 @@ class IQR(Aggregation):
             raise DataTypeError('IQR can only be applied to columns containing Number data.')
 
         if column.aggregate(HasNulls()):
-            raise NullCalculationError
+            warn_null_calculation(self, column)
 
         percentiles = column.aggregate(Percentiles())
 
@@ -384,9 +385,9 @@ class Variance(Aggregation):
             raise DataTypeError('Variance can only be applied to columns containing Number data.')
 
         if column.aggregate(HasNulls()):
-            raise NullCalculationError
+            warn_null_calculation(self, column)
 
-        data = column.values()
+        data = column.values_without_nulls()
         mean = column.aggregate(Mean())
 
         return sum((n - mean) ** 2 for n in data) / (len(column) - 1)
@@ -410,9 +411,9 @@ class PopulationVariance(Variance):
             raise DataTypeError('PopulationVariance can only be applied to columns containing Number data.')
 
         if column.aggregate(HasNulls()):
-            raise NullCalculationError
+            warn_null_calculation(self, column)
 
-        data = column.values()
+        data = column.values_without_nulls()
         mean = column.aggregate(Mean())
 
         return sum((n - mean) ** 2 for n in data) / len(column)
@@ -476,9 +477,9 @@ class MAD(Aggregation):
             raise DataTypeError('MAD can only be applied to columns containing Number data.')
 
         if column.aggregate(HasNulls()):
-            raise NullCalculationError
+            warn_null_calculation(self, column)
 
-        data = column.values_sorted()
+        data = column.values_without_nulls_sorted()
         m = column.aggregate(Percentiles())[50]
 
         return median(tuple(abs(n - m) for n in data))
@@ -507,9 +508,9 @@ class Percentiles(Aggregation):
         :returns: An array of :class:`decimal.Decimal`.
         """
         if column.aggregate(HasNulls()):
-            raise NullCalculationError
+            warn_null_calculation(self, column)
 
-        data = column.values_sorted()
+        data = column.values_without_nulls_sorted()
 
         # Zeroth percentile is first datum
         quantiles = [data[0]]

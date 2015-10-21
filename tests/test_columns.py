@@ -102,6 +102,20 @@ class TestColumn(unittest.TestCase):
             [Decimal('1'), Decimal('2'), None]
         )
 
+    def test_values_without_nulls_sorted(self):
+        rows = (
+            (2, 2, 'a'),
+            (None, 3, 'b'),
+            (1, 4, 'c')
+        )
+
+        table = Table(rows, self.columns)
+
+        self.assertSequenceEqual(
+            table.columns['one'].values_without_nulls_sorted(),
+            [Decimal('1'), Decimal('2')]
+        )
+
     def test_aggregate(self):
         self.assertTrue(self.table.columns['one'].aggregate(HasNulls()))
         self.assertFalse(self.table.columns['two'].aggregate(HasNulls()))

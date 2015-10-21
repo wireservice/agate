@@ -48,9 +48,9 @@ def confessions(data):
 
 @proof.never_cache
 def median_age(data):
-    with_age = data['exonerations'].where(lambda row: row['age'] is not None)
+    # with_age = data['exonerations'].where(lambda row: row['age'] is not None)
 
-    median_age = with_age.columns['age'].aggregate(agate.Median())
+    median_age = data['exonerations'].columns['age'].aggregate(agate.Median())
 
     print('Median age at time of arrest: %i' % median_age)
 

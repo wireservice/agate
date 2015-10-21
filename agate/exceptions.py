@@ -4,14 +4,6 @@
 This module contains various exceptions raised by agate.
 """
 
-class NullCalculationError(ValueError):  # pragma: no cover
-    """
-    Exception raised if a calculation which can not logically
-    account for null values is attempted on a :class:`.Column` containing
-    nulls.
-    """
-    pass
-
 class DataTypeError(TypeError):  # pragma: no cover
     """
     Exception raised if a process, such as an :class:`.Aggregation`, is

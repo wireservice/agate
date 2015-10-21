@@ -23,7 +23,8 @@ if six.PY3:
 
 from agate.aggregations import HasNulls, Percentiles
 from agate.data_types import Date, DateTime, Number, TimeDelta
-from agate.exceptions import DataTypeError, NullCalculationError
+from agate.exceptions import DataTypeError
+from agate.warnings import warn_null_calculation
 
 class Computation(object): #pragma: no cover
     """
@@ -82,10 +83,10 @@ class Change(Computation):
                     raise ValueError('Specified columns must be of the same type')
 
                 if before_column.aggregate(HasNulls()):
-                    raise NullCalculationError
+                    warn_null_calculation(self, before_column)
 
                 if after_column.aggregate(HasNulls()):
-                    raise NullCalculationError
+                    warn_null_calculation(self, after_column)
 
                 return before_column
 
