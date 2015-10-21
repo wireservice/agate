@@ -1,6 +1,7 @@
 0.12.0
 ------
 
+* Table.from_csv now defaults to TypeTester() if column_info is not provided. (#324)
 * New tutorials section: "Navigating table data" (#315)
 * 100% test coverage reached. (#312)
 * NullCalculationError is now a warning instead of an error. (#311)

@@ -177,6 +177,7 @@ class TestTable(unittest.TestCase):
         table.csv = csvkit
 
         table1 = Table.from_csv('examples/test.csv', self.columns)
+
         with open('examples/test.csv') as fh:
             table2 = Table.from_csv(fh, self.columns)
 
@@ -189,6 +190,32 @@ class TestTable(unittest.TestCase):
             self.assertSequenceEqual(table1.rows[0], table2.rows[0])
             self.assertSequenceEqual(table1.rows[1], table2.rows[1])
             self.assertSequenceEqual(table1.rows[2], table2.rows[2])
+
+    def test_from_csv_type_tester(self):
+        import csvkit
+        from agate import table
+        table.csv = csvkit
+
+        tester = TypeTester()
+
+        table = Table.from_csv('examples/test.csv', tester)
+
+        self.assertEqual(len(table.columns), 3)
+        self.assertIsInstance(table.columns[0].data_type, Number)
+        self.assertIsInstance(table.columns[1].data_type, Number)
+        self.assertIsInstance(table.columns[2].data_type, Text)
+
+    def test_from_csv_default_type_tester(self):
+        import csvkit
+        from agate import table
+        table.csv = csvkit
+
+        table = Table.from_csv('examples/test.csv')
+
+        self.assertEqual(len(table.columns), 3)
+        self.assertIsInstance(table.columns[0].data_type, Number)
+        self.assertIsInstance(table.columns[1].data_type, Number)
+        self.assertIsInstance(table.columns[2].data_type, Text)
 
     def test_to_csv(self):
         table = Table(self.rows, self.columns)

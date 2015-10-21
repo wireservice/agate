@@ -177,7 +177,7 @@ class Table(Patchable):
         return Table(rows, column_info, row_names=row_names, _is_fork=True)
 
     @classmethod
-    def from_csv(cls, path, column_info, row_names=None, header=True, **kwargs):
+    def from_csv(cls, path, column_info=None, row_names=None, header=True, **kwargs):
         """
         Create a new table for a CSV. This method will use csvkit if it is
         available, otherwise it will use Python's builtin csv module.
@@ -188,13 +188,16 @@ class Table(Patchable):
         unicode-safe.
 
         :param path: Filepath or file-like object from which to read CSV data.
-        :param column_info: A sequence of pairs of column names and types. The latter
-            must be instances of :class:`.DataType`. Or, an instance of
-            :class:`.TypeTester` to infer types.
+        :param column_info: May be any valid input to :meth:`Table.__init__` or
+            an instance of :class:`.TypeTester`. Or, None, in which case a
+            generic :class:`.TypeTester` will be created.
         :param row_names: See :meth:`Table.__init__`.
         :param header: If `True`, the first row of the CSV is assumed to contains
             headers and will be skipped.
         """
+        if column_info is None:
+            column_info = TypeTester()
+
         use_inference = isinstance(column_info, TypeTester)
 
         if use_inference and not header:
