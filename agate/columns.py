@@ -40,12 +40,20 @@ class Column(MappedSequence):
         instances containing the data for this column.
     :param row_names: An optional list of row names (keys) for this column.
     """
-    def __init__(self, name, data_type, rows, row_names=None):
+    def __init__(self, index, name, data_type, rows, row_names=None):
+        self._index = index
         self._name = name
         self._data_type = data_type
         self._rows = rows
         self._row_names = row_names
         self._aggregate_cache = {}
+
+    @property
+    def index(self):
+        """
+        This column's index.
+        """
+        return self._index
 
     @property
     def name(self):
@@ -67,7 +75,7 @@ class Column(MappedSequence):
 
     @memoize
     def values(self):
-        return tuple(row[self._name] for row in self._rows)
+        return tuple(row[self._index] for row in self._rows)
 
     @memoize
     def values_without_nulls(self):
