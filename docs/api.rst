@@ -10,7 +10,9 @@ API
     api/columns
     api/computations
     api/exceptions
+    api/mapped_sequence
     api/rows
     api/table
     api/tableset
     api/utils
+    api/warns

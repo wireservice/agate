@@ -127,10 +127,75 @@ In either case the ``exonerations`` variable will now be an instance of :class:`
 
     If you have data that you've generated in another way you can always pass it in the :class:`.Table` constructor directly.
 
+Navigating table data
+=====================
+
+agate goes to great pains to make accessing the data in your tables work seamlessly for a wide variety of use-cases. Access by both :class:`.Column` and :class:`.Row` is supported, via the :attr:`.Table.columns` and :attr:`.Table.rows` attributes respectively.
+
+All four of these are examples of :class:`.MappedSequence`, the foundational type that underlies much of agate's functionality. A MappedSequence functions very similar to a Python :class:`dict`, with a few important exceptions:
+
+* Data may be accessed either by numeric index (e.g. column number) or by a non-integer key (e.g. column name).
+* They are ordered, just like an instance of :class:`collections.OrderedDict`.
+* Iterating over the sequence returns its *values*, rather than its *keys*.
+
+To demonstrate the first point, these two lines are both valid ways of getting the first column in the :code:`exonerations` table:
+
+.. code-block:: python
+
+    exonerations.columns['last_name']
+    exonerations.columns[0]
+
+In the same way, rows can be accessed either by numeric index or by an optional, unique "row name" specified when the table is created. In this tutorial we won't use row names, but here is an example of how they would work:
+
+.. code-block:: python
+
+    exonerations = agate.Table.from_csv('exonerations-20150828.csv', columns, row_names=lambda r: '%(last_name)s, %(first_name)s' % (row))
+
+    exonerations.rows[0]
+    exonerations.rows['Abbitt, Joseph Lamont']
+
+In this case we create our row names using a lambda function that takes a row and returns an unique identifer. If your data has a unique column, you also just pass the column name. (For example, a column of USPS abbrevations or FIPS codes.) Note, however, that your row names can never be :class:`int`, because that is reserved for indexing by numeric order. (A stringified integer is just fine.)
+
+Once you've got a specific row, you can then access its individual values (cells, in spreadsheet-speak) either by numeric index or column name:
+
+.. code-block:: python
+
+    row = exonerations.rows[0]
+
+    row[0]
+    row['last_name']
+
+And the same goes for columns, which can be indexed numerically or by row name (if you have one):
+
+.. code-block:: python
+
+    column = exonerations.columns['crime']
+
+    column[0]
+    column['Abbitt, Joseph Lamont']
+
+For any of these types, iteration over them returns their values, *in order*:
+
+.. code-block:: python
+
+    for row in exonerations.rows:
+        print(row['last_name'])
+
+::
+
+    Abbitt
+    Abdal
+    Abernathy
+    Acero
+    Adams
+    ...
+
+To summarize, the four most common parts of a Table (:class:`.Column`, :class:`.Row`, sequences of columns and sequences of rows) are all instances of :class:`.MappedSequence` and therefore all behave in a uniform way. This is also true of :class:`.TableSet`, which will get to later on.
+
 Aggregating column data
 =======================
 
-Analysis begins with questions, so that's how we'll learn about agate.
+With the basics out of the way, let's do some actual analysis. Analysis begins with questions, so that's how we'll learn about agate.
 
 Question: **How many exonerations involved a false confession?**
 
@@ -166,11 +231,17 @@ Answer:
 
 ::
 
-    agate.exceptions.NullComputationError
+    /Users/onyxfish/src/agate/agate/warns.py:17: NullCalculationWarning: Column "age" contains nulls. These will be excluded from Median calculation.
+      ), NullCalculationWarning)
+    /Users/onyxfish/src/agate/agate/warns.py:17: NullCalculationWarning: Column "age" contains nulls. These will be excluded from Percentiles calculation.
+      ), NullCalculationWarning)
+    26
 
-Apparently, not every exonerated individual in the data has a value for the ``age`` column. The :class:`.Median` statistical operation has no standard way of accounting for null values, so its caused an error.
+The answer to our question is "26 years old", however, as the warnings indicate, not every exonerated individual in the data has a value for the ``age`` column. The :class:`.Median` statistical operation has no standard way of accounting for null values, so it removes them before running the calculation. (If you're wondering about that ``Percentage`` warning, medians are calculated as the 50th percentile.)
 
 Question: **How many individuals do not have an age specified in the data?**
+
+In order to be more rigorous, we might want to first investigate and remove those individuals that don't have an age. (What if that's most of the dataset?)
 
 .. code-block:: python
 
@@ -184,28 +255,24 @@ Answer:
 
     9
 
-Only nine rows in this dataset don't have age, so it's still useful to compute a median, but to do this we'll need to filter out those null values first.
+Only nine rows in this dataset don't have age, so it's certainly still useful to compute a median. In the next section you'll see how we could filter these 9 rows out, if we needed to.
 
-Each column in :attr:`.Table.columns` is an instance of :class:`.Column`. As we've seen with :class:`.Median`, different aggregations can be applied depending on the type of data in the column and, in this case, the specific values.
-
-If none of the provided aggregations suit your needs you can also easily create your own by subclassing :class:`.Aggregation`. See the API documentation for :mod:`.aggregations` to see all of the implemented types.
+Different :mod:`.aggregations` can be applied depending on the type of data in each column. If none of the provided aggregations suit your needs you can use :class:`.Summary` to apply a function to a column. If that still doesn't suit your needs you can also create your own from scratch by subclassing :class:`.Aggregation`.
 
 Selecting and filtering data
 ============================
 
-So how can we answer our question about median age? First, we need to filter the data to only those rows that don't contain nulls.
+So what if those rows with no age were going to flummox our analysis? Agate's :class:`.Table` class provides a full suite of these SQL-like operations, including :meth:`.Table.select` for grabbing specific columns, :meth:`.Table.where` for selecting particular rows and :meth:`.Table.group_by` for grouping rows by common values.
 
-Agate's :class:`.Table` class provides a full suite of these "SQL-like" operations, including :meth:`.Table.select` for grabbing specific columns, :meth:`.Table.where` for selecting particular rows and :meth:`.Table.group_by` for grouping rows by common values.
-
-Let's filter our exonerations table to only those individuals that have an age specified.
+Let's use :meth:`.Table.where` to filter our exonerations table to only those individuals that have an age specified.
 
 .. code-block:: python
 
     with_age = exonerations.where(lambda row: row['age'] is not None)
 
-You'll notice we provide a :keyword:`lambda` (anonymous) function to the :meth:`.Table.where`. This function is applied to each row and if it returns ``True``, the row is included in the output table.
+You'll notice we provide a :keyword:`lambda` (anonymous) function to the :meth:`.Table.where`. This function is applied to each row and if it returns ``True``, then the row is included in the output table.
 
-A crucial thing to understand about these methods is that they return **new tables**. In our example above ``exonerations`` was a :class:`.Table` instance and we applied :meth:`.Table.where`, so ``with_age`` is a :class:`Table` too. The tables themselves are immutable. You can create new tables, but you can never modify them.
+A crucial thing to understand about these table methods is that they return **new tables**. In our example above ``exonerations`` was a :class:`.Table` instance and we applied :meth:`.Table.where`, so ``with_age`` is a :class:`Table` too. The tables themselves are immutable. You can create new tables with these methods, but you can't modify them in-place. (If this seems weird, just trust me. There are lots of good computer science-y reasons to do it this way.)
 
 We can verify this did what we expected by counting the rows in the original table and rows in the new table:
 
@@ -220,9 +287,9 @@ We can verify this did what we expected by counting the rows in the original tab
 
     9
 
-Nine rows were removed, which is how many we knew had nulls for the age column.
+Nine rows were removed, which is the number of nulls we had already identified were in the column.
 
-So, what **is** the median age of these individuals?
+Now if we calculate the median age of these individuals, we don't see the warning anymore.
 
 .. code-block:: python
 
@@ -237,13 +304,13 @@ So, what **is** the median age of these individuals?
 Computing new columns
 =====================
 
-In addition to "column-wise" calculations there are also "row-wise" calculations. These calculations go through a :class:`.Table` row-by-row and derive a new column using the existing data. To perform row calculations in agate we use subclasses of :class:`.Computation`.
+In addition to "column-wise" :mod:`.aggregations` there are also "row-wise" :mod:`.computations`. Computations go through a :class:`.Table` row-by-row and derive a new column using the existing data. To perform row computations in agate we use subclasses of :class:`.Computation`.
 
-When one or more instances of :class:`.Computation` are applied to a :class:`.Table`, a new table is created with additional columns.
+When one or more instances of :class:`.Computation` are applied with the :meth:`.Table.compute` method, a new table is created with additional columns.
 
 Question: **How long did individuals remain in prison before being exonerated?**
 
-To answer this question we will apply the :class:`.Change` computation to the ``convicted`` and ``exonerated`` columns. All that :class:`.Change` does is compute the difference between two numbers. (In this case each of these columns contains an integer year, but agate does have features for working with dates too.)
+To answer this question we will apply the :class:`.Change` computation to the ``convicted`` and ``exonerated`` columns. All that :class:`.Change` does is compute the difference between two numbers. (In this case each of these columns contain is :class:`.Number` type, but this will also work with :class:`.Date` or :class:`.DateTime`)
 
 .. code-block:: python
 
@@ -261,9 +328,9 @@ To answer this question we will apply the :class:`.Change` computation to the ``
 
 The median number of years an exonerated individual spent in prison was 8 years.
 
-Sometimes, the built-in computations, such as :class:`.Change` won't suffice. In this case, you can use the generic :class:`.Formula` to compute a column based on an arbitrary function. This is somewhat analogous to Excel's cell formulas.
+Sometimes, the built-in computations, such as :class:`.Change` won't suffice. In this case, you can use the generic :class:`.Formula` to compute new values based on an arbitrary function. This is somewhat analogous to Excel's cell formulas.
 
-For instance, this example will create a ``full_name`` column from the ``first_name`` and ``last_name`` columns in the data:
+For example, this code will create a ``full_name`` column from the ``first_name`` and ``last_name`` columns in the data:
 
 .. code-block:: python
 
@@ -271,7 +338,7 @@ For instance, this example will create a ``full_name`` column from the ``first_n
         (agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row), 'full_name')
     ])
 
-For efficiencies sake, agate allows you to perform several computations at once.
+For efficiency's sake, agate allows you to perform several computations at once.
 
 .. code-block:: python
 
@@ -279,6 +346,8 @@ For efficiencies sake, agate allows you to perform several computations at once.
         (agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row), 'full_name'),
         (agate.Change('convicted', 'exonerated'), 'years_in_prison')
     ])
+
+However, it should be noted that computations in the list can not depend on the values produced by those that came before. Each is applied to the original :class:`.Table`.
 
 If :class:`.Formula` still is not flexible enough (for instance, if you need to compute a new row based on the distribution of data in a column) you can always implement your own subclass of :class:`.Computation`. See the API documentation for :mod:`.computations` to see all of the supported ways to compute new data.
 

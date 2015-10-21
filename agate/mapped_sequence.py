@@ -12,7 +12,7 @@ try:
     from collections import OrderedDict
 except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
-    
+
 import six
 from six.moves import range #pylint: disable=W0622
 
@@ -21,7 +21,7 @@ from agate.utils import memoize
 class MappedSequence(Sequence):
     """
     A generic container for data that can be accessed either by numeric index
-    or by name. This is similar to an :class:`collections.OrderedDict` except
+    or by key. This is similar to an :class:`collections.OrderedDict` except
     that the keys are optional and iteration over it returns the values.
 
     :param rows: A sequence of :class:`Row` instances.
@@ -99,16 +99,28 @@ class MappedSequence(Sequence):
         return self.values().__contains__(value)
 
     def keys(self):
+        """
+        Equivalent to :meth:`collections.OrderedDict.keys`.
+        """
         return self._keys
 
     def values(self):
+        """
+        Equivalent to :meth:`collections.OrderedDict.values`.
+        """
         return self._values
 
     @memoize
     def items(self):
+        """
+        Equivalent to :meth:`collections.OrderedDict.items`.
+        """
         return tuple(zip(self.keys(), self.values()))
 
     def get(self, key, default=None):
+        """
+        Equivalent to :meth:`collections.OrderedDict.get`.
+        """
         try:
             return self.dict()[key]
         except KeyError:
@@ -120,7 +132,7 @@ class MappedSequence(Sequence):
     @memoize
     def dict(self):
         """
-        Get the contents of this column as an :class:`collections.OrderedDict`.
+        Retrieve the contents of this column as an :class:`collections.OrderedDict`.
         """
         if self.keys() is None:
             raise KeyError
