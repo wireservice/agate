@@ -20,7 +20,7 @@ from agate.columns import Column
 from agate.data_types import *
 from agate.exceptions import *
 from agate.rows import Row
-from agate.warnings import NullCalculationWarning
+from agate.warns import NullCalculationWarning
 
 class TestSimpleAggregation(unittest.TestCase):
     def setUp(self):
@@ -204,9 +204,10 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(self.table.columns['two'].aggregate(Max()), Decimal('4.1'))
 
     def test_mean(self):
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(Mean())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         with self.assertRaises(DataTypeError):
             self.table.columns['three'].aggregate(Mean())
@@ -214,9 +215,10 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(self.table.columns['two'].aggregate(Mean()), Decimal('3.2825'))
 
     def test_median(self):
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(Median())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         with self.assertRaises(DataTypeError):
             self.table.columns['three'].aggregate(Median())
@@ -224,9 +226,10 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(self.table.columns['two'].aggregate(Median()), Decimal('3.42'))
 
     def test_mode(self):
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(Mode())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         with self.assertRaises(DataTypeError):
             self.table.columns['three'].aggregate(Mode())
@@ -234,9 +237,10 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(self.table.columns['two'].aggregate(Mode()), Decimal('3.42'))
 
     def test_iqr(self):
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(IQR())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         with self.assertRaises(DataTypeError):
             self.table.columns['three'].aggregate(IQR())
@@ -244,9 +248,10 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(self.table.columns['two'].aggregate(IQR()), Decimal('0.955'))
 
     def test_variance(self):
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(Variance())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         with self.assertRaises(DataTypeError):
             self.table.columns['three'].aggregate(Variance())
@@ -254,9 +259,10 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(self.table.columns['two'].aggregate(Variance()).quantize(Decimal('0.0001')), Decimal('0.6332'))
 
     def test_population_variance(self):
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(PopulationVariance())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         with self.assertRaises(DataTypeError):
             self.table.columns['three'].aggregate(PopulationVariance())
@@ -264,9 +270,10 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(self.table.columns['two'].aggregate(PopulationVariance()).quantize(Decimal('0.0001')), Decimal('0.4749'))
 
     def test_stdev(self):
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(StDev())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         with self.assertRaises(DataTypeError):
             self.table.columns['three'].aggregate(StDev())
@@ -274,9 +281,10 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertAlmostEqual(self.table.columns['two'].aggregate(StDev()).quantize(Decimal('0.0001')), Decimal('0.7958'))
 
     def test_population_stdev(self):
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(PopulationStDev())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         with self.assertRaises(DataTypeError):
             self.table.columns['three'].aggregate(PopulationStDev())
@@ -284,9 +292,10 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertAlmostEqual(self.table.columns['two'].aggregate(PopulationStDev()).quantize(Decimal('0.0001')), Decimal('0.6891'))
 
     def test_mad(self):
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(MAD())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         with self.assertRaises(DataTypeError):
             self.table.columns['three'].aggregate(MAD())
@@ -294,9 +303,10 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertAlmostEqual(self.table.columns['two'].aggregate(MAD()), Decimal('0'))
 
     def test_percentiles(self):
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(Percentiles())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         rows = [(n,) for n in range(1, 1001)]
 
@@ -333,9 +343,10 @@ class TestNumberAggregation(unittest.TestCase):
         CDF quartile tests from:
         http://www.amstat.org/publications/jse/v14n3/langford.html#Parzen1979
         """
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(Quartiles())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         # N = 4
         rows = [(n,) for n in [1, 2, 3, 4]]
@@ -441,9 +452,10 @@ class TestNumberAggregation(unittest.TestCase):
             quartiles.locate(11)
 
     def test_quintiles(self):
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(Quintiles())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         rows = [(n,) for n in range(1, 1001)]
 
@@ -452,9 +464,10 @@ class TestNumberAggregation(unittest.TestCase):
         table.columns['ints'].aggregate(Quintiles())
 
     def test_deciles(self):
-        with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
             self.table.columns['one'].aggregate(Quintiles())
-            self.assertIs(w[-1].category, NullCalculationWarning)
 
         rows = [(n,) for n in range(1, 1001)]
 

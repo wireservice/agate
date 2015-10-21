@@ -23,7 +23,7 @@ import math
 from agate.data_types import Boolean, Date, DateTime, Number, Text
 from agate.exceptions import DataTypeError, UnsupportedAggregationError
 from agate.utils import Quantiles, max_precision, median
-from agate.warnings import warn_null_calculation
+from agate.warns import warn_null_calculation
 
 class Aggregation(object): #pragma: no cover
     """

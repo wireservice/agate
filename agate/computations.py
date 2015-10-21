@@ -24,7 +24,7 @@ if six.PY3:
 from agate.aggregations import HasNulls, Percentiles
 from agate.data_types import Date, DateTime, Number, TimeDelta
 from agate.exceptions import DataTypeError
-from agate.warnings import warn_null_calculation
+from agate.warns import warn_null_calculation
 
 class Computation(object): #pragma: no cover
     """
