@@ -53,6 +53,7 @@ class TestSimpleAggregation(unittest.TestCase):
         self.assertEqual(length.run.call_count, 1)
 
     def test_summary(self):
+        self.assertIsInstance(Summary(Boolean(), lambda r: r).get_aggregate_data_type(None), Boolean)
         self.assertEqual(self.table.columns['one'].aggregate(Summary(Boolean(), lambda c: 2 in c)), True)
         self.assertEqual(self.table.columns['one'].aggregate(Summary(Boolean(), lambda c: c.aggregate(Sum()) < 3)), False)
 
@@ -60,6 +61,7 @@ class TestSimpleAggregation(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.table.columns['one'].aggregate(Any())
 
+        self.assertIsInstance(Any().get_aggregate_data_type(None), Boolean)
         self.assertEqual(self.table.columns['one'].aggregate(Any(lambda d: d == 2)), True)
         self.assertEqual(self.table.columns['one'].aggregate(Any(lambda d: d == 5)), False)
 
@@ -67,6 +69,7 @@ class TestSimpleAggregation(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.table.columns['one'].aggregate(All())
 
+        self.assertIsInstance(All().get_aggregate_data_type(None), Boolean)
         self.assertEqual(self.table.columns['one'].aggregate(All(lambda d: d != 5)), True)
         self.assertEqual(self.table.columns['one'].aggregate(All(lambda d: d == 2)), False)
 
@@ -143,6 +146,8 @@ class TestDateTimeAggregation(unittest.TestCase):
         ]
 
         column = Column(0, 'test', DateTime(), rows)
+
+        self.assertIsInstance(Min().get_aggregate_data_type(column), DateTime)
         self.assertEqual(column.aggregate(Min()), datetime.datetime(1994, 3, 3, 6, 30))
 
     def test_max(self):
@@ -153,6 +158,8 @@ class TestDateTimeAggregation(unittest.TestCase):
         ]
 
         column = Column(0, 'test', DateTime(), rows)
+
+        self.assertIsInstance(Max().get_aggregate_data_type(column), DateTime)
         self.assertEqual(column.aggregate(Max()), datetime.datetime(1994, 3, 3, 6, 31))
 
 class TestNumberAggregation(unittest.TestCase):
@@ -213,6 +220,11 @@ class TestNumberAggregation(unittest.TestCase):
             self.table.columns['three'].aggregate(Mean())
 
         self.assertEqual(self.table.columns['two'].aggregate(Mean()), Decimal('3.2825'))
+
+    def test_mean_with_nulls(self):
+        warnings.simplefilter('ignore')
+
+        self.assertAlmostEqual(self.table.columns['one'].aggregate(Mean()), Decimal('2.16666666'))
 
     def test_median(self):
         warnings.simplefilter('error')

@@ -114,6 +114,12 @@ class TestMappedSequence(unittest.TestCase):
             'three': 'c'
         })
 
+    def test_dict_no_keys(self):
+        row = MappedSequence(self.data)
+
+        with self.assertRaises(KeyError):
+            row.dict()
+
     def test_iterate(self):
         it = iter(self.row)
 

@@ -2,6 +2,7 @@
 
 import datetime
 from decimal import Decimal
+import warnings
 
 try:
     import unittest2 as unittest
@@ -12,6 +13,7 @@ from agate import Table
 from agate.data_types import *
 from agate.computations import *
 from agate.exceptions import *
+from agate.warns import NullCalculationWarning
 
 class TestTableComputation(unittest.TestCase):
     def setUp(self):
@@ -43,8 +45,6 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 4)
         self.assertEqual(len(new_table.columns), 5)
 
-        to_one_place = lambda d: d.quantize(Decimal('0.1'))
-
         self.assertSequenceEqual(new_table.rows[0], ('a', Decimal('2'), Decimal('3'), Decimal('4'), Decimal('1')))
         self.assertEqual(new_table.columns['test'][0], Decimal('1'))
         self.assertEqual(new_table.columns['test'][1], Decimal('2'))
@@ -68,6 +68,53 @@ class TestTableComputation(unittest.TestCase):
             table.compute([
                 (Change('number', 'date'), 'test')
             ])
+
+    def test_changed_invalid_types(self):
+        rows = (
+            (False, True),
+            (True, False)
+        )
+
+        columns = (
+            ('before', Boolean()),
+            ('after', Boolean())
+        )
+
+        table = Table(rows, columns)
+
+        with self.assertRaises(DataTypeError):
+            table.compute([
+                (Change('before', 'after'), 'test')
+            ])
+
+    def test_change_nulls(self):
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
+            new_table = self.table.compute([
+                (Change('three', 'four'), 'test')
+            ])
+
+        with self.assertRaises(NullCalculationWarning):
+            new_table = self.table.compute([
+                (Change('four', 'three'), 'test')
+            ])
+
+        warnings.simplefilter('ignore')
+
+        new_table = self.table.compute([
+            (Change('three', 'four'), 'test')
+        ])
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', Decimal('2'), Decimal('3'), Decimal('4'), Decimal('1')))
+        self.assertEqual(new_table.columns['test'][0], Decimal('1'))
+        self.assertEqual(new_table.columns['test'][1], None)
+        self.assertEqual(new_table.columns['test'][2], None)
+        self.assertEqual(new_table.columns['test'][3], None)
 
     def test_percent_change(self):
         new_table = self.table.compute([

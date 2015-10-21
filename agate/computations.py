@@ -108,7 +108,13 @@ class Change(Computation):
         self._validate(table)
 
     def run(self, row):
-        return row[self._after_column_name] - row[self._before_column_name]
+        before = row[self._before_column_name]
+        after = row[self._after_column_name]
+
+        if before and after:
+            return after - before
+
+        return None
 
 class PercentChange(Computation):
     """

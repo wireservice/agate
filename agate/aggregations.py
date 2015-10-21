@@ -286,7 +286,7 @@ class Mean(Aggregation):
         if column.aggregate(HasNulls()):
             warn_null_calculation(self, column)
 
-        return column.aggregate(Sum()) / len(column)
+        return column.aggregate(Sum()) / len(column.values_without_nulls())
 
 class Median(Aggregation):
     """
@@ -390,7 +390,7 @@ class Variance(Aggregation):
         data = column.values_without_nulls()
         mean = column.aggregate(Mean())
 
-        return sum((n - mean) ** 2 for n in data) / (len(column) - 1)
+        return sum((n - mean) ** 2 for n in data) / (len(data) - 1)
 
 class PopulationVariance(Variance):
     """
@@ -416,7 +416,7 @@ class PopulationVariance(Variance):
         data = column.values_without_nulls()
         mean = column.aggregate(Mean())
 
-        return sum((n - mean) ** 2 for n in data) / len(column)
+        return sum((n - mean) ** 2 for n in data) / len(data)
 
 class StDev(Aggregation):
     """

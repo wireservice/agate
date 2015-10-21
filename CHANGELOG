@@ -1,6 +1,7 @@
 0.12.0
 ------
 
+* 100% test coverage reached. (#312)
 * NullCalculationError is now a warning instead of an error. (#311)
 * TableSet is now a subclass of MappedSequence.
 * Rows and Columns are now subclasses of MappedSequence.

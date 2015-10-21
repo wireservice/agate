@@ -18,6 +18,7 @@ import six
 
 from agate.aggregations import Min, Max, MaxLength
 from agate.data_types import Number, Text
+from agate.exceptions import DataTypeError
 from agate.utils import max_precision, make_number_formatter, round_limits
 
 #: Character to render for horizontal lines
@@ -154,7 +155,7 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
     value_column = table.columns[value_column_name]
 
     if not isinstance(value_column.data_type, Number):
-        raise ValueError('Only Number data is supported for bar chart values.')
+        raise DataTypeError('Only Number data is supported for bar chart values.')
 
     output = output
     width = width

@@ -801,7 +801,7 @@ class Table(Patchable):
                 except KeyError:
                     bins[None] = Decimal('1')
 
-                continue
+                continue    # pragma: no cover
 
             i = 1
 

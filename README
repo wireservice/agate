@@ -1,4 +1,4 @@
-agate is a Python data analysis library designed for humans working in the real world. It is an alternative to numpy and pandas that is optimized for making humans faster at working with normal-sized datasets.
+agate is a Python data analysis library that is optimized for humans instead of machines. It is an alternative to numpy and pandas that helps you solve real-world problems with much simpler code.
 
 agate was previously known as journalism.
 

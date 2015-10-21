@@ -10,14 +10,14 @@ About
 Why agate?
 ==========
 
-* A clean and user-friendly API.
-* A full set of SQL-like operations.
+* A readable and user-friendly API.
+* A robust set of SQL-like operations.
 * Unicode support everywhere.
 * Decimal precision everywhere.
-* Exhaustive test coverage.
-* Thorough user documentation.
-* Self-documenting code patterns.
-* Pluggable extensions that add `SQL integration <http://agate-sql.readthedocs.org/>`_, etc.
+* 100% test coverage.
+* Detailed end-user documentation.
+* Encourages self-documenting code patterns.
+* Pluggable extensions to add `SQL integration <http://agate-sql.readthedocs.org/>`_, etc.
 * Pure Python. No huge C dependencies to compile.
 * Zealously `zen <https://www.python.org/dev/peps/pep-0020/>`_.
 

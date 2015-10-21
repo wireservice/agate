@@ -19,6 +19,7 @@ from six.moves import range
 from agate import Table, TableSet
 from agate.data_types import *
 from agate.computations import Formula
+from agate.exceptions import DataTypeError
 
 class TestTable(unittest.TestCase):
     def setUp(self):
@@ -92,6 +93,16 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
         self.assertSequenceEqual(table.rows[1], (2, None, None))
         self.assertSequenceEqual(table.rows[2], (None, 2, None))
+
+    def test_row_too_long(self):
+        rows = (
+            (1, 4, 'a', 'foo'),
+            (2,),
+            (None, 2)
+        )
+
+        with self.assertRaises(ValueError):
+            Table(rows, self.columns)
 
     def test_row_names(self):
         table = Table(self.rows, self.columns, row_names='three')
@@ -744,6 +755,12 @@ class TestPrettyPrint(unittest.TestCase):
 
         table = Table(rows, self.columns)
         table.print_bars('three', 'one')
+
+    def test_print_bars_invalid_values(self):
+        table = Table(self.rows, self.columns)
+
+        with self.assertRaises(DataTypeError):
+            table.print_bars('one', 'three')
 
 class TestTableGrouping(unittest.TestCase):
     def setUp(self):
