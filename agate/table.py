@@ -643,7 +643,7 @@ class Table(Patchable):
         for group, rows in groups.items():
             output[group] = self._fork(rows)
 
-        return TableSet(output, key_name=key_name, key_type=key_type)
+        return TableSet(output.values(), output.keys(), key_name=key_name, key_type=key_type)
 
     @allow_tableset_proxy
     def compute(self, computations):

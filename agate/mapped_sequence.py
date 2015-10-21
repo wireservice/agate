@@ -23,8 +23,12 @@ class MappedSequence(Sequence):
     :param row_alias: See :meth:`.Table.__init__`.
     """
     def __init__(self, values, keys=None):
-        self._values = values
-        self._keys = keys
+        self._values = tuple(values)
+
+        if keys is not None:
+            self._keys = tuple(keys)
+        else:
+            self._keys = None
 
     def __unicode__(self):
         """
@@ -55,7 +59,8 @@ class MappedSequence(Sequence):
             values = self.values()
 
             return tuple(values[i] for i in indices)
-        elif isinstance(key, int):
+        # Note: can't use isinstance because bool is a subclass of int
+        elif type(key) is int:
             return self.values()[key]
         else:
             return self.dict()[key]
@@ -112,7 +117,7 @@ class MappedSequence(Sequence):
         """
         Get the contents of this column as an :class:`collections.OrderedDict`.
         """
-        if not self.keys():
+        if self.keys() is None:
             raise KeyError
 
         return OrderedDict(self.items())

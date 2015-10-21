@@ -57,12 +57,12 @@ class TestTableSet(unittest.TestCase):
         ])
 
     def test_create_tableset(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         self.assertEqual(len(tableset), 3)
 
     def test_from_csv(self):
-        tableset1 = TableSet(self.tables)
+        tableset1 = TableSet(self.tables.values(), self.tables.keys())
         tableset2 = TableSet.from_csv('examples/tableset', self.columns)
 
         self.assertSequenceEqual(tableset1.column_names, tableset2.column_names)
@@ -79,7 +79,7 @@ class TestTableSet(unittest.TestCase):
             self.assertSequenceEqual(tableset1[name].rows[2], tableset2[name].rows[2])
 
     def test_to_csv(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         tableset.to_csv('.test-tableset')
 
@@ -95,17 +95,17 @@ class TestTableSet(unittest.TestCase):
         shutil.rmtree('.test-tableset')
 
     def test_get_column_types(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         self.assertSequenceEqual(tableset.column_types, [t for n, t in self.columns])
 
     def test_get_column_names(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         self.assertSequenceEqual(tableset.column_names, [n for n, t in self.columns])
 
     def test_merge(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         table = tableset.merge()
 
@@ -118,7 +118,7 @@ class TestTableSet(unittest.TestCase):
         self.assertSequenceEqual(table.rows[8], ['table3', 'c', 3])
 
     def test_merge_key_name(self):
-        tableset = TableSet(self.tables, key_name='foo')
+        tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='foo')
 
         table = tableset.merge()
 
@@ -127,7 +127,7 @@ class TestTableSet(unittest.TestCase):
         self.assertSequenceEqual(table.column_types[1:], [self.text_type, self.number_type])
 
     def test_compute(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_tableset = tableset.compute([
             (Formula(self.text_type, lambda r: '%(letter)s-%(number)i' % r), 'new_column')
@@ -157,7 +157,7 @@ class TestTableSet(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], ('c', 3, 'c-3'))
 
     def test_select(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_tableset = tableset.select(['number'])
 
@@ -168,7 +168,7 @@ class TestTableSet(unittest.TestCase):
             self.assertSequenceEqual(new_table._column_names, ('number',))
 
     def test_aggregate_key_name(self):
-        tableset = TableSet(self.tables, key_name='test')
+        tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
 
         new_table = tableset.aggregate([
             ('number', Length(), 'count')
@@ -188,7 +188,7 @@ class TestTableSet(unittest.TestCase):
             (3, Table(self.table3, self.columns))
         ])
 
-        tableset = TableSet(tables, key_name='test', key_type=self.number_type)
+        tableset = TableSet(tables.values(), tables.keys(), key_name='test', key_type=self.number_type)
 
         new_table = tableset.aggregate([
             ('number', Length(), 'count')
@@ -202,7 +202,7 @@ class TestTableSet(unittest.TestCase):
         self.assertIsInstance(new_table._column_types[1], Number)
 
     def test_aggregate_row_names(self):
-        tableset = TableSet(self.tables, key_name='test')
+        tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
 
         new_table = tableset.aggregate([
             ('number', Length(), 'count')
@@ -214,7 +214,7 @@ class TestTableSet(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows['table3'], ['table3', 3])
 
     def test_aggregate_sum(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_table = tableset.aggregate([
             ('number', Length(), 'count'),
@@ -230,7 +230,7 @@ class TestTableSet(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], ('table3', 3, 6))
 
     def test_aggregate_min(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_table = tableset.aggregate([
             ('number', Length(), 'count'),
@@ -247,7 +247,7 @@ class TestTableSet(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], ('table3', 3, 1))
 
     def test_aggregate_two_ops(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_table = tableset.aggregate([
             ('number', Length(), 'count'),
@@ -264,7 +264,7 @@ class TestTableSet(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], ('table3', 3, 6, 2))
 
     def test_aggregate_max_length(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_table = tableset.aggregate([
             ('letter', Length(), 'count'),
@@ -280,13 +280,13 @@ class TestTableSet(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[2], ('table3', 3, 1))
 
     def test_aggregate_sum_invalid(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         with self.assertRaises(DataTypeError):
             tableset.aggregate([('letter', Sum(), 'letter_sum')])
 
     def test_aggregeate_bad_column(self):
-        tableset = TableSet(self.tables)
+        tableset = TableSet(self.tables.values(), self.tables.keys())
 
         with self.assertRaises(KeyError):
             tableset.aggregate([('one', Sum(), 'one_sum')])
@@ -295,7 +295,7 @@ class TestTableSet(unittest.TestCase):
             tableset.aggregate([('bad', Sum(), 'bad_sum')])
 
     def test_nested(self):
-        tableset = TableSet(self.tables, key_name='test')
+        tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
 
         nested = tableset.group_by('letter')
 
@@ -314,7 +314,7 @@ class TestTableSet(unittest.TestCase):
         self.assertEqual(len(nested['table1']['a'].rows), 2)
 
     def test_nested_aggregation(self):
-        tableset = TableSet(self.tables, key_name='test')
+        tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
 
         nested = tableset.group_by('letter')
 
@@ -339,7 +339,7 @@ class TestTableSet(unittest.TestCase):
         self.assertSequenceEqual(results.rows[6], ('table3', 'c', 1, 3))
 
     def test_nested_aggregate_row_names(self):
-        tableset = TableSet(self.tables, key_name='test')
+        tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
 
         nested = tableset.group_by('letter')
 
@@ -363,7 +363,7 @@ class TestTableSet(unittest.TestCase):
     def test_proxy_maintains_key(self):
         number_type = Number()
 
-        tableset = TableSet(self.tables, key_name='foo', key_type=number_type)
+        tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='foo', key_type=number_type)
 
         self.assertEqual(tableset.key_name, 'foo')
         self.assertEqual(tableset.key_type, number_type)
@@ -372,3 +372,9 @@ class TestTableSet(unittest.TestCase):
 
         self.assertEqual(new_tableset.key_name, 'foo')
         self.assertEqual(new_tableset.key_type, number_type)
+
+    def test_proxy_invalid(self):
+        tableset = TableSet(self.tables.values(), self.tables.keys())
+
+        with self.assertRaises(AttributeError):
+            tableset.foo()

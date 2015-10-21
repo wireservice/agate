@@ -36,6 +36,7 @@ except ImportError: # pragma: no cover
     from ordereddict import OrderedDict
 
 from agate.data_types import Text, TypeTester
+from agate.mapped_sequence import MappedSequence
 from agate.rows import Row
 from agate.table import Table
 from agate.utils import Patchable
@@ -50,18 +51,19 @@ class TableMethodProxy(object):
         self.method_name = method_name
 
     def __call__(self, *args, **kwargs):
-        groups = OrderedDict()
+        tables = []
 
-        for key, value in self.tableset._tables.items():
-            groups[key] = getattr(value, self.method_name)(*args, **kwargs)
+        for table in self.tableset:
+            tables.append(getattr(table, self.method_name)(*args, **kwargs))
 
         return TableSet(
-            groups,
+            tables,
+            self.tableset.keys(),
             key_name=self.tableset.key_name,
             key_type=self.tableset.key_type
         )
 
-class TableSet(Mapping, Patchable):
+class TableSet(MappedSequence, Patchable):
     """
     An group of named tables with identical column definitions. Supports
     (almost) all the same operations as :class:`.Table`. When executed on a
@@ -70,45 +72,45 @@ class TableSet(Mapping, Patchable):
     that would have returned a single value instead returns a dictionary of
     values.
 
-    :param tables: A dictionary of string keys and :class:`Table` values.
+    TableSet is implemented as a subclass of :class:`.MappedSequence`
+
+    :param tables: A sequence :class:`Table` instances.
+    :param keys: A sequence of keys corresponding to the tables. These may be
+        any type except :class:`int`.
     :param key_name: A name that describes the grouping properties. Used as
         the column header when the groups are aggregated. Defaults to the
         column name that was grouped on.
     :param key_type: An instance some subclass of :class:`.DataType`. If not
         provided it will default to a :class`.Text`.
     """
-    def __init__(self, group, key_name='group', key_type=None):
+    def __init__(self, tables, keys, key_name='group', key_type=None):
+        tables = tuple(tables)
+        keys = tuple(keys)
+
         self._key_name = key_name
         self._key_type = key_type or Text()
-
-        # Note: list call is a workaround for Python 3 "ValuesView"
-        self._sample_table = tuple(group.values())[0]
+        self._sample_table = tables[0]
 
         while isinstance(self._sample_table, TableSet):
-            self._sample_table = tuple(self._sample_table.values())[0]
+            self._sample_table = self._sample_table[0]
 
         self._column_types = self._sample_table.column_types
         self._column_names = self._sample_table.column_names
 
-        for table in group.values():
+        for table in tables:
             if table.column_types != self.column_types:
                 raise ValueError('Not all tables have the same column types!')
 
             if table.column_names != self.column_names:
                 raise ValueError('Not all tables have the same column names!')
 
-        self._tables = copy(group)
-
-    def __getitem__(self, k):
-        return self._tables.__getitem__(k)
-
-    def __iter__(self):
-        return self._tables.__iter__()
-
-    def __len__(self):
-        return self._tables.__len__()
+        MappedSequence.__init__(self, tables, keys)
 
     def __getattr__(self, name):
+        """
+        Proxy method access to :class:`Table` methods via instances of
+        :class:`TableMethodProxy` that are created on-demand.
+        """
         if name in self.__dict__:
             return self.__dict__[name]
 
@@ -117,7 +119,7 @@ class TableSet(Mapping, Patchable):
             if Table.__dict__[name].allow_tableset_proxy:
                 return TableMethodProxy(self, name)
 
-        return super(TableSet, self).__getattr__(name)
+        raise AttributeError
 
     @property
     def key_name(self):
@@ -180,7 +182,7 @@ class TableSet(Mapping, Patchable):
 
             tables[name] = table
 
-        return TableSet(tables)
+        return TableSet(tables.values(), tables.keys())
 
     def to_csv(self, dir_path, **kwargs):
         """
@@ -198,7 +200,7 @@ class TableSet(Mapping, Patchable):
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
 
-        for name, table in self._tables.items():
+        for name, table in self.items():
             path = os.path.join(dir_path, '%s.csv' % name)
 
             table.to_csv(path, **kwargs)
@@ -255,8 +257,8 @@ class TableSet(Mapping, Patchable):
         output = []
 
         # Process nested TableSet's
-        if isinstance(list(self._tables.values())[0], TableSet):
-            for key, tableset in self._tables.items():
+        if isinstance(self._values[0], TableSet):
+            for key, tableset in self.items():
                 column_names, column_types, nested_output, row_name_columns = tableset._aggregate(aggregations)
 
                 for row in nested_output:
@@ -279,7 +281,7 @@ class TableSet(Mapping, Patchable):
                 column_names.append(new_column_name)
                 column_types.append(aggregation.get_aggregate_data_type(c))
 
-            for name, table in self._tables.items():
+            for name, table in self.items():
                 new_row = [name]
 
                 for column_name, aggregation, new_column_name in aggregations:

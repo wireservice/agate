@@ -791,11 +791,11 @@ class TestTableGrouping(unittest.TestCase):
         self.assertEqual(tableset.key_name, 'two')
         self.assertIsInstance(tableset.key_type, Number)
 
-        self.assertIn(2, tableset.keys())
-        self.assertIn(3, tableset.keys())
+        self.assertIn(Decimal('2'), tableset.keys())
+        self.assertIn(Decimal('3'), tableset.keys())
 
-        self.assertSequenceEqual(tableset[2].columns['one'], ('a', 'a'))
-        self.assertSequenceEqual(tableset[3].columns['one'], (None, 'b'))
+        self.assertSequenceEqual(tableset[Decimal('2')].columns['one'], ('a', 'a'))
+        self.assertSequenceEqual(tableset[Decimal('3')].columns['one'], (None, 'b'))
 
     def test_group_by_key_name(self):
         table = Table(self.rows, self.columns)
