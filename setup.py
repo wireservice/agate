@@ -19,7 +19,7 @@ setup(
     description='A Python data analysis library designed for humans working in the real world.',
     long_description=open('README').read(),
     author='Christopher Groskopf',
-    author_email='staringmonkey@gmail.com',
+    author_email='chrisgroskopf@gmail.com',
     url='http://agate.readthedocs.org/',
     license='MIT',
     classifiers=[
