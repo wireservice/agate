@@ -15,7 +15,8 @@ Why agate?
 * Unicode support everywhere.
 * Decimal precision everywhere.
 * Detailed end-user documentation.
-* Pluggable extensions to add `SQL integration <http://agate-sql.readthedocs.org/>`_, etc.
+* Pluggable extensions to add `SQL integration <http://agate-sql.readthedocs.org/>`_, `statistical methods <http://agate-stats.readthedocs.org/>`_, etc.
+* Designed with `iPython <http://ipython.org/>`_, `Jupyter <https://jupyter.org/>`_ and `atom/hydrogen <https://atom.io/packages/hydrogen>`_ in mind.
 * Pure Python. No huge C dependencies to compile.
 * 100% test coverage.
 * Zealously `zen <https://www.python.org/dev/peps/pep-0020/>`_.

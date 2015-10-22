@@ -44,3 +44,7 @@ agate supports the following versions of Python:
 * `PyPy <http://pypy.org/>`_
 
 It is tested on OSX, but due to it's minimal dependencies should work fine on both Linux and Windows.
+
+.. note::
+
+    `iPython <http://ipython.org/>`_ or `Jupyter <https://jupyter.org/>`_ user? Agate works great there too.
