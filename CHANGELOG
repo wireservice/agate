@@ -2,14 +2,15 @@
 ------
 
 * Table.from_csv now defaults to TypeTester() if column_info is not provided. (#324)
-* New tutorials section: "Navigating table data" (#315)
+* New tutorial section: "Navigating table data" (#315)
 * 100% test coverage reached. (#312)
 * NullCalculationError is now a warning instead of an error. (#311)
 * TableSet is now a subclass of MappedSequence.
 * Rows and Columns are now subclasses of MappedSequence.
-* Column.get_data_without_nulls() renamed Column.values_without_nulls().
-* Column.get_data_sorted() renamed Column.values_sorted().
-* Column.get_data() renamed Column.values().
+* Add Column.values_without_nulls_sorted().
+* Column.get_data_without_nulls() is now Column.values_without_nulls().
+* Column.get_data_sorted() is now Column.values_sorted().
+* Column.get_data() is now Column.values().
 * Columns can now be sliced.
 * Columns can now be indexed by row name. (#301)
 * Added support for Python 3.5.
@@ -20,7 +21,6 @@
 * Removed unnecessary custom RowIterator, ColumnIterator and CellIterator.
 * Performance improvements for Table "forks". (where, limit, etc)
 * TableSet keys are now converted to row names during aggregation. (#291)
-* Simplified implementation of Row for speed and consistency. No API changes.
 * Removed fancy __repr__ implementations. Use __str__ instead. (#290)
 * Rows can now be accessed by name as well as index. (#282)
 * Added row_names argument to Table constructor. (#282)
