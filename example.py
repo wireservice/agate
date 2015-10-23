@@ -8,13 +8,17 @@ tester = agate.TypeTester(force={
 
 table = agate.Table.from_csv('examples/realdata/ks_1033_data.csv', tester)
 
+# Question 1: What was the total cost to Kansas City area counties?
+
 # Filter to counties containing Kansas City
 kansas_city = table.where(lambda r: r['county'] in ('JACKSON', 'CLAY', 'CASS', 'PLATTE'))
 
 # Sum total_cost of four counties
 print('Total for Kansas City area: %i' % kansas_city.columns['total_cost'].aggregate(agate.Sum()))
 
-# Group by countys
+# Question 2: Which counties spent the most?
+
+# Group by counties
 counties = table.group_by('county')
 
 # Aggregate totals for all counties
@@ -29,19 +33,22 @@ print('Five most spendy counties:')
 
 totals.print_table(5)
 
-# Get the most recent purchases
+# Question 3: What are the most recent purchases?
+
 recent = table.order_by('ship_date', reverse=True)
 
 print('Five most recent purchases:')
 
 recent.print_table(5, 5)
 
-# Calculate the standard of deviation for the total_costs
+# Question 4: What is the standard of deviation of the cost of all purchases?
+
 stdev = table.columns['total_cost'].aggregate(agate.StDev())
 
 print('Standard deviation of total_cost: %.2f' % stdev)
 
-# How many roborts were purchased?
+# Question 5: How many robots were purchased?
+
 robots = table.where(lambda r: 'ROBOT' in (r['item_name'] or [])).columns['quantity'].aggregate(agate.Sum())
 
 print('Number of robots purchased: %i' % robots)
