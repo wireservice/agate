@@ -236,9 +236,12 @@ class Table(Patchable):
         if 'lineterminator' not in kwargs:
             kwargs['lineterminator'] = '\n'
 
+        close = True
+
         try:
             if hasattr(path, 'write'):
                 f = path
+                close = False
             else:
                 f = open(path, 'w')
 
@@ -249,7 +252,8 @@ class Table(Patchable):
             for row in self._rows:
                 writer.writerow(row)
         finally:
-            f.close()
+            if close:
+                f.close()
 
     @property
     def column_types(self):

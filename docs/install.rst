@@ -21,7 +21,13 @@ If you are a developer that also wants to hack on agate, install it this way::
     git clone git://github.com/onyxfish/agate.git
     cd agate
     mkvirtualenv agate
-    pip install -r requirements.txt
+
+    # If running Python 2
+    pip install -r requirements-py2.txt
+
+    # If running Python 3
+    pip install -r requirements-py3.txt
+
     python setup.py develop
     tox
 
