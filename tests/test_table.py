@@ -1005,6 +1005,41 @@ class TestTableJoin(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 3, 'b'))
         self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', 2, 'c'))
 
+    def test_join_match_multiple(self):
+        left_rows = (
+            (1, 4, 'a'),
+            (2, 3, 'b')
+        )
+
+        right_rows = (
+            (1, 1, 'a'),
+            (1, 2, 'a'),
+            (2, 2, 'b')
+        )
+
+        left = Table(left_rows, self.left_columns)
+        right = Table(right_rows, self.right_columns)
+        new_table = left.join(right, 'one', 'five')
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertEqual(new_table.columns[0].name, 'one')
+        self.assertEqual(new_table.columns[1].name, 'two')
+        self.assertEqual(new_table.columns[2].name, 'three')
+        self.assertEqual(new_table.columns[3].name, 'four')
+        self.assertEqual(new_table.columns[4].name, 'six')
+
+        self.assertIsInstance(new_table.columns[0].data_type, Number)
+        self.assertIsInstance(new_table.columns[1].data_type, Number)
+        self.assertIsInstance(new_table.columns[2].data_type, Text)
+        self.assertIsInstance(new_table.columns[3].data_type, Number)
+        self.assertIsInstance(new_table.columns[4].data_type, Text)
+
+        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 1, 'a'))
+        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 1, 'a'))
+        self.assertSequenceEqual(new_table.rows[2], (2, 3, 'b', 2, 'b'))
+
     def test_join2(self):
         new_table = self.left.join(self.right, 'one', 'five')
 

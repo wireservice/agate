@@ -526,10 +526,10 @@ class Table(Patchable):
         right_hash = {}
 
         for i, value in enumerate(right_data):
-            if value not in []:
+            if value not in right_hash:
                 right_hash[value] = []
 
-            right_hash[value].append(self._rows[i])
+            right_hash[value].append(right_table._rows[i])
 
         # Collect new rows
         rows = []
@@ -541,13 +541,13 @@ class Table(Patchable):
 
         # Iterate over left column
         for left_index, left_value in enumerate(left_data):
-            new_row = list(self._rows[left_index])
-
             matching_rows = right_hash.get(left_value, None)
 
             # Rows with matches
             if matching_rows:
                 for right_row in matching_rows:
+                    new_row = list(self._rows[left_index])
+
                     for k, v in enumerate(right_row):
                         if k == right_key_index:
                             continue
@@ -560,6 +560,8 @@ class Table(Patchable):
                         row_names.append(self._row_names[left_index])
             # Rows without matches
             elif not inner:
+                new_row = list(self._rows[left_index])
+                
                 for k, v in enumerate(right_table.column_names):
                     if k == right_key_index:
                         continue
