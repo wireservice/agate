@@ -989,6 +989,18 @@ class TestTableJoin(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 5)
 
+        self.assertEqual(new_table.columns[0].name, 'one')
+        self.assertEqual(new_table.columns[1].name, 'two')
+        self.assertEqual(new_table.columns[2].name, 'three')
+        self.assertEqual(new_table.columns[3].name, 'five')
+        self.assertEqual(new_table.columns[4].name, 'six')
+
+        self.assertIsInstance(new_table.columns[0].data_type, Number)
+        self.assertIsInstance(new_table.columns[1].data_type, Number)
+        self.assertIsInstance(new_table.columns[2].data_type, Text)
+        self.assertIsInstance(new_table.columns[3].data_type, Number)
+        self.assertIsInstance(new_table.columns[4].data_type, Text)
+
         self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 4, 'a'))
         self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 3, 'b'))
         self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', 2, 'c'))
@@ -998,6 +1010,18 @@ class TestTableJoin(unittest.TestCase):
 
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 5)
+
+        self.assertEqual(new_table.columns[0].name, 'one')
+        self.assertEqual(new_table.columns[1].name, 'two')
+        self.assertEqual(new_table.columns[2].name, 'three')
+        self.assertEqual(new_table.columns[3].name, 'four')
+        self.assertEqual(new_table.columns[4].name, 'six')
+
+        self.assertIsInstance(new_table.columns[0].data_type, Number)
+        self.assertIsInstance(new_table.columns[1].data_type, Number)
+        self.assertIsInstance(new_table.columns[2].data_type, Text)
+        self.assertIsInstance(new_table.columns[3].data_type, Number)
+        self.assertIsInstance(new_table.columns[4].data_type, Text)
 
         self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', None, None))
         self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', None, 'c'))
@@ -1017,6 +1041,18 @@ class TestTableJoin(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 5)
 
+        self.assertEqual(new_table.columns[0].name, 'one')
+        self.assertEqual(new_table.columns[1].name, 'two')
+        self.assertEqual(new_table.columns[2].name, 'three')
+        self.assertEqual(new_table.columns[3].name, 'four')
+        self.assertEqual(new_table.columns[4].name, 'six')
+
+        self.assertIsInstance(new_table.columns[0].data_type, Number)
+        self.assertIsInstance(new_table.columns[1].data_type, Number)
+        self.assertIsInstance(new_table.columns[2].data_type, Text)
+        self.assertIsInstance(new_table.columns[3].data_type, Number)
+        self.assertIsInstance(new_table.columns[4].data_type, Text)
+
         self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', None, None))
         self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', None, 'c'))
         self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, None))
@@ -1030,6 +1066,20 @@ class TestTableJoin(unittest.TestCase):
 
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 6)
+
+        self.assertEqual(new_table.columns[0].name, 'one')
+        self.assertEqual(new_table.columns[1].name, 'two')
+        self.assertEqual(new_table.columns[2].name, 'three')
+        self.assertEqual(new_table.columns[3].name, 'four')
+        self.assertEqual(new_table.columns[4].name, 'five')
+        self.assertEqual(new_table.columns[5].name, 'six')
+
+        self.assertIsInstance(new_table.columns[0].data_type, Number)
+        self.assertIsInstance(new_table.columns[1].data_type, Number)
+        self.assertIsInstance(new_table.columns[2].data_type, Text)
+        self.assertIsInstance(new_table.columns[3].data_type, Number)
+        self.assertIsInstance(new_table.columns[4].data_type, Number)
+        self.assertIsInstance(new_table.columns[5].data_type, Text)
 
         self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 1, 4, 'a'))
         self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 2, 3, 'b'))
@@ -1045,6 +1095,18 @@ class TestTableJoin(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 5)
 
+        self.assertEqual(new_table.columns[0].name, 'one')
+        self.assertEqual(new_table.columns[1].name, 'two')
+        self.assertEqual(new_table.columns[2].name, 'three')
+        self.assertEqual(new_table.columns[3].name, 'five')
+        self.assertEqual(new_table.columns[4].name, 'six')
+
+        self.assertIsInstance(new_table.columns[0].data_type, Number)
+        self.assertIsInstance(new_table.columns[1].data_type, Number)
+        self.assertIsInstance(new_table.columns[2].data_type, Text)
+        self.assertIsInstance(new_table.columns[3].data_type, Number)
+        self.assertIsInstance(new_table.columns[4].data_type, Text)
+
         self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 4, 'a'))
         self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 3, 'b'))
         self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', 2, 'c'))
@@ -1054,6 +1116,18 @@ class TestTableJoin(unittest.TestCase):
 
         self.assertEqual(len(new_table.rows), 1)
         self.assertEqual(len(new_table.columns), 5)
+
+        self.assertEqual(new_table.columns[0].name, 'one')
+        self.assertEqual(new_table.columns[1].name, 'two')
+        self.assertEqual(new_table.columns[2].name, 'three')
+        self.assertEqual(new_table.columns[3].name, 'four')
+        self.assertEqual(new_table.columns[4].name, 'six')
+
+        self.assertIsInstance(new_table.columns[0].data_type, Number)
+        self.assertIsInstance(new_table.columns[1].data_type, Number)
+        self.assertIsInstance(new_table.columns[2].data_type, Text)
+        self.assertIsInstance(new_table.columns[3].data_type, Number)
+        self.assertIsInstance(new_table.columns[4].data_type, Text)
 
         self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b', None, 'c'))
 
@@ -1071,6 +1145,18 @@ class TestTableJoin(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 1)
         self.assertEqual(len(new_table.columns), 5)
 
+        self.assertEqual(new_table.columns[0].name, 'one')
+        self.assertEqual(new_table.columns[1].name, 'two')
+        self.assertEqual(new_table.columns[2].name, 'three')
+        self.assertEqual(new_table.columns[3].name, 'four')
+        self.assertEqual(new_table.columns[4].name, 'six')
+
+        self.assertIsInstance(new_table.columns[0].data_type, Number)
+        self.assertIsInstance(new_table.columns[1].data_type, Number)
+        self.assertIsInstance(new_table.columns[2].data_type, Text)
+        self.assertIsInstance(new_table.columns[3].data_type, Number)
+        self.assertIsInstance(new_table.columns[4].data_type, Text)
+
         self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b', None, 'c'))
 
     def test_inner_join_func(self):
@@ -1083,6 +1169,20 @@ class TestTableJoin(unittest.TestCase):
 
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 6)
+
+        self.assertEqual(new_table.columns[0].name, 'one')
+        self.assertEqual(new_table.columns[1].name, 'two')
+        self.assertEqual(new_table.columns[2].name, 'three')
+        self.assertEqual(new_table.columns[3].name, 'four')
+        self.assertEqual(new_table.columns[4].name, 'five')
+        self.assertEqual(new_table.columns[5].name, 'six')
+
+        self.assertIsInstance(new_table.columns[0].data_type, Number)
+        self.assertIsInstance(new_table.columns[1].data_type, Number)
+        self.assertIsInstance(new_table.columns[2].data_type, Text)
+        self.assertIsInstance(new_table.columns[3].data_type, Number)
+        self.assertIsInstance(new_table.columns[4].data_type, Number)
+        self.assertIsInstance(new_table.columns[5].data_type, Text)
 
     def test_join_with_row_names(self):
         left = Table(self.left_rows, self.left_columns, row_names='three')
