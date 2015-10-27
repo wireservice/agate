@@ -47,6 +47,11 @@ class TestDataTypes(unittest.TestCase):
         casted = tuple(Number().cast(v) for v in values)
         self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000')))
 
+    def test_number_currency_cast(self):
+        values = ('$2.70', '$0.70', u'€14', u'75¢')
+        casted = tuple(Number().cast(v) for v in values)
+        self.assertSequenceEqual(casted, (Decimal('2.7'), Decimal('0.7'), Decimal('14'), Decimal('75')))
+
     def test_number_cast_locale(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a', '2,7', '200.000.000')
         casted = tuple(Number(locale='de_DE').cast(v) for v in values)

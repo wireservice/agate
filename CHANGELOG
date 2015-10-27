@@ -1,6 +1,7 @@
 1.1.0
 -----
 
+* Fixed stripping currency symbols when casting Numbers from strings. (#333) 
 * Fixed two major join issues. (#336)
 
 1.0.0

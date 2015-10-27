@@ -66,6 +66,10 @@ class Number(DataType):
             raise CastError('Can not convert float to Decimal. Convert data to string first!')
         elif isinstance(d, six.string_types):
             d = d.strip()
+            d = d.strip('%')
+
+            for symbol in CURRENCY_SYMBOLS:
+                d = d.strip(symbol)
 
             if d.lower() in self.null_values:
                 return None
