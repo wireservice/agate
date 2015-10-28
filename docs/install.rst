@@ -49,7 +49,7 @@ agate supports the following versions of Python:
 * Python 3.5
 * `PyPy <http://pypy.org/>`_
 
-It is tested on OSX, but due to it's minimal dependencies should work fine on both Linux and Windows.
+It is tested on OSX, but due to its minimal dependencies should work fine on both Linux and Windows.
 
 .. note::
 
