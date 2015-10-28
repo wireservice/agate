@@ -1,7 +1,9 @@
-1.1.0
+1.0.1
 -----
 
-* Fixed stripping currency symbols when casting Numbers from strings. (#333) 
+* File handles passed to Table.to_csv are now left open. (#330)
+* Added Table.print_csv method. (#307, #339)
+* Fixed stripping currency symbols when casting Numbers from strings. (#333)
 * Fixed two major join issues. (#336)
 
 1.0.0
