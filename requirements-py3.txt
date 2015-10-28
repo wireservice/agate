@@ -10,6 +10,3 @@ csvkit>=0.9.1
 Babel>=2.0
 parsedatetime>=1.5
 pytz>=2015.4
-ipython>=4.0.0
-notebook>=4.0.4
-pylint>=1.4.4
