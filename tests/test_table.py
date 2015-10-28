@@ -6,6 +6,11 @@ try:
 except ImportError: #pragma: no cover
     from decimal import Decimal
 
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 import os
 
 try:
@@ -247,6 +252,19 @@ class TestTable(unittest.TestCase):
         self.assertEqual(contents1, contents2)
 
         os.remove('.test.csv')
+
+    def test_to_csv_to_stdout(self):
+        table = Table(self.rows, self.columns)
+
+        output = StringIO()
+        table.to_csv(output)
+
+        contents1 = output.getvalue()
+
+        with open('examples/test.csv') as f:
+            contents2 = f.read()
+
+        self.assertEqual(contents1, contents2)
 
     def test_get_column_types(self):
         table = Table(self.rows, self.columns)

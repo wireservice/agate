@@ -255,6 +255,16 @@ class Table(Patchable):
             if close:
                 f.close()
 
+    def print_csv(self, **kwargs):
+        """
+        A shortcut to printing a table as a csv. Effectively the same as
+        passing :meth:`sys.stdout` to :meth:`Table.to_csv`.
+
+        ``kwargs`` will be passed on to :meth:`Table.to_csv`.
+        """
+
+        self.to_csv(sys.stdout, **kwargs)
+
     @property
     def column_types(self):
         """
@@ -561,7 +571,7 @@ class Table(Patchable):
             # Rows without matches
             elif not inner:
                 new_row = list(self._rows[left_index])
-                
+
                 for k, v in enumerate(right_table.column_names):
                     if k == right_key_index:
                         continue
