@@ -255,16 +255,6 @@ class Table(Patchable):
             if close:
                 f.close()
 
-    def print_csv(self, **kwargs):
-        """
-        A shortcut to printing a table as a csv. Effectively the same as
-        passing :meth:`sys.stdout` to :meth:`Table.to_csv`.
-
-        ``kwargs`` will be passed on to :meth:`Table.to_csv`.
-        """
-
-        self.to_csv(sys.stdout, **kwargs)
-
     @property
     def column_types(self):
         """
@@ -850,6 +840,15 @@ class Table(Patchable):
             :code:`sys.stdout`.
         """
         print_table(self, max_rows, max_columns, output)
+
+    def print_csv(self, **kwargs):
+        """
+        A shortcut to printing a table as a csv. Effectively the same as
+        passing :meth:`sys.stdout` to :meth:`Table.to_csv`.
+
+        ``kwargs`` will be passed on to :meth:`Table.to_csv`.
+        """
+        self.to_csv(sys.stdout, **kwargs)
 
     def print_bars(self, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout):
         """

@@ -12,6 +12,7 @@ except ImportError:
     from io import StringIO
 
 import os
+import sys
 
 try:
     import unittest2 as unittest
@@ -724,6 +725,30 @@ class TestPrettyPrint(unittest.TestCase):
 
         self.assertEqual(len(lines), 8)
         self.assertEqual(len(lines[0]), 25)
+
+    def test_print_csv(self):
+        rows = (
+            (1, 4, 'a'),
+            (2, 3, 'b'),
+            (None, 2, u'👍')
+        )
+
+        table = Table(rows, self.columns)
+
+        old = sys.stdout
+        sys.stdout = StringIO()
+
+        try:
+            table.print_csv()
+
+            contents1 = sys.stdout.getvalue()
+
+            with open('examples/test.csv') as f:
+                contents2 = f.read()
+
+            self.assertEqual(contents1, contents2)
+        finally:
+            sys.stdout = old
 
     def test_print_table_max_rows(self):
         table = Table(self.rows, self.columns)
