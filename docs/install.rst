@@ -35,7 +35,7 @@ If you are a developer that also wants to hack on agate, install it this way::
 
     agate also supports running tests with coverage::
 
-        nosetests --with-coverage --cover-package=agate
+        nosetests --with-coverage --cover-package=agate tests
 
 Supported platforms
 -------------------
@@ -44,9 +44,7 @@ agate supports the following versions of Python:
 
 * Python 2.6 (provisional support: agate's tests pass, but some dependencies claim not to support it)
 * Python 2.7
-* Python 3.3
-* Python 3.4
-* Python 3.5
+* Python 3.3+
 * `PyPy <http://pypy.org/>`_
 
 It is tested on OSX, but due to its minimal dependencies should work fine on both Linux and Windows.

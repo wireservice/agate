@@ -244,6 +244,9 @@ class TestTable(unittest.TestCase):
         with open('.test.csv', 'w') as f:
             table.to_csv(f)
 
+            # Should leave the file open
+            self.assertFalse(f.closed)
+
         with open('.test.csv') as f:
             contents1 = f.read()
 
