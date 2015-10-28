@@ -5,7 +5,7 @@ agate |release|
 About
 =====
 
-.. include:: ../README
+.. include:: ../README.md
 
 Why agate?
 ==========
