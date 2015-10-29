@@ -202,14 +202,14 @@ class Table(Patchable):
         if hasattr(path, 'read'):
             for i,line in enumerate(path.readlines()):
                 if i == 0:
-                    rows.append(json.loads(line, **kwargs).keys())
-                rows.append(json.loads(line, **kwargs).values())
+                    rows.append(json.loads(line, object_pairs_hook=OrderedDict, **kwargs).keys())
+                rows.append(json.loads(line, object_pairs_hook=OrderedDict, **kwargs).values())
         else:
             with open(path) as f:
                 for i,line in enumerate(f.readlines()): 
                     if i == 0:
-                        rows.append(json.loads(line, **kwargs).keys())
-                    rows.append(json.loads(line, **kwargs).values())
+                        rows.append(json.loads(line, object_pairs_hook=OrderedDict, **kwargs).keys())
+                    rows.append(json.loads(line, object_pairs_hook=OrderedDict, **kwargs).values())
 
         column_names = rows.pop(0)
 

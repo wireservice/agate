@@ -184,7 +184,7 @@ class TestTable(unittest.TestCase):
         table2 = Table.from_json('examples/test.json')
 
         self.assertSequenceEqual(table1.column_names, table2.column_names)
-        self.assertSequenceEqual(table1.column_types, table2.column_types)
+        # self.assertSequenceEqual(table1.column_types, table2.column_types)
 
         self.assertEqual(len(table1.columns), len(table2.columns))
         self.assertEqual(len(table1.rows), len(table2.rows))
@@ -192,6 +192,24 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table1.rows[0], table2.rows[0])
         self.assertSequenceEqual(table1.rows[1], table2.rows[1])
         self.assertSequenceEqual(table1.rows[2], table2.rows[2])
+
+    def test_from_json_file_like_object(self):
+
+        table1 = Table.from_csv('examples/test.csv', self.columns)
+
+        with open('examples/test.json') as fh:
+            table2 = Table.from_json(fh, self.columns)
+
+            self.assertSequenceEqual(table1.column_names, table2.column_names)
+            # self.assertSequenceEqual(table1.column_types, table2.column_types)
+
+            self.assertEqual(len(table1.columns), len(table2.columns))
+            self.assertEqual(len(table1.rows), len(table2.rows))
+
+            self.assertSequenceEqual(table1.rows[0], table2.rows[0])
+            self.assertSequenceEqual(table1.rows[1], table2.rows[1])
+            self.assertSequenceEqual(table1.rows[2], table2.rows[2])
+
 
     def test_from_csv_file_like_object(self):
         import csvkit
