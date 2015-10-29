@@ -17,7 +17,7 @@ setup(
     name='agate',
     version='1.0.1',
     description='A Python data analysis library designed for humans working in the real world.',
-    long_description=open('README.md').read(),
+    long_description=open('README.txt').read(),
     author='Christopher Groskopf',
     author_email='chrisgroskopf@gmail.com',
     url='http://agate.readthedocs.org/',
