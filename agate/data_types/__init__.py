@@ -27,9 +27,14 @@ class TypeTester(object):
         value is a :class:`.DataType` instance that overrides inference.
     :param locale: A locale to use when evaluating the types of data. See
         :class:`.Number`.
+    :param limit: An optional limit on how many rows to evaluate before
+        selecting the most likely type. Note that applying a limit may mean
+        errors arise when the data is cast--if the guess is proved incorrect
+        in further rows of data.
     """
-    def __init__(self, force={}, locale='en_US'):
+    def __init__(self, force={}, locale='en_US', limit=None):
         self._force = force
+        self._limit = limit
 
         # In order of preference
         self._possible_types =[
@@ -56,7 +61,12 @@ class TypeTester(object):
 
         force_indices = [column_names.index(name) for name in self._force.keys()]
 
-        for row in rows:
+        if self._limit:
+            sample_rows = rows[:self._limit]
+        else:
+            sample_rows = rows
+
+        for row in sample_rows:
             for i in range(num_columns):
                 if i in force_indices:
                     continue

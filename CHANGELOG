@@ -1,6 +1,7 @@
 1.0.1
 -----
 
+* TypeTester now takes a "limit" arg that restricts how many rows it tests. (#332)
 * Table.from_csv now supports CSVs with neither headers nor manual column names.
 * Tables can now be created with automatically generated column names. (#331)
 * File handles passed to Table.to_csv are now left open. (#330)
