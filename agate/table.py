@@ -178,38 +178,41 @@ class Table(Patchable):
         return Table(rows, column_info, row_names=row_names, _is_fork=True)
 
     @classmethod
-    def from_json(cls, path, column_info=None, row_names=None, **kwargs):
+    def from_json(cls, path, key=None, column_info=None, row_names=None, **kwargs):
         """
-        Create a new table for a JSON file. File should be homogenous JSON
-        items, seperated by a newline, which will each be converted to rows in the Table.
+        Create a new table for a JSON file. File should be a list containing JSON items, 
+        or a key for an item in the dictionary that contains a list of JSON items.
 
         ``kwargs`` will be passed through to :meth:`json.load`.
         :param path: Filepath or file-like object from which to read CSV data.
+        :key: The key of the dictionary that contains a list of JSON items.
+            if not provided, then the file itself should be a list of JSON items.
         :param column_info: May be any valid input to :meth:`Table.__init__` or
             an instance of :class:`.TypeTester`. Or, None, in which case a
             generic :class:`.TypeTester` will be created.
         :param row_names: See :meth:`Table.__init__`.
         """
+        if hasattr(path,'read'):
+            js = json.load(path, object_pairs_hook=OrderedDict, **kwargs)
+        else:
+            with open(path,'r') as f:
+                js = json.load(f, object_pairs_hook=OrderedDict, **kwargs)
+
+        if isinstance(js, dict):
+            if not key:
+                raise TypeError('When converting a JSON document with a top-level dictionary element, a key must be specified.')
+            js = js[key]
+
         if column_info is None:
             column_info = TypeTester()
 
         use_inference = isinstance(column_info, TypeTester)
 
-        # if use_inference:
-        #     raise ValueError('')
-
         rows = list()
-        if hasattr(path, 'read'):
-            for i,line in enumerate(path.readlines()):
-                if i == 0:
-                    rows.append(json.loads(line, object_pairs_hook=OrderedDict, **kwargs).keys())
-                rows.append(json.loads(line, object_pairs_hook=OrderedDict, **kwargs).values())
-        else:
-            with open(path) as f:
-                for i,line in enumerate(f.readlines()): 
-                    if i == 0:
-                        rows.append(json.loads(line, object_pairs_hook=OrderedDict, **kwargs).keys())
-                    rows.append(json.loads(line, object_pairs_hook=OrderedDict, **kwargs).values())
+        for i, item in enumerate(js):
+            if i == 0:
+                rows.append(item.keys())
+            rows.append(item.values())
 
         column_names = rows.pop(0)
 
