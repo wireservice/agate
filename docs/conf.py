@@ -4,8 +4,6 @@
 import os
 import sys
 
-from recommonmark.parser import CommonMarkParser
-
 # Path munging
 sys.path.insert(0, os.path.abspath('..'))
 
@@ -19,12 +17,6 @@ intersphinx_mapping = {
 
 # Templates
 templates_path = ['_templates']
-
-source_parsers = {
-    '.md': CommonMarkParser,
-}
-
-source_suffix = ['.rst', '.md']
 master_doc = 'index'
 
 # Metadata
