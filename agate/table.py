@@ -24,7 +24,12 @@ from collections import Sequence
 from copy import copy
 from itertools import chain
 import sys
-import json
+
+
+if sys.version_info < (2, 7):
+    import simplejson as json
+else:
+    import json
 
 try:
     from collections import OrderedDict
@@ -210,9 +215,14 @@ class Table(Patchable):
 
         rows = list()
         for i, item in enumerate(js):
+            if type(item.keys()) != list:
+                k, v = list(item.keys()),list(item.values())
+            else:
+                k, v = item.keys(),item.values()
+
             if i == 0:
-                rows.append(item.keys())
-            rows.append(item.values())
+                rows.append(k)
+            rows.append(v)
 
         column_names = rows.pop(0)
 
