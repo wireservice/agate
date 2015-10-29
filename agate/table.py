@@ -24,6 +24,7 @@ from collections import Sequence
 from copy import copy
 from itertools import chain
 import sys
+import json
 
 try:
     from collections import OrderedDict
@@ -175,6 +176,51 @@ class Table(Patchable):
             row_names = self._row_names
 
         return Table(rows, column_info, row_names=row_names, _is_fork=True)
+
+    @classmethod
+    def from_json(cls, path, column_info=None, row_names=None, **kwargs):
+        """
+        Create a new table for a JSON file. File should be homogenous JSON
+        items, seperated by a newline, which will each be converted to rows in the Table.
+
+        ``kwargs`` will be passed through to :meth:`json.load`.
+        :param path: Filepath or file-like object from which to read CSV data.
+        :param column_info: May be any valid input to :meth:`Table.__init__` or
+            an instance of :class:`.TypeTester`. Or, None, in which case a
+            generic :class:`.TypeTester` will be created.
+        :param row_names: See :meth:`Table.__init__`.
+        """
+        if column_info is None:
+            column_info = TypeTester()
+
+        use_inference = isinstance(column_info, TypeTester)
+
+        # if use_inference:
+        #     raise ValueError('')
+
+        rows = list()
+        if hasattr(path, 'read'):
+            for i,line in enumerate(path.readlines()):
+                if i == 0:
+                    rows.append(json.loads(line, **kwargs).keys())
+                rows.append(json.loads(line, **kwargs).values())
+        else:
+            with open(path) as f:
+                for i,line in enumerate(f.readlines()): 
+                    if i == 0:
+                        rows.append(json.loads(line, **kwargs).keys())
+                    rows.append(json.loads(line, **kwargs).values())
+
+        column_names = rows.pop(0)
+
+        if use_inference:
+            column_info = column_info.run(rows, column_names)
+        else:
+            if len(column_names) != len(column_info):
+                # TKTK Better Error
+                raise ValueError('JSON data contains more columns than were specified.')
+
+        return Table(rows, column_info, row_names=row_names)
 
     @classmethod
     def from_csv(cls, path, column_info=None, row_names=None, header=True, **kwargs):
