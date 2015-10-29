@@ -52,7 +52,7 @@ from agate.computations import Computation
 from agate.mapped_sequence import MappedSequence
 from agate.preview import print_table, print_bars
 from agate.rows import Row
-from agate.utils import NullOrder, Patchable, max_precision, make_number_formatter, round_limits
+from agate.utils import NullOrder, Patchable, max_precision, make_number_formatter, round_limits, letter_name
 
 def allow_tableset_proxy(func):
     """
@@ -76,20 +76,27 @@ class Table(Patchable):
     :attr:`Table.rows` property. They maybe be accessed by either numeric index
     or, if specified, unique row names.
 
-    :param rows: The data as a sequence of any sequences: tuples, lists, etc. If
+    :param rows:
+        The data as a sequence of any sequences: tuples, lists, etc. If
         any row has fewer values than the number of columns, it will be filled
         out with nulls. No row may have more values than the number of columns.
-    :param column_info: A sequence of pairs of column names and types. Column
-        names must be strings and column types must be instances of
-        :class:`.DataType`. Alternately, a sequence of :class:`.Column`
-        instances. New column instances will be created reusing the name and
-        data type from each column.
-    :param row_names: Specifies unique names for each row. This parameter is
+    :param column_info:
+        A sequence of pairs of column names and types. Column names must be
+        strings (or ``None``) and column types must be instances of
+        :class:`.DataType`. If any name is ``None``, then a column name will be
+        be assigned using :func:`.letter_name`.
+
+        Alternately, a sequence of :class:`.Column` instances. New column
+        instances will be created reusing the name and data type from each
+        column.
+    :param row_names:
+        Specifies unique names for each row. This parameter is
         optional. If specified it may be 1) the name of a single column that
         contains a unique identifier for each row, 2) a key function that takes
         a :class:`.Row` and returns a unique identifier or 3) a sequence of
         unique identifiers of the same length as the sequence of rows.
-    :param _is_fork: Used internally to skip certain validation steps when data
+    :param _is_fork:
+        Used internally to skip certain validation steps when data
         is propagated from an existing table. When :code:`True`, rows are
         assumed to be :class:`.Row` instances, rather than raw data.
     """
@@ -100,21 +107,30 @@ class Table(Patchable):
             self._column_names = tuple(c.name for c in column_info)
             self._column_types = tuple(c.data_type for c in column_info)
         else:
-            self._column_names, self._column_types = zip(*column_info)
+            column_names, self._column_types = zip(*column_info)
+
+            self._column_names = []
 
             # Validation
-            for column_name in self._column_names:
-                if not isinstance(column_name, six.string_types):
-                    raise ValueError('Column names must be strings.')
+            for i, column_name in enumerate(column_names):
+                if not column_name:
+                    self._column_names.append(letter_name(i))
+                else:
+                    if not isinstance(column_name, six.string_types):
+                        raise ValueError('Column names must be strings.')
 
-            for column_type in self._column_types:
-                if not isinstance(column_type, DataType):
-                    raise ValueError('Column types must be instances of DataType.')
+                    self._column_names.append(column_name)
 
             len_column_names = len(self._column_names)
 
             if len(set(self._column_names)) != len_column_names:
                 raise ValueError('Duplicate column names are not allowed.')
+
+            self._column_names = tuple(self._column_names)
+
+            for column_type in self._column_types:
+                if not isinstance(column_type, DataType):
+                    raise ValueError('Column types must be instances of DataType.')
 
         if not _is_fork:
             new_rows = []
@@ -187,21 +203,22 @@ class Table(Patchable):
         If you are using Python 2 and not using csvkit, this method is not
         unicode-safe.
 
-        :param path: Filepath or file-like object from which to read CSV data.
-        :param column_info: May be any valid input to :meth:`Table.__init__` or
+        :param path:
+            Filepath or file-like object from which to read CSV data.
+        :param column_info:
+            May be any valid input to :meth:`Table.__init__` or
             an instance of :class:`.TypeTester`. Or, None, in which case a
             generic :class:`.TypeTester` will be created.
-        :param row_names: See :meth:`Table.__init__`.
-        :param header: If `True`, the first row of the CSV is assumed to contains
+        :param row_names:
+            See :meth:`Table.__init__`.
+        :param header:
+            If `True`, the first row of the CSV is assumed to contains
             headers and will be skipped.
         """
         if column_info is None:
             column_info = TypeTester()
 
         use_inference = isinstance(column_info, TypeTester)
-
-        if use_inference and not header:
-            raise ValueError('Can not apply TypeTester to a CSV without headers.')
 
         if hasattr(path, 'read'):
             rows = list(csv.reader(path, **kwargs))
@@ -211,6 +228,8 @@ class Table(Patchable):
 
         if header:
             column_names = rows.pop(0)
+        else:
+            column_names = [None] * len(rows[0])
 
         if use_inference:
             column_info = column_info.run(rows, column_names)

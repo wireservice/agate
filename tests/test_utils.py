@@ -13,7 +13,7 @@ except ImportError:
 from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
 from agate.table import Table
-from agate.utils import Patchable, Quantiles, round_limits
+from agate.utils import Patchable, Quantiles, round_limits, letter_name
 
 class TryPatch(object):
     def test(self, n):
@@ -125,3 +125,10 @@ class TestMisc(unittest.TestCase):
             round_limits(Decimal('-0.505'), Decimal('0.47')),
             (Decimal('-0.6'), Decimal('0.5'))
         )
+
+    def test_letter_name(self):
+        self.assertEqual(letter_name(0), 'A')
+        self.assertEqual(letter_name(4), 'E')
+        self.assertEqual(letter_name(25), 'Z')
+        self.assertEqual(letter_name(30), 'EE')
+        self.assertEqual(letter_name(77), 'ZZZ')

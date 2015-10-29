@@ -7,6 +7,7 @@ agate.
 
 from collections import Sequence
 from functools import wraps
+import string
 
 try:
     from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING
@@ -193,3 +194,14 @@ def round_limits(minimum, maximum):
         minimum.quantize(q, rounding=ROUND_FLOOR).normalize(),
         maximum.quantize(q, rounding=ROUND_CEILING).normalize()
     )
+
+def letter_name(index):
+    """
+    Given a column index, assign a "letter" column name equivalent to
+    Excel. For example, index ``4`` would return ``E``.
+    Index ``30`` would return ``EE``.
+    """
+    letters = string.ascii_uppercase
+    count = len(letters)
+
+    return letters[index % count] * ((index // count) + 1)

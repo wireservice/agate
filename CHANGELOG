@@ -1,6 +1,8 @@
 1.0.1
 -----
 
+* Table.from_csv now supports CSVs with neither headers nor manual column names.
+* Tables can now be created with automatically generated column names. (#331)
 * File handles passed to Table.to_csv are now left open. (#330)
 * Added Table.print_csv method. (#307, #339)
 * Fixed stripping currency symbols when casting Numbers from strings. (#333)

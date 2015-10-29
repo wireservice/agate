@@ -100,6 +100,33 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table.rows[1], (2, None, None))
         self.assertSequenceEqual(table.rows[2], (None, 2, None))
 
+    def test_create_table_no_column_names(self):
+        self.columns = (
+            (None, self.number_type),
+            (None, self.number_type),
+            ('', self.text_type)
+        )
+
+        table = Table(self.rows, self.columns)
+
+        self.assertEqual(len(table.rows), 3)
+        self.assertEqual(len(table.columns), 3)
+
+        self.assertSequenceEqual(table.columns[0], (1, 2, None))
+        self.assertSequenceEqual(table.columns['A'], (1, 2, None))
+
+        with self.assertRaises(KeyError):
+            table.columns[None]
+
+        with self.assertRaises(KeyError):
+            table.columns['one']
+
+        self.assertSequenceEqual(table.columns[2], ('a', 'b', u'👍'))
+        self.assertSequenceEqual(table.columns['C'], ('a', 'b', u'👍'))
+
+        with self.assertRaises(KeyError):
+            table.columns['']
+
     def test_row_too_long(self):
         rows = (
             (1, 4, 'a', 'foo'),
@@ -153,11 +180,11 @@ class TestTable(unittest.TestCase):
 
         if six.PY2:
             with self.assertRaises(UnicodeDecodeError):
-                table = Table.from_csv('examples/test.csv', self.columns)
+                output = Table.from_csv('examples/test.csv', self.columns)
         else:
-            table = Table.from_csv('examples/test.csv', self.columns)
+            output = Table.from_csv('examples/test.csv', self.columns)
 
-            self.assertEqual(len(table.columns), 3)
+            self.assertEqual(len(output.columns), 3)
 
     def test_from_csv_csvkit(self):
         import csvkit
@@ -204,24 +231,50 @@ class TestTable(unittest.TestCase):
 
         tester = TypeTester()
 
-        table = Table.from_csv('examples/test.csv', tester)
+        output = Table.from_csv('examples/test.csv', tester)
 
-        self.assertEqual(len(table.columns), 3)
-        self.assertIsInstance(table.columns[0].data_type, Number)
-        self.assertIsInstance(table.columns[1].data_type, Number)
-        self.assertIsInstance(table.columns[2].data_type, Text)
+        self.assertEqual(len(output.columns), 3)
+        self.assertIsInstance(output.columns[0].data_type, Number)
+        self.assertIsInstance(output.columns[1].data_type, Number)
+        self.assertIsInstance(output.columns[2].data_type, Text)
 
     def test_from_csv_default_type_tester(self):
         import csvkit
         from agate import table
         table.csv = csvkit
 
-        table = Table.from_csv('examples/test.csv')
+        output = Table.from_csv('examples/test.csv')
 
-        self.assertEqual(len(table.columns), 3)
-        self.assertIsInstance(table.columns[0].data_type, Number)
-        self.assertIsInstance(table.columns[1].data_type, Number)
-        self.assertIsInstance(table.columns[2].data_type, Text)
+        self.assertEqual(len(output.columns), 3)
+        self.assertIsInstance(output.columns[0].data_type, Number)
+        self.assertIsInstance(output.columns[1].data_type, Number)
+        self.assertIsInstance(output.columns[2].data_type, Text)
+
+    def test_from_csv_no_header(self):
+        import csvkit
+        from agate import table
+        table.csv = csvkit
+
+        output = Table.from_csv('examples/test_no_header.csv', None, header=False)
+
+        self.assertEqual(len(output.columns), 3)
+        self.assertSequenceEqual(output.column_names, ('A', 'B', 'C'))
+        self.assertIsInstance(output.columns[0].data_type, Number)
+        self.assertIsInstance(output.columns[1].data_type, Number)
+        self.assertIsInstance(output.columns[2].data_type, Text)
+
+    def test_from_csv_no_header_type_inference(self):
+        import csvkit
+        from agate import table
+        table.csv = csvkit
+
+        output = Table.from_csv('examples/test_no_header.csv', None, header=False)
+
+        self.assertEqual(len(output.columns), 3)
+        self.assertSequenceEqual(output.column_names, ('A', 'B', 'C'))
+        self.assertIsInstance(output.columns[0].data_type, Number)
+        self.assertIsInstance(output.columns[1].data_type, Number)
+        self.assertIsInstance(output.columns[2].data_type, Text)
 
     def test_to_csv(self):
         table = Table(self.rows, self.columns)
