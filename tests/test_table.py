@@ -172,6 +172,15 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table1.rows[1], table2.rows[1])
         self.assertSequenceEqual(table1.rows[2], table2.rows[2])
 
+    def test_from_csv_columns_and_header(self):
+        column_names = ['a', 'b', 'c']
+
+        table = Table.from_csv('examples/test.csv', column_names, self.column_types)
+
+        self.assertEqual(len(table.columns), 3)
+        self.assertEqual(len(table.rows), 3)
+        self.assertSequenceEqual(table.column_names, ['a', 'b', 'c'])
+
     def test_from_csv_file_like_object(self):
         table1 = Table.from_csv('examples/test.csv', self.column_names, self.column_types)
 
@@ -191,7 +200,7 @@ class TestTable(unittest.TestCase):
     def test_from_csv_type_tester(self):
         tester = TypeTester()
 
-        output = Table.from_csv('examples/test.csv', tester)
+        output = Table.from_csv('examples/test.csv', column_types=tester)
 
         self.assertEqual(len(output.columns), 3)
         self.assertIsInstance(output.columns[0].data_type, Number)

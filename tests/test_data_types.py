@@ -441,7 +441,7 @@ class TestTypeTester(unittest.TestCase):
         self.assertIsInstance(inferred[0], Text)
 
     def test_table_from_csv(self):
-        table = Table.from_csv('examples/test.csv', self.tester)
+        table = Table.from_csv('examples/test.csv', column_types=self.tester)
 
         self.assertSequenceEqual(table.column_names, ['one', 'two', 'three'])
         self.assertSequenceEqual(tuple(map(type, table.column_types)), [Number, Number, Text])

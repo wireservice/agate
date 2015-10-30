@@ -154,8 +154,7 @@ class TableSet(MappedSequence, Patchable):
         :param row_names:
             See :meth:`Table.__init__`.
         :param header:
-            If `True`, the first row of the CSV is assumed to contains headers
-            and will be skipped.
+            See :meth:`Table.from_csv`.
         """
         if not os.path.isdir(dir_path):
             raise IOError('Specified path doesn\'t exist or isn\'t a directory.')

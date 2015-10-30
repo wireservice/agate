@@ -213,7 +213,9 @@ class Table(Patchable):
             See :meth:`Table.__init__`.
         :param header:
             If `True`, the first row of the CSV is assumed to contains headers
-            and will be skipped.
+            and will be skipped. If `header` and `column_names` are both
+            specified then a row will be skipped, but `column_names` will be
+            used.
         """
         if hasattr(path, 'read'):
             rows = list(csv.reader(path, **kwargs))
@@ -222,7 +224,10 @@ class Table(Patchable):
                 rows = list(csv.reader(f, **kwargs))
 
         if header:
-            column_names = rows.pop(0)
+            if column_names is None:
+                column_names = rows.pop(0)
+            else:
+                rows.pop(0)
 
         return Table(rows, column_names, column_types, row_names=row_names)
 
