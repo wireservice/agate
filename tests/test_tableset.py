@@ -76,6 +76,10 @@ class TestTableSet(unittest.TestCase):
             self.assertSequenceEqual(tableset1[name].rows[1], tableset2[name].rows[1])
             self.assertSequenceEqual(tableset1[name].rows[2], tableset2[name].rows[2])
 
+    def test_tableset_from_csv_invalid_dir(self):
+        with self.assertRaises(IOError):
+            TableSet.from_csv('quack')
+
     def test_to_csv(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
