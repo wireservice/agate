@@ -11,7 +11,7 @@ types from column data.
 
 from copy import copy
 
-from agate.data_types.base import DataType
+from agate.data_types.base import DEFAULT_NULL_VALUES, DataType
 from agate.data_types.boolean import Boolean
 from agate.data_types.date import Date
 from agate.data_types.date_time import DateTime
@@ -37,7 +37,7 @@ class TypeTester(object):
         self._limit = limit
 
         # In order of preference
-        self._possible_types =[
+        self._possible_types = [
             Boolean(),
             Number(locale=locale),
             TimeDelta(),
