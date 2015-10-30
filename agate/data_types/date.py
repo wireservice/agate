@@ -31,7 +31,8 @@ class Date(DataType):
         if d is None:
             return True
 
-        if isinstance(d, datetime.date):
+        if type(d) is datetime.date:
+            print (d)
             return True
 
         if not isinstance(d, six.string_types):
