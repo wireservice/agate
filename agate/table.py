@@ -129,6 +129,9 @@ class Table(Patchable):
         else:
             self._column_types = tuple(column_types)
 
+        if len_column_names != len(self._column_types):
+            raise ValueError('column_names and column_types must be the same length.')
+
         if not _is_fork:
             new_rows = []
             cast_funcs = [c.cast for c in self._column_types]

@@ -69,6 +69,12 @@ class TestTable(unittest.TestCase):
         with self.assertRaises(ValueError):
             Table(self.rows, column_names, self.column_types)
 
+    def test_column_names_types_different_lengths(self):
+        column_names = ['one', 'two', 'three', 'four']
+
+        with self.assertRaises(ValueError):
+            Table(self.rows, column_names, self.column_types)
+
     def test_create_variable_length_rows(self):
         rows = (
             (1, 4, 'a'),
