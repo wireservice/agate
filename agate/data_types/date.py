@@ -12,9 +12,9 @@ class Date(DataType):
     """
     Data type representing dates only.
 
-    :param date_format: A formatting string for
-        :meth:`datetime.datetime.strptime` to use instead of using regex-based
-        parsing.
+    :param date_format:
+        A formatting string for :meth:`datetime.datetime.strptime` to use
+        instead of using regex-based parsing.
     """
     def __init__(self, date_format=None, **kwargs):
         super(Date, self).__init__(**kwargs)
@@ -24,9 +24,19 @@ class Date(DataType):
 
     def test(self, d):
         """
-        Test, for purposes of type inference, if a string value could possibly
-        be valid for this column type.
+        Test, for purposes of type inference, if a value could possibly be valid
+        for this column type. This will work with values that are native types
+        and values that have been stringified.
         """
+        if d is None:
+            return True
+
+        if isinstance(d, datetime.date):
+            return True
+
+        if not isinstance(d, six.string_types):
+            return False
+
         d = d.strip()
 
         if d.lower() in self.null_values:
@@ -43,9 +53,11 @@ class Date(DataType):
         """
         Cast a single value to a :class:`datetime.date`.
 
-        :param date_format: An optional :func:`datetime.strptime`
-            format string for parsing datetimes in this column.
-        :returns: :class:`datetime.date` or :code:`None`.
+        :param date_format:
+            An optional :func:`datetime.strptime` format string for parsing
+            datetimes in this column.
+        :returns:
+            :class:`datetime.date` or :code:`None`.
         """
         if isinstance(d, datetime.date) or d is None:
             return d

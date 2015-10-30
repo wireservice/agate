@@ -14,9 +14,19 @@ class TimeDelta(DataType):
     """
     def test(self, d):
         """
-        Test, for purposes of type inference, if a string value could possibly
-        be valid for this column type.
+        Test, for purposes of type inference, if a value could possibly be valid
+        for this column type. This will work with values that are native types
+        and values that have been stringified.
         """
+        if d is None:
+            return True
+
+        if isinstance(d, datetime.timedelta):
+            return True
+
+        if not isinstance(d, six.string_types):
+            return False
+
         d = d.strip()
 
         if d.lower() in self.null_values:
@@ -33,8 +43,10 @@ class TimeDelta(DataType):
         """
         Cast a single value to :class:`datetime.timedelta`.
 
-        :param d: A value to cast.
-        :returns: :class:`datetime.timedelta` or :code:`None`
+        :param d:
+            A value to cast.
+        :returns:
+            :class:`datetime.timedelta` or :code:`None`
         """
         if isinstance(d, datetime.timedelta) or d is None:
             return d

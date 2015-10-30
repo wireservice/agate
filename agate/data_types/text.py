@@ -10,8 +10,9 @@ class Text(DataType):
     """
     def test(self, d):
         """
-        Test, for purposes of type inference, if a string value could possibly
-        be valid for this column type.
+        Test, for purposes of type inference, if a value could possibly be valid
+        for this column type. This will work with values that are native types
+        and values that have been stringified.
         """
         return True
 
@@ -19,8 +20,10 @@ class Text(DataType):
         """
         Cast a single value to :func:`unicode` (:func:`str` in Python 3).
 
-        :param d: A value to cast.
-        :returns: :func:`unicode` (:func:`str` in Python 3) or :code:`None`
+        :param d:
+            A value to cast.
+        :returns:
+            :func:`unicode` (:func:`str` in Python 3) or :code:`None`
         """
         if d is None:
             return d

@@ -15,8 +15,9 @@ class DataType(object): #pragma: no cover
 
     def test(self, d):
         """
-        Test if a given string value could possibly be an instance of this
-        data type.
+        Test, for purposes of type inference, if a value could possibly be valid
+        for this column type. This will work with values that are native types
+        and values that have been stringified.
         """
         raise NotImplementedError
 

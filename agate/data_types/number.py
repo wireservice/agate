@@ -19,10 +19,12 @@ class Number(DataType):
     """
     Data type representing numbers.
 
-    :param locale: A locale specification such as :code:`en_US` or
-        :code:`de_DE` to use for parsing formatted numbers.
-    :param display_precision: An integer specifying how many decimal places to
-        include when formatting this column for display. (Such as when using
+    :param locale:
+        A locale specification such as :code:`en_US` or :code:`de_DE` to use
+        for parsing formatted numbers.
+    :param display_precision:
+        An integer specifying how many decimal places to include when
+        formatting this column for display. (Such as when using
         :class:`.Table.pretty_print`.)
     """
     def __init__(self, locale='en_US', display_precision=2, **kwargs):
@@ -33,9 +35,22 @@ class Number(DataType):
 
     def test(self, d):
         """
-        Test, for purposes of type inference, if a string value could possibly
-        be valid for this column type.
+        Test, for purposes of type inference, if a value could possibly be valid
+        for this column type. This will work with values that are native types
+        and values that have been stringified.
         """
+        if d is None:
+            return True
+
+        if isinstance(d, Decimal):
+            return True
+
+        if type(d) is int:
+            return True
+
+        if not isinstance(d, six.string_types):
+            return False
+
         d = d.strip()
         d = d.strip('%')
 
@@ -55,8 +70,8 @@ class Number(DataType):
         """
         Cast a single value to a :class:`decimal.Decimal`.
 
-        :returns: :class:`decimal.Decimal` or :code:`None`.
-        :raises: :exc:`.CastError`
+        :returns:
+            :class:`decimal.Decimal` or :code:`None`.
         """
         if isinstance(d, Decimal) or d is None:
             return d

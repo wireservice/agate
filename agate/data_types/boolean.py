@@ -28,9 +28,19 @@ class Boolean(DataType):
 
     def test(self, d):
         """
-        Test, for purposes of type inference, if a string value could possibly
-        be valid for this column type.
+        Test, for purposes of type inference, if a value could possibly be valid
+        for this column type. This will work with values that are native types
+        and values that have been stringified.
         """
+        if d is None:
+            return True
+
+        if type(d) is bool and type(d) is not int:
+            return True
+
+        if not isinstance(d, six.string_types):
+            return False
+
         d = d.replace(',' ,'').strip()
 
         d_lower = d.lower()
@@ -51,7 +61,9 @@ class Boolean(DataType):
         :param d: A value to cast.
         :returns: :class:`bool` or :code:`None`.
         """
-        if isinstance(d, bool) or d is None:
+        if d is None:
+            return d
+        elif type(d) is bool and type(d) is not int:
             return d
         elif isinstance(d, six.string_types):
             d = d.replace(',' ,'').strip()

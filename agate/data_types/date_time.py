@@ -12,11 +12,12 @@ class DateTime(DataType):
     """
     Data type representing dates and times.
 
-    :param datetime_format: A formatting string for
-        :meth:`datetime.datetime.strptime` to use instead of using regex-based
-        parsing.
-    :param timezone: A `pytz <http://pytz.sourceforge.net/>`_ timezone to apply
-        to each parsed date.
+    :param datetime_format:
+        A formatting string for :meth:`datetime.datetime.strptime` to use
+        instead of using regex-based parsing.
+    :param timezone:
+        A `pytz <http://pytz.sourceforge.net/>`_ timezone to apply to each
+        parsed date.
     """
     def __init__(self, datetime_format=None, timezone=None, **kwargs):
         super(DateTime, self).__init__(**kwargs)
@@ -32,9 +33,19 @@ class DateTime(DataType):
 
     def test(self, d):
         """
-        Test, for purposes of type inference, if a string value could possibly
-        be valid for this column type.
+        Test, for purposes of type inference, if a value could possibly be valid
+        for this column type. This will work with values that are native types
+        and values that have been stringified.
         """
+        if d is None:
+            return True
+
+        if isinstance(d, datetime.datetime):
+            return True
+
+        if not isinstance(d, six.string_types):
+            return False
+
         d = d.strip()
 
         if d.lower() in self.null_values:
@@ -55,9 +66,11 @@ class DateTime(DataType):
         """
         Cast a single value to a :class:`datetime.datetime`.
 
-        :param date_format: An optional :func:`datetime.strptime`
-            format string for parsing datetimes in this column.
-        :returns: :class:`datetime.datetime` or :code:`None`.
+        :param date_format:
+            An optional :func:`datetime.strptime` format string for parsing
+            datetimes in this column.
+        :returns:
+            :class:`datetime.datetime` or :code:`None`.
         """
         if isinstance(d, datetime.datetime) or d is None:
             return d

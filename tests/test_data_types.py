@@ -17,18 +17,59 @@ from agate.exceptions import CastError
 from agate.table import Table
 from agate.tableset import TableSet
 
-class TestDataTypes(unittest.TestCase):
-    def test_text_cast(self):
+class TestText(unittest.TestCase):
+    def setUp(self):
+        self.type = Text()
+
+    def test_test(self):
+        self.assertEqual(self.type.test(None), True)
+        self.assertEqual(self.type.test('N/A'), True)
+        self.assertEqual(self.type.test(True), True)
+        self.assertEqual(self.type.test('True'), True)
+        self.assertEqual(self.type.test(1), True)
+        self.assertEqual(self.type.test(Decimal('1')), True)
+        self.assertEqual(self.type.test('2.7'), True)
+        self.assertEqual(self.type.test(2.7), True)
+        self.assertEqual(self.type.test('3/1/1994'), True)
+        self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), True)
+        self.assertEqual(self.type.test('3/1/1994 12:30 PM'), True)
+        self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), True)
+        self.assertEqual(self.type.test('4:10'), True)
+        self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), True)
+        self.assertEqual(self.type.test('a'), True)
+
+    def test_cast(self):
         values = ('a', 1, None, Decimal('2.7'), 'n/a', u'👍')
-        casted = tuple(Text().cast(v) for v in values)
+        casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None, u'👍'))
 
-    def test_boolean_cast(self):
+class TestBoolean(unittest.TestCase):
+    def setUp(self):
+        self.type = Boolean()
+
+    def test_test(self):
+        self.assertEqual(self.type.test(None), True)
+        self.assertEqual(self.type.test('N/A'), True)
+        self.assertEqual(self.type.test(True), True)
+        self.assertEqual(self.type.test('True'), True)
+        self.assertEqual(self.type.test(1), False)
+        self.assertEqual(self.type.test(Decimal('1')), False)
+        self.assertEqual(self.type.test('2.7'), False)
+        self.assertEqual(self.type.test(2.7), False)
+        self.assertEqual(self.type.test('3/1/1994'), False)
+        self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), False)
+        self.assertEqual(self.type.test('3/1/1994 12:30 PM'), False)
+        self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), False)
+        self.assertEqual(self.type.test('4:10'), False)
+        self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
+        self.assertEqual(self.type.test('a'), False)
+
+    def test_cast(self):
         values = (True, 'yes', None, False, 'no', 'n/a')
-        casted = tuple(Boolean().cast(v) for v in values)
+        casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (True, True, None, False, False, None))
 
-    def test_boolean_cast_custom_strings(self):
+    def test_cast_custom_strings(self):
         values = ('a', 'b', 'c', 'd', 'e', 'f')
         boolean_type = Boolean(
             true_values=('a', 'b'),
@@ -38,38 +79,80 @@ class TestDataTypes(unittest.TestCase):
         casted = tuple(boolean_type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (True, True, None, False, False, None))
 
-    def test_boolean_cast_error(self):
+    def test_cast_error(self):
         with self.assertRaises(CastError):
-            Boolean().cast('quack')
+            self.type.cast('quack')
 
-    def test_number_cast(self):
+class TestNumber(unittest.TestCase):
+    def setUp(self):
+        self.type = Number()
+
+    def test_test(self):
+        self.assertEqual(self.type.test(None), True)
+        self.assertEqual(self.type.test('N/A'), True)
+        self.assertEqual(self.type.test(True), False)
+        self.assertEqual(self.type.test('True'), False)
+        self.assertEqual(self.type.test(1), True)
+        self.assertEqual(self.type.test(Decimal('1')), True)
+        self.assertEqual(self.type.test('2.7'), True)
+        self.assertEqual(self.type.test(2.7), True)
+        self.assertEqual(self.type.test('3/1/1994'), False)
+        self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), False)
+        self.assertEqual(self.type.test('3/1/1994 12:30 PM'), False)
+        self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), False)
+        self.assertEqual(self.type.test('4:10'), False)
+        self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
+        self.assertEqual(self.type.test('a'), False)
+
+    def test_cast(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a', '2.7', '200,000,000')
-        casted = tuple(Number().cast(v) for v in values)
+        casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000')))
 
-    def test_number_currency_cast(self):
+    def test_currency_cast(self):
         values = ('$2.70', '$0.70', u'€14', u'75¢')
-        casted = tuple(Number().cast(v) for v in values)
+        casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (Decimal('2.7'), Decimal('0.7'), Decimal('14'), Decimal('75')))
 
-    def test_number_cast_locale(self):
+    def test_cast_locale(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a', '2,7', '200.000.000')
         casted = tuple(Number(locale='de_DE').cast(v) for v in values)
         self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000')))
 
-    def test_number_cast_text(self):
+    def test_cast_text(self):
         with self.assertRaises(CastError):
-            Number().cast('a')
+            self.type.cast('a')
 
-    def test_number_cast_float(self):
+    def test_cast_float(self):
         with self.assertRaises(CastError):
-            Number().cast(1.1)
+            self.type.cast(1.1)
 
-    def test_number_cast_error(self):
+    def test_cast_error(self):
         with self.assertRaises(CastError):
-            Number().cast('quack')
+            self.type.cast('quack')
 
-    def test_date_cast_format(self):
+class TestDate(unittest.TestCase):
+    def setUp(self):
+        self.type = Date()
+
+    def test_test(self):
+        self.assertEqual(self.type.test(None), True)
+        self.assertEqual(self.type.test('N/A'), True)
+        self.assertEqual(self.type.test(True), False)
+        self.assertEqual(self.type.test('True'), False)
+        self.assertEqual(self.type.test(1), False)
+        self.assertEqual(self.type.test(Decimal('1')), False)
+        self.assertEqual(self.type.test('2.7'), False)
+        self.assertEqual(self.type.test(2.7), False)
+        self.assertEqual(self.type.test('3/1/1994'), True)
+        self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), True)
+        self.assertEqual(self.type.test('3/1/1994 12:30 PM'), False)
+        self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), False)
+        self.assertEqual(self.type.test('4:10'), False)
+        self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
+        self.assertEqual(self.type.test('a'), False)
+
+    def test_cast_format(self):
         date_type = Date(date_format='%m-%d-%Y')
 
         values = ('03-01-1994', '02-17-2011', None, '01-05-1984', 'n/a')
@@ -83,11 +166,9 @@ class TestDataTypes(unittest.TestCase):
         ))
 
 
-    def test_date_cast_parser(self):
-        date_type = Date()
-
+    def test_cast_parser(self):
         values = ('3/1/1994', '2/17/2011', None, 'January 5th, 1984', 'n/a')
-        casted = tuple(date_type.cast(v) for v in values)
+        casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.date(1994, 3, 1),
             datetime.date(2011, 2, 17),
@@ -97,21 +178,40 @@ class TestDataTypes(unittest.TestCase):
         ))
 
     @unittest.skip('Broken pending parsedatetime 1.6 release')
-    def test_date_dash_format(self):
-        date_type = Date()
-
+    def test_dash_format(self):
         values = ('1994-03-01', '2011-02-17')
-        casted = tuple(date_type.cast(v) for v in values)
+        casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.date(1994, 3, 1),
             datetime.date(2011, 2, 17)
         ))
 
-    def test_date_cast_error(self):
+    def test_cast_error(self):
         with self.assertRaises(CastError):
-            Date().cast('quack')
+            self.type.cast('quack')
 
-    def test_datetime_cast_format(self):
+class TestDateTime(unittest.TestCase):
+    def setUp(self):
+        self.type = DateTime()
+
+    def test_test(self):
+        self.assertEqual(self.type.test(None), True)
+        self.assertEqual(self.type.test('N/A'), True)
+        self.assertEqual(self.type.test(True), False)
+        self.assertEqual(self.type.test('True'), False)
+        self.assertEqual(self.type.test(1), False)
+        self.assertEqual(self.type.test(Decimal('1')), False)
+        self.assertEqual(self.type.test('2.7'), False)
+        self.assertEqual(self.type.test(2.7), False)
+        self.assertEqual(self.type.test('3/1/1994'), False)
+        self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), False)
+        self.assertEqual(self.type.test('3/1/1994 12:30 PM'), True)
+        self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), True)
+        self.assertEqual(self.type.test('4:10'), False)
+        self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
+        self.assertEqual(self.type.test('a'), False)
+
+    def test_cast_format(self):
         datetime_type = DateTime(datetime_format='%m-%d-%Y %I:%M %p')
 
         values = ('03-01-1994 12:30 PM', '02-17-1011 06:30 AM', None, '01-05-1984 06:30 PM', 'n/a')
@@ -124,11 +224,9 @@ class TestDataTypes(unittest.TestCase):
             None
         ))
 
-    def test_datetime_cast_parser(self):
-        datetime_type = DateTime()
-
+    def test_cast_parser(self):
         values = ('3/1/1994 12:30 PM', '2/17/2011 06:30', None, 'January 5th, 1984 22:37', 'n/a')
-        casted = tuple(datetime_type.cast(v) for v in values)
+        casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.datetime(1994, 3, 1, 12, 30, 0),
             datetime.datetime(2011, 2, 17, 6, 30, 0),
@@ -137,7 +235,7 @@ class TestDataTypes(unittest.TestCase):
             None
         ))
 
-    def test_datetime_cast_parser_timezone(self):
+    def test_cast_parser_timezone(self):
         tzinfo = pytz.timezone('US/Pacific')
         datetime_type = DateTime(timezone=tzinfo)
 
@@ -151,13 +249,34 @@ class TestDataTypes(unittest.TestCase):
             None
         ))
 
-    def test_datetime_cast_error(self):
+    def test_cast_error(self):
         with self.assertRaises(CastError):
-            DateTime().cast('quack')
+            self.type.cast('quack')
 
-    def test_timedelta_cast_parser(self):
+class TestTimeDelta(unittest.TestCase):
+    def setUp(self):
+        self.type = TimeDelta()
+
+    def test_test(self):
+        self.assertEqual(self.type.test(None), True)
+        self.assertEqual(self.type.test('N/A'), True)
+        self.assertEqual(self.type.test(True), False)
+        self.assertEqual(self.type.test('True'), False)
+        self.assertEqual(self.type.test(1), False)
+        self.assertEqual(self.type.test(Decimal('1')), False)
+        self.assertEqual(self.type.test('2.7'), False)
+        self.assertEqual(self.type.test(2.7), False)
+        self.assertEqual(self.type.test('3/1/1994'), False)
+        self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), False)
+        self.assertEqual(self.type.test('3/1/1994 12:30 PM'), False)
+        self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), False)
+        self.assertEqual(self.type.test('4:10'), True)
+        self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), True)
+        self.assertEqual(self.type.test('a'), False)
+
+    def test_cast_parser(self):
         values = ('4:10', '1.2m', '172 hours', '5 weeks, 2 days', 'n/a')
-        casted = tuple(TimeDelta().cast(v) for v in values)
+        casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.timedelta(minutes=4, seconds=10),
             datetime.timedelta(minutes=1, seconds=12),
@@ -167,11 +286,11 @@ class TestDataTypes(unittest.TestCase):
         ))
 
 
-    def test_timedelta_cast_error(self):
+    def test_cast_error(self):
         with self.assertRaises(CastError):
-            TimeDelta().cast('quack')
+            self.type.cast('quack')
 
-class TestTypeInference(unittest.TestCase):
+class TestTypeTester(unittest.TestCase):
     def setUp(self):
         self.tester = TypeTester()
 
