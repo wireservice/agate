@@ -1,7 +1,8 @@
 1.1.0
 -----
 
-
+* agate can now be used as a drop-in replacement for Python's csv module.
+* Migrated csvkit's unicode CSV reading/writing support into agate. (#354)
 
 1.0.1
 -----

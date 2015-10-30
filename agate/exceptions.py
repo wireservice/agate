@@ -23,3 +23,13 @@ class CastError(Exception):   #pragma: no cover
     Exception raised when a column value can not be cast to the correct type.
     """
     pass
+
+class FieldSizeLimitError(Exception):
+    """
+    Exception raised when a field in the CSV file exceeds the default max
+    or one provided by the user.
+    """
+    def __init__(self, limit):
+        super(FieldSizeLimitError, self).__init__(
+            'CSV contains fields longer than maximum length of %i characters. Try raising the maximum with the --maxfieldsize flag.' % limit
+        )
