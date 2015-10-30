@@ -3,8 +3,9 @@
 
 Version 1.1.0 introduces one major breaking API change. The Table, Table.from_csv and TableSet.from_csv methods now all takes "column_names" and "column_types" as separate arguments instead of as a list of tuples. Was done to facilitate type inference and to streamline the API in various other places.
 
-* agate.TypeTester can now be used with agate.Table, not just from_csv. (#350)
-* agate.Table, agate.Table.from_csv and agate.TableSet.from_csv now take column names and column types as separate parameters. (#350)
+* TypeTester can now validate Python native types (not just strings). (#367)
+* TypeTester can now be used with Table, not just Table.from_csv. (#350)
+* Table, Table.from_csv and TableSet.from_csv now take column names and column types as separate parameters. (#350)
 * agate.DEFAULT_NULL_VALUES (list of strings that mean null) is now public.
 * Table.from_csv and Table.to_csv are now unicode-safe without using csvkit.
 * agate can now be used as a drop-in replacement for Python's csv module.
