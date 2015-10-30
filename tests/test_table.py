@@ -410,6 +410,25 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[2], (None, 2, u'👍'))
 
+    def test_order_by_nulls(self):
+        self.rows = (
+            (1, 4, 'a'),
+            (None, 3, 'c'),
+            (2, 3, 'b'),
+            (None, 2, u'👍')
+        )
+
+        table = Table(self.rows, self.columns)
+
+        new_table = table.order_by('one')
+
+        self.assertIsNot(new_table, table)
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a'))
+        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b'))
+        self.assertSequenceEqual(new_table.rows[2], (None, 3, 'c'))
+        self.assertSequenceEqual(new_table.rows[3], (None, 2, u'👍'))
+
     def test_order_by_func(self):
         rows = (
             (1, 2, 'a'),
@@ -629,6 +648,19 @@ class TestCounts(unittest.TestCase):
     def test_counts_text(self):
         table = Table(self.rows, self.columns)
         new_table = table.counts('two')
+
+        self.assertEqual(len(new_table.rows), 3)
+        self.assertEqual(len(new_table.columns), 2)
+
+        self.assertSequenceEqual(new_table.rows[0], ['Y', 1])
+        self.assertSequenceEqual(new_table.rows[1], ['N', 4])
+        self.assertSequenceEqual(new_table.rows[2], [None, 1])
+
+        self.assertSequenceEqual(new_table.row_names, ['Y', 'N', None])
+
+    def test_counts_key_func(self):
+        table = Table(self.rows, self.columns)
+        new_table = table.counts(lambda r: r['two'])
 
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 2)
