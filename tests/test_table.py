@@ -184,7 +184,7 @@ class TestTable(unittest.TestCase):
         table2 = Table.from_json('examples/test.json')
 
         self.assertSequenceEqual(table1.column_names, table2.column_names)
-        # self.assertSequenceEqual(table1.column_types, table2.column_types)
+        self.assertSequenceEqual(table1.column_types, table2.column_types)
 
         self.assertEqual(len(table1.columns), len(table2.columns))
         self.assertEqual(len(table1.rows), len(table2.rows))
@@ -201,7 +201,7 @@ class TestTable(unittest.TestCase):
             table2 = Table.from_json(fh, self.columns)
 
             self.assertSequenceEqual(table1.column_names, table2.column_names)
-            # self.assertSequenceEqual(table1.column_types, table2.column_types)
+            self.assertSequenceEqual(table1.column_types, table2.column_types)
 
             self.assertEqual(len(table1.columns), len(table2.columns))
             self.assertEqual(len(table1.rows), len(table2.rows))
