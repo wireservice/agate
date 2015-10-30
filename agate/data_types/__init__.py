@@ -23,14 +23,16 @@ class TypeTester(object):
     """
     Infer data types for the columns in a given set of data.
 
-    :param force: A dictionary where each key is a column name and each
-        value is a :class:`.DataType` instance that overrides inference.
-    :param locale: A locale to use when evaluating the types of data. See
-        :class:`.Number`.
-    :param limit: An optional limit on how many rows to evaluate before
-        selecting the most likely type. Note that applying a limit may mean
-        errors arise when the data is cast--if the guess is proved incorrect
-        in further rows of data.
+    :param force:
+        A dictionary where each key is a column name and each value is a
+        :class:`.DataType` instance that overrides inference.
+    :param locale:
+        A locale to use when evaluating the types of data. See :class:`.Number`.
+    :param limit:
+        An optional limit on how many rows to evaluate before selecting the
+        most likely type. Note that applying a limit may mean errors arise when
+        the data is cast--if the guess is proved incorrect in further rows of
+        data.
     """
     def __init__(self, force={}, locale='en_US', limit=None):
         self._force = force
@@ -48,13 +50,11 @@ class TypeTester(object):
 
     def run(self, rows, column_names):
         """
-        Apply inference to the provided data and return an array of
-        :code:`(column_name, column_type)` tuples suitable as an argument to
-        :class:`.Table`.
+        Apply type inference to the provided data and return an array of
+        column types.
 
-        :param rows: The data as a sequence of any sequences: tuples, lists,
-            etc.
-        :param column_names: A sequence of column names.
+        :param rows:
+            The data as a sequence of any sequences: tuples, lists, etc.
         """
         num_columns = len(column_names)
         hypotheses = [set(self._possible_types) for i in range(num_columns)]
@@ -95,4 +95,4 @@ class TypeTester(object):
                     column_types.append(t)
                     break
 
-        return tuple(zip(column_names, column_types))
+        return tuple(column_types)

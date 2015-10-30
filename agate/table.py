@@ -80,15 +80,13 @@ class Table(Patchable):
         The data as a sequence of any sequences: tuples, lists, etc. If
         any row has fewer values than the number of columns, it will be filled
         out with nulls. No row may have more values than the number of columns.
-    :param column_info:
-        A sequence of pairs of column names and types. Column names must be
-        strings (or ``None``) and column types must be instances of
-        :class:`.DataType`. If any name is ``None``, then a column name will be
-        be assigned using :func:`.letter_name`.
-
-        Alternately, a sequence of :class:`.Column` instances. New column
-        instances will be created reusing the name and data type from each
-        column.
+    :param column_names:
+        A sequence of string names for each column or ``None``, in which case
+        column names will be automatically assigned using :func:`.letter_name`.
+    :param column_types:
+        A sequence of instances of :class:`.DataType` or an instance of
+        :class:`.TypeTester` or ``None`` in which case a generic TypeTester will
+        be used.
     :param row_names:
         Specifies unique names for each row. This parameter is
         optional. If specified it may be 1) the name of a single column that
@@ -100,37 +98,36 @@ class Table(Patchable):
         is propagated from an existing table. When :code:`True`, rows are
         assumed to be :class:`.Row` instances, rather than raw data.
     """
-    def __init__(self, rows, column_info, row_names=None, _is_fork=False):
-        column_info = list(column_info)
+    def __init__(self, rows, column_names=None, column_types=None, row_names=None, _is_fork=False):
+        # Validate column names
+        if column_names:
+            for column_name in column_names:
+                if not isinstance(column_name, six.string_types):
+                    raise ValueError('Column names must be strings.')
 
-        if isinstance(column_info[0], Column):
-            self._column_names = tuple(c.name for c in column_info)
-            self._column_types = tuple(c.data_type for c in column_info)
-        else:
-            column_names, self._column_types = zip(*column_info)
-
-            self._column_names = []
-
-            # Validation
-            for i, column_name in enumerate(column_names):
-                if not column_name:
-                    self._column_names.append(letter_name(i))
-                else:
-                    if not isinstance(column_name, six.string_types):
-                        raise ValueError('Column names must be strings.')
-
-                    self._column_names.append(column_name)
-
-            len_column_names = len(self._column_names)
-
-            if len(set(self._column_names)) != len_column_names:
+            if len(set(column_names)) != len(column_names):
                 raise ValueError('Duplicate column names are not allowed.')
 
-            self._column_names = tuple(self._column_names)
+            self._column_names = tuple(column_names)
+        else:
+            self._column_names = tuple(letter_name(i) for i in range(len(rows[0])))
 
-            for column_type in self._column_types:
+        len_column_names = len(self._column_names)
+
+        # Validate column_types
+        if column_types is None:
+            column_types = TypeTester()
+        elif isinstance(column_types, TypeTester):
+            pass
+        else:
+            for column_type in column_types:
                 if not isinstance(column_type, DataType):
                     raise ValueError('Column types must be instances of DataType.')
+
+        if isinstance(column_types, TypeTester):
+            self._column_types = column_types.run(rows, self._column_names)
+        else:
+            self._column_types = tuple(column_types)
 
         if not _is_fork:
             new_rows = []
@@ -179,21 +176,24 @@ class Table(Patchable):
 
         self._columns = MappedSequence(new_columns, self._column_names)
 
-    def _fork(self, rows, column_info=None, row_names=None):
+    def _fork(self, rows, column_names=None, column_types=None, row_names=None):
         """
         Create a new table using the metadata from this one.
         Used internally by functions like :meth:`order_by`.
         """
-        if column_info is None:
-            column_info = self._columns
+        if column_names is None:
+            column_names = self._column_names
+
+        if column_types is None:
+            column_types = self._column_types
 
         if row_names is None:
             row_names = self._row_names
 
-        return Table(rows, column_info, row_names=row_names, _is_fork=True)
+        return Table(rows, column_names, column_types, row_names=row_names, _is_fork=True)
 
     @classmethod
-    def from_csv(cls, path, column_info=None, row_names=None, header=True, **kwargs):
+    def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, **kwargs):
         """
         Create a new table for a CSV. This method uses agate's builtin
         CSV reader, which supports unicode on both Python 2 and Python 3.
@@ -202,21 +202,16 @@ class Table(Patchable):
 
         :param path:
             Filepath or file-like object from which to read CSV data.
-        :param column_info:
-            May be any valid input to :meth:`Table.__init__` or an instance of
-            :class:`.TypeTester`. Or, None, in which case a generic
-            :class:`.TypeTester` will be created.
+        :param column_names:
+            See :meth:`Table.__init__`.
+        :param column_types:
+            See :meth:`Table.__init__`.
         :param row_names:
             See :meth:`Table.__init__`.
         :param header:
             If `True`, the first row of the CSV is assumed to contains headers
             and will be skipped.
         """
-        if column_info is None:
-            column_info = TypeTester()
-
-        use_inference = isinstance(column_info, TypeTester)
-
         if hasattr(path, 'read'):
             rows = list(csv.reader(path, **kwargs))
         else:
@@ -225,17 +220,8 @@ class Table(Patchable):
 
         if header:
             column_names = rows.pop(0)
-        else:
-            column_names = [None] * len(rows[0])
 
-        if use_inference:
-            column_info = column_info.run(rows, column_names)
-        else:
-            if len(column_names) != len(column_info):
-                # TKTK Better Error
-                raise ValueError('CSV contains more columns than were specified.')
-
-        return Table(rows, column_info, row_names=row_names)
+        return Table(rows, column_names, column_types, row_names=row_names)
 
     def to_csv(self, path, **kwargs):
         """
@@ -314,13 +300,13 @@ class Table(Patchable):
             new table.
         :returns: A new :class:`Table`.
         """
-        new_columns = [self.columns[name] for name in selected_names]
+        column_types = [self.columns[name].data_type for name in selected_names]
         new_rows = []
 
         for row in self._rows:
             new_rows.append(Row(tuple(row[n] for n in selected_names), selected_names))
 
-        return self._fork(new_rows, new_columns)
+        return self._fork(new_rows, selected_names, column_types)
 
     @allow_tableset_proxy
     def where(self, test):
@@ -586,7 +572,7 @@ class Table(Patchable):
                 if self._row_names is not None:
                     row_names.append(self._row_names[left_index])
 
-        return self._fork(rows, zip(column_names, column_types), row_names=row_names)
+        return self._fork(rows, column_names, column_types, row_names=row_names)
 
     @classmethod
     def merge(cls, tables):
@@ -608,7 +594,7 @@ class Table(Patchable):
 
         rows = list(chain(*[table.rows for table in tables]))
 
-        return Table(rows, tables[0].columns, row_names=tables[0].row_names, _is_fork=True)
+        return Table(rows, column_names, column_types, row_names=tables[0].row_names, _is_fork=True)
 
     @allow_tableset_proxy
     def group_by(self, key, key_name=None, key_type=None):
@@ -695,7 +681,7 @@ class Table(Patchable):
             new_columns = tuple(c.run(row) for c, n in computations)
             new_rows.append(Row(tuple(row) + new_columns, column_names))
 
-        return self._fork(new_rows, zip(column_names, column_types))
+        return self._fork(new_rows, column_names, column_types)
 
     @allow_tableset_proxy
     def counts(self, key, key_name=None, key_type=None):
@@ -748,7 +734,7 @@ class Table(Patchable):
         column_names = [key_name, 'count']
         column_types = [key_type, Number()]
 
-        return Table(output.items(), zip(column_names, column_types), row_names=tuple(output.keys()))
+        return Table(output.items(), column_names, column_types, row_names=tuple(output.keys()))
 
     @allow_tableset_proxy
     def bins(self, column_name, count=10, start=None, end=None):
@@ -838,7 +824,10 @@ class Table(Patchable):
 
             bins[name] += 1
 
-        return Table(bins.items(), [(column_name, Text()), ('count', Number())], row_names=tuple(bins.keys()))
+        column_names = [column_name, 'count']
+        column_types = [Text(), Number()]
+
+        return Table(bins.items(), column_names, column_types, row_names=tuple(bins.keys()))
 
     def print_table(self, max_rows=None, max_columns=None, output=sys.stdout):
         """

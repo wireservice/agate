@@ -33,13 +33,10 @@ class TestSimpleAggregation(unittest.TestCase):
         self.number_type = Number()
         self.text_type = Text()
 
-        self.columns = (
-            ('one', self.number_type),
-            ('two', self.number_type),
-            ('three', self.text_type)
-        )
+        self.column_names = ['one', 'two', 'three']
+        self.column_types = [self.number_type, self.number_type, self.text_type]
 
-        self.table = Table(self.rows, self.columns)
+        self.table = Table(self.rows, self.column_names, self.column_types)
 
     def test_caching(self):
         length = Length()
@@ -82,7 +79,7 @@ class TestSimpleAggregation(unittest.TestCase):
             (1, 2, 'a')
         )
 
-        table = Table(rows, self.columns)
+        table = Table(rows, self.column_names, self.column_types)
 
         self.assertEqual(table.columns['one'].aggregate(Length()), 5)
         self.assertEqual(table.columns['two'].aggregate(Length()), 5)
@@ -96,7 +93,7 @@ class TestSimpleAggregation(unittest.TestCase):
             (1, 2, 'a')
         )
 
-        table = Table(rows, self.columns)
+        table = Table(rows, self.column_names, self.column_types)
 
         self.assertEqual(table.columns['one'].aggregate(Count(1)), 3)
         self.assertEqual(table.columns['one'].aggregate(Count(4)), 0)
@@ -174,13 +171,10 @@ class TestNumberAggregation(unittest.TestCase):
         self.number_type = Number()
         self.text_type = Text()
 
-        self.columns = (
-            ('one', self.number_type),
-            ('two', self.number_type),
-            ('three', self.text_type)
-        )
+        self.column_names = ['one', 'two', 'three']
+        self.column_types = [self.number_type, self.number_type, self.text_type]
 
-        self.table = Table(self.rows, self.columns)
+        self.table = Table(self.rows, self.column_names, self.column_types)
 
     def test_max_precision(self):
         self.assertEqual(self.table.columns['one'].aggregate(MaxPrecision()), 1)
@@ -322,7 +316,7 @@ class TestNumberAggregation(unittest.TestCase):
 
         rows = [(n,) for n in range(1, 1001)]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         percentiles = table.columns['ints'].aggregate(Percentiles())
 
@@ -336,7 +330,7 @@ class TestNumberAggregation(unittest.TestCase):
     def test_percentiles_locate(self):
         rows = [(n,) for n in range(1, 1001)]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         percentiles = table.columns['ints'].aggregate(Percentiles())
 
@@ -363,7 +357,7 @@ class TestNumberAggregation(unittest.TestCase):
         # N = 4
         rows = [(n,) for n in [1, 2, 3, 4]]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         quartiles = table.columns['ints'].aggregate(Quartiles())
 
@@ -373,7 +367,7 @@ class TestNumberAggregation(unittest.TestCase):
         # N = 5
         rows = [(n,) for n in [1, 2, 3, 4, 5]]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         quartiles = table.columns['ints'].aggregate(Quartiles())
 
@@ -383,7 +377,7 @@ class TestNumberAggregation(unittest.TestCase):
         # N = 6
         rows = [(n,) for n in [1, 2, 3, 4, 5, 6]]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         quartiles = table.columns['ints'].aggregate(Quartiles())
 
@@ -393,7 +387,7 @@ class TestNumberAggregation(unittest.TestCase):
         # N = 7
         rows = [(n,) for n in [1, 2, 3, 4, 5, 6, 7]]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         quartiles = table.columns['ints'].aggregate(Quartiles())
 
@@ -403,7 +397,7 @@ class TestNumberAggregation(unittest.TestCase):
         # N = 8 (doubled)
         rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4]]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         quartiles = table.columns['ints'].aggregate(Quartiles())
 
@@ -413,7 +407,7 @@ class TestNumberAggregation(unittest.TestCase):
         # N = 10 (doubled)
         rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         quartiles = table.columns['ints'].aggregate(Quartiles())
 
@@ -423,7 +417,7 @@ class TestNumberAggregation(unittest.TestCase):
         # N = 12 (doubled)
         rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6]]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         quartiles = table.columns['ints'].aggregate(Quartiles())
 
@@ -433,7 +427,7 @@ class TestNumberAggregation(unittest.TestCase):
         # N = 14 (doubled)
         rows = [(n,) for n in [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7]]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         quartiles = table.columns['ints'].aggregate(Quartiles())
 
@@ -448,7 +442,7 @@ class TestNumberAggregation(unittest.TestCase):
         # N = 4
         rows = [(n,) for n in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         quartiles = table.columns['ints'].aggregate(Quartiles())
 
@@ -471,7 +465,7 @@ class TestNumberAggregation(unittest.TestCase):
 
         rows = [(n,) for n in range(1, 1001)]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         table.columns['ints'].aggregate(Quintiles())
 
@@ -483,7 +477,7 @@ class TestNumberAggregation(unittest.TestCase):
 
         rows = [(n,) for n in range(1, 1001)]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
 
         table.columns['ints'].aggregate(Deciles())
 

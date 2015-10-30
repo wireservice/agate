@@ -6,7 +6,7 @@ tester = agate.TypeTester(force={
     'fips': agate.Text()
 })
 
-table = agate.Table.from_csv('examples/realdata/ks_1033_data.csv', tester)
+table = agate.Table.from_csv('examples/realdata/ks_1033_data.csv', column_types=tester)
 
 # Question 1: What was the total cost to Kansas City area counties?
 

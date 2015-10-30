@@ -14,19 +14,16 @@ Assuming your file has a single row of headers:
     text_type = agate.Text()
     number_type = agate.Number()
 
-    columns = (
-        ('city', text_type),
-        ('area', number_type),
-        ('population', number_type)
-    )
+    column_names = ['city', 'area', 'population']
+    column_types = [text_type, number_type, number_type]
 
-    table = agate.Table.from_csv('population.csv', columns)
+    table = agate.Table.from_csv('population.csv', column_names, column_types)
 
 If your file does not have headers:
 
 .. code-block:: python
 
-    table = agate.Table.from_csv('population.csv', columns, header=False)
+    table = agate.Table.from_csv('population.csv', column_names, column_types, header=False)
 
 Write a table to a CSV
 ======================
@@ -45,7 +42,7 @@ Load table from latin1 CSV
 
 .. code-block:: python
 
-    table = agate.Table.from_csv('census.csv', columns, encoding='latin1')
+    table = agate.Table.from_csv('census.csv', column_names, column_types, encoding='latin1')
 
 .. _load_a_table_from_a_sql_database:
 
@@ -84,11 +81,11 @@ The class which implements the type guessing is :class:`.TypeTester`. It support
         'fips': agate.Text()
     })
 
-    table = agate.Table.from_csv('counties.csv', tester)
+    table = agate.Table.from_csv('counties.csv', column_types=tester)
 
 .. note::
 
-    For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. It's best to use it with a tool such as `proof <http://proof.readthedocs.org/en/latest/>`_ so you don't have to run it everytime you work with your data.
+    For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. You can specify a `limit` argument to reduce the number of rows that are tested, but you may also want to consider using a tool such as `proof <http://proof.readthedocs.org/en/latest/>`_ so you don't have to run it everytime you work with your data.
 
 Reorder columns
 ===============

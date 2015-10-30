@@ -1,6 +1,8 @@
 1.1.0
 -----
 
+* agate.TypeTester can now be used with agate.Table, not just from_csv. (#350)
+* agate.Table, agate.Table.from_csv and agate.TableSet.from_csv now take column names and column types as separate parameters. (#350)
 * agate.DEFAULT_NULL_VALUES (list of strings that mean null) is now public.
 * Table.from_csv and Table.to_csv are now unicode-safe without using csvkit.
 * agate can now be used as a drop-in replacement for Python's csv module.

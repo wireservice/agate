@@ -184,7 +184,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], Text)
+        self.assertIsInstance(inferred[0], Text)
 
     def test_number_type(self):
         rows = [
@@ -195,7 +195,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], Number)
+        self.assertIsInstance(inferred[0], Number)
 
     def test_number_locale(self):
         rows = [
@@ -207,8 +207,8 @@ class TestTypeInference(unittest.TestCase):
         tester = TypeTester(locale='de_DE')
         inferred = tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], Number)
-        self.assertEqual(inferred[0][1]._locale, 'de_DE')
+        self.assertIsInstance(inferred[0], Number)
+        self.assertEqual(inferred[0]._locale, 'de_DE')
 
     def test_number_percent(self):
         rows = [
@@ -219,7 +219,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], Number)
+        self.assertIsInstance(inferred[0], Number)
 
     def test_number_currency(self):
         rows = [
@@ -230,7 +230,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], Number)
+        self.assertIsInstance(inferred[0], Number)
 
     def test_number_currency_locale(self):
         rows = [
@@ -241,7 +241,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], Number)
+        self.assertIsInstance(inferred[0], Number)
 
     def test_boolean_type(self):
         rows = [
@@ -252,7 +252,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], Boolean)
+        self.assertIsInstance(inferred[0], Boolean)
 
     def test_date_type(self):
         rows = [
@@ -264,7 +264,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], Date)
+        self.assertIsInstance(inferred[0], Date)
 
     def test_date_time_type(self):
         rows = [
@@ -276,7 +276,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], DateTime)
+        self.assertIsInstance(inferred[0], DateTime)
 
     def test_time_delta_type(self):
         rows = [
@@ -287,7 +287,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = self.tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], TimeDelta)
+        self.assertIsInstance(inferred[0], TimeDelta)
 
     def test_force_type(self):
         rows = [
@@ -302,7 +302,7 @@ class TestTypeInference(unittest.TestCase):
 
         inferred = tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], Text)
+        self.assertIsInstance(inferred[0], Text)
 
     def test_limit(self):
         rows = [
@@ -314,12 +314,12 @@ class TestTypeInference(unittest.TestCase):
         tester = TypeTester(limit=1)
         inferred = tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], Number)
+        self.assertIsInstance(inferred[0], Number)
 
         tester = TypeTester(limit=2)
         inferred = tester.run(rows, ['one'])
 
-        self.assertIsInstance(inferred[0][1], Text)
+        self.assertIsInstance(inferred[0], Text)
 
     def test_table_from_csv(self):
         table = Table.from_csv('examples/test.csv', self.tester)

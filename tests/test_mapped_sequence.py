@@ -7,8 +7,6 @@ except ImportError:
 
 import six
 
-from agate import Table
-from agate.computations import Formula
 from agate.data_types import *
 from agate.mapped_sequence import MappedSequence
 

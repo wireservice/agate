@@ -55,7 +55,7 @@ The :class:`.Table` class will now have all the methods of :code:`ExamplePatch` 
     >>> import agate
     >>> import myextension
     >>> myextension.patch()
-    >>> table = agate.Table(rows, columns)
+    >>> table = agate.Table(rows, column_names, column_types)
     >>> table.new_method()
     'I do something to a Table when you call me.'
 

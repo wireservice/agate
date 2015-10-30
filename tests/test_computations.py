@@ -27,14 +27,14 @@ class TestTableComputation(unittest.TestCase):
         self.number_type = Number()
         self.text_type = Text()
 
-        self.columns = (
-            ('one', self.text_type),
-            ('two', self.number_type),
-            ('three', self.number_type),
-            ('four', self.number_type)
-        )
+        self.column_names = [
+            'one', 'two', 'three', 'four'
+        ]
+        self.column_types = [
+            self.text_type, self.number_type, self.number_type, self.number_type
+        ]
 
-        self.table = Table(self.rows, self.columns)
+        self.table = Table(self.rows, self.column_names, self.column_types)
 
     def test_change(self):
         new_table = self.table.compute([
@@ -57,12 +57,10 @@ class TestTableComputation(unittest.TestCase):
             ('2', '11/13/1974')
         )
 
-        columns = (
-            ('number', Number()),
-            ('date', Date())
-        )
+        column_names = ['number', 'date']
+        column_types = [Number(), Date()]
 
-        table = Table(rows, columns)
+        table = Table(rows, column_names, column_types)
 
         with self.assertRaises(ValueError):
             table.compute([
@@ -75,12 +73,10 @@ class TestTableComputation(unittest.TestCase):
             (True, False)
         )
 
-        columns = (
-            ('before', Boolean()),
-            ('after', Boolean())
-        )
+        column_names = ['before', 'after']
+        column_types = [Boolean(), Boolean()]
 
-        table = Table(rows, columns)
+        table = Table(rows, column_names, column_types)
 
         with self.assertRaises(DataTypeError):
             table.compute([
@@ -187,7 +183,7 @@ class TestTableComputation(unittest.TestCase):
     def test_percentile_rank(self):
         rows = [(n,) for n in range(1, 1001)]
 
-        table = Table(rows, (('ints', self.number_type),))
+        table = Table(rows, ['ints'], [self.number_type])
         new_table = table.compute([
             (PercentileRank('ints'), 'percentiles')
         ])
@@ -212,12 +208,10 @@ class TestDateAndTimeComputations(unittest.TestCase):
 
         date_type = Date()
 
-        columns = (
-            ('one', date_type),
-            ('two', date_type)
-        )
+        column_names = ['one', 'two']
+        column_types = [date_type, date_type]
 
-        table = Table(rows, columns)
+        table = Table(rows, column_names, column_types)
 
         new_table = table.compute([
             (Change('one', 'two'), 'test')
@@ -246,12 +240,10 @@ class TestDateAndTimeComputations(unittest.TestCase):
 
         datetime_type = DateTime()
 
-        columns = (
-            ('one', datetime_type),
-            ('two', datetime_type)
-        )
+        column_names = ['one', 'two']
+        column_types = [datetime_type, datetime_type]
 
-        table = Table(rows, columns)
+        table = Table(rows, column_names, column_types)
 
         new_table = table.compute([
             (Change('one', 'two'), 'test')
@@ -280,12 +272,10 @@ class TestDateAndTimeComputations(unittest.TestCase):
 
         timedelta_type = TimeDelta()
 
-        columns = (
-            ('one', timedelta_type),
-            ('two', timedelta_type)
-        )
+        column_names = ['one', 'two']
+        column_types = [timedelta_type, timedelta_type]
 
-        table = Table(rows, columns)
+        table = Table(rows, column_names, column_types)
 
         new_table = table.compute([
             (Change('one', 'two'), 'test')

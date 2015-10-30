@@ -45,15 +45,13 @@ class TestTableSet(unittest.TestCase):
         self.text_type = Text()
         self.number_type = Number()
 
-        self.columns = (
-            ('letter', self.text_type),
-            ('number', self.number_type)
-        )
+        self.column_names = ['letter', 'number']
+        self.column_types = [self.text_type, self.number_type]
 
         self.tables = OrderedDict([
-            ('table1', Table(self.table1, self.columns)),
-            ('table2', Table(self.table2, self.columns)),
-            ('table3', Table(self.table3, self.columns))
+            ('table1', Table(self.table1, self.column_names, self.column_types)),
+            ('table2', Table(self.table2, self.column_names, self.column_types)),
+            ('table3', Table(self.table3, self.column_names, self.column_types))
         ])
 
     def test_create_tableset(self):
@@ -63,7 +61,7 @@ class TestTableSet(unittest.TestCase):
 
     def test_from_csv(self):
         tableset1 = TableSet(self.tables.values(), self.tables.keys())
-        tableset2 = TableSet.from_csv('examples/tableset', self.columns)
+        tableset2 = TableSet.from_csv('examples/tableset', self.column_names, self.column_types)
 
         self.assertSequenceEqual(tableset1.column_names, tableset2.column_names)
         self.assertSequenceEqual(tableset1.column_types, tableset2.column_types)
@@ -97,12 +95,12 @@ class TestTableSet(unittest.TestCase):
     def test_get_column_types(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
-        self.assertSequenceEqual(tableset.column_types, [t for n, t in self.columns])
+        self.assertSequenceEqual(tableset.column_types, self.column_types)
 
     def test_get_column_names(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
-        self.assertSequenceEqual(tableset.column_names, [n for n, t in self.columns])
+        self.assertSequenceEqual(tableset.column_names, self.column_names)
 
     def test_merge(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
@@ -183,9 +181,9 @@ class TestTableSet(unittest.TestCase):
 
     def test_aggregate_key_type(self):
         tables = OrderedDict([
-            (1, Table(self.table1, self.columns)),
-            (2, Table(self.table2, self.columns)),
-            (3, Table(self.table3, self.columns))
+            (1, Table(self.table1, self.column_names, self.column_types)),
+            (2, Table(self.table2, self.column_names, self.column_types)),
+            (3, Table(self.table3, self.column_names, self.column_types))
         ])
 
         tableset = TableSet(tables.values(), tables.keys(), key_name='test', key_type=self.number_type)

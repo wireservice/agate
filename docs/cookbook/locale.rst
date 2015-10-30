@@ -20,9 +20,7 @@ To correctly parse numbers from non-US locales, you can pass a :code:`locale` pa
 
     dutch_numbers = agate.Number(locale='de_DE')
 
-    columns = (
-        ('city', text_type),
-        ('population', dutch_numbers)
-    )
+    column_names = ['city', 'population']
+    column_types = [text_type, dutch_numbers]
 
     table = agate.Table.from_csv('dutch_cities.csv', columns)

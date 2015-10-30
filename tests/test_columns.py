@@ -28,13 +28,10 @@ class TestColumn(unittest.TestCase):
         self.number_type = Number()
         self.text_type = Text()
 
-        self.columns = (
-            ('one', self.number_type),
-            ('two', self.number_type),
-            ('three', self.text_type)
-        )
+        self.column_names = ['one', 'two', 'three']
+        self.column_types = [self.number_type, self.number_type, self.text_type]
 
-        self.table = Table(self.rows, self.columns)
+        self.table = Table(self.rows, self.column_names, self.column_types)
 
     def test_name(self):
         self.assertEqual(self.table.columns['one'].name, 'one')
@@ -46,14 +43,14 @@ class TestColumn(unittest.TestCase):
         pickle.dumps(self.table.columns['one'])
 
     def test_row_names(self):
-        table = Table(self.rows, self.columns, row_names='three')
+        table = Table(self.rows, self.column_names, self.column_types, row_names='three')
         column = table.columns['one']
 
         self.assertSequenceEqual(column._row_names, ['a', 'b', 'c'])
         self.assertEqual(column['b'], 2)
 
     def test_keys(self):
-        table = Table(self.rows, self.columns, row_names='three')
+        table = Table(self.rows, self.column_names, self.column_types, row_names='three')
 
         self.assertIs(self.table.columns['one'].keys(), None)
         self.assertSequenceEqual(table.columns['one'].keys(), ['a', 'b', 'c'])
@@ -65,7 +62,7 @@ class TestColumn(unittest.TestCase):
         )
 
     def test_items(self):
-        table = Table(self.rows, self.columns, row_names='three')
+        table = Table(self.rows, self.column_names, self.column_types, row_names='three')
 
         self.assertSequenceEqual(table.columns['one'].items(), [
             ('a', Decimal('1')),
@@ -74,7 +71,7 @@ class TestColumn(unittest.TestCase):
         ])
 
     def test_dict(self):
-        table = Table(self.rows, self.columns, row_names='three')
+        table = Table(self.rows, self.column_names, self.column_types, row_names='three')
 
         self.assertDictEqual(table.columns['one'].dict(), {
             'a': Decimal('1'),
@@ -95,7 +92,7 @@ class TestColumn(unittest.TestCase):
             (1, 4, 'c')
         )
 
-        table = Table(rows, self.columns)
+        table = Table(rows, self.column_names, self.column_types)
 
         self.assertSequenceEqual(
             table.columns['one'].values_sorted(),
@@ -109,7 +106,7 @@ class TestColumn(unittest.TestCase):
             (1, 4, 'c')
         )
 
-        table = Table(rows, self.columns)
+        table = Table(rows, self.column_names, self.column_types)
 
         self.assertSequenceEqual(
             table.columns['one'].values_without_nulls_sorted(),

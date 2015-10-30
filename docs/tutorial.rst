@@ -54,7 +54,7 @@ Now let's import our dependencies:
 Defining the columns
 ====================
 
-There are two ways to specify column types in agate. You can specify a particular type one-by-one, which gives you complete control over how the data is processed, or you can use agate's :class:`.TypeTester` to infer types from the data. The latter is more convenient, but it is imperfect, so it's wise to check that the types in infers are reasonable. (For instance, some date formats look exactly like numbers and some numbers are really text.)
+There are two ways to specify column types in agate. You can specify a particular type one-by-one, which gives you complete control over how the data is processed, or you can use agate's :class:`.TypeTester` to infer types from the data. The latter is more convenient, but it is imperfect, so if you run int problems you may want to specify them manually. (For instance, some date formats look exactly like numbers and some numbers are really text.)
 
 You can create a :class:`.TypeTester` like this:
 
@@ -70,30 +70,29 @@ If you prefer to specify your columns manually you will need to create instances
     number_type = agate.Number()
     boolean_type = agate.Boolean()
 
-Then you define the names and types of the columns that are in our dataset as a sequence of pairs. For the exonerations dataset, you would define:
+Then you define the names and types of the columns that are in our dataset as a sequence. For the exonerations dataset, you would define:
 
 .. code-block:: python
 
-    columns = (
-        ('last_name', text_type),
-        ('first_name', text_type),
-        ('age', number_type),
-        ('race', text_type),
-        ('state', text_type),
-        ('tags', text_type),
-        ('crime', text_type),
-        ('sentence', text_type),
-        ('convicted', number_type),
-        ('exonerated', number_type),
-        ('dna', boolean_type),
-        ('dna_essential', text_type),
-        ('mistaken_witness', boolean_type),
-        ('false_confession', boolean_type),
-        ('perjury', boolean_type),
-        ('false_evidence', boolean_type),
-        ('official_misconduct', boolean_type),
-        ('inadequate_defense', boolean_type),
-    )
+    column_names = [
+        'last_name',
+        'first_name',
+        'age',
+        'race',
+        'state',
+        # ...
+    ]
+
+    column_types = [
+        text_type,
+        text_type,
+        number_type,
+        text_type,
+        text_type,
+        # ...
+    ]
+
+For the remainder of this example we will use the :class:`.TypeTester`.
 
 .. note::
 
@@ -116,11 +115,11 @@ The :class:`.Table` is the basic class in agate. A time-saving method is include
 
     For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. You can specify a `limit` argument to restrict the amount of data it will use to infer types. Alternately, you may wish to use a tool such as `proof <http://proof.readthedocs.org/en/latest/>`_ so you don't have to run it everytime you work with your data.
 
-Or, to use the column types we created manually:
+Or, if you wanted to use the column data created manually:
 
 .. code-block:: python
 
-    exonerations = agate.Table.from_csv('exonerations-20150828.csv', columns)
+    exonerations = agate.Table.from_csv('exonerations-20150828.csv', column_names, column_types)
 
 In either case the ``exonerations`` variable will now be an instance of :class:`.Table`.
 

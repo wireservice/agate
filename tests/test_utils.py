@@ -32,11 +32,11 @@ class TryPatchShadow(object):
 
 class TestMonkeyPatching(unittest.TestCase):
     def test_monkeypatch(self):
-        before_table = Table([], [('foo', Text())])
+        before_table = Table([], ['foo'], [Text()])
 
         Table.monkeypatch(TryPatch)
 
-        after_table = Table([], [('foo', Text())])
+        after_table = Table([], ['foo'], [Text()])
 
         self.assertSequenceEqual(Table.__bases__, [Patchable, TryPatch])
 
@@ -51,11 +51,11 @@ class TestMonkeyPatching(unittest.TestCase):
         self.assertEqual(Table.testcls(5), 5)
 
     def test_monkeypatch_shadow(self):
-        before_table = Table([['blah'], ], [('foo', Text())])
+        before_table = Table([['blah'], ], ['foo'], [Text()])
 
         Table.monkeypatch(TryPatchShadow)
 
-        after_table = Table([['blah'], ], [('foo', Text())])
+        after_table = Table([['blah'], ], ['foo'], [Text()])
 
         self.assertIsInstance(before_table.columns, MappedSequence)
         self.assertIsInstance(after_table.columns, MappedSequence)

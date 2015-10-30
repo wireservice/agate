@@ -138,7 +138,7 @@ class TableSet(MappedSequence, Patchable):
         return self._key_type
 
     @classmethod
-    def from_csv(cls, dir_path, column_info, row_names=None, header=True, **kwargs):
+    def from_csv(cls, dir_path, column_names=None, column_types=None, row_names=None, header=True, **kwargs):
         """
         Create a new :class:`TableSet` from a directory of CSVs.
 
@@ -147,10 +147,10 @@ class TableSet(MappedSequence, Patchable):
         :param dir_path:
             Path to a directory full of CSV files. All CSV files in this
             directory will be loaded.
-        :param column_info:
-            A sequence of pairs of column names and types. The latter must be
-            instances of :class:`.DataType`. Or, an instance of
-            :class:`.TypeTester` to infer types.
+        :param column_names:
+            See :meth:`Table.__init__`.
+        :param column_types:
+            See :meth:`Table.__init__`.
         :param row_names:
             See :meth:`Table.__init__`.
         :param header:
@@ -241,7 +241,7 @@ class TableSet(MappedSequence, Patchable):
             for row in table.rows:
                 rows.append(Row((key,) + tuple(row), column_names))
 
-        return Table(rows, zip(column_names, column_types))
+        return Table(rows, column_names, column_types)
 
     def _aggregate(self, aggregations=[]):
         """
@@ -314,4 +314,4 @@ class TableSet(MappedSequence, Patchable):
         else:
             row_names = lambda r: tuple(r[n] for n in row_name_columns)
 
-        return Table(output, zip(column_names, column_types), row_names=row_names)
+        return Table(output, column_names, column_types, row_names=row_names)

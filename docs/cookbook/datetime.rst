@@ -14,12 +14,10 @@ By default, agate will attempt to infer the format of a date column:
     text_type = agate.Text()
     date_type = agate.Date()
 
-    columns = (
-        ('name', text_type),
-        ('date', date_type)
-    )
+    column_names = ['name', 'date']
+    column_types = [text_type, date_type]
 
-    table = agate.Table.from_csv('events.csv', columns)
+    table = agate.Table.from_csv('events.csv', column_names, column_types)
 
 Specify a date format
 =====================
@@ -84,10 +82,8 @@ If you load data from a spreadsheet in one timezone and you need to convert it t
     us_eastern = pytz.timezone('US/Eastern')
     datetime_type = agate.DateTime(timezone=us_eastern)
 
-    columns = (
-        ('what', text_type),
-        ('when', datetime_type)
-    )
+    column_names = ['what', 'when']
+    column_types = [text_type, datetime_type]
 
     table = agate.Table.from_csv('events.csv', columns)
 
