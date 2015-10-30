@@ -334,7 +334,7 @@ class TestTypeInference(unittest.TestCase):
         self.assertSequenceEqual(table.rows[2], [None, 2, u'👍'])
 
     def test_tableset_from_csv(self):
-        tableset = TableSet.from_csv('examples/tableset', self.tester)
+        tableset = TableSet.from_csv('examples/tableset', column_types=self.tester)
 
         self.assertSequenceEqual(tableset.column_names, ['letter', 'number'])
         self.assertSequenceEqual(tuple(map(type, tableset.column_types)), [Text, Number])
@@ -344,10 +344,6 @@ class TestTypeInference(unittest.TestCase):
         self.assertSequenceEqual(tableset['table1'].rows[0], ['a', 1])
         self.assertSequenceEqual(tableset['table1'].rows[1], ['a', 3])
         self.assertSequenceEqual(tableset['table1'].rows[2], ['b', 2])
-
-    def test_tableset_from_csv_no_headers(self):
-        with self.assertRaises(ValueError):
-            TableSet.from_csv('examples/tableset', self.tester, header=False)
 
     def test_tableset_from_csv_invalid_dir(self):
         with self.assertRaises(IOError):

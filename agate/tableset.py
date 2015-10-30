@@ -157,29 +157,15 @@ class TableSet(MappedSequence, Patchable):
             If `True`, the first row of the CSV is assumed to contains headers
             and will be skipped.
         """
-        use_inference = isinstance(column_info, TypeTester)
-
-        if use_inference and not header:
-            raise ValueError('Can not apply TypeTester to a CSV without headers.')
-
         if not os.path.isdir(dir_path):
             raise IOError('Specified path doesn\'t exist or isn\'t a directory.')
 
         tables = OrderedDict()
 
-        if use_inference:
-            has_inferred_columns = False
-
         for path in glob(os.path.join(dir_path, '*.csv')):
             name = os.path.split(path)[1].strip('.csv')
 
-            table = Table.from_csv(path, column_info, row_names=row_names, header=header, **kwargs)
-
-            if use_inference and not has_inferred_columns:
-                column_info = tuple(zip(table.column_names, table.column_types))
-                has_inferred_columns = True
-
-            tables[name] = table
+            tables[name] = Table.from_csv(path, column_names, column_types, row_names=row_names, header=header, **kwargs)
 
         return TableSet(tables.values(), tables.keys())
 
