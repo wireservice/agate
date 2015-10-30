@@ -322,10 +322,6 @@ class TestTypeInference(unittest.TestCase):
         self.assertIsInstance(inferred[0][1], Text)
 
     def test_table_from_csv(self):
-        import csvkit
-        from agate import table
-        table.csv = csvkit
-
         table = Table.from_csv('examples/test.csv', self.tester)
 
         self.assertSequenceEqual(table.column_names, ['one', 'two', 'three'])

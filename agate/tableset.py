@@ -140,23 +140,22 @@ class TableSet(MappedSequence, Patchable):
     @classmethod
     def from_csv(cls, dir_path, column_info, row_names=None, header=True, **kwargs):
         """
-        Create a new :class:`TableSet` from a directory of CSVs. This method
-        will use csvkit if it is available, otherwise it will use Python's
-        builtin csv module.
+        Create a new :class:`TableSet` from a directory of CSVs.
 
-        ``kwargs`` will be passed through to :meth:`csv.reader`.
+        See :meth:`.Table.from_csv` for additional details.
 
-        If you are using Python 2 and not using csvkit, this method is not
-        unicode-safe.
-
-        :param dir_path: Path to a directory full of CSV files. All CSV files
-            in this directory will be loaded.
-        :param column_info: A sequence of pairs of column names and types. The latter
-            must be instances of :class:`.DataType`. Or, an instance of
+        :param dir_path:
+            Path to a directory full of CSV files. All CSV files in this
+            directory will be loaded.
+        :param column_info:
+            A sequence of pairs of column names and types. The latter must be
+            instances of :class:`.DataType`. Or, an instance of
             :class:`.TypeTester` to infer types.
-        :param row_names: See :meth:`Table.__init__`.
-        :param header: If `True`, the first row of the CSV is assumed to contains
-            headers and will be skipped.
+        :param row_names:
+            See :meth:`Table.__init__`.
+        :param header:
+            If `True`, the first row of the CSV is assumed to contains headers
+            and will be skipped.
         """
         use_inference = isinstance(column_info, TypeTester)
 
@@ -187,15 +186,12 @@ class TableSet(MappedSequence, Patchable):
     def to_csv(self, dir_path, **kwargs):
         """
         Write this each table in this set to a separate CSV in a given
-        directory. This method will use csvkit if it is available, otherwise
-        it will use Python's builtin csv module.
+        directory.
 
-        ``kwargs`` will be passed through to :meth:`csv.writer`.
+        See :meth:`.Table.to_csv` for additional details.
 
-        If you are using Python 2 and not using csvkit, this method is not
-        unicode-safe.
-
-        :param dir_path: Path to the directory to write the CSV files to.
+        :param dir_path:
+            Path to the directory to write the CSV files to.
         """
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
@@ -210,7 +206,7 @@ class TableSet(MappedSequence, Patchable):
         """
         Get an ordered list of this :class:`.TableSet`'s column types.
 
-        :returns: A :class:`tuple` of :class:`.Column` instances.
+        :returns: A :class:`tuple` of :class:`.DataType` instances.
         """
         return self._column_types
 

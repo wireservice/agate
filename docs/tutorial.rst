@@ -45,12 +45,9 @@ Now let's import our dependencies:
 
 .. code-block:: python
 
-    import csv
     import agate
 
 .. note::
-
-    You should really be using `csvkit <http://csvkit.readthedocs.org/>`_ to load CSV files, but here we stick with the builtin `csv` module because it comes with Python so everyone already has it.
 
     I also strongly suggest taking a look at `proof <http://proof.readthedocs.org/en/latest/>`_ for building data processing pipelines, but we won't use it in this tutorial to keep things simple.
 
@@ -113,7 +110,11 @@ The :class:`.Table` is the basic class in agate. A time-saving method is include
 
 .. note::
 
-    For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. It's best to use it with a tool such as `proof <http://proof.readthedocs.org/en/latest/>`_ so you don't have to run it everytime you work with your data.
+    agate's builtin CSV reader supports unicode and other encodings for both Python 2 and Python 3.
+
+.. note::
+
+    For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. You can specify a `limit` argument to restrict the amount of data it will use to infer types. Alternately, you may wish to use a tool such as `proof <http://proof.readthedocs.org/en/latest/>`_ so you don't have to run it everytime you work with your data.
 
 Or, to use the column types we created manually:
 

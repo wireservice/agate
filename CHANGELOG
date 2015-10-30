@@ -1,6 +1,7 @@
 1.1.0
 -----
 
+* Table.from_csv and Table.to_csv are now unicode-safe without using csvkit.
 * agate can now be used as a drop-in replacement for Python's csv module.
 * Migrated csvkit's unicode CSV reading/writing support into agate. (#354)
 

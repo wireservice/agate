@@ -173,24 +173,7 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table.rows[(Decimal('2'), 'b')], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[(None, u'👍')], (None, 2, u'👍'))
 
-    def test_from_csv_builtin(self):
-        import csv
-        from agate import table
-        table.csv = csv
-
-        if six.PY2:
-            with self.assertRaises(UnicodeDecodeError):
-                output = Table.from_csv('examples/test.csv', self.columns)
-        else:
-            output = Table.from_csv('examples/test.csv', self.columns)
-
-            self.assertEqual(len(output.columns), 3)
-
-    def test_from_csv_csvkit(self):
-        import csvkit
-        from agate import table
-        table.csv = csvkit
-
+    def test_from_csv(self):
         table1 = Table(self.rows, self.columns)
         table2 = Table.from_csv('examples/test.csv', self.columns)
 
@@ -205,10 +188,6 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table1.rows[2], table2.rows[2])
 
     def test_from_csv_file_like_object(self):
-        import csvkit
-        from agate import table
-        table.csv = csvkit
-
         table1 = Table.from_csv('examples/test.csv', self.columns)
 
         with open('examples/test.csv') as fh:
@@ -225,10 +204,6 @@ class TestTable(unittest.TestCase):
             self.assertSequenceEqual(table1.rows[2], table2.rows[2])
 
     def test_from_csv_type_tester(self):
-        import csvkit
-        from agate import table
-        table.csv = csvkit
-
         tester = TypeTester()
 
         output = Table.from_csv('examples/test.csv', tester)
@@ -239,10 +214,6 @@ class TestTable(unittest.TestCase):
         self.assertIsInstance(output.columns[2].data_type, Text)
 
     def test_from_csv_default_type_tester(self):
-        import csvkit
-        from agate import table
-        table.csv = csvkit
-
         output = Table.from_csv('examples/test.csv')
 
         self.assertEqual(len(output.columns), 3)
@@ -251,10 +222,6 @@ class TestTable(unittest.TestCase):
         self.assertIsInstance(output.columns[2].data_type, Text)
 
     def test_from_csv_no_header(self):
-        import csvkit
-        from agate import table
-        table.csv = csvkit
-
         output = Table.from_csv('examples/test_no_header.csv', None, header=False)
 
         self.assertEqual(len(output.columns), 3)
@@ -264,10 +231,6 @@ class TestTable(unittest.TestCase):
         self.assertIsInstance(output.columns[2].data_type, Text)
 
     def test_from_csv_no_header_type_inference(self):
-        import csvkit
-        from agate import table
-        table.csv = csvkit
-
         output = Table.from_csv('examples/test_no_header.csv', None, header=False)
 
         self.assertEqual(len(output.columns), 3)

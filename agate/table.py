@@ -37,11 +37,6 @@ except ImportError: #pragma: no cover
 
 from babel.numbers import format_decimal
 
-try:
-    import csvkit as csv
-except ImportError: #pragma: no cover
-    import csv
-
 import six
 from six.moves import range, zip #pylint: disable=W0622
 
@@ -53,6 +48,11 @@ from agate.mapped_sequence import MappedSequence
 from agate.preview import print_table, print_bars
 from agate.rows import Row
 from agate.utils import NullOrder, Patchable, max_precision, make_number_formatter, round_limits, letter_name
+
+if six.PY2:
+    from agate import csv_py2 as csv
+else:
+    from agate import csv_py3 as csv
 
 def allow_tableset_proxy(func):
     """
@@ -195,25 +195,22 @@ class Table(Patchable):
     @classmethod
     def from_csv(cls, path, column_info=None, row_names=None, header=True, **kwargs):
         """
-        Create a new table for a CSV. This method will use csvkit if it is
-        available, otherwise it will use Python's builtin csv module.
+        Create a new table for a CSV. This method uses agate's builtin
+        CSV reader, which supports unicode on both Python 2 and Python 3.
 
-        ``kwargs`` will be passed through to :meth:`csv.reader`.
-
-        If you are using Python 2 and not using csvkit, this method is not
-        unicode-safe.
+        ``kwargs`` will be passed through to the CSV reader.
 
         :param path:
             Filepath or file-like object from which to read CSV data.
         :param column_info:
-            May be any valid input to :meth:`Table.__init__` or
-            an instance of :class:`.TypeTester`. Or, None, in which case a
-            generic :class:`.TypeTester` will be created.
+            May be any valid input to :meth:`Table.__init__` or an instance of
+            :class:`.TypeTester`. Or, None, in which case a generic
+            :class:`.TypeTester` will be created.
         :param row_names:
             See :meth:`Table.__init__`.
         :param header:
-            If `True`, the first row of the CSV is assumed to contains
-            headers and will be skipped.
+            If `True`, the first row of the CSV is assumed to contains headers
+            and will be skipped.
         """
         if column_info is None:
             column_info = TypeTester()
@@ -242,13 +239,10 @@ class Table(Patchable):
 
     def to_csv(self, path, **kwargs):
         """
-        Write this table to a CSV. This method will use csvkit if it is
-        available, otherwise it will use Python's builtin csv module.
+        Write this table to a CSV. This method uses agate's builtin CSV writer,
+        which supports unicode on both Python 2 and Python 3.
 
-        ``kwargs`` will be passed through to :meth:`csv.writer`.
-
-        If you are using Python 2 and not using csvkit, this method is not
-        unicode-safe.
+        ``kwargs`` will be passed through to the CSV writer.
 
         :param path: Filepath or file-like object to write to.
         """

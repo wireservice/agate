@@ -2,11 +2,7 @@
 Basics
 ======
 
-You can always use Python's builtin :mod:`csv` to read and write CSV files, but agate also includes shortcuts to save time.
-
-.. note::
-
-    If you have `csvkit <http://csvkit.rtfd.org/>`_ installed, agate will use it instead of Python's builtin :mod:`csv`. The builting module is not unicode-safe for Python 2, so it is strongly suggested that you do install csvkit.
+You could always use Python's builtin :mod:`csv` to read and write CSV files, but agate also includes custom versions that ensure correct handling of unicode characters.
 
 Load table from a CSV
 =====================
@@ -38,6 +34,18 @@ Write a table to a CSV
 .. code-block:: python
 
     table.to_csv('output.csv')
+
+Load table from unicode CSV
+===========================
+
+You don't have to do anything special. It just works!
+
+Load table from latin1 CSV
+==========================
+
+.. code-block:: python
+
+    table = agate.Table.from_csv('census.csv', columns, encoding='latin1')
 
 .. _load_a_table_from_a_sql_database:
 
