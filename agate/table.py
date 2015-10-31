@@ -25,6 +25,11 @@ from copy import copy
 from itertools import chain
 import sys
 
+if sys.version_info < (2, 7):
+    import simplejson as json
+else:
+    import json
+
 try:
     from collections import OrderedDict
 except ImportError: # pragma: no cover
@@ -47,7 +52,7 @@ from agate.computations import Computation
 from agate.mapped_sequence import MappedSequence
 from agate.preview import print_table, print_bars
 from agate.rows import Row
-from agate.utils import NullOrder, Patchable, max_precision, make_number_formatter, round_limits, letter_name
+from agate.utils import NullOrder, Patchable, max_precision, make_number_formatter, round_limits, letter_name, parse_object
 
 if six.PY2:
     from agate import csv_py2 as csv
@@ -179,6 +184,44 @@ class Table(Patchable):
 
         self._columns = MappedSequence(new_columns, self._column_names)
 
+
+    @property
+    def column_types(self):
+        """
+        Get an ordered sequence of this table's column types.
+
+        :returns: A sequence of :class:`.DataType` instances.
+        """
+        return self._column_types
+
+    @property
+    def column_names(self):
+        """
+        Get an ordered sequence of this table's column names.
+        """
+        return self._column_names
+
+    @property
+    def row_names(self):
+        """
+        Get an ordered sequence of this table's row names.
+        """
+        return self._row_names
+
+    @property
+    def columns(self):
+        """
+        Get this tables' :class:`.MappedSequence` of columns.
+        """
+        return self._columns
+
+    @property
+    def rows(self):
+        """
+        Get this tables' :class:`.MappedSequence` of rows.
+        """
+        return self._rows
+
     def _fork(self, rows, column_names=None, column_types=None, row_names=None):
         """
         Create a new table using the metadata from this one.
@@ -262,42 +305,91 @@ class Table(Patchable):
             if close:
                 f.close()
 
-    @property
-    def column_types(self):
+    @classmethod
+    def from_json(cls, path, row_names=None, key=None, **kwargs):
         """
-        Get an ordered sequence of this table's column types.
+        Create a new table from a JSON file. Contents should be an array
+        containing a dictionary for each "row". Nested objects or lists will
+        also be parsed. For example, this object:
 
-        :returns: A sequence of :class:`.DataType` instances.
-        """
-        return self._column_types
+        .. code-block:: javascript
 
-    @property
-    def column_names(self):
-        """
-        Get an ordered sequence of this table's column names.
-        """
-        return self._column_names
+            {
+                'one': {
+                    'a': 1,
+                    'b': 2,
+                    'c': 3
+                },
+                'two': [4, 5, 6],
+                'three': 'd'
+            }
 
-    @property
-    def row_names(self):
-        """
-        Get an ordered sequence of this table's row names.
-        """
-        return self._row_names
+        Would generate these columns and values:
 
-    @property
-    def columns(self):
-        """
-        Get this tables' :class:`.MappedSequence` of columns.
-        """
-        return self._columns
+        .. code-block:: python
 
-    @property
-    def rows(self):
+            {
+                'one/a': 1,
+                'one/b': 2,
+                'one/c': 3,
+                'two.0': 4,
+                'two.1': 5,
+                'two.2': 6,
+                'three': 'd'
+            }
+
+        Column names and types will be inferred from the data. Not all rows are
+        required to have the same keys. Missing elements will be filled in with
+        null.
+
+        If the file contains a top-level dictionary you may specify what
+        property contains the row list using the ``key`` parameter.
+
+        ``kwargs`` will be passed through to :meth:`json.load`.
+
+        :param path:
+            Filepath or file-like object from which to read CSV data.
+        :param row_names:
+            See :meth:`Table.__init__`.
+        :key:
+            The key of the top-level dictionary that contains a list of row
+            arrays.
         """
-        Get this tables' :class:`.MappedSequence` of rows.
-        """
-        return self._rows
+        if hasattr(path, 'read'):
+            js = json.load(path, object_pairs_hook=OrderedDict, **kwargs)
+        else:
+            with open(path, 'r') as f:
+                js = json.load(f, object_pairs_hook=OrderedDict, **kwargs)
+
+        if isinstance(js, dict):
+            if not key:
+                raise TypeError('When converting a JSON document with a top-level dictionary element, a key must be specified.')
+
+            js = js[key]
+
+        column_names = []
+        row_objects = []
+
+        for obj in js:
+            parsed = parse_object(obj)
+
+            for key in parsed.keys():
+                if key not in column_names:
+                    column_names.append(key)
+
+            row_objects.append(parsed)
+
+        rows = []
+
+        for obj in row_objects:
+            r = []
+
+            for name in column_names:
+                r.append(obj.get(name, None))
+
+            rows.append(r)
+
+        return Table(rows, column_names, row_names=row_names)
 
     @allow_tableset_proxy
     def select(self, selected_names):

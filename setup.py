@@ -12,6 +12,7 @@ install_requires = [
 
 if sys.version_info == (2, 6):
     install_requires.append('ordereddict>=1.1')
+    install_requires.append('simplejson>=2.1')
 
 setup(
     name='agate',

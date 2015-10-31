@@ -10,9 +10,16 @@ from functools import wraps
 import string
 
 try:
+    from collections import OrderedDict
+except ImportError: # pragma: no cover
+    from ordereddict import OrderedDict
+
+try:
     from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING
 except ImportError: #pragma: no cover
     from decimal import Decimal, ROUND_FLOOR, ROUND_CEILING
+
+import six
 
 def memoize(func):
     """
@@ -205,3 +212,23 @@ def letter_name(index):
     count = len(letters)
 
     return letters[index % count] * ((index // count) + 1)
+
+def parse_object(obj, path=''):
+    """
+    Recursively parse JSON objects and a dictionary of paths/keys and values.
+    Inspired by JSONPipe (https://github.com/dvxhouse/jsonpipe).
+    """
+    if isinstance(obj, dict):
+        iterator = obj.items()
+    elif isinstance(obj, (list, tuple)):
+        iterator = enumerate(obj)
+    else:
+        return { path.strip('/'): obj }
+
+    d = OrderedDict()
+
+    for key, value in iterator:
+        key = six.text_type(key)
+        d.update(parse_object(value, path + key + '/'))
+
+    return d

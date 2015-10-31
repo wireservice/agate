@@ -175,6 +175,87 @@ class TestTable(unittest.TestCase):
     def test_from_csv_columns_and_header(self):
         column_names = ['a', 'b', 'c']
 
+    def test_from_json(self):
+        table = Table.from_json('examples/test.json')
+
+        self.assertEqual(len(table.columns), 3)
+        self.assertEqual(len(table.rows), 3)
+
+        self.assertSequenceEqual(table.column_names, ['one', 'two', 'three'])
+        self.assertIsInstance(table.columns[0].data_type, Number)
+        self.assertIsInstance(table.columns[1].data_type, Number)
+        self.assertIsInstance(table.columns[2].data_type, Text)
+
+        self.assertSequenceEqual(table.rows[0], [1, 4, 'a'])
+        self.assertSequenceEqual(table.rows[1], [2, 3, 'b'])
+        self.assertSequenceEqual(table.rows[2], [None, 2, u'👍'])
+
+    def test_from_json_file_like_object(self):
+        with open('examples/test.json') as f:
+            table = Table.from_json(f)
+
+        self.assertEqual(len(table.columns), 3)
+        self.assertEqual(len(table.rows), 3)
+
+        self.assertSequenceEqual(table.column_names, ['one', 'two', 'three'])
+        self.assertIsInstance(table.columns[0].data_type, Number)
+        self.assertIsInstance(table.columns[1].data_type, Number)
+        self.assertIsInstance(table.columns[2].data_type, Text)
+
+        self.assertSequenceEqual(table.rows[0], [1, 4, 'a'])
+        self.assertSequenceEqual(table.rows[1], [2, 3, 'b'])
+        self.assertSequenceEqual(table.rows[2], [None, 2, u'👍'])
+
+    def test_from_json_with_key(self):
+        table = Table.from_json('examples/test_key.json', key='data')
+
+        self.assertEqual(len(table.columns), 3)
+        self.assertEqual(len(table.rows), 3)
+
+        self.assertSequenceEqual(table.column_names, ['one', 'two', 'three'])
+        self.assertIsInstance(table.columns[0].data_type, Number)
+        self.assertIsInstance(table.columns[1].data_type, Number)
+        self.assertIsInstance(table.columns[2].data_type, Text)
+
+        self.assertSequenceEqual(table.rows[0], [1, 4, 'a'])
+        self.assertSequenceEqual(table.rows[1], [2, 3, 'b'])
+        self.assertSequenceEqual(table.rows[2], [None, 2, u'👍'])
+
+    def test_from_json_mixed_keys(self):
+        table = Table.from_json('examples/test_mixed.json')
+
+        self.assertEqual(len(table.columns), 5)
+        self.assertEqual(len(table.rows), 3)
+
+        self.assertSequenceEqual(table.column_names, ['one', 'two', 'three', 'four', 'five'])
+        self.assertIsInstance(table.columns[0].data_type, Number)
+        self.assertIsInstance(table.columns[1].data_type, Number)
+        self.assertIsInstance(table.columns[2].data_type, Text)
+        self.assertIsInstance(table.columns[3].data_type, Text)
+        self.assertIsInstance(table.columns[4].data_type, Number)
+
+        self.assertSequenceEqual(table.rows[0], [1, 4, 'a', None, None])
+        self.assertSequenceEqual(table.rows[1], [2, 3, 'b', 'd', None])
+        self.assertSequenceEqual(table.rows[2], [None, 2, u'👍', None, 5])
+
+    def test_from_json_nested(self):
+        table = Table.from_json('examples/test_nested.json')
+
+        self.assertEqual(len(table.columns), 6)
+        self.assertEqual(len(table.rows), 2)
+
+        self.assertSequenceEqual(table.column_names, ['one', 'two/two_a', 'two/two_b', 'three/0', 'three/1', 'three/2'])
+        self.assertIsInstance(table.columns[0].data_type, Number)
+        self.assertIsInstance(table.columns[1].data_type, Text)
+        self.assertIsInstance(table.columns[2].data_type, Text)
+        self.assertIsInstance(table.columns[3].data_type, Text)
+        self.assertIsInstance(table.columns[4].data_type, Number)
+        self.assertIsInstance(table.columns[5].data_type, Text)
+
+        self.assertSequenceEqual(table.rows[0], [1, 'a', 'b', 'a', 2, 'c'])
+        self.assertSequenceEqual(table.rows[1], [2, 'c', 'd', 'd', 2, 'f'])
+
+    def test_from_csv_file_like_object(self):
         table = Table.from_csv('examples/test.csv', column_names, self.column_types)
 
         self.assertEqual(len(table.columns), 3)
