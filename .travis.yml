@@ -10,3 +10,4 @@ install:
     - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip install -r requirements-py3.txt; else pip install -r requirements-py2.txt; fi
 # command to run tests
 script: nosetests tests
+sudo: false
