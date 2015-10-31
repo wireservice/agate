@@ -22,16 +22,17 @@ class Number(DataType):
     :param locale:
         A locale specification such as :code:`en_US` or :code:`de_DE` to use
         for parsing formatted numbers.
-    :param display_precision:
+    :param float_precision:
         An integer specifying how many decimal places to include when
-        formatting this column for display. (Such as when using
-        :class:`.Table.pretty_print`.)
+        converting Python's native floats to Decimals. Beyond this point values
+        will be rounded. This does *not* apply to string representations of
+        fractional numbers.
     """
-    def __init__(self, locale='en_US', display_precision=2, **kwargs):
+    def __init__(self, locale='en_US', float_precision=10, **kwargs):
         super(Number, self).__init__(**kwargs)
 
         self._locale = locale
-        self._display_precision = display_precision
+        self._float_format = '%%.%if' % float_precision
 
     def test(self, d):
         """
@@ -45,7 +46,7 @@ class Number(DataType):
         if isinstance(d, Decimal):
             return True
 
-        if type(d) is int:
+        if type(d) is int or type(d) is float:
             return True
 
         if not isinstance(d, six.string_types):
@@ -78,7 +79,7 @@ class Number(DataType):
         elif isinstance(d, int):
             return Decimal(d)
         elif isinstance(d, float):
-            raise CastError('Can not convert float to Decimal. Convert data to string first!')
+            return Decimal(self._float_format % d)
         elif isinstance(d, six.string_types):
             d = d.strip()
             d = d.strip('%')

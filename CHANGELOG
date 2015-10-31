@@ -3,6 +3,8 @@
 
 Version 1.1.0 introduces one major breaking API change. The Table, Table.from_csv and TableSet.from_csv methods now all takes "column_names" and "column_types" as separate arguments instead of as a list of tuples. Was done to facilitate type inference and to streamline the API in various other places.
 
+* Number column now takes a float_precision argument.
+* Number columns can now be populated with float values. (#370)
 * TypeTester can now validate Python native types (not just strings). (#367)
 * TypeTester can now be used with Table, not just Table.from_csv. (#350)
 * Table, Table.from_csv and TableSet.from_csv now take column names and column types as separate parameters. (#350)

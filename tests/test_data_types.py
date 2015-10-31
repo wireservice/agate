@@ -95,7 +95,7 @@ class TestNumber(unittest.TestCase):
         self.assertEqual(self.type.test(1), True)
         self.assertEqual(self.type.test(Decimal('1')), True)
         self.assertEqual(self.type.test('2.7'), True)
-        self.assertEqual(self.type.test(2.7), False)
+        self.assertEqual(self.type.test(2.7), True)
         self.assertEqual(self.type.test('3/1/1994'), False)
         self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), False)
         self.assertEqual(self.type.test('3/1/1994 12:30 PM'), False)
@@ -123,9 +123,9 @@ class TestNumber(unittest.TestCase):
         with self.assertRaises(CastError):
             self.type.cast('a')
 
-    def test_cast_float(self):
-        with self.assertRaises(CastError):
-            self.type.cast(1.1)
+    def test_cast_floats(self):
+        self.assertEqual(self.type.cast(0.1 + 0.2), Decimal('0.3'))
+        self.assertEqual(self.type.cast(0.12345123456), Decimal('0.1234512346'))
 
     def test_cast_error(self):
         with self.assertRaises(CastError):
