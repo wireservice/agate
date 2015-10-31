@@ -152,19 +152,12 @@ class TestDate(unittest.TestCase):
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
         self.assertEqual(self.type.test('a'), False)
 
-    def test_cast_format(self):
+    def test_test_format(self):
         date_type = Date(date_format='%m-%d-%Y')
 
-        values = ('03-01-1994', '02-17-2011', None, '01-05-1984', 'n/a')
-        casted = tuple(date_type.cast(v) for v in values)
-        self.assertSequenceEqual(casted, (
-            datetime.date(1994, 3, 1),
-            datetime.date(2011, 2, 17),
-            None,
-            datetime.date(1984, 1, 5),
-            None
-        ))
-
+        self.assertEqual(date_type.test('3/1/1994'), False)
+        self.assertEqual(date_type.test('03-01-1994'), True)
+        self.assertEqual(date_type.test(datetime.date(1994, 3, 1)), True)
 
     def test_cast_parser(self):
         values = ('3/1/1994', '2/17/2011', None, 'January 5th, 1984', 'n/a')
@@ -184,6 +177,19 @@ class TestDate(unittest.TestCase):
         self.assertSequenceEqual(casted, (
             datetime.date(1994, 3, 1),
             datetime.date(2011, 2, 17)
+        ))
+
+    def test_cast_format(self):
+        date_type = Date(date_format='%m-%d-%Y')
+
+        values = ('03-01-1994', '02-17-2011', None, '01-05-1984', 'n/a')
+        casted = tuple(date_type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.date(1994, 3, 1),
+            datetime.date(2011, 2, 17),
+            None,
+            datetime.date(1984, 1, 5),
+            None
         ))
 
     def test_cast_error(self):
@@ -211,18 +217,12 @@ class TestDateTime(unittest.TestCase):
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
         self.assertEqual(self.type.test('a'), False)
 
-    def test_cast_format(self):
+    def test_test_format(self):
         datetime_type = DateTime(datetime_format='%m-%d-%Y %I:%M %p')
 
-        values = ('03-01-1994 12:30 PM', '02-17-1011 06:30 AM', None, '01-05-1984 06:30 PM', 'n/a')
-        casted = tuple(datetime_type.cast(v) for v in values)
-        self.assertSequenceEqual(casted, (
-            datetime.datetime(1994, 3, 1, 12, 30, 0),
-            datetime.datetime(1011, 2, 17, 6, 30, 0),
-            None,
-            datetime.datetime(1984, 1, 5, 18, 30, 0),
-            None
-        ))
+        self.assertEqual(datetime_type.test('3/1/1994 12:30 PM'), False)
+        self.assertEqual(datetime_type.test('03-01-1994 12:30 PM'), True)
+        self.assertEqual(datetime_type.test(datetime.datetime(1994, 3, 1, 12, 30)), True)
 
     def test_cast_parser(self):
         values = ('3/1/1994 12:30 PM', '2/17/2011 06:30', None, 'January 5th, 1984 22:37', 'n/a')
@@ -246,6 +246,19 @@ class TestDateTime(unittest.TestCase):
             tzinfo.localize(datetime.datetime(2011, 2, 17, 6, 30, 0, 0)),
             None,
             tzinfo.localize(datetime.datetime(1984, 1, 5, 22, 37, 0, 0)),
+            None
+        ))
+
+    def test_cast_format(self):
+        datetime_type = DateTime(datetime_format='%m-%d-%Y %I:%M %p')
+
+        values = ('03-01-1994 12:30 PM', '02-17-1011 06:30 AM', None, '01-05-1984 06:30 PM', 'n/a')
+        casted = tuple(datetime_type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.datetime(1994, 3, 1, 12, 30, 0),
+            datetime.datetime(1011, 2, 17, 6, 30, 0),
+            None,
+            datetime.datetime(1984, 1, 5, 18, 30, 0),
             None
         ))
 

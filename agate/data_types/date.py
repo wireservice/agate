@@ -43,6 +43,14 @@ class Date(DataType):
         if d.lower() in self.null_values:
             return True
 
+        if self.date_format:
+            try:
+                datetime.datetime.strptime(d, self.date_format)
+            except ValueError:
+                return False
+
+            return True
+
         value, status = self.parser.parseDT(d)
 
         if status != 1:
