@@ -1,0 +1,20 @@
+{
+    "data": [
+        {
+            "one": 1,
+            "two": 4,
+            "three": "a"
+        },
+        {
+            "one": 2,
+            "two": 3,
+            "three": "b"
+        },
+        {
+            "one": null,
+            "two": 2,
+            "three": "👍"
+        }
+    ],
+    "other": "ignore me!"
+}
