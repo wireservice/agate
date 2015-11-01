@@ -5,14 +5,10 @@ This module contains a collection of utility classes and functions used in
 agate.
 """
 
-from collections import Sequence
+from collections import OrderedDict, Sequence
 from functools import wraps
+import json
 import string
-
-try:
-    from collections import OrderedDict
-except ImportError: # pragma: no cover
-    from ordereddict import OrderedDict
 
 try:
     from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING
@@ -232,3 +228,13 @@ def parse_object(obj, path=''):
         d.update(parse_object(value, path + key + '/'))
 
     return d
+
+def json_encode(obj):
+    """
+    Encode non-standard data types as JSON. (Intended to be used as the
+    ``default`` argument to ``json.dumps``.)
+    """
+    if isinstance(obj, Decimal):
+        return float(obj)
+
+    raise TypeError

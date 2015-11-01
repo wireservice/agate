@@ -131,13 +131,6 @@ class UnicodeDictWriter(csv.DictWriter):
 
         self.writer = UnicodeWriter(f, *args, **kwds)
 
-    if sys.version_info < (2, 7):
-        def writeheader(self):
-            """
-            Python 2.6 is missing the writeheader function.
-            """
-            self.writerow(dict(zip(self.fieldnames, self.fieldnames)))
-
 class Reader(UnicodeReader):
     """
     A unicode-aware CSV reader.

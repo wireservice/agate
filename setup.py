@@ -10,10 +10,6 @@ install_requires = [
     'Babel>=2.0'
 ]
 
-if sys.version_info == (2, 6):
-    install_requires.append('ordereddict>=1.1')
-    install_requires.append('simplejson>=2.1')
-
 setup(
     name='agate',
     version='1.1.0',
@@ -33,7 +29,6 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',

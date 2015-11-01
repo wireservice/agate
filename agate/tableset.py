@@ -25,15 +25,10 @@ and end up with data grouped across multiple dimensions.
 dimensions.
 """
 
-from collections import Mapping
+from collections import Mapping, OrderedDict
 from copy import copy
 from glob import glob
 import os
-
-try:
-    from collections import OrderedDict
-except ImportError: # pragma: no cover
-    from ordereddict import OrderedDict
 
 from agate.data_types import Text, TypeTester
 from agate.mapped_sequence import MappedSequence

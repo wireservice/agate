@@ -20,20 +20,12 @@ sequences can be accessed either by numeric index or by name. (In the case of
 rows, row names are optional.)
 """
 
-from collections import Sequence
+import codecs
+from collections import OrderedDict, Sequence
 from copy import copy
 from itertools import chain
+import json
 import sys
-
-if sys.version_info < (2, 7):
-    import simplejson as json
-else:
-    import json
-
-try:
-    from collections import OrderedDict
-except ImportError: # pragma: no cover
-    from ordereddict import OrderedDict
 
 try:
     from cdecimal import Decimal
@@ -52,7 +44,7 @@ from agate.computations import Computation
 from agate.mapped_sequence import MappedSequence
 from agate.preview import print_table, print_bars
 from agate.rows import Row
-from agate.utils import NullOrder, Patchable, max_precision, make_number_formatter, round_limits, letter_name, parse_object
+from agate import utils
 
 if six.PY2:
     from agate import csv_py2 as csv
@@ -67,7 +59,7 @@ def allow_tableset_proxy(func):
 
     return func
 
-class Table(Patchable):
+class Table(utils.Patchable):
     """
     A dataset consisting of rows and columns. Columns refer to "vertical" slices
     of data that must all be of the same type. Rows refer to "horizontal" slices
@@ -115,7 +107,7 @@ class Table(Patchable):
 
             self._column_names = tuple(column_names)
         else:
-            self._column_names = tuple(letter_name(i) for i in range(len(rows[0])))
+            self._column_names = tuple(utils.letter_name(i) for i in range(len(rows[0])))
 
         len_column_names = len(self._column_names)
 
@@ -371,7 +363,7 @@ class Table(Patchable):
         row_objects = []
 
         for obj in js:
-            parsed = parse_object(obj)
+            parsed = utils.parse_object(obj)
 
             for key in parsed.keys():
                 if key not in column_names:
@@ -390,6 +382,91 @@ class Table(Patchable):
             rows.append(r)
 
         return Table(rows, column_names, row_names=row_names)
+
+    def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
+        """
+        Write this table to a JSON file or file-like object.
+
+        ``kwargs`` will be passed through to the JSON encoder.
+
+        :param path:
+            File path or file-like object to write to.
+        :param key:
+            If specified, JSON will be output as an hash instead of a list. May
+            be either the name of a column from the this table containing
+            unique values or a :class:`function` that takes a row and returns
+            a unique value.
+        :param newline:
+            If ``True``, output will be in the form of "newline-delimited JSON".
+        :param indent:
+            If specified, the number of spaces to indent the JSON for
+            formatting.
+        """
+        if key is not None and newline:
+            raise ValueError('key and newline may not be specified together.')
+
+        if newline and indent is not None:
+            raise ValueError('newline and indent may not be specified together.')
+
+        key_is_row_function = hasattr(key, '__call__')
+
+        json_kwargs = {
+            'ensure_ascii': False,
+            'indent': indent,
+            'default': utils.json_encode
+        }
+
+        if six.PY2:
+            json_kwargs['encoding'] = 'utf-8'
+
+        close = True
+
+        try:
+            if hasattr(path, 'write'):
+                f = path
+                close = False
+            else:
+                f = open(path, 'w')
+
+            if six.PY2:
+                f = codecs.getwriter('utf-8')(f)
+
+            def dump_json(data):
+                json.dump(data, f, **json_kwargs)
+
+                if newline:
+                    f.write('\n')
+
+            # Keyed
+            if key is not None:
+                output = OrderedDict()
+
+                for row in self._rows:
+                    if key_is_row_function:
+                        k = key(row)
+                    else:
+                        k = row[key]
+
+                    if k in output:
+                        raise ValueError('Value %s is not unique in the key column.' % six.text_type(k))
+
+                    output[k] = row.dict()
+                dump_json(output)
+            # Newline-delimited
+            elif newline:
+                for row in self._rows:
+                    dump_json(row.dict())
+            # Normal
+            else:
+                output = []
+
+                for row in self._rows:
+                    output.append(row.dict())
+
+                dump_json(output)
+        finally:
+            if close:
+                f.close()
 
     @allow_tableset_proxy
     def select(self, selected_names):
@@ -473,7 +550,7 @@ class Table(Patchable):
                 k = row[key]
 
             if k is None:
-                return NullOrder()
+                return utils.NullOrder()
 
             return k
 
@@ -861,7 +938,7 @@ class Table(Patchable):
         column = self._columns[column_name]
 
         if start is None or end is None:
-            start, end = round_limits(
+            start, end = utils.round_limits(
                 column.aggregate(Min()),
                 column.aggregate(Max())
             )
@@ -879,8 +956,8 @@ class Table(Patchable):
 
             breaks.append(top)
 
-        decimal_places = max_precision(breaks)
-        break_formatter = make_number_formatter(decimal_places)
+        decimal_places = utils.max_precision(breaks)
+        break_formatter = utils.make_number_formatter(decimal_places)
 
         def name_bin(i, j, first_exclusive=True, last_exclusive=False):
             inclusive = format_decimal(i, format=break_formatter)

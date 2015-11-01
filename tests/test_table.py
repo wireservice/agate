@@ -6,6 +6,8 @@ try:
 except ImportError: #pragma: no cover
     from decimal import Decimal
 
+import json
+
 try:
     from StringIO import StringIO
 except ImportError:
@@ -172,8 +174,111 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table1.rows[1], table2.rows[1])
         self.assertSequenceEqual(table1.rows[2], table2.rows[2])
 
-    def test_from_csv_columns_and_header(self):
-        column_names = ['a', 'b', 'c']
+    def test_from_csv_file_like_object(self):
+        table = Table.from_csv('examples/test.csv', column_names, self.column_types)
+
+        self.assertEqual(len(table.columns), 3)
+        self.assertEqual(len(table.rows), 3)
+        self.assertSequenceEqual(table.column_names, ['a', 'b', 'c'])
+
+    def test_from_csv_file_like_object(self):
+        table1 = Table.from_csv('examples/test.csv', self.column_names, self.column_types)
+
+        with open('examples/test.csv') as fh:
+            table2 = Table.from_csv(fh, self.column_names, self.column_types)
+
+            self.assertSequenceEqual(table1.column_names, table2.column_names)
+            self.assertSequenceEqual(table1.column_types, table2.column_types)
+
+            self.assertEqual(len(table1.columns), len(table2.columns))
+            self.assertEqual(len(table1.rows), len(table2.rows))
+
+            self.assertSequenceEqual(table1.rows[0], table2.rows[0])
+            self.assertSequenceEqual(table1.rows[1], table2.rows[1])
+            self.assertSequenceEqual(table1.rows[2], table2.rows[2])
+
+    def test_from_csv_type_tester(self):
+        tester = TypeTester()
+
+        output = Table.from_csv('examples/test.csv', column_types=tester)
+
+        self.assertEqual(len(output.columns), 3)
+        self.assertIsInstance(output.columns[0].data_type, Number)
+        self.assertIsInstance(output.columns[1].data_type, Number)
+        self.assertIsInstance(output.columns[2].data_type, Text)
+
+    def test_from_csv_default_type_tester(self):
+        output = Table.from_csv('examples/test.csv')
+
+        self.assertEqual(len(output.columns), 3)
+        self.assertIsInstance(output.columns[0].data_type, Number)
+        self.assertIsInstance(output.columns[1].data_type, Number)
+        self.assertIsInstance(output.columns[2].data_type, Text)
+
+    def test_from_csv_no_header(self):
+        output = Table.from_csv('examples/test_no_header.csv', header=False)
+
+        self.assertEqual(len(output.columns), 3)
+        self.assertSequenceEqual(output.column_names, ('A', 'B', 'C'))
+        self.assertIsInstance(output.columns[0].data_type, Number)
+        self.assertIsInstance(output.columns[1].data_type, Number)
+        self.assertIsInstance(output.columns[2].data_type, Text)
+
+    def test_from_csv_no_header_columns(self):
+        output = Table.from_csv('examples/test_no_header.csv', self.column_names, header=False)
+
+        self.assertEqual(len(output.columns), 3)
+        self.assertSequenceEqual(output.column_names, ('one', 'two', 'three'))
+        self.assertIsInstance(output.columns[0].data_type, Number)
+        self.assertIsInstance(output.columns[1].data_type, Number)
+        self.assertIsInstance(output.columns[2].data_type, Text)
+
+    def test_to_csv(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        table.to_csv('.test.csv')
+
+        with open('.test.csv') as f:
+            contents1 = f.read()
+
+        with open('examples/test.csv') as f:
+            contents2 = f.read()
+
+        self.assertEqual(contents1, contents2)
+
+        os.remove('.test.csv')
+
+    def test_to_csv_file_like_object(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        with open('.test.csv', 'w') as f:
+            table.to_csv(f)
+
+            # Should leave the file open
+            self.assertFalse(f.closed)
+
+        with open('.test.csv') as f:
+            contents1 = f.read()
+
+        with open('examples/test.csv') as f:
+            contents2 = f.read()
+
+        self.assertEqual(contents1, contents2)
+
+        os.remove('.test.csv')
+
+    def test_to_csv_to_stdout(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = StringIO()
+        table.to_csv(output)
+
+        contents1 = output.getvalue()
+
+        with open('examples/test.csv') as f:
+            contents2 = f.read()
+
+        self.assertEqual(contents1, contents2)
 
     def test_from_json(self):
         table = Table.from_json('examples/test.json')
@@ -255,111 +360,73 @@ class TestTable(unittest.TestCase):
         self.assertSequenceEqual(table.rows[0], [1, 'a', 'b', 'a', 2, 'c'])
         self.assertSequenceEqual(table.rows[1], [2, 'c', 'd', 'd', 2, 'f'])
 
-    def test_from_csv_file_like_object(self):
-        table = Table.from_csv('examples/test.csv', column_names, self.column_types)
-
-        self.assertEqual(len(table.columns), 3)
-        self.assertEqual(len(table.rows), 3)
-        self.assertSequenceEqual(table.column_names, ['a', 'b', 'c'])
-
-    def test_from_csv_file_like_object(self):
-        table1 = Table.from_csv('examples/test.csv', self.column_names, self.column_types)
-
-        with open('examples/test.csv') as fh:
-            table2 = Table.from_csv(fh, self.column_names, self.column_types)
-
-            self.assertSequenceEqual(table1.column_names, table2.column_names)
-            self.assertSequenceEqual(table1.column_types, table2.column_types)
-
-            self.assertEqual(len(table1.columns), len(table2.columns))
-            self.assertEqual(len(table1.rows), len(table2.rows))
-
-            self.assertSequenceEqual(table1.rows[0], table2.rows[0])
-            self.assertSequenceEqual(table1.rows[1], table2.rows[1])
-            self.assertSequenceEqual(table1.rows[2], table2.rows[2])
-
-    def test_from_csv_type_tester(self):
-        tester = TypeTester()
-
-        output = Table.from_csv('examples/test.csv', column_types=tester)
-
-        self.assertEqual(len(output.columns), 3)
-        self.assertIsInstance(output.columns[0].data_type, Number)
-        self.assertIsInstance(output.columns[1].data_type, Number)
-        self.assertIsInstance(output.columns[2].data_type, Text)
-
-    def test_from_csv_default_type_tester(self):
-        output = Table.from_csv('examples/test.csv')
-
-        self.assertEqual(len(output.columns), 3)
-        self.assertIsInstance(output.columns[0].data_type, Number)
-        self.assertIsInstance(output.columns[1].data_type, Number)
-        self.assertIsInstance(output.columns[2].data_type, Text)
-
-    def test_from_csv_no_header(self):
-        output = Table.from_csv('examples/test_no_header.csv', header=False)
-
-        self.assertEqual(len(output.columns), 3)
-        self.assertSequenceEqual(output.column_names, ('A', 'B', 'C'))
-        self.assertIsInstance(output.columns[0].data_type, Number)
-        self.assertIsInstance(output.columns[1].data_type, Number)
-        self.assertIsInstance(output.columns[2].data_type, Text)
-
-    def test_from_csv_no_header_type_inference(self):
-        output = Table.from_csv('examples/test_no_header.csv', header=False)
-
-        self.assertEqual(len(output.columns), 3)
-        self.assertSequenceEqual(output.column_names, ('A', 'B', 'C'))
-        self.assertIsInstance(output.columns[0].data_type, Number)
-        self.assertIsInstance(output.columns[1].data_type, Number)
-        self.assertIsInstance(output.columns[2].data_type, Text)
-
-    def test_to_csv(self):
-        table = Table(self.rows, self.column_names, self.column_types)
-
-        table.to_csv('.test.csv')
-
-        with open('.test.csv') as f:
-            contents1 = f.read()
-
-        with open('examples/test.csv') as f:
-            contents2 = f.read()
-
-        self.assertEqual(contents1, contents2)
-
-        os.remove('.test.csv')
-
-    def test_to_csv_file_like_object(self):
-        table = Table(self.rows, self.column_names, self.column_types)
-
-        with open('.test.csv', 'w') as f:
-            table.to_csv(f)
-
-            # Should leave the file open
-            self.assertFalse(f.closed)
-
-        with open('.test.csv') as f:
-            contents1 = f.read()
-
-        with open('examples/test.csv') as f:
-            contents2 = f.read()
-
-        self.assertEqual(contents1, contents2)
-
-        os.remove('.test.csv')
-
-    def test_to_csv_to_stdout(self):
+    def test_to_json(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
         output = StringIO()
-        table.to_csv(output)
+        table.to_json(output, indent=4)
 
-        contents1 = output.getvalue()
+        js1 = json.loads(output.getvalue())
 
-        with open('examples/test.csv') as f:
-            contents2 = f.read()
+        with open('examples/test.json') as f:
+            js2 = json.load(f)
 
-        self.assertEqual(contents1, contents2)
+        self.assertEqual(js1, js2)
+
+    def test_to_json_key(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = StringIO()
+        table.to_json(output, key='three', indent=4)
+
+        js1 = json.loads(output.getvalue())
+
+        with open('examples/test_keyed.json') as f:
+            js2 = json.load(f)
+
+        self.assertEqual(js1, js2)
+
+    def test_to_json_key_func(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = StringIO()
+        table.to_json(output, key=lambda r: r['three'], indent=4)
+
+        js1 = json.loads(output.getvalue())
+
+        with open('examples/test_keyed.json') as f:
+            js2 = json.load(f)
+
+        self.assertEqual(js1, js2)
+
+    def test_to_json_newline_delimited(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = StringIO()
+        table.to_json(output, newline=True)
+
+        js1 = json.loads(output.getvalue().split('\n')[0])
+
+        with open('examples/test_newline.json') as f:
+            js2 = json.loads(list(f)[0])
+
+        self.assertEqual(js1, js2)
+
+    def test_to_json_error_newline_indent(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = StringIO()
+
+        with self.assertRaises(ValueError):
+            table.to_json(output, newline=True, indent=4)
+
+    def test_to_json_error_newline_key(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = StringIO()
+
+        with self.assertRaises(ValueError):
+            table.to_json(output, key='three', newline=True)
 
     def test_get_column_types(self):
         table = Table(self.rows, self.column_names, self.column_types)

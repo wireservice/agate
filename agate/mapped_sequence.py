@@ -6,12 +6,7 @@ for agate's :class:`.Row` and :class:`.Column` as well as for named sequences of
 rows and columns.
 """
 
-from collections import Sequence
-
-try:
-    from collections import OrderedDict
-except ImportError: # pragma: no cover
-    from ordereddict import OrderedDict
+from collections import OrderedDict, Sequence
 
 import six
 from six.moves import range #pylint: disable=W0622

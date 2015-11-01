@@ -1,8 +1,12 @@
 1.1.0
 -----
 
-Version 1.1.0 introduces one major breaking API change. The Table, Table.from_csv and TableSet.from_csv methods now all takes "column_names" and "column_types" as separate arguments instead of as a list of tuples. Was done to facilitate type inference and to streamline the API in various other places.
+This version introduces one major breaking API change. The Table, Table.from_csv and TableSet.from_csv methods now all takes "column_names" and "column_types" as separate arguments instead of as a list of tuples. Was done to facilitate type inference and to streamline the API in various other places.
 
+This version also drops support for Python 2.6. Taking and bug-fixing for this version was taking more time than it's worth given that virtually all operating systems and distributions now ship with version 2.7 or higher. (And you should really be using Python 3 anyway.)
+
+* Remove support for Python 2.6.
+* Table.to_json is implemented. (#345)
 * Table.from_json is implemented. (#344, #347)
 * Date and DateTime type testing now takes specified format into account. (#361)
 * Number column now takes a float_precision argument.

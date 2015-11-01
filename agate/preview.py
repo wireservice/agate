@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-try:
-    from collections import OrderedDict
-except ImportError: # pragma: no cover
-    from ordereddict import OrderedDict
+from collections import OrderedDict
 
 try:
     from cdecimal import Decimal, ROUND_FLOOR
