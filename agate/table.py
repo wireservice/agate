@@ -348,10 +348,10 @@ class Table(utils.Patchable):
             arrays.
         """
         if hasattr(path, 'read'):
-            js = json.load(path, object_pairs_hook=OrderedDict, **kwargs)
+            js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
         else:
             with open(path, 'r') as f:
-                js = json.load(f, object_pairs_hook=OrderedDict, **kwargs)
+                js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
 
         if isinstance(js, dict):
             if not key:
