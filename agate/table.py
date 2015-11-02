@@ -1022,12 +1022,21 @@ class Table(utils.Patchable):
 
     def print_csv(self, **kwargs):
         """
-        A shortcut to printing a table as a csv. Effectively the same as
-        passing :meth:`sys.stdout` to :meth:`Table.to_csv`.
+        A shortcut for printing a CSV directly to the csonsole. Effectively the
+        same as passing :meth:`sys.stdout` to :meth:`Table.to_csv`.
 
         ``kwargs`` will be passed on to :meth:`Table.to_csv`.
         """
         self.to_csv(sys.stdout, **kwargs)
+
+    def print_json(self, **kwargs):
+        """
+        A shortcut for printing JSON directly to the console. Effectively the
+        same as passing :meth:`sys.stdout` to :meth:`Table.to_json`.
+
+        ``kwargs`` will be passed on to :meth:`Table.to_json`.
+        """
+        self.to_json(sys.stdout, **kwargs)
 
     def print_bars(self, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout):
         """

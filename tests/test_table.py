@@ -892,6 +892,26 @@ class TestPrettyPrint(unittest.TestCase):
         self.assertEqual(len(lines), 8)
         self.assertEqual(len(lines[0]), 25)
 
+    def test_print_table_max_rows(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = six.StringIO()
+        table.print_table(max_rows=2, output=output)
+        lines = output.getvalue().split('\n')
+
+        self.assertEqual(len(lines), 8)
+        self.assertEqual(len(lines[0]), 25)
+
+    def test_print_table_max_columns(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = six.StringIO()
+        table.print_table(max_columns=2, output=output)
+        lines = output.getvalue().split('\n')
+
+        self.assertEqual(len(lines), 8)
+        self.assertEqual(len(lines[0]), 23)
+
     def test_print_csv(self):
         rows = (
             (1, 4, 'a'),
@@ -916,25 +936,29 @@ class TestPrettyPrint(unittest.TestCase):
         finally:
             sys.stdout = old
 
-    def test_print_table_max_rows(self):
-        table = Table(self.rows, self.column_names, self.column_types)
+    def test_print_json(self):
+        rows = (
+            (1, 4, 'a'),
+            (2, 3, 'b'),
+            (None, 2, u'👍')
+        )
 
-        output = six.StringIO()
-        table.print_table(max_rows=2, output=output)
-        lines = output.getvalue().split('\n')
+        table = Table(rows, self.column_names, self.column_types)
 
-        self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 25)
+        old = sys.stdout
+        sys.stdout = StringIO()
 
-    def test_print_table_max_columns(self):
-        table = Table(self.rows, self.column_names, self.column_types)
+        try:
+            table.print_json()
 
-        output = six.StringIO()
-        table.print_table(max_columns=2, output=output)
-        lines = output.getvalue().split('\n')
+            js1 = json.loads(sys.stdout.getvalue())
 
-        self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 23)
+            with open('examples/test.json') as f:
+                js2 = json.load(f)
+
+            self.assertEqual(js1, js2)
+        finally:
+            sys.stdout = old
 
     def test_print_bars(self):
         table = Table(self.rows, self.column_names, self.column_types)

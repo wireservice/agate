@@ -6,6 +6,7 @@ agate.
 """
 
 from collections import OrderedDict, Sequence
+import datetime
 from functools import wraps
 import json
 import string
@@ -236,5 +237,11 @@ def json_encode(obj):
     """
     if isinstance(obj, Decimal):
         return float(obj)
+    elif isinstance(obj, datetime.date):
+        return obj.isoformat()
+    elif isinstance(obj, datetime.datetime):
+        return obj.isoformat()
+    elif isinstance(obj, datetime.timedelta):
+        return six.text_type(obj)
 
     raise TypeError
