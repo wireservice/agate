@@ -16,13 +16,20 @@ from agate.exceptions import FieldSizeLimitError
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestUnicodeReader(unittest.TestCase):
+    def setUp(self):
+        self.rows = [
+            ['number', 'text', 'boolean', 'date', 'datetime', 'timedelta'],
+            ['1', 'a', 'True', '2015-11-04', '2015-11-04T12:22:00', '0:04:15'],
+            ['2', u'👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
+            ['', 'b', '', '', '', '']
+        ]
+
     def test_utf8(self):
         with open('examples/test.csv') as f:
-            reader = csv_py2.UnicodeReader(f, encoding='utf-8')
-            self.assertEqual(next(reader), ['one', 'two', 'three'])
-            self.assertEqual(next(reader), ['1', '4', 'a'])
-            self.assertEqual(next(reader), ['2', '3', 'b'])
-            self.assertEqual(next(reader), ['', '2', u'👍'])
+            rows = list(csv_py2.UnicodeReader(f, encoding='utf-8'))
+
+        for a, b in zip(self.rows, rows):
+            self.assertEqual(a, b)
 
     def test_latin1(self):
         with open('examples/test_latin1.csv') as f:
@@ -110,19 +117,22 @@ class TestUnicodeWriter(unittest.TestCase):
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestUnicodeDictReader(unittest.TestCase):
     def setUp(self):
+        self.rows = [
+            ['number', 'text', 'boolean', 'date', 'datetime', 'timedelta'],
+            ['1', 'a', 'True', '2015-11-04', '2015-11-04T12:22:00', '0:04:15'],
+            ['2', u'👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
+            ['', 'b', '', '', '', '']
+        ]
+
         self.f = open('examples/test.csv')
 
     def tearDown(self):
         self.f.close()
 
     def test_reader(self):
-        reader = csv_py2.UnicodeDictReader(self.f)
+        reader = csv_py2.UnicodeDictReader(self.f, encoding='utf-8')
 
-        self.assertEqual(next(reader), {
-            u'one': u'1',
-            u'two': u'4',
-            u'three': u'a'
-        })
+        self.assertEqual(next(reader), dict(zip(self.rows[0], self.rows[1])))
 
     def test_latin1(self):
         with open('examples/test_latin1.csv') as f:
@@ -164,17 +174,17 @@ class TestMaxFieldSize(unittest.TestCase):
     def setUp(self):
         self.lim = csv.field_size_limit()
 
-        with open('test.csv', 'w') as f:
+        with open('.test.csv', 'w') as f:
             f.write('a' * 10)
 
     def tearDown(self):
         # Resetting limit to avoid failure in other tests.
         csv.field_size_limit(self.lim)
-        os.remove('test.csv')
+        os.remove('.test.csv')
 
     def test_maxfieldsize(self):
         # Testing --maxfieldsize for failure. Creating data using str * int.
-        with open('test.csv', 'r') as f:
+        with open('.test.csv', 'r') as f:
             c = csv_py2.UnicodeReader(f, maxfieldsize=9)
             try:
                 c.next()
@@ -184,28 +194,33 @@ class TestMaxFieldSize(unittest.TestCase):
                 raise AssertionError('Expected FieldSizeLimitError')
 
         # Now testing higher --maxfieldsize.
-        with open('test.csv', 'r') as f:
+        with open('.test.csv', 'r') as f:
             c = csv_py2.UnicodeReader(f, maxfieldsize=11)
             self.assertEqual(['a' * 10], c.next())
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestReader(unittest.TestCase):
+    def setUp(self):
+        self.rows = [
+            ['number', 'text', 'boolean', 'date', 'datetime', 'timedelta'],
+            ['1', 'a', 'True', '2015-11-04', '2015-11-04T12:22:00', '0:04:15'],
+            ['2', u'👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
+            ['', 'b', '', '', '', '']
+        ]
+
     def test_utf8(self):
         with open('examples/test.csv') as f:
-            reader = csv_py2.Reader(f, encoding='utf-8')
-            self.assertEqual(next(reader), ['one', 'two', 'three'])
-            self.assertEqual(next(reader), ['1', '4', 'a'])
-            self.assertEqual(next(reader), ['2', '3', 'b'])
-            self.assertEqual(next(reader), ['', '2', u'👍'])
+            rows = list(csv_py2.Reader(f, encoding='utf-8'))
+
+        for a, b in zip(self.rows, rows):
+            self.assertEqual(a, b)
 
     def test_reader_alias(self):
         with open('examples/test.csv') as f:
-            reader = csv_py2.reader(f, encoding='utf-8')
-            self.assertEqual(next(reader), ['one', 'two', 'three'])
-            self.assertEqual(next(reader), ['1', '4', 'a'])
-            self.assertEqual(next(reader), ['2', '3', 'b'])
-            self.assertEqual(next(reader), ['', '2', u'👍'])
+            rows = list(csv_py2.Reader(f, encoding='utf-8'))
 
+        for a, b in zip(self.rows, rows):
+            self.assertEqual(a, b)
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestWriter(unittest.TestCase):
@@ -243,28 +258,27 @@ class TestWriter(unittest.TestCase):
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestDictReader(unittest.TestCase):
     def setUp(self):
+        self.rows = [
+            ['number', 'text', 'boolean', 'date', 'datetime', 'timedelta'],
+            ['1', 'a', 'True', '2015-11-04', '2015-11-04T12:22:00', '0:04:15'],
+            ['2', u'👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
+            ['', 'b', '', '', '', '']
+        ]
+
         self.f = open('examples/test.csv')
 
     def tearDown(self):
         self.f.close()
 
     def test_reader(self):
-        reader = csv_py2.DictReader(self.f)
+        reader = csv_py2.DictReader(self.f, encoding='utf-8')
 
-        self.assertEqual(next(reader), {
-            u'one': u'1',
-            u'two': u'4',
-            u'three': u'a'
-        })
+        self.assertEqual(next(reader), dict(zip(self.rows[0], self.rows[1])))
 
     def test_reader_alias(self):
-        reader = csv_py2.DictReader(self.f)
+        reader = csv_py2.DictReader(self.f, encoding='utf-8')
 
-        self.assertEqual(next(reader), {
-            u'one': u'1',
-            u'two': u'4',
-            u'three': u'a'
-        })
+        self.assertEqual(next(reader), dict(zip(self.rows[0], self.rows[1])))
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestDictWriter(unittest.TestCase):

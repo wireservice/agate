@@ -313,11 +313,12 @@ class Table(utils.Patchable):
                 f = open(path, 'w')
 
             writer = csv.writer(f, **kwargs)
-
             writer.writerow(self._column_names)
 
+            csv_funcs = [c.csvify for c in self._column_types]
+
             for row in self._rows:
-                writer.writerow(row)
+                writer.writerow(tuple(csv_funcs[i](d) for i, d in enumerate(row)))
         finally:
             if close:
                 f.close()
@@ -437,12 +438,13 @@ class Table(utils.Patchable):
 
         json_kwargs = {
             'ensure_ascii': False,
-            'indent': indent,
-            'default': utils.json_encode
+            'indent': indent
         }
 
         if six.PY2:
             json_kwargs['encoding'] = 'utf-8'
+
+        json_funcs = [c.jsonify for c in self._column_types]
 
         close = True
 
@@ -475,18 +477,21 @@ class Table(utils.Patchable):
                     if k in output:
                         raise ValueError('Value %s is not unique in the key column.' % six.text_type(k))
 
-                    output[k] = row.dict()
+                    values = tuple(json_funcs[i](d) for i, d in enumerate(row))
+                    output[k] = OrderedDict(zip(row.keys(), values))
                 dump_json(output)
             # Newline-delimited
             elif newline:
                 for row in self._rows:
-                    dump_json(row.dict())
+                    values = tuple(json_funcs[i](d) for i, d in enumerate(row))
+                    dump_json(OrderedDict(zip(row.keys(), values)))
             # Normal
             else:
                 output = []
 
                 for row in self._rows:
-                    output.append(row.dict())
+                    values = tuple(json_funcs[i](d) for i, d in enumerate(row))
+                    output.append(OrderedDict(zip(row.keys(), values)))
 
                 dump_json(output)
         finally:

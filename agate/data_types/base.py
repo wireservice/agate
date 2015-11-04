@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import six
+
 #: Default values which will be automatically cast to :code:`None`
 DEFAULT_NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
 
@@ -26,3 +28,21 @@ class DataType(object): #pragma: no cover
         Coerce a given string value into this column's data type.
         """
         raise NotImplementedError
+
+    def csvify(self, d):
+        """
+        Format a given native value for CSV serialization.
+        """
+        if d is None:
+            return None
+
+        return six.text_type(d)
+
+    def jsonify(self, d):
+        """
+        Format a given native value for JSON serialization.
+        """
+        if d is None:
+            return None
+
+        return six.text_type(d)

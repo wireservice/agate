@@ -1,17 +1,26 @@
 {
     "a": {
-        "one": 1.0,
-        "two": 4.0,
-        "three": "a"
-    },
-    "b": {
-        "one": 2.0,
-        "two": 3.0,
-        "three": "b"
+        "number": 1.0,
+        "text": "a",
+        "boolean": true,
+        "date": "2015-11-04",
+        "datetime": "2015-11-04T12:22:00",
+        "timedelta": "0:04:15"
     },
     "👍": {
-        "one": null,
-        "two": 2.0,
-        "three": "👍"
+        "number": 2,
+        "text": "👍",
+        "boolean": false,
+        "date": "2015-11-05",
+        "datetime": "2015-11-04T12:45:00",
+        "timedelta": "0:06:18"
+    },
+    "b": {
+        "number": null,
+        "text": "b",
+        "boolean": null,
+        "date": null,
+        "datetime": null,
+        "timedelta": null
     }
 }

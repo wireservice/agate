@@ -2,6 +2,7 @@
 
 import datetime
 
+import isodate
 import parsedatetime
 import six
 
@@ -53,10 +54,17 @@ class Date(DataType):
 
         value, status = self.parser.parseDT(d)
 
-        if status != 1:
-            return False
+        if status == 1:
+            return True
 
-        return True
+        try:
+            dt = isodate.parse_date(d)
+
+            return True
+        except:
+            pass
+
+        return False
 
     def cast(self, d):
         """
@@ -78,11 +86,28 @@ class Date(DataType):
 
         if self.date_format:
             dt = datetime.datetime.strptime(d, self.date_format)
+
             return dt.date()
 
         value, status = self.parser.parseDT(d)
 
-        if status != 1:
-            raise CastError('Can not parse value "%s" to as date.' % d)
+        if status == 1:
+            return value.date()
 
-        return value.date()
+        try:
+            dt = isodate.parse_date(d)
+
+            return dt
+        except:
+            pass
+
+        raise CastError('Can not parse value "%s" as date.' % d)
+
+    def csvify(self, d):
+        if d is None:
+            return None
+
+        return d.isoformat()
+
+    def jsonify(self, d):
+        return self.csvify(d)

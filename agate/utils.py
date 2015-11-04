@@ -232,19 +232,3 @@ def parse_object(obj, path=''):
         d.update(parse_object(value, path + key + '/'))
 
     return d
-
-def json_encode(obj):
-    """
-    Encode non-standard data types as JSON. (Intended to be used as the
-    ``default`` argument to ``json.dumps``.)
-    """
-    if isinstance(obj, Decimal):
-        return float(obj)
-    elif isinstance(obj, datetime.date):
-        return obj.isoformat()
-    elif isinstance(obj, datetime.datetime):
-        return obj.isoformat()
-    elif isinstance(obj, datetime.timedelta):
-        return six.text_type(obj)
-
-    raise TypeError

@@ -12,22 +12,27 @@ from agate import csv_py3
 
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestReader(unittest.TestCase):
+    def setUp(self):
+        self.rows = [
+            ['number', 'text', 'boolean', 'date', 'datetime', 'timedelta'],
+            ['1', 'a', 'True', '2015-11-04', '2015-11-04T12:22:00', '0:04:15'],
+            ['2', '👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
+            ['', 'b', '', '', '', '']
+        ]
+
     def test_utf8(self):
         with open('examples/test.csv', encoding='utf-8') as f:
-            reader = csv_py3.Reader(f)
-            self.assertEqual(next(reader), ['one', 'two', 'three'])
-            self.assertEqual(next(reader), ['1', '4', 'a'])
-            self.assertEqual(next(reader), ['2', '3', 'b'])
-            self.assertEqual(next(reader), ['', '2', u'👍'])
+            rows = list(csv_py3.Reader(f))
+
+        for a, b in zip(self.rows, rows):
+            self.assertEqual(a, b)
 
     def test_reader_alias(self):
         with open('examples/test.csv', encoding='utf-8') as f:
-            reader = csv_py3.reader(f)
-            self.assertEqual(next(reader), ['one', 'two', 'three'])
-            self.assertEqual(next(reader), ['1', '4', 'a'])
-            self.assertEqual(next(reader), ['2', '3', 'b'])
-            self.assertEqual(next(reader), ['', '2', u'👍'])
+            rows = list(csv_py3.reader(f))
 
+        for a, b in zip(self.rows, rows):
+            self.assertEqual(a, b)
 
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestWriter(unittest.TestCase):
@@ -59,10 +64,16 @@ class TestWriter(unittest.TestCase):
         self.assertEqual(next(reader), ['1', '2', '3'])
         self.assertEqual(next(reader), ['4', '5', u'ʤ'])
 
-
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestDictReader(unittest.TestCase):
     def setUp(self):
+        self.rows = [
+            ['number', 'text', 'boolean', 'date', 'datetime', 'timedelta'],
+            ['1', 'a', 'True', '2015-11-04', '2015-11-04T12:22:00', '0:04:15'],
+            ['2', '👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
+            ['', 'b', '', '', '', '']
+        ]
+
         self.f = open('examples/test.csv')
 
     def tearDown(self):
@@ -71,20 +82,12 @@ class TestDictReader(unittest.TestCase):
     def test_reader(self):
         reader = csv_py3.DictReader(self.f)
 
-        self.assertEqual(next(reader), {
-            u'one': u'1',
-            u'two': u'4',
-            u'three': u'a'
-        })
+        self.assertEqual(next(reader), dict(zip(self.rows[0], self.rows[1])))
 
     def test_reader_alias(self):
         reader = csv_py3.DictReader(self.f)
 
-        self.assertEqual(next(reader), {
-            u'one': u'1',
-            u'two': u'4',
-            u'three': u'a'
-        })
+        self.assertEqual(next(reader), dict(zip(self.rows[0], self.rows[1])))
 
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestDictWriter(unittest.TestCase):

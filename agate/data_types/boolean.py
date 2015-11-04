@@ -78,3 +78,6 @@ class Boolean(DataType):
                 return False
 
         raise CastError('Can not convert value %s to bool.' % d)
+
+    def jsonify(self, d):
+        return d

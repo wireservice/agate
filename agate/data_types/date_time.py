@@ -2,6 +2,7 @@
 
 import datetime
 
+import isodate
 import parsedatetime
 import six
 
@@ -65,10 +66,17 @@ class DateTime(DataType):
             tzinfo=self.timezone
         )
 
-        if status != 3:
-            return False
+        if status == 3:
+            return True
 
-        return True
+        try:
+            dt = isodate.parse_datetime(d)
+
+            return True
+        except:
+            pass
+
+        return False
 
     def cast(self, d):
         """
@@ -97,7 +105,23 @@ class DateTime(DataType):
             tzinfo=self.timezone
         )
 
-        if status != 3:
-            raise CastError('Can not parse value "%s" to as datetime.' % d)
+        if status == 3:
+            return value
 
-        return value
+        try:
+            dt = isodate.parse_datetime(d)
+
+            return dt
+        except:
+            pass
+
+        raise CastError('Can not parse value "%s" as datetime.' % d)
+
+    def csvify(self, d):
+        if d is None:
+            return None
+
+        return d.isoformat()
+
+    def jsonify(self, d):
+        return self.csvify(d)

@@ -159,6 +159,14 @@ class TestDate(unittest.TestCase):
         self.assertEqual(date_type.test('03-01-1994'), True)
         self.assertEqual(date_type.test(datetime.date(1994, 3, 1)), True)
 
+    def test_iso_format(self):
+        values = ('1994-03-01', '2011-02-17')
+        casted = tuple(self.type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.date(1994, 3, 1),
+            datetime.date(2011, 2, 17)
+        ))
+
     def test_cast_parser(self):
         values = ('3/1/1994', '2/17/2011', None, 'January 5th, 1984', 'n/a')
         casted = tuple(self.type.cast(v) for v in values)
@@ -168,15 +176,6 @@ class TestDate(unittest.TestCase):
             None,
             datetime.date(1984, 1, 5),
             None
-        ))
-
-    @unittest.skip('Broken pending parsedatetime 1.6 release')
-    def test_dash_format(self):
-        values = ('1994-03-01', '2011-02-17')
-        casted = tuple(self.type.cast(v) for v in values)
-        self.assertSequenceEqual(casted, (
-            datetime.date(1994, 3, 1),
-            datetime.date(2011, 2, 17)
         ))
 
     def test_cast_format(self):
@@ -223,6 +222,14 @@ class TestDateTime(unittest.TestCase):
         self.assertEqual(datetime_type.test('3/1/1994 12:30 PM'), False)
         self.assertEqual(datetime_type.test('03-01-1994 12:30 PM'), True)
         self.assertEqual(datetime_type.test(datetime.datetime(1994, 3, 1, 12, 30)), True)
+
+    def test_iso_format(self):
+        values = ('1994-03-01T12:30:00', '2011-02-17T06:30')
+        casted = tuple(self.type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.datetime(1994, 3, 1, 12, 30, 0),
+            datetime.datetime(2011, 2, 17, 6, 30, 0)
+        ))
 
     def test_cast_parser(self):
         values = ('3/1/1994 12:30 PM', '2/17/2011 06:30', None, 'January 5th, 1984 22:37', 'n/a')
@@ -398,11 +405,35 @@ class TestTypeTester(unittest.TestCase):
 
         self.assertIsInstance(inferred[0], Date)
 
+    def test_date_type_iso_format(self):
+        rows = [
+            ('1984-05-07',),
+            ('1997-02-28',),
+            ('2020-03-19',),
+            ('',)
+        ]
+
+        inferred = self.tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0], Date)
+
     def test_date_time_type(self):
         rows = [
             ('5/7/84 3:44:12',),
             ('2/28/1997 3:12 AM',),
             ('3/19/20 4:40 PM',),
+            ('',)
+        ]
+
+        inferred = self.tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0], DateTime)
+
+    def test_date_time_type_isoformat(self):
+        rows = [
+            ('1984-07-05T03:44:12',),
+            ('1997-02-28T03:12:00',),
+            ('2020-03-19T04:40:00',),
             ('',)
         ]
 
@@ -452,27 +483,3 @@ class TestTypeTester(unittest.TestCase):
         inferred = tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0], Text)
-
-    def test_table_from_csv(self):
-        table = Table.from_csv('examples/test.csv', column_types=self.tester)
-
-        self.assertSequenceEqual(table.column_names, ['one', 'two', 'three'])
-        self.assertSequenceEqual(tuple(map(type, table.column_types)), [Number, Number, Text])
-
-        self.assertEqual(len(table.columns), 3)
-
-        self.assertSequenceEqual(table.rows[0], [1, 4, 'a'])
-        self.assertSequenceEqual(table.rows[1], [2, 3, 'b'])
-        self.assertSequenceEqual(table.rows[2], [None, 2, u'👍'])
-
-    def test_tableset_from_csv(self):
-        tableset = TableSet.from_csv('examples/tableset', column_types=self.tester)
-
-        self.assertSequenceEqual(tableset.column_names, ['letter', 'number'])
-        self.assertSequenceEqual(tuple(map(type, tableset.column_types)), [Text, Number])
-
-        self.assertEqual(len(tableset['table1'].columns), 2)
-
-        self.assertSequenceEqual(tableset['table1'].rows[0], ['a', 1])
-        self.assertSequenceEqual(tableset['table1'].rows[1], ['a', 3])
-        self.assertSequenceEqual(tableset['table1'].rows[2], ['b', 2])
