@@ -46,7 +46,6 @@ class Column(MappedSequence):
         self._data_type = data_type
         self._rows = rows
         self._row_names = row_names
-        self._aggregate_cache = {}
 
     @property
     def index(self):
@@ -98,22 +97,3 @@ class Column(MappedSequence):
         sorted.
         """
         return sorted(self.values_without_nulls(), key=null_handler)
-
-    def aggregate(self, aggregation):
-        """
-        Apply a :class:`.Aggregation` to this column and return the result. If
-        the aggregation defines a `cache_key` the result will be cached for
-        future requests.
-        """
-        cache_key = aggregation.get_cache_key()
-
-        if cache_key is not None:
-            if cache_key in self._aggregate_cache:
-                return self._aggregate_cache[cache_key]
-
-        result = aggregation.run(self)
-
-        if cache_key is not None:
-            self._aggregate_cache[cache_key] = result
-
-        return result

@@ -170,7 +170,7 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
 
         new_table = tableset.aggregate([
-            ('number', Length(), 'count')
+            ('count', Length())
         ])
 
         self.assertIsInstance(new_table, Table)
@@ -190,7 +190,7 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(tables.values(), tables.keys(), key_name='test', key_type=self.number_type)
 
         new_table = tableset.aggregate([
-            ('number', Length(), 'count')
+            ('count', Length())
         ])
 
         self.assertIsInstance(new_table, Table)
@@ -204,7 +204,7 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
 
         new_table = tableset.aggregate([
-            ('number', Length(), 'count')
+            ('count', Length())
         ])
 
         self.assertSequenceEqual(new_table.row_names, ['table1', 'table2', 'table3'])
@@ -216,8 +216,8 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_table = tableset.aggregate([
-            ('number', Length(), 'count'),
-            ('number', Sum(), 'number_sum')
+            ('count', Length()),
+            ('number_sum', Sum('number'))
         ])
 
         self.assertIsInstance(new_table, Table)
@@ -232,8 +232,8 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_table = tableset.aggregate([
-            ('number', Length(), 'count'),
-            ('number', Min(), 'number_min')
+            ('count', Length()),
+            ('number_min', Min('number'))
         ])
 
         self.assertIsInstance(new_table, Table)
@@ -249,9 +249,9 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_table = tableset.aggregate([
-            ('number', Length(), 'count'),
-            ('number', Sum(), 'number_sum'),
-            ('number', Mean(), 'number_mean')
+            ('count', Length()),
+            ('number_sum', Sum('number')),
+            ('number_mean', Mean('number'))
         ])
 
         self.assertIsInstance(new_table, Table)
@@ -266,8 +266,8 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_table = tableset.aggregate([
-            ('letter', Length(), 'count'),
-            ('letter', MaxLength(), 'letter_max_length')
+            ('count', Length()),
+            ('letter_max_length', MaxLength('letter'))
         ])
 
         self.assertIsInstance(new_table, Table)
@@ -282,16 +282,16 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         with self.assertRaises(DataTypeError):
-            tableset.aggregate([('letter', Sum(), 'letter_sum')])
+            tableset.aggregate([('letter_sum', Sum('letter'))])
 
     def test_aggregeate_bad_column(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         with self.assertRaises(KeyError):
-            tableset.aggregate([('one', Sum(), 'one_sum')])
+            tableset.aggregate([('one_sum', Sum('one'))])
 
         with self.assertRaises(KeyError):
-            tableset.aggregate([('bad', Sum(), 'bad_sum')])
+            tableset.aggregate([('bad_sum', Sum('bad'))])
 
     def test_nested(self):
         tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
@@ -318,8 +318,8 @@ class TestTableSet(unittest.TestCase):
         nested = tableset.group_by('letter')
 
         results = nested.aggregate([
-            ('letter', Length(), 'count'),
-            ('number', Sum(), 'number_sum')
+            ('count', Length()),
+            ('number_sum', Sum('number'))
         ])
 
         self.assertIsInstance(results, Table)
@@ -343,8 +343,8 @@ class TestTableSet(unittest.TestCase):
         nested = tableset.group_by('letter')
 
         results = nested.aggregate([
-            ('letter', Length(), 'count'),
-            ('number', Sum(), 'number_sum')
+            ('count', Length()),
+            ('number_sum', Sum('number'))
         ])
 
         self.assertSequenceEqual(results.row_names, [

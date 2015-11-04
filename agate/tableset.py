@@ -251,19 +251,15 @@ class TableSet(MappedSequence, Patchable):
             column_types = [self._key_type]
             row_name_columns = [self._key_name]
 
-            for column_name, aggregation, new_column_name in aggregations:
-                c = self._sample_table.columns[column_name]
-
+            for new_column_name, aggregation in aggregations:
                 column_names.append(new_column_name)
-                column_types.append(aggregation.get_aggregate_data_type(c))
+                column_types.append(aggregation.get_aggregate_data_type(self._sample_table))
 
             for name, table in self.items():
                 new_row = [name]
 
-                for column_name, aggregation, new_column_name in aggregations:
-                    c = table.columns[column_name]
-
-                    new_row.append(c.aggregate(aggregation))
+                for new_column_name, aggregation in aggregations:
+                    new_row.append(aggregation.run(table))
 
                 output.append(new_row)
 
