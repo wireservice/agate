@@ -35,7 +35,7 @@ If you are a developer that also wants to hack on agate, install it this way::
 
     agate also supports running tests with coverage::
 
-        nosetests --with-coverage --cover-package=agate tests
+        nosetests --with-coverage tests
 
 Supported platforms
 -------------------

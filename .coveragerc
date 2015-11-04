@@ -1,0 +1,5 @@
+[run]
+include =
+    agate/*
+omit =
+    agate/csv_py2.py
