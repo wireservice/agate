@@ -23,7 +23,7 @@ agate:
         return (row['a'] + row['b']) / row['c']
 
     new_table = table.compute([
-        (Formula(f), 'new_column')
+        ('new_column', Formula(f))
     ])
 
 If this still isn't enough flexibility, you can also create your own subclass of :class:`.Computation`.
@@ -43,7 +43,7 @@ SUM
     formula = agate.Formula(number_type, five_year_total)
 
     new_table = table.compute([
-        (formula, 'five_year_total')
+        ('five_year_total', formula)
     ])
 
 TRIM
@@ -52,7 +52,7 @@ TRIM
 .. code-block:: python
 
     new_table = table.compute([
-        (Formula(text_type, lambda r: r['name'].strip()), 'name_stripped')
+        ('name_stripped', Formula(text_type, lambda r: r['name'].strip()))
     ])
 
 CONCATENATE
@@ -61,7 +61,7 @@ CONCATENATE
 .. code-block:: python
 
     new_table = table.compute([
-        (Formula(text_type, lambda r: '%(first_name)s %(middle_name)s %(last_name)s' % r), 'full_name')
+        ('full_name', Formula(text_type, lambda r: '%(first_name)s %(middle_name)s %(last_name)s' % r))
     ])
 
 IF
@@ -70,7 +70,7 @@ IF
 .. code-block:: python
 
     new_table = table.compute([
-        (Formula(boolean_type, lambda r: row['batting_average'] > 0.3), 'mvp_candidate')
+        ('mvp_candidate', Formula(boolean_type, lambda r: row['batting_average'] > 0.3))
     ])
 
 
@@ -87,7 +87,7 @@ VLOOKUP
     }
 
     new_table = table.compute([
-        (Formula(text_type, lambda r: states[row['state_abbr']]), 'mvp_candidate')
+        ('mvp_candidate', Formula(text_type, lambda r: states[row['state_abbr']]))
     ])
 
 Pivot tables
@@ -99,9 +99,9 @@ You can emulate most of the functionality of Excel's pivot tables using the :met
 
     jobs = employees.group_by('job_title')
     summary = jobs.aggregate([
-        ('salary', agate.Length(), 'employee_count')
-        ('salary', agate.Mean(), 'salary_mean'),
-        ('salary', agate.Median(), 'salary_median')
+        ('employee_count', agate.Length())
+        ('salary_mean', agate.Mean('salary')),
+        ('salary_median', agate.Median('salary'))
     ])
 
 The resulting ``summary`` table will have four columns: ``job_title`, ``employee_count``, ``salary_mean`` and ``salary_median``.

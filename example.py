@@ -14,7 +14,7 @@ table = agate.Table.from_csv('examples/realdata/ks_1033_data.csv', column_types=
 kansas_city = table.where(lambda r: r['county'] in ('JACKSON', 'CLAY', 'CASS', 'PLATTE'))
 
 # Sum total_cost of four counties
-print('Total for Kansas City area: %i' % kansas_city.columns['total_cost'].aggregate(agate.Sum()))
+print('Total for Kansas City area: %i' % kansas_city.aggregate(agate.Sum('total_cost')))
 
 # Question 2: Which counties spent the most?
 
@@ -23,7 +23,7 @@ counties = table.group_by('county')
 
 # Aggregate totals for all counties
 totals = counties.aggregate([
-    ('total_cost', agate.Sum(), 'total_cost_sum')
+    ('total_cost_sum', agate.Sum('total_cost'))
 ])
 
 totals = totals.order_by('total_cost_sum', reverse=True)
@@ -43,12 +43,12 @@ recent.print_table(5, 5)
 
 # Question 4: What is the standard of deviation of the cost of all purchases?
 
-stdev = table.columns['total_cost'].aggregate(agate.StDev())
+stdev = table.aggregate(agate.StDev('total_cost'))
 
 print('Standard deviation of total_cost: %.2f' % stdev)
 
 # Question 5: How many robots were purchased?
 
-robots = table.where(lambda r: 'ROBOT' in (r['item_name'] or [])).columns['quantity'].aggregate(agate.Sum())
+robots = table.where(lambda r: 'ROBOT' in (r['item_name'] or [])).aggregate(agate.Sum('quantity'))
 
 print('Number of robots purchased: %i' % robots)

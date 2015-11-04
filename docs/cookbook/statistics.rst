@@ -11,17 +11,25 @@ agate includes a full set of standard descriptive statistics that can be applied
 
 .. code-block:: python
 
-    column = table.columns['salary']
+    table.aggregate(Sum('salary'))
+    table.aggregate(Min('salary'))
+    table.aggregate(Max('salary'))
+    table.aggregate(Mean('salary'))
+    table.aggregate(Median('salary'))
+    table.aggregate(Mode('salary'))
+    table.aggregate(Variance('salary'))
+    table.aggregate(StDev('salary'))
+    table.aggregate(MAD('salary'))
 
-    column.aggregate(Sum())
-    column.aggregate(Min())
-    column.aggregate(Max())
-    column.aggregate(Mean())
-    column.aggregate(Median())
-    column.aggregate(Mode())
-    column.aggregate(Variance())
-    column.aggregate(StDev())
-    column.aggregate(MAD())
+Or, get several at once:
+
+.. code-block:: python
+
+    table.aggregate([
+        Min('salary'),
+        Mean('salary'),
+        Max('salary')
+    ])
 
 Aggregate statistics
 ====================
@@ -32,9 +40,9 @@ You can also generate aggregate statistics for subsets of data (sometimes colloq
 
     doctors = patients.group_by('doctor')
     patient_ages = doctors.aggregate([
-        ('age', agate.Length(), 'patient_count')
-        ('age', agate.Mean(), 'age_mean'),
-        ('age', agate.Median(), 'age_median')
+        ('patient_count', agate.Length())
+        ('age_mean', agate.Mean('age')),
+        ('age_median', agate.Median('age'))
     ])
 
 The resulting table will have four columns: ``doctor``, ``patient_count``, ``age_mean`` and ``age_median``.

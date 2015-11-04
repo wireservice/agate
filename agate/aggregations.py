@@ -7,13 +7,13 @@ instance, :class:`Mean`, when applied to a column containing :class:`.Number`
 data, returns a single :class:`decimal.Decimal` value which is the average of
 all values in that column.
 
+Aggregations are applied to single columns using the :meth:`.Table.aggregate`
+method. There result is a single value if a single aggregation was applied, or
+a tuple of values if a sequence of aggregations was applied.
+
 Aggregations are applied to instances of :class:`.TableSet` using the
 :meth:`.Tableset.aggregate` method. The result will be a new :class:`.Table`
 with a column for each aggregation and a row for each table in the set.
-
-Aggregations can also be executed directly, by passing a :class`.Table`
-instance to the :meth:`Aggregation.run` method. (A few aggregations, such as
-:class:`Percentiles` can only be applied in this way.)
 """
 
 from collections import defaultdict

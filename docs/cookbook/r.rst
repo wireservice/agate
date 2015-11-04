@@ -17,5 +17,5 @@ agate:
 
     jobs = employees.group_by('job')
     aggregates = jobs.aggregate([
-        ( 'salary', 'mean')
+        ('mean', agate.Mean('salary'))
     ])

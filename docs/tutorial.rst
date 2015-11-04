@@ -51,81 +51,40 @@ Now let's import our dependencies:
 
     I also strongly suggest taking a look at `proof <http://proof.readthedocs.org/en/latest/>`_ for building data processing pipelines, but we won't use it in this tutorial to keep things simple.
 
-Defining the columns
-====================
-
-There are two ways to specify column types in agate. You can specify a particular type one-by-one, which gives you complete control over how the data is processed, or you can use agate's :class:`.TypeTester` to infer types from the data. The latter is more convenient, but it is imperfect, so if you run int problems you may want to specify them manually. (For instance, some date formats look exactly like numbers and some numbers are really text.)
-
-You can create a :class:`.TypeTester` like this:
-
-.. code-block:: python
-
-    tester = agate.TypeTester()
-
-If you prefer to specify your columns manually you will need to create instances of each type that you are using:
-
-.. code-block:: python
-
-    text_type = agate.Text()
-    number_type = agate.Number()
-    boolean_type = agate.Boolean()
-
-Then you define the names and types of the columns that are in our dataset as a sequence. For the exonerations dataset, you would define:
-
-.. code-block:: python
-
-    column_names = [
-        'last_name',
-        'first_name',
-        'age',
-        'race',
-        'state',
-        # ...
-    ]
-
-    column_types = [
-        text_type,
-        text_type,
-        number_type,
-        text_type,
-        text_type,
-        # ...
-    ]
-
-For the remainder of this example we will use the :class:`.TypeTester`.
-
-.. note::
-
-    If specifying column names manually they do not necessarily need to match those found in your CSV file. I've kept them consistent in this example for clarity. If using :class:`.TypeTester` column names will be inferred from the headers of your CSV.
-
 Loading data from a CSV
 =======================
 
-The :class:`.Table` is the basic class in agate. A time-saving method is included to create a table from CSV. To infer column types automatically while reading the data:
+The :class:`.Table` is the basic class in agate. A time-saving method is included to create a table from CSV.
 
 .. code-block:: python
 
+    exonerations = agate.Table.from_csv('exonerations-20150828.csv')
+
+With no other arguments specified, agate will automatically create an instance of :class:`.TypeTester` and use it to infer the type of each column. TypeTester is a "best guess" approach to determining the kinds of data in your table. It can guess incorrectly. In that case you can create a TypeTester manually and use the `force` argument to override its guess for a specific column:
+
+.. code-block:: python
+
+    tester = TypeTester(force={
+        'false_evidence': agate.Boolean()
+    })
+
+    exonerations = agate.Table.from_csv('exonerations-20150828.csv', column_types=tester)`
+
+If you know the types of your data you may wish to skip the TypeTester entirely. You may pass sequences of column names and column types to :meth:`.Table.from_csv` as the `column_names` and `column_types` arguments, respectively.
+
+For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. In that case you can construct a :class:`.TypeTester` manually and specify a `limit` argument to restrict the amount of data it will use to infer types. You will pass your type tester like this:
+
+.. code-block:: python
+
+    tester = TypeTester(limit=100)
+
     exonerations = agate.Table.from_csv('exonerations-20150828.csv', tester)
+
+The dataset we are using in this tutorial is simple enough that we can rely on the built-in TypeTester to guess quicly and accurately.
 
 .. note::
 
     agate's builtin CSV reader supports unicode and other encodings for both Python 2 and Python 3.
-
-.. note::
-
-    For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. You can specify a `limit` argument to restrict the amount of data it will use to infer types. Alternately, you may wish to use a tool such as `proof <http://proof.readthedocs.org/en/latest/>`_ so you don't have to run it everytime you work with your data.
-
-Or, if you wanted to use the column data created manually:
-
-.. code-block:: python
-
-    exonerations = agate.Table.from_csv('exonerations-20150828.csv', column_names, column_types)
-
-In either case the ``exonerations`` variable will now be an instance of :class:`.Table`.
-
-.. note::
-
-    If you have data that you've generated in another way you can always pass it in the :class:`.Table` constructor directly.
 
 Navigating table data
 =====================
@@ -203,13 +162,13 @@ Answering this question involves counting the number of "True" values in the ``f
 
 We'll answer the question using :class:`.Count` which is a type of :class:`.Aggregation`. Aggregations in agate are used to perform "column-wise" calculations. That is, they derive a new single value from the contents of a column. In the case of :class:`.Count`, it will tell us how many times a particular value appears in the column.
 
-An :class:`.Aggregation` is applied to a column of a table. You can access the columns of a table using the :attr:`.Table.columns` attribute.
+An :class:`.Aggregation` is applied to a column of a table using the :meth:`.Table.aggregate` method.
 
 Putting it together looks like this:
 
 .. code-block:: python
 
-    num_false_confessions = exonerations.columns['false_confession'].aggregate(agate.Count(True))
+    num_false_confessions = exonerations.aggregate(agate.Count('false_confession', True))
 
     print(num_false_confessions)
 
@@ -223,7 +182,7 @@ Question: **What was the median age of exonerated indviduals at time of arrest?*
 
 .. code-block:: python
 
-    median_age = exonerations.columns['age'].aggregate(agate.Median())
+    median_age = exonerations.aggregate(agate.Median('age'))
 
     print(median_age)
 
@@ -245,7 +204,7 @@ In order to be more rigorous, we might want to first investigate and remove thos
 
 .. code-block:: python
 
-    num_without_age = exonerations.columns['age'].aggregate(agate.Count(None))
+    num_without_age = exonerations.aggregate(agate.Count('age', None))
 
     print(num_without_age)
 
@@ -293,7 +252,7 @@ Now if we calculate the median age of these individuals, we don't see the warnin
 
 .. code-block:: python
 
-    median_age = with_age.columns['age'].aggregate(agate.Median())
+    median_age = with_age.aggregate(agate.Median('age'))
 
     print(median_age)
 
@@ -315,10 +274,10 @@ To answer this question we will apply the :class:`.Change` computation to the ``
 .. code-block:: python
 
     with_years_in_prison = exonerations.compute([
-        (agate.Change('convicted', 'exonerated'), 'years_in_prison')
+        ('years_in_prison', agate.Change('convicted', 'exonerated'))
     ])
 
-    median_years = with_years_in_prison.columns['years_in_prison'].aggregate(agate.Median())
+    median_years = with_years_in_prison.aggregate(agate.Median('years_in_prison'))
 
     print(median_years)
 
@@ -335,7 +294,7 @@ For example, this code will create a ``full_name`` column from the ``first_name`
 .. code-block:: python
 
     full_names = exonerations.compute([
-        (agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row), 'full_name')
+        ('full_name', agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row))
     ])
 
 For efficiency's sake, agate allows you to perform several computations at once.
@@ -343,8 +302,8 @@ For efficiency's sake, agate allows you to perform several computations at once.
 .. code-block:: python
 
     with_computations = exonerations.compute([
-        (agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row), 'full_name'),
-        (agate.Change('convicted', 'exonerated'), 'years_in_prison')
+        ('full_name', agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row)),
+        ('years_in_prison', agate.Change('convicted', 'exonerated'))
     ])
 
 However, it should be noted that computations in the list can not depend on the values produced by those that came before. Each is applied to the original :class:`.Table`.
@@ -440,12 +399,12 @@ First, we use :meth:`.Table.group_by` to group the data by state.
 
     by_state = exonerations.group_by('state')
 
-This takes our original :class:`.Table` and groups it into a :class:`.TableSet`, which contains one table per county. Now we need to aggregate the total for each state. This works in a very similar way to how it did when we were aggregating columns of a single table, except that we'll use the :class:`.Length` aggregation to count the total number of values in the column.
+This takes our original :class:`.Table` and groups it into a :class:`.TableSet`, which contains one table per county. Now we need to aggregate the total for each state. This works in a very similar way to how it did when we were aggregating columns of a single table, except that we'll use the :class:`.Length` aggregation to count the total number of values in the table.
 
 .. code-block:: python
 
     state_totals = by_state.aggregate([
-        ('state', agate.Length(), 'count')
+        ('count', agate.Length())
     ])
 
     sorted_totals = state_totals.order_by('count', reverse=True)
@@ -465,7 +424,7 @@ This takes our original :class:`.Table` and groups it into a :class:`.TableSet`,
     |  ...   | ...    |
     |--------+--------|
 
-You'll notice we pass a list of tuples to :meth:`.TableSet.aggregate`. Each one includes three elements. The first is the column name to aggregate. The second is an instance of some :class:`.Aggregation`. The third is the new column name. Unsurpringly, in this case the results appear roughly proportional to population.
+You'll notice we pass a sequence of tuples to :meth:`.TableSet.aggregate`. Each one includes two elements. The first is the new column name being created. The second is an instance of some :class:`.Aggregation`. Unsurpringly, in this case the results appear roughly proportional to population.
 
 Question: **What state has the longest median time in prison prior to exoneration?**
 
@@ -474,14 +433,14 @@ This is a much more complicated question that's going to pull together a lot of 
 .. code-block:: python
 
     with_years_in_prison = exonerations.compute([
-        (agate.Change('convicted', 'exonerated'), 'years_in_prison')
+        ('years_in_prison', agate.Change('convicted', 'exonerated'))
     ])
 
     state_totals = with_years_in_prison.group_by('state')
 
     medians = state_totals.aggregate([
-        ('years_in_prison', agate.Length(), 'count'),
-        ('years_in_prison', agate.Median(), 'median_years_in_prison')
+        ('count', agate.Length()),
+        ('median_years_in_prison', agate.Median('years_in_prison'))
     ])
 
     sorted_medians = medians.order_by('median_years_in_prison', reverse=True)
@@ -534,8 +493,8 @@ I'm not going to explain every stage of this analysis as most of it repeats patt
 
     # Aggregate medians for each group
     medians = race_and_age_groups.aggregate([
-        ('years_in_prison', agate.Length(), 'count'),
-        ('years_in_prison', agate.Median(), 'median_years_in_prison')
+        ('count', agate.Length()),
+        ('median_years_in_prison', agate.Median('years_in_prison'))
     ])
 
     # Sort the results

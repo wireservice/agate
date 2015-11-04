@@ -5,7 +5,7 @@ Cookbook
 .. toctree::
     :maxdepth: 2
 
-    cookbook/basics
+    cookbook/create
     cookbook/filter
     cookbook/sort
     cookbook/search

@@ -1,54 +1,22 @@
 #!/usr/bin/env python
 
+from collections import OrderedDict
 import csv
 
 import agate
 import proof
 
 def load_data(data):
-    text_type = agate.Text()
-    number_type = agate.Number()
-    boolean_type = agate.Boolean()
-
-    columns = (
-        ('last_name', text_type),
-        ('first_name', text_type),
-        ('age', number_type),
-        ('race', text_type),
-        ('state', text_type),
-        ('tags', text_type),
-        ('crime', text_type),
-        ('sentence', text_type),
-        ('convicted', number_type),
-        ('exonerated', number_type),
-        ('dna', boolean_type),
-        ('dna_essential', text_type),
-        ('mistaken_witness', boolean_type),
-        ('false_confession', boolean_type),
-        ('perjury', boolean_type),
-        ('false_evidence', boolean_type),
-        ('official_misconduct', boolean_type),
-        ('inadequate_defense', boolean_type),
-    )
-
-    with open('examples/realdata/exonerations-20150828.csv') as f:
-        # Create a csv reader
-        reader = csv.reader(f)
-
-        # Skip header
-        next(f)
-
-        # Create the table
-        data['exonerations'] = agate.Table(reader, columns)
+    data['exonerations'] = agate.Table.from_csv('examples/realdata/exonerations-20150828.csv')
 
 def confessions(data):
-    num_false_confessions = data['exonerations'].columns['false_confession'].aggregate(agate.Count(True))
+    num_false_confessions = data['exonerations'].aggregate(agate.Count('false_confession', True))
 
     print('False confessions: %i' % num_false_confessions)
 
 @proof.never_cache
 def median_age(data):
-    median_age = data['exonerations'].columns['age'].aggregate(agate.Median())
+    median_age = data['exonerations'].aggregate(agate.Median('age'))
 
     print('Median age at time of arrest: %i' % median_age)
 
@@ -59,7 +27,7 @@ def median_age(data):
 
 def years_in_prison(data):
     data['with_years_in_prison'] = data['exonerations'].compute([
-        (agate.Change('convicted', 'exonerated'), 'years_in_prison')
+        ('years_in_prison', agate.Change('convicted', 'exonerated'))
     ])
 
 def youth(data):
@@ -72,7 +40,7 @@ def states(data):
     state_totals = data['with_years_in_prison'].group_by('state')
 
     medians = state_totals.aggregate([
-        ('years_in_prison', agate.Median(), 'median_years_in_prison')
+        ('median_years_in_prison', agate.Median('years_in_prison'))
     ])
 
     sorted_medians = medians.order_by('median_years_in_prison', reverse=True)
@@ -96,8 +64,8 @@ def race_and_age(data):
 
     # Aggregate medians for each group
     medians = race_and_age_groups.aggregate([
-        ('years_in_prison', agate.Length(), 'count'),
-        ('years_in_prison', agate.Median(), 'median_years_in_prison')
+        ('count', agate.Length()),
+        ('median_years_in_prison', agate.Median('years_in_prison'))
     ])
 
     # Sort the results
