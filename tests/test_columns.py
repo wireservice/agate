@@ -112,7 +112,3 @@ class TestColumn(unittest.TestCase):
             table.columns['one'].values_without_nulls_sorted(),
             [Decimal('1'), Decimal('2')]
         )
-
-    def test_aggregate(self):
-        self.assertTrue(HasNulls('one').run(self.table))
-        self.assertFalse(HasNulls('two').run(self.table))

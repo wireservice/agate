@@ -25,11 +25,12 @@ import six
 from six.moves import range
 
 from agate import Table, TableSet
+from agate.aggregations import Length, Sum
 from agate.data_types import *
 from agate.computations import Formula
 from agate.exceptions import DataTypeError
 
-class TestTable(unittest.TestCase):
+class TestBasic(unittest.TestCase):
     def setUp(self):
         self.rows = (
             (1, 4, 'a'),
@@ -1022,7 +1023,7 @@ class TestPrettyPrint(unittest.TestCase):
         with self.assertRaises(DataTypeError):
             table.print_bars('one', 'three')
 
-class TestTableGrouping(unittest.TestCase):
+class TestGrouping(unittest.TestCase):
     def setUp(self):
         self.rows = (
             ('a', 2, 3, 4),
@@ -1126,7 +1127,38 @@ class TestTableGrouping(unittest.TestCase):
         with self.assertRaises(KeyError):
             table.group_by('bad')
 
-class TestTableCompute(unittest.TestCase):
+class TestAggregate(unittest.TestCase):
+    def setUp(self):
+        self.rows = (
+            (1, 4, 'a'),
+            (2, 3, 'b'),
+            (None, 2, u'👍')
+        )
+
+        self.number_type = Number()
+        self.text_type = Text()
+
+        self.column_names = ['one', 'two', 'three']
+        self.column_types = [self.number_type, self.number_type, self.text_type]
+
+        self.table = Table(self.rows, self.column_names, self.column_types)
+
+    def test_length(self):
+        self.assertEqual(self.table.aggregate(Length()), 3)
+
+    def test_sum(self):
+        self.assertEqual(self.table.aggregate(Sum('two')), 9)
+
+    def test_multiple(self):
+        self.assertSequenceEqual(
+            self.table.aggregate([
+                Length(),
+                Sum('two')
+            ]),
+            [3, 9]
+        )
+
+class TestCompute(unittest.TestCase):
     def setUp(self):
         self.rows = (
             ('a', 2, 3, 4),
@@ -1184,7 +1216,7 @@ class TestTableCompute(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 5, 'a3'))
         self.assertSequenceEqual(new_table.row_names, (3, 5, 4, 6))
 
-class TestTableJoin(unittest.TestCase):
+class TestJoin(unittest.TestCase):
     def setUp(self):
         self.left_rows = (
             (1, 4, 'a'),
@@ -1443,7 +1475,7 @@ class TestTableJoin(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows['a'], (1, 4, 'a', 4, 'a'))
         self.assertSequenceEqual(new_table.row_names, ('a', 'b', 'c'))
 
-class TestTableMerge(unittest.TestCase):
+class TestMerge(unittest.TestCase):
     def setUp(self):
         self.rows = (
             (1, 4, 'a'),
@@ -1497,7 +1529,7 @@ class TestTableMerge(unittest.TestCase):
 
         self.assertEqual(table_a.row_names, table_c.row_names)
 
-class TestTableData(unittest.TestCase):
+class TestData(unittest.TestCase):
     def setUp(self):
         self.rows = (
             (1, 4, 'a'),

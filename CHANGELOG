@@ -10,6 +10,8 @@ Second, the interfaces for TableSet.aggregate and Table.compute have been redesi
 Third, this version drops support for Python 2.6. Testing and bug-fixing for this version was taking substantial time with zero evidence that anyone was actually using it. Also, multiple agate dependencies claim to not support 2.6, even though the tests passed.
 
 * Aggregation results are no longer cached. (#378)
+* Removed Column.aggregate. Use Table.aggregate instead. (#378)
+* Added Table.aggregate method for aggregating column results. (#378)
 * Aggregations now take column names as their first argument. (#378)
 * TableSet.aggregate and Table.compute now take the new column name as the first argument. (#378)
 * Remove support for Python 2.6.

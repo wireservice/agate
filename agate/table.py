@@ -830,6 +830,23 @@ class Table(utils.Patchable):
 
         return TableSet(output.values(), output.keys(), key_name=key_name, key_type=key_type)
 
+    def aggregate(self, aggregations):
+        """
+        Aggregate data from the columns in this table by applying a sequence of
+        :class:`.Aggregation` instances.
+
+        :param aggregations:
+            A single :class:`.Aggregation` instance or sequence of them.
+        :returns:
+            If the input was a single :class:`Aggregation` then a single result
+            will be returned. If it was a sequence then a tuple of results will
+            be returned.
+        """
+        if isinstance(aggregations, Sequence):
+            return tuple(a.run(self) for a in aggregations)
+        else:
+            return aggregations.run(self)
+
     @allow_tableset_proxy
     def compute(self, computations):
         """
@@ -837,8 +854,8 @@ class Table(utils.Patchable):
         each row.
 
         :param computations:
-            An iterable of pairs of new column names and
-            :class:`.Computation` instances.
+            A sequence of pairs of new column names and :class:`.Computation`
+            instances.
         :returns:
             A new :class:`Table`.
         """
@@ -927,15 +944,19 @@ class Table(utils.Patchable):
         The second will be named :code:`count` and will be of type
         :class:`.Number`.
 
-        :param column_name: The name of the column to bin. Must be of type
-            :class:`.Number`
-        :param count: The number of bins to create. If not specified then each
-            value will be counted as its own bin.
-        :param start: The minimum value to start the bins at. If not specified the
+        :param column_name:
+            The name of the column to bin. Must be of type :class:`.Number`
+        :param count:
+            The number of bins to create. If not specified then each value will
+            be counted as its own bin.
+        :param start:
+            The minimum value to start the bins at. If not specified the
             minimum value in the column will be used.
-        :param end: The maximum value to end the bins at. If not specified the
-            maximum value in the column will be used.
-        :returns: A new :class:`Table`.
+        :param end:
+            The maximum value to end the bins at. If not specified the maximum
+            value in the column will be used.
+        :returns:
+            A new :class:`Table`.
         """
         if start is None or end is None:
             start, end = utils.round_limits(
@@ -1043,14 +1064,18 @@ class Table(utils.Patchable):
         Print a text-based bar chart of the columns names `label_column_name`
         and `value_column_name`.
 
-        :param label_column_name: The column containing the label values.
-        :param value_column_name: The column containing the bar values.
-        :param domain: A 2-tuple containing the minimum and maximum values for
-            the chart's x-axis. The domain must be large enough to contain all
-            values in the column.
-        :param width: The width, in characters, to use for the bar chart.
-            Defaults to `120`.
-        :param output: A file-like object to print to. Defaults to
-            :code:`sys.stdout`.
+        :param label_column_name:
+            The column containing the label values.
+        :param value_column_name:
+            The column containing the bar values.
+        :param domain:
+            A 2-tuple containing the minimum and maximum values for the chart's
+            x-axis. The domain must be large enough to contain all values in
+            the column.
+        :param width:
+            The width, in characters, to use for the bar chart. Defaults to
+            `120`.
+        :param output:
+            A file-like object to print to. Defaults to :code:`sys.stdout`.
         """
         print_bars(self, label_column_name, value_column_name, domain, width, output)
