@@ -3,11 +3,11 @@
 
 This version of agate introduces several major changes.
 
-First, the Table, Table.from_csv and TableSet.from_csv methods now all take "column_names" and "column_types" as separate arguments instead of as a sequence of tuples. Was done to facilitate type inference and to streamline the API in various other places.
+First, the Table, Table.from_csv and TableSet.from_csv methods now all take "column_names" and "column_types" as separate arguments instead of as a sequence of tuples. Was done to enable more flexible type inference and to streamline the API.
 
-Second, the interfaces for TableSet.aggregate and Table.compute have been redesigned. In both cases the new column name now comes first. Aggregations have also been redesigned so that the input column name is an argument to the aggregation class, rather than a third element in the tuple.
+Second, the interfaces for TableSet.aggregate and Table.compute have been redesigned. In both cases the new column name now comes first. Aggregations have also been modified so that the input column name is an argument to the aggregation class, rather than a third element in the tuple.
 
-Third, this version drops support for Python 2.6. Testing and bug-fixing for this version was taking substantial time with zero evidence that anyone was actually using it. Also, multiple agate dependencies claim to not support 2.6, even though the tests passed.
+Third, this version drops support for Python 2.6. Testing and bug-fixing for this version was taking substantial time with zero evidence that anyone was actually using it. Also, multiple agate dependencies claim to not support 2.6, even though the tests were passing.
 
 * Aggregation results are no longer cached. (#378)
 * Removed Column.aggregate. Use Table.aggregate instead. (#378)
