@@ -11,6 +11,7 @@ This is the release process for agate:
 #. Ensure ``CHANGELOG`` is up to date.
 #. Create a release tag: ``git tag -a x.y.z -m "x.y.z release."``
 #. Push tags upstream: ``git push --tags``
+#. If this is a major release, merge ``master`` into ``stable``: ``git checkout stable; git merge master; git push``
 #. Upload to `PyPI <https://pypi.python.org/pypi/agate>`_: ``python setup.py sdist bdist_wheel upload``.
 #. Flag the release to build on `RTFD <https://readthedocs.org/dashboard/agate/versions/>`_.
 #. Update the "default version" on `RTFD <https://readthedocs.org/dashboard/agate/versions/>`_ to the latest.
