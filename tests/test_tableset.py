@@ -19,7 +19,9 @@ from agate.aggregations import *
 from agate.data_types import *
 from agate.computations import Formula
 
-class TestTableSet(unittest.TestCase):
+from tests.testcase import AgateTestCase
+
+class TestTableSet(AgateTestCase):
     def setUp(self):
         self.table1 = (
             ('a', 1),
@@ -109,8 +111,7 @@ class TestTableSet(unittest.TestCase):
         table = tableset.merge()
 
         self.assertSequenceEqual(table.column_names, ['group', 'letter', 'number'])
-        self.assertIsInstance(table.column_types[0], Text)
-        self.assertSequenceEqual(table.column_types[1:], [self.text_type, self.number_type])
+        self.assertSequenceInstances(table.column_types, [Text, Text, Number])
 
         self.assertEqual(len(table.rows), 9)
         self.assertSequenceEqual(table.rows[0], ['table1', 'a', 1])
@@ -122,8 +123,7 @@ class TestTableSet(unittest.TestCase):
         table = tableset.merge()
 
         self.assertSequenceEqual(table.column_names, ['foo', 'letter', 'number'])
-        self.assertIsInstance(table.column_types[0], Text)
-        self.assertSequenceEqual(table.column_types[1:], [self.text_type, self.number_type])
+        self.assertSequenceInstances(table.column_types, [Text, Text, Number])
 
     def test_compute(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
@@ -176,9 +176,8 @@ class TestTableSet(unittest.TestCase):
         self.assertIsInstance(new_table, Table)
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 2)
-        self.assertSequenceEqual(new_table._column_names, ('test', 'count'))
-        self.assertIsInstance(new_table._column_types[0], Text)
-        self.assertIsInstance(new_table._column_types[1], Number)
+        self.assertSequenceEqual(new_table.column_names, ('test', 'count'))
+        self.assertSequenceInstances(new_table.column_types, [Text, Number])
 
     def test_aggregate_key_type(self):
         tables = OrderedDict([
@@ -196,9 +195,8 @@ class TestTableSet(unittest.TestCase):
         self.assertIsInstance(new_table, Table)
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 2)
-        self.assertSequenceEqual(new_table._column_names, ('test', 'count'))
-        self.assertIsInstance(new_table._column_types[0], Number)
-        self.assertIsInstance(new_table._column_types[1], Number)
+        self.assertSequenceEqual(new_table.column_names, ('test', 'count'))
+        self.assertSequenceInstances(new_table.column_types, [Number, Number])
 
     def test_aggregate_row_names(self):
         tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
@@ -223,7 +221,8 @@ class TestTableSet(unittest.TestCase):
         self.assertIsInstance(new_table, Table)
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 3)
-        self.assertSequenceEqual(new_table._column_names, ('group', 'count', 'number_sum'))
+        self.assertSequenceEqual(new_table.column_names, ('group', 'count', 'number_sum'))
+        self.assertSequenceInstances(new_table.column_types, [Text, Number, Number])
         self.assertSequenceEqual(new_table.rows[0], ('table1', 3, 6))
         self.assertSequenceEqual(new_table.rows[1], ('table2', 3, 7))
         self.assertSequenceEqual(new_table.rows[2], ('table3', 3, 6))
@@ -239,8 +238,8 @@ class TestTableSet(unittest.TestCase):
         self.assertIsInstance(new_table, Table)
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 3)
-        self.assertSequenceEqual(new_table._column_names, ('group', 'count', 'number_min'))
-        self.assertIsInstance(new_table.columns['number_min'].data_type, Number)
+        self.assertSequenceEqual(new_table.column_names, ('group', 'count', 'number_min'))
+        self.assertSequenceInstances(new_table.column_types, [Text, Number, Number])
         self.assertSequenceEqual(new_table.rows[0], ('table1', 3, 1))
         self.assertSequenceEqual(new_table.rows[1], ('table2', 3, 0))
         self.assertSequenceEqual(new_table.rows[2], ('table3', 3, 1))
@@ -257,7 +256,8 @@ class TestTableSet(unittest.TestCase):
         self.assertIsInstance(new_table, Table)
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 4)
-        self.assertSequenceEqual(new_table._column_names, ('group', 'count', 'number_sum', 'number_mean'))
+        self.assertSequenceEqual(new_table.column_names, ('group', 'count', 'number_sum', 'number_mean'))
+        self.assertSequenceInstances(new_table.column_types, [Text, Number, Number, Number])
         self.assertSequenceEqual(new_table.rows[0], ('table1', 3, 6, 2))
         self.assertSequenceEqual(new_table.rows[1], ('table2', 3, 7, Decimal(7) / 3))
         self.assertSequenceEqual(new_table.rows[2], ('table3', 3, 6, 2))
@@ -273,7 +273,8 @@ class TestTableSet(unittest.TestCase):
         self.assertIsInstance(new_table, Table)
         self.assertEqual(len(new_table.rows), 3)
         self.assertEqual(len(new_table.columns), 3)
-        self.assertSequenceEqual(new_table._column_names, ('group', 'count', 'letter_max_length'))
+        self.assertSequenceEqual(new_table.column_names, ('group', 'count', 'letter_max_length'))
+        self.assertSequenceInstances(new_table.column_types, [Text, Number, Number])
         self.assertSequenceEqual(new_table.rows[0], ('table1', 3, 1))
         self.assertSequenceEqual(new_table.rows[1], ('table2', 3, 1))
         self.assertSequenceEqual(new_table.rows[2], ('table3', 3, 1))
