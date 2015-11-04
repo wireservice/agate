@@ -21,6 +21,3 @@ class TestCSV(unittest.TestCase):
             self.assertIs(agate.writer, agate.csv_py3.writer)
             self.assertIs(agate.DictReader, agate.csv_py3.DictReader)
             self.assertIs(agate.DictWriter, agate.csv_py3.DictWriter)
-
-        with self.assertRaises(NotImplementedError):
-            agate.save()

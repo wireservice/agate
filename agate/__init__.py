@@ -15,6 +15,3 @@ if six.PY2:
     from agate.csv_py2 import reader, writer, DictReader, DictWriter
 else :
     from agate.csv_py3 import reader, writer, DictReader, DictWriter
-
-def save():
-    raise NotImplementedError
