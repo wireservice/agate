@@ -82,10 +82,10 @@ class Change(Computation):
                 if not isinstance(after_column.data_type, data_type):
                     raise ValueError('Specified columns must be of the same type')
 
-                if before_column.aggregate(HasNulls()):
+                if HasNulls(self._before_column_name).run(table):
                     warn_null_calculation(self, before_column)
 
-                if after_column.aggregate(HasNulls()):
+                if HasNulls(self._after_column_name).run(table):
                     warn_null_calculation(self, after_column)
 
                 return before_column
@@ -204,7 +204,7 @@ class PercentileRank(Rank):
         if not isinstance(column.data_type, Number):
             raise DataTypeError('PercentileRank column must contain Number data.')
 
-        self._percentiles = column.aggregate(Percentiles())
+        self._percentiles = Percentiles(self._column_name).run(table)
 
     def run(self, row):
         return self._percentiles.locate(row[self._column_name])

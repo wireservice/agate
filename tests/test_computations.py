@@ -38,7 +38,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_change(self):
         new_table = self.table.compute([
-            (Change('two', 'three'), 'test')
+            ('test', Change('two', 'three'))
         ])
 
         self.assertIsNot(new_table, self.table)
@@ -64,7 +64,7 @@ class TestTableComputation(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             table.compute([
-                (Change('number', 'date'), 'test')
+                ('test', Change('number', 'date'))
             ])
 
     def test_changed_invalid_types(self):
@@ -80,7 +80,7 @@ class TestTableComputation(unittest.TestCase):
 
         with self.assertRaises(DataTypeError):
             table.compute([
-                (Change('before', 'after'), 'test')
+                ('test', Change('before', 'after'))
             ])
 
     def test_change_nulls(self):
@@ -88,18 +88,18 @@ class TestTableComputation(unittest.TestCase):
 
         with self.assertRaises(NullCalculationWarning):
             new_table = self.table.compute([
-                (Change('three', 'four'), 'test')
+                ('test', Change('three', 'four'))
             ])
 
         with self.assertRaises(NullCalculationWarning):
             new_table = self.table.compute([
-                (Change('four', 'three'), 'test')
+                ('test', Change('four', 'three'))
             ])
 
         warnings.simplefilter('ignore')
 
         new_table = self.table.compute([
-            (Change('three', 'four'), 'test')
+            ('test', Change('three', 'four'))
         ])
 
         self.assertIsNot(new_table, self.table)
@@ -114,7 +114,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_percent_change(self):
         new_table = self.table.compute([
-            (PercentChange('two', 'three'), 'test')
+            ('test', PercentChange('two', 'three'))
         ])
 
         self.assertIsNot(new_table, self.table)
@@ -132,12 +132,12 @@ class TestTableComputation(unittest.TestCase):
     def test_percent_change_invalid_columns(self):
         with self.assertRaises(DataTypeError):
             new_table = self.table.compute([
-                (PercentChange('one', 'three'), 'test')
+                ('test', PercentChange('one', 'three'))
             ])
 
     def test_rank_number(self):
         new_table = self.table.compute([
-            (Rank('two'), 'rank')
+            ('rank', Rank('two'))
         ])
 
         self.assertEqual(len(new_table.rows), 4)
@@ -146,7 +146,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_rank_number_reverse(self):
         new_table = self.table.compute([
-            (Rank('two', reverse=True), 'rank')
+            ('rank', Rank('two', reverse=True))
         ])
 
         self.assertEqual(len(new_table.rows), 4)
@@ -155,7 +155,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_rank_number_key(self):
         new_table = self.table.compute([
-            (Rank('two', comparer=lambda x,y: int(y - x)), 'rank')
+            ('rank', Rank('two', comparer=lambda x,y: int(y - x)))
         ])
 
         self.assertEqual(len(new_table.rows), 4)
@@ -164,7 +164,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_rank_number_reverse_key(self):
         new_table = self.table.compute([
-            (Rank('two', comparer=lambda x,y: int(y - x), reverse=True), 'rank')
+            ('rank', Rank('two', comparer=lambda x,y: int(y - x), reverse=True))
         ])
 
         self.assertEqual(len(new_table.rows), 4)
@@ -173,7 +173,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_rank_text(self):
         new_table = self.table.compute([
-            (Rank('one'), 'rank')
+            ('rank', Rank('one'))
         ])
 
         self.assertEqual(len(new_table.rows), 4)
@@ -185,7 +185,7 @@ class TestTableComputation(unittest.TestCase):
 
         table = Table(rows, ['ints'], [self.number_type])
         new_table = table.compute([
-            (PercentileRank('ints'), 'percentiles')
+            ('percentiles', PercentileRank('ints'))
         ])
 
         self.assertEqual(len(new_table.rows), 1000)
@@ -214,7 +214,7 @@ class TestDateAndTimeComputations(unittest.TestCase):
         table = Table(rows, column_names, column_types)
 
         new_table = table.compute([
-            (Change('one', 'two'), 'test')
+            ('test', Change('one', 'two'))
         ])
 
         self.assertIsNot(new_table, table)
@@ -246,7 +246,7 @@ class TestDateAndTimeComputations(unittest.TestCase):
         table = Table(rows, column_names, column_types)
 
         new_table = table.compute([
-            (Change('one', 'two'), 'test')
+            ('test', Change('one', 'two'))
         ])
 
         self.assertIsNot(new_table, table)
@@ -278,7 +278,7 @@ class TestDateAndTimeComputations(unittest.TestCase):
         table = Table(rows, column_names, column_types)
 
         new_table = table.compute([
-            (Change('one', 'two'), 'test')
+            ('test', Change('one', 'two'))
         ])
 
         self.assertIsNot(new_table, table)

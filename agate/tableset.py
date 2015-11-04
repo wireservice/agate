@@ -271,17 +271,18 @@ class TableSet(MappedSequence, Patchable):
         set of column operations on the groups and coalescing the results into
         a new :class:`.Table`.
 
-        :code:`aggregations` must be a list of tuples, where each has three
-        parts: a :code:`column_name`, a :class:`.Aggregation` instance and a
-        :code:`new_column_name`.
+        :code:`aggregations` must be a sequence of tuples, where each has two
+        parts: a :code:`new_column_name` and a :class:`.Aggregation` instance.
 
         The resulting table will have the keys from this :class:`TableSet` (and
         any nested TableSets) set as its :code:`row_names`. See
         :meth:`.Table.__init__` for more details.
 
-        :param aggregations: An list of triples in the format
-            :code:`(column_name, aggregation, new_column_name)`.
-        :returns: A new :class:`.Table`.
+        :param aggregations:
+            A list of tuples in the format
+            :code:`(new_column_name, aggregation)`.
+        :returns:
+            A new :class:`.Table`.
         """
         column_names, column_types, output, row_name_columns = self._aggregate(aggregations)
 

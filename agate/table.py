@@ -836,16 +836,18 @@ class Table(utils.Patchable):
         Compute new columns by applying one or more :class:`.Computation` to
         each row.
 
-        :param computations: An iterable of pairs of new column names and
+        :param computations:
+            An iterable of pairs of new column names and
             :class:`.Computation` instances.
-        :returns: A new :class:`Table`.
+        :returns:
+            A new :class:`Table`.
         """
         column_names = list(copy(self._column_names))
         column_types = list(copy(self._column_types))
 
-        for computation, new_column_name in computations:
+        for new_column_name, computation in computations:
             if not isinstance(computation, Computation):
-                raise ValueError('The first element in pair must be a Computation instance.')
+                raise ValueError('The second element in pair must be a Computation instance.')
 
             column_names.append(new_column_name)
             column_types.append(computation.get_computed_data_type(self))
@@ -855,7 +857,7 @@ class Table(utils.Patchable):
         new_rows = []
 
         for row in self._rows:
-            new_columns = tuple(c.run(row) for c, n in computations)
+            new_columns = tuple(c.run(row) for n, c in computations)
             new_rows.append(Row(tuple(row) + new_columns, column_names))
 
         return self._fork(new_rows, column_names, column_types)
@@ -935,12 +937,10 @@ class Table(utils.Patchable):
             maximum value in the column will be used.
         :returns: A new :class:`Table`.
         """
-        column = self._columns[column_name]
-
         if start is None or end is None:
             start, end = utils.round_limits(
-                column.aggregate(Min()),
-                column.aggregate(Max())
+                Min(column_name).run(self),
+                Max(column_name).run(self)
             )
         else:
             start = Decimal(start)

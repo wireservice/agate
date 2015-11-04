@@ -1149,8 +1149,8 @@ class TestTableCompute(unittest.TestCase):
 
     def test_compute(self):
         new_table = self.table.compute([
-            (Formula(self.number_type, lambda r: r['two'] + r['three']), 'number'),
-            (Formula(self.text_type, lambda r: (r['one'] or '-') + six.text_type(r['three'])), 'text')
+            ('number', Formula(self.number_type, lambda r: r['two'] + r['three'])),
+            ('text', Formula(self.text_type, lambda r: (r['one'] or '-') + six.text_type(r['three'])))
         ])
 
         self.assertIsNot(new_table, self.table)
@@ -1163,7 +1163,7 @@ class TestTableCompute(unittest.TestCase):
 
     def test_compute_multiple(self):
         new_table = self.table.compute([
-            (Formula(self.number_type, lambda r: r['two'] + r['three']), 'test')
+            ('test', Formula(self.number_type, lambda r: r['two'] + r['three']))
         ])
 
         self.assertIsNot(new_table, self.table)
@@ -1177,8 +1177,8 @@ class TestTableCompute(unittest.TestCase):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
 
         new_table = table.compute([
-            (Formula(self.number_type, lambda r: r['two'] + r['three']), 'number'),
-            (Formula(self.text_type, lambda r: (r['one'] or '-') + six.text_type(r['three'])), 'text')
+            ('number', Formula(self.number_type, lambda r: r['two'] + r['three'])),
+            ('text', Formula(self.text_type, lambda r: (r['one'] or '-') + six.text_type(r['three'])))
         ])
 
         self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 5, 'a3'))
@@ -1557,10 +1557,10 @@ class TestTableData(unittest.TestCase):
     def test_compute_creates_rows(self):
         table = Table(self.rows, self.column_names, self.column_types)
         table2 = table.compute([
-            (Formula(self.number_type, lambda r: r['one']), 'new2')
+            ('new2', Formula(self.number_type, lambda r: r['one']))
         ])
         table3 = table2.compute([
-            (Formula(self.number_type, lambda r: r['one']), 'new3')
+            ('new3', Formula(self.number_type, lambda r: r['one']))
         ])
 
         self.assertIsNot(table.rows[0], table2.rows[0])

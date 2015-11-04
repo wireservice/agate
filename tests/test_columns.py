@@ -114,5 +114,5 @@ class TestColumn(unittest.TestCase):
         )
 
     def test_aggregate(self):
-        self.assertTrue(self.table.columns['one'].aggregate(HasNulls()))
-        self.assertFalse(self.table.columns['two'].aggregate(HasNulls()))
+        self.assertTrue(HasNulls('one').run(self.table))
+        self.assertFalse(HasNulls('two').run(self.table))

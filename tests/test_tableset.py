@@ -129,7 +129,7 @@ class TestTableSet(unittest.TestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_tableset = tableset.compute([
-            (Formula(self.text_type, lambda r: '%(letter)s-%(number)i' % r), 'new_column')
+            ('new_column', Formula(self.text_type, lambda r: '%(letter)s-%(number)i' % r))
         ])
 
         new_table = new_tableset['table1']

@@ -176,20 +176,17 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
 
     plot_width = width - (max_label_width + max_value_width + 2)
 
+    min_value = Min(value_column_name).run(table)
+    max_value = Max(value_column_name).run(table)
+
     # Calculate dimensions
     if domain:
-        min_value = value_column.aggregate(Min())
-        max_value = value_column.aggregate(Max())
-
         x_min = Decimal(domain[0])
         x_max = Decimal(domain[1])
 
         if min_value < x_min or max_value > x_max:
             raise ValueError('Column contains values outside specified domain')
     else:
-        min_value = value_column.aggregate(Min())
-        max_value = value_column.aggregate(Max())
-
         x_min, x_max = round_limits(min_value, max_value)
 
     # All positive
