@@ -143,7 +143,7 @@ class TestDate(unittest.TestCase):
         self.assertEqual(self.type.test(1), False)
         self.assertEqual(self.type.test(Decimal('1')), False)
         # self.assertEqual(self.type.test('2.7'), False)
-        # self.assertEqual(self.type.test(2.7), False)
+        self.assertEqual(self.type.test(2.7), False)
         self.assertEqual(self.type.test('3/1/1994'), True)
         self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), True)
         self.assertEqual(self.type.test('3/1/1994 12:30 PM'), False)

@@ -12,33 +12,6 @@ class TimeDelta(DataType):
     """
     Data type representing the interval between two times.
     """
-    def test(self, d):
-        """
-        Test, for purposes of type inference, if a value could possibly be valid
-        for this column type. This will work with values that are native types
-        and values that have been stringified.
-        """
-        if d is None:
-            return True
-
-        if isinstance(d, datetime.timedelta):
-            return True
-
-        if not isinstance(d, six.string_types):
-            return False
-
-        d = d.strip()
-
-        if d.lower() in self.null_values:
-            return True
-
-        seconds = pytimeparse.parse(d)
-
-        if seconds is None:
-            return False
-
-        return True
-
     def cast(self, d):
         """
         Cast a single value to :class:`datetime.timedelta`.
@@ -55,6 +28,8 @@ class TimeDelta(DataType):
 
             if d.lower() in self.null_values:
                 return None
+        else:
+            raise CastError('Can not parse value "%s" as timedelta.' % d)
 
         seconds = pytimeparse.parse(d)
 

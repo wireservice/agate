@@ -2,6 +2,8 @@
 
 import six
 
+from agate.exceptions import CastError
+
 #: Default values which will be automatically cast to :code:`None`
 DEFAULT_NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
 
@@ -17,11 +19,17 @@ class DataType(object): #pragma: no cover
 
     def test(self, d):
         """
-        Test, for purposes of type inference, if a value could possibly be valid
-        for this column type. This will work with values that are native types
-        and values that have been stringified.
+        Test, for purposes of type inference, if a value could possibly be
+        coerced to this data type.
+
+        This is really just a thin wrapper around :meth:`DataType.cast`.
         """
-        raise NotImplementedError
+        try:
+            self.cast(d)
+        except CastError:
+            return False
+
+        return True
 
     def cast(self, d):
         """

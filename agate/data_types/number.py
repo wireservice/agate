@@ -34,39 +34,6 @@ class Number(DataType):
         self._locale = locale
         self._float_format = '%%.%if' % float_precision
 
-    def test(self, d):
-        """
-        Test, for purposes of type inference, if a value could possibly be valid
-        for this column type. This will work with values that are native types
-        and values that have been stringified.
-        """
-        if d is None:
-            return True
-
-        if isinstance(d, Decimal):
-            return True
-
-        if type(d) is int or type(d) is float:
-            return True
-
-        if not isinstance(d, six.string_types):
-            return False
-
-        d = d.strip()
-        d = d.strip('%')
-
-        for symbol in CURRENCY_SYMBOLS:
-            d = d.strip(symbol)
-
-        if d.lower() in self.null_values:
-            return True
-
-        try:
-            parse_decimal(d, self._locale)
-            return True
-        except:
-            return False
-
     def cast(self, d):
         """
         Cast a single value to a :class:`decimal.Decimal`.
@@ -76,9 +43,9 @@ class Number(DataType):
         """
         if isinstance(d, Decimal) or d is None:
             return d
-        elif isinstance(d, int):
+        elif type(d) is int:
             return Decimal(d)
-        elif isinstance(d, float):
+        elif type(d) is float:
             return Decimal(self._float_format % d)
         elif isinstance(d, six.string_types):
             d = d.strip()
@@ -89,11 +56,15 @@ class Number(DataType):
 
             if d.lower() in self.null_values:
                 return None
+        else:
+            raise CastError('Can not parse value "%s" as Decimal.' % d)
 
         try:
             return parse_decimal(d, self._locale)
         except:
-            raise CastError('Can not parse value "%s" as Decimal.' % d)
+            pass
+
+        raise CastError('Can not parse value "%s" as Decimal.' % d)
 
     def jsonify(self, d):
         if d is None:

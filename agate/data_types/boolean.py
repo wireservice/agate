@@ -26,34 +26,6 @@ class Boolean(DataType):
         self.true_values = true_values
         self.false_values = false_values
 
-    def test(self, d):
-        """
-        Test, for purposes of type inference, if a value could possibly be valid
-        for this column type. This will work with values that are native types
-        and values that have been stringified.
-        """
-        if d is None:
-            return True
-
-        if type(d) is bool and type(d) is not int:
-            return True
-
-        if not isinstance(d, six.string_types):
-            return False
-
-        d = d.replace(',' ,'').strip()
-
-        d_lower = d.lower()
-
-        if d_lower in self.null_values:
-            return True
-        elif d_lower in self.true_values:
-            return True
-        elif d_lower in self.false_values:
-            return True
-
-        return False
-
     def cast(self, d):
         """
         Cast a single value to :class:`bool`.

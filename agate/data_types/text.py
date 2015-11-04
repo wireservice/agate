@@ -8,14 +8,6 @@ class Text(DataType):
     """
     Data type representing text.
     """
-    def test(self, d):
-        """
-        Test, for purposes of type inference, if a value could possibly be valid
-        for this column type. This will work with values that are native types
-        and values that have been stringified.
-        """
-        return True
-
     def cast(self, d):
         """
         Cast a single value to :func:`unicode` (:func:`str` in Python 3).

@@ -32,52 +32,6 @@ class DateTime(DataType):
         )
         self._parser = parsedatetime.Calendar()
 
-    def test(self, d):
-        """
-        Test, for purposes of type inference, if a value could possibly be valid
-        for this column type. This will work with values that are native types
-        and values that have been stringified.
-        """
-        if d is None:
-            return True
-
-        if isinstance(d, datetime.datetime):
-            return True
-
-        if not isinstance(d, six.string_types):
-            return False
-
-        d = d.strip()
-
-        if d.lower() in self.null_values:
-            return True
-
-        if self.datetime_format:
-            try:
-                datetime.datetime.strptime(d, self.datetime_format)
-            except ValueError:
-                return False
-
-            return True
-
-        value, status = self._parser.parseDT(
-            d,
-            sourceTime=self._source_time,
-            tzinfo=self.timezone
-        )
-
-        if status == 3:
-            return True
-
-        try:
-            dt = isodate.parse_datetime(d)
-
-            return True
-        except:
-            pass
-
-        return False
-
     def cast(self, d):
         """
         Cast a single value to a :class:`datetime.datetime`.
@@ -95,9 +49,14 @@ class DateTime(DataType):
 
             if d.lower() in self.null_values:
                 return None
+        else:
+            raise CastError('Can not parse value "%s" as datetime.' % d)
 
         if self.datetime_format:
-            return datetime.datetime.strptime(d, self.datetime_format)
+            try:
+                return datetime.datetime.strptime(d, self.datetime_format)
+            except:
+                raise CastError('Value "%s" does not match date format.' % d)
 
         value, status = self._parser.parseDT(
             d,

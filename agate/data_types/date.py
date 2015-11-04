@@ -23,49 +23,6 @@ class Date(DataType):
         self.date_format = date_format
         self.parser = parsedatetime.Calendar()
 
-    def test(self, d):
-        """
-        Test, for purposes of type inference, if a value could possibly be valid
-        for this column type. This will work with values that are native types
-        and values that have been stringified.
-        """
-        if d is None:
-            return True
-
-        if type(d) is datetime.date:
-            print (d)
-            return True
-
-        if not isinstance(d, six.string_types):
-            return False
-
-        d = d.strip()
-
-        if d.lower() in self.null_values:
-            return True
-
-        if self.date_format:
-            try:
-                datetime.datetime.strptime(d, self.date_format)
-            except ValueError:
-                return False
-
-            return True
-
-        value, status = self.parser.parseDT(d)
-
-        if status == 1:
-            return True
-
-        try:
-            dt = isodate.parse_date(d)
-
-            return True
-        except:
-            pass
-
-        return False
-
     def cast(self, d):
         """
         Cast a single value to a :class:`datetime.date`.
@@ -76,16 +33,21 @@ class Date(DataType):
         :returns:
             :class:`datetime.date` or :code:`None`.
         """
-        if isinstance(d, datetime.date) or d is None:
+        if type(d) is datetime.date or d is None:
             return d
         elif isinstance(d, six.string_types):
             d = d.strip()
 
             if d.lower() in self.null_values:
                 return None
+        else:
+            raise CastError('Can not parse value "%s" as date.' % d)
 
         if self.date_format:
-            dt = datetime.datetime.strptime(d, self.date_format)
+            try:
+                dt = datetime.datetime.strptime(d, self.date_format)
+            except:
+                raise CastError('Value "%s" does not match date format.' % d)
 
             return dt.date()
 
