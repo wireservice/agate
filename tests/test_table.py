@@ -44,55 +44,35 @@ class TestBasic(AgateTestCase):
     def test_create_table(self):
         table = Table(self.rows)
 
-        self.assertEqual(len(table.rows), 3)
-        self.assertEqual(len(table.columns), 3)
-
-        self.assertSequenceEqual(table.column_names, ['A', 'B', 'C'])
-        self.assertSequenceInstances(table.column_types, [Number, Number, Text])
-
-        self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
-        self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
-        self.assertSequenceEqual(table.rows[2], (None, 2, u'👍'))
+        self.assertColumnNames(table, ['A', 'B', 'C'])
+        self.assertColumnTypes(table, [Number, Number, Text])
+        self.assertRows(table, self.rows)
 
     def test_create_table_column_types(self):
         column_types = [self.number_type, self.text_type, self.text_type]
         table = Table(self.rows, column_types=column_types)
 
-        self.assertEqual(len(table.rows), 3)
-        self.assertEqual(len(table.columns), 3)
-
-        self.assertSequenceEqual(table.column_names, ['A', 'B', 'C'])
-        self.assertSequenceInstances(table.column_types, [Number, Text, Text])
-
-        self.assertSequenceEqual(table.rows[0], (1, '4', 'a'))
-        self.assertSequenceEqual(table.rows[1], (2, '3', 'b'))
-        self.assertSequenceEqual(table.rows[2], (None, '2', u'👍'))
+        self.assertColumnNames(table, ['A', 'B', 'C'])
+        self.assertColumnTypes(table, [Number, Text, Text])
+        self.assertRows(table, [
+            (1, '4', 'a'),
+            (2, '3', 'b'),
+            (None, '2', u'👍')
+        ])
 
     def test_create_table_column_names(self):
         table = Table(self.rows, self.column_names)
 
-        self.assertEqual(len(table.rows), 3)
-        self.assertEqual(len(table.columns), 3)
-
-        self.assertSequenceEqual(table.column_names, self.column_names)
-        self.assertSequenceInstances(table.column_types, [Number, Number, Text])
-
-        self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
-        self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
-        self.assertSequenceEqual(table.rows[2], (None, 2, u'👍'))
+        self.assertColumnNames(table, self.column_names)
+        self.assertColumnTypes(table, [Number, Number, Text])
+        self.assertRows(table, self.rows)
 
     def test_create_table_column_types_and_names(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        self.assertEqual(len(table.rows), 3)
-        self.assertEqual(len(table.columns), 3)
-
-        self.assertSequenceEqual(table.column_names, self.column_names)
-        self.assertSequenceInstances(table.column_types, [Number, Number, Text])
-
-        self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
-        self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
-        self.assertSequenceEqual(table.rows[2], (None, 2, u'👍'))
+        self.assertColumnNames(table, self.column_names)
+        self.assertColumnTypes(table, [Number, Number, Text])
+        self.assertRows(table, self.rows)
 
     def test_create_table_non_string_columns(self):
         column_names = ['one', 'two', 3]
@@ -127,12 +107,13 @@ class TestBasic(AgateTestCase):
 
         table = Table(rows, self.column_names, self.column_types)
 
-        self.assertEqual(len(table.rows), 3)
-        self.assertEqual(len(table.columns), 3)
-
-        self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
-        self.assertSequenceEqual(table.rows[1], (2, None, None))
-        self.assertSequenceEqual(table.rows[2], (None, 2, None))
+        self.assertColumnNames(table, self.column_names)
+        self.assertColumnTypes(table, [Number, Number, Text])
+        self.assertRows(table, [
+            (1, 4, 'a'),
+            (2, None, None),
+            (None, 2, None)
+        ])
 
     def test_create_table_no_column_names(self):
         table = Table(self.rows, None, self.column_types)
@@ -168,14 +149,7 @@ class TestBasic(AgateTestCase):
     def test_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
 
-        self.assertSequenceEqual(table.row_names, [
-            'a',
-            'b',
-            u'👍'
-        ])
-        self.assertSequenceEqual(table.rows['a'], (1, 4, 'a'))
-        self.assertSequenceEqual(table.rows['b'], (2, 3, 'b'))
-        self.assertSequenceEqual(table.rows[u'👍'], (None, 2, u'👍'))
+        self.assertRowNames(table, ['a', 'b', u'👍'])
 
     def test_row_names_non_string(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='one')
@@ -218,9 +192,7 @@ class TestBasic(AgateTestCase):
     def test_from_csv_file_like_object(self):
         table = Table.from_csv('examples/test.csv', column_names, self.column_types)
 
-        self.assertEqual(len(table.columns), 3)
-        self.assertEqual(len(table.rows), 3)
-        self.assertSequenceEqual(table.column_names, ['a', 'b', 'c'])
+        self.assertColumnNames(table, ['a', 'b', 'c'])
 
     def test_from_csv_file_like_object(self):
         table1 = Table.from_csv('examples/test.csv', self.column_names, self.column_types)
@@ -241,30 +213,26 @@ class TestBasic(AgateTestCase):
     def test_from_csv_type_tester(self):
         tester = TypeTester()
 
-        output = Table.from_csv('examples/test.csv', column_types=tester)
+        table = Table.from_csv('examples/test.csv', column_types=tester)
 
-        self.assertEqual(len(output.columns), 3)
-        self.assertSequenceInstances(output.column_types, [Number, Number, Text])
+        self.assertColumnTypes(table, [Number, Number, Text])
 
     def test_from_csv_default_type_tester(self):
-        output = Table.from_csv('examples/test.csv')
+        table = Table.from_csv('examples/test.csv')
 
-        self.assertEqual(len(output.columns), 3)
-        self.assertSequenceInstances(output.column_types, [Number, Number, Text])
+        self.assertColumnTypes(table, [Number, Number, Text])
 
     def test_from_csv_no_header(self):
-        output = Table.from_csv('examples/test_no_header.csv', header=False)
+        table = Table.from_csv('examples/test_no_header.csv', header=False)
 
-        self.assertEqual(len(output.columns), 3)
-        self.assertSequenceEqual(output.column_names, ('A', 'B', 'C'))
-        self.assertSequenceInstances(output.column_types, [Number, Number, Text])
+        self.assertColumnNames(table, ('A', 'B', 'C'))
+        self.assertColumnTypes(table, [Number, Number, Text])
 
     def test_from_csv_no_header_columns(self):
-        output = Table.from_csv('examples/test_no_header.csv', self.column_names, header=False)
+        table = Table.from_csv('examples/test_no_header.csv', self.column_names, header=False)
 
-        self.assertEqual(len(output.columns), 3)
-        self.assertSequenceEqual(output.column_names, ('one', 'two', 'three'))
-        self.assertSequenceInstances(output.column_types, [Number, Number, Text])
+        self.assertColumnNames(table, ('one', 'two', 'three'))
+        self.assertColumnTypes(table, [Number, Number, Text])
 
     def test_to_csv(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -316,67 +284,45 @@ class TestBasic(AgateTestCase):
     def test_from_json(self):
         table = Table.from_json('examples/test.json')
 
-        self.assertEqual(len(table.columns), 3)
-        self.assertEqual(len(table.rows), 3)
-
-        self.assertSequenceEqual(table.column_names, ['one', 'two', 'three'])
-        self.assertSequenceInstances(table.column_types, [Number, Number, Text])
-
-        self.assertSequenceEqual(table.rows[0], [1, 4, 'a'])
-        self.assertSequenceEqual(table.rows[1], [2, 3, 'b'])
-        self.assertSequenceEqual(table.rows[2], [None, 2, u'👍'])
+        self.assertColumnNames(table, self.column_names)
+        self.assertColumnTypes(table, [Number, Number, Text])
+        self.assertRows(table, self.rows)
 
     def test_from_json_file_like_object(self):
         with open('examples/test.json') as f:
             table = Table.from_json(f)
 
-        self.assertEqual(len(table.columns), 3)
-        self.assertEqual(len(table.rows), 3)
-
-        self.assertSequenceEqual(table.column_names, ['one', 'two', 'three'])
-        self.assertSequenceInstances(table.column_types, [Number, Number, Text])
-
-        self.assertSequenceEqual(table.rows[0], [1, 4, 'a'])
-        self.assertSequenceEqual(table.rows[1], [2, 3, 'b'])
-        self.assertSequenceEqual(table.rows[2], [None, 2, u'👍'])
+        self.assertColumnNames(table, self.column_names)
+        self.assertColumnTypes(table, [Number, Number, Text])
+        self.assertRows(table, self.rows)
 
     def test_from_json_with_key(self):
         table = Table.from_json('examples/test_key.json', key='data')
 
-        self.assertEqual(len(table.columns), 3)
-        self.assertEqual(len(table.rows), 3)
-
-        self.assertSequenceEqual(table.column_names, ['one', 'two', 'three'])
-        self.assertSequenceInstances(table.column_types, [Number, Number, Text])
-
-        self.assertSequenceEqual(table.rows[0], [1, 4, 'a'])
-        self.assertSequenceEqual(table.rows[1], [2, 3, 'b'])
-        self.assertSequenceEqual(table.rows[2], [None, 2, u'👍'])
+        self.assertColumnNames(table, self.column_names)
+        self.assertColumnTypes(table, [Number, Number, Text])
+        self.assertRows(table, self.rows)
 
     def test_from_json_mixed_keys(self):
         table = Table.from_json('examples/test_mixed.json')
 
-        self.assertEqual(len(table.columns), 5)
-        self.assertEqual(len(table.rows), 3)
-
-        self.assertSequenceEqual(table.column_names, ['one', 'two', 'three', 'four', 'five'])
-        self.assertSequenceInstances(table.column_types, [Number, Number, Text, Text, Number])
-
-        self.assertSequenceEqual(table.rows[0], [1, 4, 'a', None, None])
-        self.assertSequenceEqual(table.rows[1], [2, 3, 'b', 'd', None])
-        self.assertSequenceEqual(table.rows[2], [None, 2, u'👍', None, 5])
+        self.assertColumnNames(table, ['one', 'two', 'three', 'four', 'five'])
+        self.assertColumnTypes(table, [Number, Number, Text, Text, Number])
+        self.assertRows(table, [
+            [1, 4, 'a', None, None],
+            [2, 3, 'b', 'd', None],
+            [None, 2, u'👍', None, 5]
+        ])
 
     def test_from_json_nested(self):
         table = Table.from_json('examples/test_nested.json')
 
-        self.assertEqual(len(table.columns), 6)
-        self.assertEqual(len(table.rows), 2)
-
-        self.assertSequenceEqual(table.column_names, ['one', 'two/two_a', 'two/two_b', 'three/0', 'three/1', 'three/2'])
-        self.assertSequenceInstances(table.column_types, [Number, Text, Text, Text, Number, Text])
-
-        self.assertSequenceEqual(table.rows[0], [1, 'a', 'b', 'a', 2, 'c'])
-        self.assertSequenceEqual(table.rows[1], [2, 'c', 'd', 'd', 2, 'f'])
+        self.assertColumnNames(table, ['one', 'two/two_a', 'two/two_b', 'three/0', 'three/1', 'three/2'])
+        self.assertColumnTypes(table, [Number, Text, Text, Text, Number, Text])
+        self.assertRows(table, [
+            [1, 'a', 'b', 'a', 2, 'c'],
+            [2, 'c', 'd', 'd', 2, 'f']
+        ])
 
     def test_to_json(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -463,22 +409,19 @@ class TestBasic(AgateTestCase):
 
         self.assertIsNot(new_table, table)
 
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertSequenceEqual(new_table.rows[0], ('a',))
-        self.assertSequenceEqual(new_table.rows[1], ('b',))
-        self.assertSequenceEqual(new_table.rows[2], (u'👍',))
-
-        self.assertEqual(len(new_table.columns), 1)
-        self.assertSequenceEqual(new_table._column_types, (self.text_type,))
-        self.assertSequenceEqual(new_table._column_names, ('three',))
-        self.assertSequenceEqual(new_table.columns['three'], ('a', 'b', u'👍'))
+        self.assertColumnNames(new_table, ['three'])
+        self.assertColumnTypes(new_table, [Text])
+        self.assertRows(new_table,[
+            ['a'],
+            ['b'],
+            [u'👍']
+        ])
 
     def test_select_with_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
         new_table = table.select(('three',))
 
-        self.assertSequenceEqual(new_table.rows['a'], ('a',))
-        self.assertSequenceEqual(new_table.row_names, ('a', 'b', u'👍'))
+        self.assertRowNames(new_table, ['a', 'b', u'👍'])
 
     def test_select_does_not_exist(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -492,16 +435,19 @@ class TestBasic(AgateTestCase):
         new_table = table.where(lambda r: r['one'] in (2, None))
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 2)
-        self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b'))
-        self.assertSequenceEqual(new_table.columns['one'], (2, None))
+
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table,[
+            self.rows[1],
+            self.rows[2]
+        ])
 
     def test_where_with_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
         new_table = table.where(lambda r: r['one'] in (2, None))
 
-        self.assertSequenceEqual(table.rows['a'], (1, 4, 'a'))
-        self.assertSequenceEqual(new_table.row_names, ('b', u'👍'))
+        self.assertRowNames(new_table, ['b', u'👍'])
 
     def test_find(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -523,34 +469,17 @@ class TestBasic(AgateTestCase):
         new_table = table.order_by('two')
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertSequenceEqual(new_table.rows[0], (None, 2, u'👍'))
-        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b'))
-        self.assertSequenceEqual(new_table.rows[2], (1, 4, 'a'))
+
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table,[
+            self.rows[2],
+            self.rows[1],
+            self.rows[0]
+        ])
 
         # Verify old table not changed
-        self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
-        self.assertSequenceEqual(table.rows[1], (2, 3, 'b'))
-        self.assertSequenceEqual(table.rows[2], (None, 2, u'👍'))
-
-    def test_order_by_nulls(self):
-        self.rows = (
-            (1, 4, 'a'),
-            (None, 3, 'c'),
-            (2, 3, 'b'),
-            (None, 2, u'👍')
-        )
-
-        table = Table(self.rows, self.column_names, self.column_types)
-
-        new_table = table.order_by('one')
-
-        self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b'))
-        self.assertSequenceEqual(new_table.rows[2], (None, 3, 'c'))
-        self.assertSequenceEqual(new_table.rows[3], (None, 2, u'👍'))
+        self.assertRows(table, self.rows)
 
     def test_order_by_func(self):
         rows = (
@@ -563,21 +492,29 @@ class TestBasic(AgateTestCase):
 
         new_table = table.order_by(lambda r: (r['one'], r['two']))
 
+
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertSequenceEqual(new_table.rows[0], (1, 1, 'c'))
-        self.assertSequenceEqual(new_table.rows[1], (1, 2, 'a'))
-        self.assertSequenceEqual(new_table.rows[2], (2, 1, 'b'))
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table,[
+            rows[2],
+            rows[0],
+            rows[1]
+        ])
 
     def test_order_by_reverse(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
         new_table = table.order_by(lambda r: r['two'], reverse=True)
 
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b'))
-        self.assertSequenceEqual(new_table.rows[2], (None, 2, u'👍'))
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table,[
+            self.rows[0],
+            self.rows[1],
+            self.rows[2]
+        ])
 
     def test_order_by_nulls(self):
         rows = (
@@ -591,18 +528,33 @@ class TestBasic(AgateTestCase):
 
         new_table = table.order_by('two')
 
-        self.assertSequenceEqual(new_table.columns['two'], (1, 2, None, None))
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, [
+            rows[2],
+            rows[0],
+            rows[1],
+            rows[3]
+        ])
 
         new_table = table.order_by('three')
 
-        self.assertSequenceEqual(new_table.columns['three'], ('a', 'c', None, None))
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, [
+            rows[3],
+            rows[2],
+            rows[0],
+            rows[1]
+        ])
 
     def test_order_by_with_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
         new_table = table.order_by('two')
 
-        self.assertSequenceEqual(new_table.rows[u'a'], (1, 4, 'a'))
-        self.assertSequenceEqual(new_table.row_names, (u'👍', 'b', 'a'))
+        self.assertRowNames(new_table, [u'👍', 'b', 'a'])
 
     def test_limit(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -610,9 +562,9 @@ class TestBasic(AgateTestCase):
         new_table = table.limit(2)
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 2)
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a'))
-        self.assertSequenceEqual(new_table.columns['one'], (1, 2))
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, self.rows[:2])
 
     def test_limit_slice(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -620,10 +572,9 @@ class TestBasic(AgateTestCase):
         new_table = table.limit(0, 3, 2)
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 2)
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (None, 2, u'👍'))
-        self.assertSequenceEqual(new_table.columns['one'], (1, None))
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, self.rows[0:3:2])
 
     def test_limit_slice_negative(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -631,10 +582,9 @@ class TestBasic(AgateTestCase):
         new_table = table.limit(-2, step=-1)
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 2)
-        self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b'))
-        self.assertSequenceEqual(new_table.rows[1], (1, 4, 'a'))
-        self.assertSequenceEqual(new_table.columns['one'], (2, 1))
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, self.rows[-2:-1])
 
     def test_limit_step_only(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -642,17 +592,15 @@ class TestBasic(AgateTestCase):
         new_table = table.limit(step=2)
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 2)
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (None, 2, u'👍'))
-        self.assertSequenceEqual(new_table.columns['one'], (1, None))
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, self.rows[::2])
 
     def test_limit_with_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
         new_table = table.limit(2)
 
-        self.assertSequenceEqual(new_table.rows['a'], (1, 4, 'a'))
-        self.assertSequenceEqual(new_table.row_names, ('a', 'b'))
+        self.assertRowNames(new_table, ['a', 'b'])
 
     def test_distinct_column(self):
         rows = (
@@ -667,10 +615,12 @@ class TestBasic(AgateTestCase):
         new_table = table.distinct('one')
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 2)
-        self.assertSequenceEqual(new_table.rows[0], (1, 2, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (2, None, None))
-        self.assertSequenceEqual(new_table.columns['one'], (1, 2))
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, [
+            rows[0],
+            rows[1]
+        ])
 
     def test_distinct_func(self):
         rows = (
@@ -685,11 +635,13 @@ class TestBasic(AgateTestCase):
         new_table = table.distinct(lambda row: (row['two'], row['three']))
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertSequenceEqual(new_table.rows[0], (1, 2, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (2, None, None))
-        self.assertSequenceEqual(new_table.rows[2], (1, 1, 'c'))
-        self.assertSequenceEqual(new_table.columns['one'], (1, 2, 1))
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, [
+            rows[0],
+            rows[1],
+            rows[2]
+        ])
 
     def test_distinct_none(self):
         rows = (
@@ -704,11 +656,13 @@ class TestBasic(AgateTestCase):
         new_table = table.distinct()
 
         self.assertIsNot(new_table, table)
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertSequenceEqual(new_table.rows[0], (1, 2, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (1, None, None))
-        self.assertSequenceEqual(new_table.rows[2], (1, 1, 'c'))
-        self.assertSequenceEqual(new_table.columns['one'], (1, 1, 1))
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, [
+            rows[0],
+            rows[1],
+            rows[2]
+        ])
 
     def test_distinct_with_row_names(self):
         rows = (
@@ -721,21 +675,19 @@ class TestBasic(AgateTestCase):
         table = Table(rows, self.column_names, self.column_types, row_names='three')
         new_table = table.distinct('one')
 
-        self.assertSequenceEqual(new_table.rows['a'], (1, 2, 'a'))
-        self.assertSequenceEqual(new_table.row_names, ('a', None))
+        self.assertRowNames(new_table, ['a', None])
 
     def test_chain_select_where(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
         new_table = table.select(('one', 'two')).where(lambda r: r['two'] == 3)
 
-        self.assertEqual(len(new_table.rows), 1)
-        self.assertSequenceEqual(new_table.rows[0], (2, 3))
-
-        self.assertEqual(len(new_table.columns), 2)
-        self.assertSequenceEqual(new_table._column_types, (self.number_type, self.number_type))
-        self.assertEqual(new_table._column_names, ('one', 'two'))
-        self.assertSequenceEqual(new_table.columns['one'], (2,))
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, self.column_names[:2])
+        self.assertColumnTypes(new_table, [Number, Number])
+        self.assertRows(new_table, [
+            self.rows[1][:2],
+        ])
 
 class TestCounts(AgateTestCase):
     def setUp(self):
@@ -758,39 +710,44 @@ class TestCounts(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types)
         new_table = table.counts('one')
 
-        self.assertEqual(len(new_table.rows), 4)
-        self.assertEqual(len(new_table.columns), 2)
-
-        self.assertSequenceEqual(new_table.rows[0], [1, 2])
-        self.assertSequenceEqual(new_table.rows[1], [2, 2])
-        self.assertSequenceEqual(new_table.rows[2], [None, 1])
-        self.assertSequenceEqual(new_table.rows[3], [3, 1])
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, ['one', 'count'])
+        self.assertColumnTypes(new_table, [Number, Number])
+        self.assertRowNames(new_table, [1, 2, None, 3])
+        self.assertRows(new_table, [
+            [1, 2],
+            [2, 2],
+            [None, 1],
+            [3, 1]
+        ])
 
     def test_counts_text(self):
         table = Table(self.rows, self.column_names, self.column_types)
         new_table = table.counts('two')
 
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 2)
-
-        self.assertSequenceEqual(new_table.rows[0], ['Y', 1])
-        self.assertSequenceEqual(new_table.rows[1], ['N', 4])
-        self.assertSequenceEqual(new_table.rows[2], [None, 1])
-
-        self.assertSequenceEqual(new_table.row_names, ['Y', 'N', None])
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, ['two', 'count'])
+        self.assertColumnTypes(new_table, [Text, Number])
+        self.assertRowNames(new_table, ['Y', 'N', None])
+        self.assertRows(new_table, [
+            ['Y', 1],
+            ['N', 4],
+            [None, 1]
+        ])
 
     def test_counts_key_func(self):
         table = Table(self.rows, self.column_names, self.column_types)
         new_table = table.counts(lambda r: r['two'])
 
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 2)
-
-        self.assertSequenceEqual(new_table.rows[0], ['Y', 1])
-        self.assertSequenceEqual(new_table.rows[1], ['N', 4])
-        self.assertSequenceEqual(new_table.rows[2], [None, 1])
-
-        self.assertSequenceEqual(new_table.row_names, ['Y', 'N', None])
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, ['group', 'count'])
+        self.assertColumnTypes(new_table, [Text, Number])
+        self.assertRowNames(new_table, ['Y', 'N', None])
+        self.assertRows(new_table, [
+            ['Y', 1],
+            ['N', 4],
+            [None, 1]
+        ])
 
 class TestBins(AgateTestCase):
     def setUp(self):
@@ -806,11 +763,14 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number')
 
+        self.assertColumnNames(new_table, ['number', 'count'])
+        self.assertColumnTypes(new_table, [Text, Number])
+
         self.assertSequenceEqual(new_table.rows[0], ['[0 - 10)', 10])
         self.assertSequenceEqual(new_table.rows[3], ['[30 - 40)', 10])
         self.assertSequenceEqual(new_table.rows[9], ['[90 - 100]', 10])
 
-        self.assertSequenceEqual(new_table.row_names, [
+        self.assertRowNames(new_table, [
             '[0 - 10)',
             '[10 - 20)',
             '[20 - 30)',
@@ -831,6 +791,9 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number', 10, -100, 0)
 
+        self.assertColumnNames(new_table, ['number', 'count'])
+        self.assertColumnTypes(new_table, [Text, Number])
+
         self.assertSequenceEqual(new_table.rows[0], ['[-100 - -90)', 9])
         self.assertSequenceEqual(new_table.rows[3], ['[-70 - -60)', 10])
         self.assertSequenceEqual(new_table.rows[9], ['[-10 - 0]', 11])
@@ -842,6 +805,9 @@ class TestBins(AgateTestCase):
             rows.append([i + 50])
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number')
+
+        self.assertColumnNames(new_table, ['number', 'count'])
+        self.assertColumnTypes(new_table, [Text, Number])
 
         self.assertSequenceEqual(new_table.rows[0], ['[-50 - -40)', 9])
         self.assertSequenceEqual(new_table.rows[3], ['[-20 - -10)', 10])
@@ -867,6 +833,9 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number')
 
+        self.assertColumnNames(new_table, ['number', 'count'])
+        self.assertColumnTypes(new_table, [Text, Number])
+
         self.assertSequenceEqual(new_table.rows[0], ['[0.0 - 0.1)', 10])
         self.assertSequenceEqual(new_table.rows[3], ['[0.3 - 0.4)', 10])
         self.assertSequenceEqual(new_table.rows[9], ['[0.9 - 1.0]', 10])
@@ -880,6 +849,9 @@ class TestBins(AgateTestCase):
         rows.append([None])
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number')
+
+        self.assertColumnNames(new_table, ['number', 'count'])
+        self.assertColumnTypes(new_table, [Text, Number])
 
         self.assertSequenceEqual(new_table.rows[0], ['[0.0 - 0.1)', 10])
         self.assertSequenceEqual(new_table.rows[3], ['[0.3 - 0.4)', 10])
@@ -1198,29 +1170,29 @@ class TestCompute(AgateTestCase):
 
     def test_compute(self):
         new_table = self.table.compute([
+            ('test', Formula(self.number_type, lambda r: r['two'] + r['three']))
+        ])
+
+        self.assertIsNot(new_table, self.table)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'test'])
+        self.assertColumnTypes(new_table, [Text, Number, Number, Number, Number])
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 5))
+        self.assertSequenceEqual(new_table.columns['test'], (5, 8, 6, 9))
+
+    def test_compute_multiple(self):
+        new_table = self.table.compute([
             ('number', Formula(self.number_type, lambda r: r['two'] + r['three'])),
             ('text', Formula(self.text_type, lambda r: (r['one'] or '-') + six.text_type(r['three'])))
         ])
 
         self.assertIsNot(new_table, self.table)
-        self.assertEqual(len(new_table.rows), 4)
-        self.assertEqual(len(new_table.columns), 6)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'number', 'text'])
+        self.assertColumnTypes(new_table, [Text, Number, Number, Number, Number, Text])
 
         self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 5, 'a3'))
         self.assertSequenceEqual(new_table.columns['number'], (5, 8, 6, 9))
         self.assertSequenceEqual(new_table.columns['text'], ('a3', '-5', 'a4', 'b6'))
-
-    def test_compute_multiple(self):
-        new_table = self.table.compute([
-            ('test', Formula(self.number_type, lambda r: r['two'] + r['three']))
-        ])
-
-        self.assertIsNot(new_table, self.table)
-        self.assertEqual(len(new_table.rows), 4)
-        self.assertEqual(len(new_table.columns), 5)
-
-        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 5))
-        self.assertSequenceEqual(new_table.columns['test'], (5, 8, 6, 9))
 
     def test_compute_with_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
@@ -1230,8 +1202,7 @@ class TestCompute(AgateTestCase):
             ('text', Formula(self.text_type, lambda r: (r['one'] or '-') + six.text_type(r['three'])))
         ])
 
-        self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 5, 'a3'))
-        self.assertSequenceEqual(new_table.row_names, (3, 5, 4, 6))
+        self.assertRowNames(new_table, [3, 5, 4, 6])
 
 class TestJoin(AgateTestCase):
     def setUp(self):
@@ -1260,24 +1231,15 @@ class TestJoin(AgateTestCase):
     def test_join(self):
         new_table = self.left.join(self.right, 'one', 'four')
 
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 5)
-
-        self.assertEqual(new_table.columns[0].name, 'one')
-        self.assertEqual(new_table.columns[1].name, 'two')
-        self.assertEqual(new_table.columns[2].name, 'three')
-        self.assertEqual(new_table.columns[3].name, 'five')
-        self.assertEqual(new_table.columns[4].name, 'six')
-
-        self.assertIsInstance(new_table.columns[0].data_type, Number)
-        self.assertIsInstance(new_table.columns[1].data_type, Number)
-        self.assertIsInstance(new_table.columns[2].data_type, Text)
-        self.assertIsInstance(new_table.columns[3].data_type, Number)
-        self.assertIsInstance(new_table.columns[4].data_type, Text)
-
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 4, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 3, 'b'))
-        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', 2, 'c'))
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, self.right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'five', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 4, 'a'),
+            (2, 3, 'b', 3, 'b'),
+            (None, 2, 'c', 2, 'c')
+        ])
 
     def test_join_match_multiple(self):
         left_rows = (
@@ -1295,46 +1257,28 @@ class TestJoin(AgateTestCase):
         right = Table(right_rows, self.right_column_names, self.column_types)
         new_table = left.join(right, 'one', 'five')
 
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 5)
-
-        self.assertEqual(new_table.columns[0].name, 'one')
-        self.assertEqual(new_table.columns[1].name, 'two')
-        self.assertEqual(new_table.columns[2].name, 'three')
-        self.assertEqual(new_table.columns[3].name, 'four')
-        self.assertEqual(new_table.columns[4].name, 'six')
-
-        self.assertIsInstance(new_table.columns[0].data_type, Number)
-        self.assertIsInstance(new_table.columns[1].data_type, Number)
-        self.assertIsInstance(new_table.columns[2].data_type, Text)
-        self.assertIsInstance(new_table.columns[3].data_type, Number)
-        self.assertIsInstance(new_table.columns[4].data_type, Text)
-
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 1, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 1, 'a'))
-        self.assertSequenceEqual(new_table.rows[2], (2, 3, 'b', 2, 'b'))
+        self.assertIsNot(new_table, left)
+        self.assertIsNot(new_table, right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 1, 'a'),
+            (2, 3, 'b', 1, 'a'),
+            (2, 3, 'b', 2, 'b')
+        ])
 
     def test_join2(self):
         new_table = self.left.join(self.right, 'one', 'five')
 
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 5)
-
-        self.assertEqual(new_table.columns[0].name, 'one')
-        self.assertEqual(new_table.columns[1].name, 'two')
-        self.assertEqual(new_table.columns[2].name, 'three')
-        self.assertEqual(new_table.columns[3].name, 'four')
-        self.assertEqual(new_table.columns[4].name, 'six')
-
-        self.assertIsInstance(new_table.columns[0].data_type, Number)
-        self.assertIsInstance(new_table.columns[1].data_type, Number)
-        self.assertIsInstance(new_table.columns[2].data_type, Text)
-        self.assertIsInstance(new_table.columns[3].data_type, Number)
-        self.assertIsInstance(new_table.columns[4].data_type, Text)
-
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', None, None))
-        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', None, 'c'))
-        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, None))
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, self.right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', None, None),
+            (2, 3, 'b', None, 'c'),
+            (None, 2, 'c', None, None)
+        ])
 
     def test_join_same_column_name(self):
         right_column_names = ['four', 'one', 'six']
@@ -1343,24 +1287,15 @@ class TestJoin(AgateTestCase):
 
         new_table = self.left.join(right, 'one')
 
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 5)
-
-        self.assertEqual(new_table.columns[0].name, 'one')
-        self.assertEqual(new_table.columns[1].name, 'two')
-        self.assertEqual(new_table.columns[2].name, 'three')
-        self.assertEqual(new_table.columns[3].name, 'four')
-        self.assertEqual(new_table.columns[4].name, 'six')
-
-        self.assertIsInstance(new_table.columns[0].data_type, Number)
-        self.assertIsInstance(new_table.columns[1].data_type, Number)
-        self.assertIsInstance(new_table.columns[2].data_type, Text)
-        self.assertIsInstance(new_table.columns[3].data_type, Number)
-        self.assertIsInstance(new_table.columns[4].data_type, Text)
-
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', None, None))
-        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', None, 'c'))
-        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, None))
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', None, None),
+            (2, 3, 'b', None, 'c'),
+            (None, 2, 'c', None, None)
+        ])
 
     def test_join_func(self):
         new_table = self.left.join(
@@ -1369,26 +1304,15 @@ class TestJoin(AgateTestCase):
             lambda right: '%i%s' % (right['five'], right['six'])
         )
 
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 6)
-
-        self.assertEqual(new_table.columns[0].name, 'one')
-        self.assertEqual(new_table.columns[1].name, 'two')
-        self.assertEqual(new_table.columns[2].name, 'three')
-        self.assertEqual(new_table.columns[3].name, 'four')
-        self.assertEqual(new_table.columns[4].name, 'five')
-        self.assertEqual(new_table.columns[5].name, 'six')
-
-        self.assertIsInstance(new_table.columns[0].data_type, Number)
-        self.assertIsInstance(new_table.columns[1].data_type, Number)
-        self.assertIsInstance(new_table.columns[2].data_type, Text)
-        self.assertIsInstance(new_table.columns[3].data_type, Number)
-        self.assertIsInstance(new_table.columns[4].data_type, Number)
-        self.assertIsInstance(new_table.columns[5].data_type, Text)
-
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 1, 4, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 2, 3, 'b'))
-        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', None, 2, 'c'))
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, self.right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'five', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 1, 4, 'a'),
+            (2, 3, 'b', 2, 3, 'b'),
+            (None, 2, 'c', None, 2, 'c')
+        ])
 
     def test_join_column_does_not_exist(self):
         with self.assertRaises(KeyError):
@@ -1397,44 +1321,26 @@ class TestJoin(AgateTestCase):
     def test_inner_join(self):
         new_table = self.left.join(self.right, 'one', 'four', inner=True)
 
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 5)
-
-        self.assertEqual(new_table.columns[0].name, 'one')
-        self.assertEqual(new_table.columns[1].name, 'two')
-        self.assertEqual(new_table.columns[2].name, 'three')
-        self.assertEqual(new_table.columns[3].name, 'five')
-        self.assertEqual(new_table.columns[4].name, 'six')
-
-        self.assertIsInstance(new_table.columns[0].data_type, Number)
-        self.assertIsInstance(new_table.columns[1].data_type, Number)
-        self.assertIsInstance(new_table.columns[2].data_type, Text)
-        self.assertIsInstance(new_table.columns[3].data_type, Number)
-        self.assertIsInstance(new_table.columns[4].data_type, Text)
-
-        self.assertSequenceEqual(new_table.rows[0], (1, 4, 'a', 4, 'a'))
-        self.assertSequenceEqual(new_table.rows[1], (2, 3, 'b', 3, 'b'))
-        self.assertSequenceEqual(new_table.rows[2], (None, 2, 'c', 2, 'c'))
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, self.right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'five', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 4, 'a'),
+            (2, 3, 'b', 3, 'b'),
+            (None, 2, 'c', 2, 'c')
+        ])
 
     def test_inner_join2(self):
         new_table = self.left.join(self.right, 'one', 'five', inner=True)
 
-        self.assertEqual(len(new_table.rows), 1)
-        self.assertEqual(len(new_table.columns), 5)
-
-        self.assertEqual(new_table.columns[0].name, 'one')
-        self.assertEqual(new_table.columns[1].name, 'two')
-        self.assertEqual(new_table.columns[2].name, 'three')
-        self.assertEqual(new_table.columns[3].name, 'four')
-        self.assertEqual(new_table.columns[4].name, 'six')
-
-        self.assertIsInstance(new_table.columns[0].data_type, Number)
-        self.assertIsInstance(new_table.columns[1].data_type, Number)
-        self.assertIsInstance(new_table.columns[2].data_type, Text)
-        self.assertIsInstance(new_table.columns[3].data_type, Number)
-        self.assertIsInstance(new_table.columns[4].data_type, Text)
-
-        self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b', None, 'c'))
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, self.right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Text])
+        self.assertRows(new_table, [
+            (2, 3, 'b', None, 'c')
+        ])
 
     def test_inner_join_same_column_name(self):
         right_column_names = ['four', 'one', 'six']
@@ -1443,22 +1349,13 @@ class TestJoin(AgateTestCase):
 
         new_table = self.left.join(right, 'one', inner=True)
 
-        self.assertEqual(len(new_table.rows), 1)
-        self.assertEqual(len(new_table.columns), 5)
-
-        self.assertEqual(new_table.columns[0].name, 'one')
-        self.assertEqual(new_table.columns[1].name, 'two')
-        self.assertEqual(new_table.columns[2].name, 'three')
-        self.assertEqual(new_table.columns[3].name, 'four')
-        self.assertEqual(new_table.columns[4].name, 'six')
-
-        self.assertIsInstance(new_table.columns[0].data_type, Number)
-        self.assertIsInstance(new_table.columns[1].data_type, Number)
-        self.assertIsInstance(new_table.columns[2].data_type, Text)
-        self.assertIsInstance(new_table.columns[3].data_type, Number)
-        self.assertIsInstance(new_table.columns[4].data_type, Text)
-
-        self.assertSequenceEqual(new_table.rows[0], (2, 3, 'b', None, 'c'))
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Text])
+        self.assertRows(new_table, [
+            (2, 3, 'b', None, 'c')
+        ])
 
     def test_inner_join_func(self):
         new_table = self.left.join(
@@ -1468,29 +1365,19 @@ class TestJoin(AgateTestCase):
             inner=True
         )
 
-        self.assertEqual(len(new_table.rows), 3)
-        self.assertEqual(len(new_table.columns), 6)
-
-        self.assertEqual(new_table.columns[0].name, 'one')
-        self.assertEqual(new_table.columns[1].name, 'two')
-        self.assertEqual(new_table.columns[2].name, 'three')
-        self.assertEqual(new_table.columns[3].name, 'four')
-        self.assertEqual(new_table.columns[4].name, 'five')
-        self.assertEqual(new_table.columns[5].name, 'six')
-
-        self.assertIsInstance(new_table.columns[0].data_type, Number)
-        self.assertIsInstance(new_table.columns[1].data_type, Number)
-        self.assertIsInstance(new_table.columns[2].data_type, Text)
-        self.assertIsInstance(new_table.columns[3].data_type, Number)
-        self.assertIsInstance(new_table.columns[4].data_type, Number)
-        self.assertIsInstance(new_table.columns[5].data_type, Text)
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, self.right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'five', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 1, 4, 'a')
+        ])
 
     def test_join_with_row_names(self):
         left = Table(self.left_rows, self.left_column_names, self.column_types, row_names='three')
         new_table = left.join(self.right, 'one', 'four')
 
-        self.assertSequenceEqual(new_table.rows['a'], (1, 4, 'a', 4, 'a'))
-        self.assertSequenceEqual(new_table.row_names, ('a', 'b', 'c'))
+        self.assertRowNames(new_table, ('a', 'b', 'c'))
 
 class TestMerge(AgateTestCase):
     def setUp(self):
@@ -1511,23 +1398,25 @@ class TestMerge(AgateTestCase):
         table_b = Table(self.rows, self.column_names, self.column_types)
         table_c = Table.merge([table_a, table_b])
 
-        self.assertEqual(table_c.column_names, table_a.column_names)
-        self.assertEqual(table_c.column_types, table_a.column_types)
-
-        self.assertEqual(len(table_c.rows), 6)
+        self.assertIsNot(table_c, table_a)
+        self.assertIsNot(table_c, table_b)
+        self.assertColumnNames(table_c, self.column_names)
+        self.assertColumnTypes(table_c, [Number, Number, Text])
+        self.assertRows(table_c, self.rows + self.rows)
 
     def test_merge_different_names(self):
         table_a = Table(self.rows, self.column_names, self.column_types)
 
-        column_types = [self.number_type, self.number_type, self.text_type]
+        column_names = ['a', 'b', 'c']
 
-        table_b = Table(self.rows, self.column_names, column_types)
+        table_b = Table(self.rows, column_names, self.column_types)
         table_c = Table.merge([table_a, table_b])
 
-        self.assertEqual(table_c.column_names, table_a.column_names)
-        self.assertEqual(table_c.column_types, table_a.column_types)
-
-        self.assertEqual(len(table_c.rows), 6)
+        self.assertIsNot(table_c, table_a)
+        self.assertIsNot(table_c, table_b)
+        self.assertColumnNames(table_c, self.column_names)
+        self.assertColumnTypes(table_c, [Number, Number, Text])
+        self.assertRows(table_c, self.rows + self.rows)
 
     def test_merge_different_types(self):
         table_a = Table(self.rows, self.column_names, self.column_types)
@@ -1544,7 +1433,7 @@ class TestMerge(AgateTestCase):
         table_b = Table(self.rows, self.column_names, self.column_types)
         table_c = Table.merge([table_a, table_b])
 
-        self.assertEqual(table_a.row_names, table_c.row_names)
+        self.assertRowNames(table_c, table_a.row_names)
 
 class TestData(AgateTestCase):
     def setUp(self):
