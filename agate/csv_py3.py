@@ -81,23 +81,25 @@ class DictWriter(csv.DictWriter):
         if 'lineterminator' not in kwargs:
             kwargs['lineterminator'] = '\n'
 
+        if self.line_numbers:
+            fieldnames.insert(0, 'line_number')
+
         csv.DictWriter.__init__(self, f, fieldnames, **kwargs)
 
     def _append_line_number(self, row):
         if self.row_count == 0:
-            row['line_number'] = 0
+            row['line_number'] = 'line_number'
         else:
             row['line_number'] = self.row_count
 
         self.row_count += 1
 
     def writerow(self, row):
-        if self.line_numbers:
-            row = list(row)
-            self._append_line_number(row)
-
         # Convert embedded Mac line endings to unix style line endings so they get quoted
         row = dict([(k, v.replace('\r', '\n')) if isinstance(v, six.string_types) else (k, v) for k, v in row.items()])
+
+        if self.line_numbers:
+            self._append_line_number(row)
 
         csv.DictWriter.writerow(self, row)
 

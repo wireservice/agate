@@ -916,9 +916,6 @@ class Table(utils.Patchable):
         column_types = list(copy(self._column_types))
 
         for new_column_name, computation in computations:
-            if not isinstance(computation, Computation):
-                raise ValueError('The second element in pair must be a Computation instance.')
-
             column_names.append(new_column_name)
             column_types.append(computation.get_computed_data_type(self))
 
