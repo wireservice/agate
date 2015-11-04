@@ -31,8 +31,8 @@ class Number(DataType):
     def __init__(self, locale='en_US', float_precision=10, **kwargs):
         super(Number, self).__init__(**kwargs)
 
-        self._locale = locale
-        self._float_format = '%%.%if' % float_precision
+        self.locale = locale
+        self.float_format = '%%.%if' % float_precision
 
     def cast(self, d):
         """
@@ -46,7 +46,7 @@ class Number(DataType):
         elif type(d) is int:
             return Decimal(d)
         elif type(d) is float:
-            return Decimal(self._float_format % d)
+            return Decimal(self.float_format % d)
         elif isinstance(d, six.string_types):
             d = d.strip()
             d = d.strip('%')
@@ -60,7 +60,7 @@ class Number(DataType):
             raise CastError('Can not parse value "%s" as Decimal.' % d)
 
         try:
-            return parse_decimal(d, self._locale)
+            return parse_decimal(d, self.locale)
         except:
             pass
 

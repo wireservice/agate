@@ -347,7 +347,7 @@ class TestTypeTester(unittest.TestCase):
         inferred = tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0], Number)
-        self.assertEqual(inferred[0]._locale, 'de_DE')
+        self.assertEqual(inferred[0].locale, 'de_DE')
 
     def test_number_percent(self):
         rows = [
