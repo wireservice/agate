@@ -17,10 +17,13 @@ class MappedSequence(Sequence):
     """
     A generic container for data that can be accessed either by numeric index
     or by key. This is similar to an :class:`collections.OrderedDict` except
-    that the keys are optional and iteration over it returns the values.
+    that the keys are optional and iteration over it returns the values instead
+    of keys.
 
-    :param rows: A sequence of :class:`Row` instances.
-    :param row_alias: See :meth:`.Table.__init__`.
+    :param values:
+        A sequence of :class:`Row` instances.
+    :param keys:
+        See :meth:`.Table.__init__`.
     """
     def __init__(self, values, keys=None):
         self._values = tuple(values)
@@ -43,7 +46,7 @@ class MappedSequence(Sequence):
 
     def __str__(self):
         """
-        Print a non-unicode sample of the contents of this sequence.
+        Print an ascii sample of the contents of this sequence.
         """
         if six.PY2: #pragma: no cover
             return str(self.__unicode__().encode('utf8'))
@@ -52,7 +55,7 @@ class MappedSequence(Sequence):
 
     def __getitem__(self, key):
         """
-        Retrieve values from this array by index, by slice or by key.
+        Retrieve values from this array by index, slice or key.
         """
         if isinstance(key, slice):
             indices = range(*key.indices(len(self)))

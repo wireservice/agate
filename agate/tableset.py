@@ -69,14 +69,18 @@ class TableSet(MappedSequence, Patchable):
 
     TableSet is implemented as a subclass of :class:`.MappedSequence`
 
-    :param tables: A sequence :class:`Table` instances.
-    :param keys: A sequence of keys corresponding to the tables. These may be
-        any type except :class:`int`.
-    :param key_name: A name that describes the grouping properties. Used as
-        the column header when the groups are aggregated. Defaults to the
-        column name that was grouped on.
-    :param key_type: An instance some subclass of :class:`.DataType`. If not
-        provided it will default to a :class`.Text`.
+    :param tables:
+        A sequence :class:`Table` instances.
+    :param keys:
+        A sequence of keys corresponding to the tables. These may be any type
+        except :class:`int`.
+    :param key_name:
+        A name that describes the grouping properties. Used as the column
+        header when the groups are aggregated. Defaults to the column name that
+        was grouped on.
+    :param key_type:
+        An instance some subclass of :class:`.DataType`. If not provided it
+        will default to a :class`.Text`.
     """
     def __init__(self, tables, keys, key_name='group', key_type=None):
         tables = tuple(tables)
@@ -186,7 +190,8 @@ class TableSet(MappedSequence, Patchable):
         """
         Get an ordered list of this :class:`.TableSet`'s column types.
 
-        :returns: A :class:`tuple` of :class:`.DataType` instances.
+        :returns:
+            A :class:`tuple` of :class:`.DataType` instances.
         """
         return self._column_types
 
@@ -195,7 +200,8 @@ class TableSet(MappedSequence, Patchable):
         """
         Get an ordered list of this :class:`TableSet`'s column names.
 
-        :returns: A :class:`tuple` of strings.
+        :returns:
+            A :class:`tuple` of strings.
         """
         return self._column_names
 
@@ -204,10 +210,11 @@ class TableSet(MappedSequence, Patchable):
         Convert this TableSet into a single table. This is the inverse of
         :meth:`.Table.group_by`.
 
-        Any :code:`row_names` set on the merged tables will be lost in this
+        Any `row_names` set on the merged tables will be lost in this
         process.
 
-        :returns: A new :class:`Table`.
+        :returns:
+            A new :class:`Table`.
         """
         column_names = list(self.column_names)
         column_types = list(self.column_types)

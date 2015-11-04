@@ -138,6 +138,10 @@ class PercentChange(Computation):
             raise DataTypeError('PercentChange after column must contain Number data.')
 
     def run(self, row):
+        """
+        :returns:
+            :class:`decimal.Decimal`
+        """
         return (row[self._after_column_name] - row[self._before_column_name]) / row[self._before_column_name] * 100
 
 class Rank(Computation):
@@ -145,14 +149,17 @@ class Rank(Computation):
     Computes rank order of the values in a column.
 
     Uses the "competition" ranking method: if there are four values and the
-    middle two are tied, then the output will be :code:`[1, 2, 2, 4]`.
+    middle two are tied, then the output will be `[1, 2, 2, 4]`.
 
     Null values will always be ranked last.
 
-    :param column_name: The name of the column to rank.
-    :param comparer: An optional comparison function. If not specified ranking
-        will be ascending, with nulls ranked last.
-    :param reverse: Reverse sort order before ranking.
+    :param column_name:
+        The name of the column to rank.
+    :param comparer:
+        An optional comparison function. If not specified ranking will be
+        ascending, with nulls ranked last.
+    :param reverse:
+        Reverse sort order before ranking.
     """
     def __init__(self, column_name, comparer=None, reverse=None):
         self._column_name = column_name
@@ -190,6 +197,10 @@ class Rank(Computation):
             self._ranks[c] = rank
 
     def run(self, row):
+        """
+        :returns:
+            :class:`int`
+        """
         return self._ranks[row[self._column_name]]
 
 class PercentileRank(Rank):
@@ -207,4 +218,8 @@ class PercentileRank(Rank):
         self._percentiles = Percentiles(self._column_name).run(table)
 
     def run(self, row):
+        """
+        :returns:
+            :class:`int`
+        """
         return self._percentiles.locate(row[self._column_name])

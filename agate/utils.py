@@ -51,7 +51,8 @@ class Patchable(object):
         """
         Dynamically add :code:`patch_cls` as a base class of this class.
 
-        :param patch_cls: The class to be patched on.
+        :param patch_cls:
+            The class to be patched on.
         """
         if patch_cls in cls.__bases__:
             return
@@ -117,7 +118,8 @@ def median(data_sorted):
     """
     Finds the median value of a given series of values.
 
-    :param data_sorted: The values to find the median of. Must be sorted.
+    :param data_sorted:
+        The values to find the median of. Must be sorted.
     """
     length = len(data_sorted)
 
@@ -135,7 +137,8 @@ def max_precision(values):
     Given a series of values (such as a :class:`.Column`) returns the most
     significant decimal places present in any value.
 
-    :param values: The values to analyze.
+    :param values:
+        The values to analyze.
     """
     max_places = 0
 

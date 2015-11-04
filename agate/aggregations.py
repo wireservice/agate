@@ -48,7 +48,7 @@ class Aggregation(object): #pragma: no cover
 
 class Summary(Aggregation):
     """
-    An aggregation that can apply any function to a column.
+    An aggregation that can apply an arbitrary function to a column.
     """
     def __init__(self, column_name, data_type, func, cache_key=None):
         self._column_name = column_name
@@ -74,7 +74,8 @@ class HasNulls(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`bool`
+        :returns:
+            :class:`bool`
         """
         return None in table.columns[self._column_name].values()
 
@@ -83,8 +84,8 @@ class Any(Aggregation):
     Returns :code:`True` if any value in a column passes a truth test. The
     truth test may be omitted when testing :class:`.Boolean` data.
 
-    :param test: A function that takes a value and returns :code:`True`
-        or :code:`False`.
+    :param test:
+        A function that takes a value and returns `True` or `False`.
     """
     def __init__(self, column_name, test=None):
         self._column_name = column_name
@@ -95,7 +96,8 @@ class Any(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`bool`
+        :returns:
+            :class:`bool`
         """
         column = table.columns[self._column_name]
         data = column.values()
@@ -112,8 +114,8 @@ class All(Aggregation):
     Returns :code:`True` if all values in a column pass a truth test. The truth
     test may be omitted when testing :class:`.Boolean` data.
 
-    :param test: A function that takes a value and returns :code:`True`
-        or :code:`False`.
+    :param test:
+        A function that takes a value and returns `True` or `False`.
     """
     def __init__(self, column_name, test=None):
         self._column_name = column_name
@@ -124,7 +126,8 @@ class All(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`bool`
+        :returns:
+            :class:`bool`
         """
         column = table.columns[self._column_name]
         data = column.values()
@@ -147,7 +150,8 @@ class Length(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`int`
+        :returns:
+            :class:`int`
         """
         return len(table.rows)
 
@@ -155,10 +159,11 @@ class Count(Aggregation):
     """
     Count the number of times a specific value occurs in a column.
 
-    If you want to count the total number of values in a column use
+    If you want to count the total number of rows in a column use
     :class:`Length`.
 
-    :param value: Any value to be counted, including :code:`None`.
+    :param value:
+        Any value to be counted, including :code:`None`.
     """
     def __init__(self, column_name, value):
         self._column_name = column_name
@@ -169,7 +174,8 @@ class Count(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`int`
+        :returns:
+            :class:`int`
         """
         return table.columns[self._column_name].values().count(self._value)
 
@@ -191,7 +197,8 @@ class Min(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`datetime.date`
+        :returns:
+            A single value whose type is dependent on the type of the column.
         """
         column = table.columns[self._column_name]
 
@@ -220,7 +227,8 @@ class Max(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`datetime.date`
+        :returns:
+            A single value whose type is dependent on the type of the column.
         """
         column = table.columns[self._column_name]
 
@@ -243,7 +251,8 @@ class MaxPrecision(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`decimal.Decimal`.
+        :returns:
+            :class:`decimal.Decimal`.
         """
         column = table.columns[self._column_name]
 
@@ -285,7 +294,8 @@ class Mean(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`decimal.Decimal`.
+        :returns:
+            :class:`decimal.Decimal`.
         """
         column = table.columns[self._column_name]
 
@@ -316,7 +326,8 @@ class Median(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`decimal.Decimal`.
+        :returns:
+            :class:`decimal.Decimal`.
         """
         column = table.columns[self._column_name]
 
@@ -344,7 +355,8 @@ class Mode(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`decimal.Decimal`.
+        :returns:
+            :class:`decimal.Decimal`.
         """
         column = table.columns[self._column_name]
 
@@ -377,7 +389,8 @@ class IQR(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`decimal.Decimal`.
+        :returns:
+            :class:`decimal.Decimal`.
         """
         column = table.columns[self._column_name]
 
@@ -406,7 +419,8 @@ class Variance(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`decimal.Decimal`.
+        :returns:
+            :class:`decimal.Decimal`.
         """
         column = table.columns[self._column_name]
 
@@ -436,7 +450,8 @@ class PopulationVariance(Variance):
 
     def run(self, table):
         """
-        :returns: :class:`decimal.Decimal`.
+        :returns:
+            :class:`decimal.Decimal`.
         """
         column = table.columns[self._column_name]
 
@@ -466,7 +481,8 @@ class StDev(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`decimal.Decimal`.
+        :returns:
+            :class:`decimal.Decimal`.
         """
         column = table.columns[self._column_name]
 
@@ -488,7 +504,8 @@ class PopulationStDev(StDev):
 
     def run(self, table):
         """
-        :returns: :class:`decimal.Decimal`.
+        :returns:
+            :class:`decimal.Decimal`.
         """
         column = table.columns[self._column_name]
 
@@ -510,7 +527,8 @@ class MAD(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`decimal.Decimal`.
+        :returns:
+            :class:`decimal.Decimal`.
         """
         column = table.columns[self._column_name]
 
@@ -548,7 +566,8 @@ class Percentiles(Aggregation):
 
     def run(self, table):
         """
-        :returns: An array of :class:`decimal.Decimal`.
+        :returns:
+            An instance of :class:`Quantiles`.
         """
         column = table.columns[self._column_name]
 
@@ -598,6 +617,10 @@ class Quartiles(Aggregation):
         self._column_name = column_name
 
     def run(self, table):
+        """
+        :returns:
+            An instance of :class:`Quantiles`.
+        """
         percentiles = Percentiles(self._column_name).run(table)
 
         return Quantiles([percentiles[i] for i in range(0, 101, 25)])
@@ -618,6 +641,10 @@ class Quintiles(Aggregation):
         self._column_name = column_name
 
     def run(self, table):
+        """
+        :returns:
+            An instance of :class:`Quantiles`.
+        """
         percentiles = Percentiles(self._column_name).run(table)
 
         return Quantiles([percentiles[i] for i in range(0, 101, 20)])
@@ -637,6 +664,10 @@ class Deciles(Aggregation):
         self._column_name = column_name
 
     def run(self, table):
+        """
+        :returns:
+            An instance of :class:`Quantiles`.
+        """
         percentiles = Percentiles(self._column_name).run(table)
 
         return Quantiles([percentiles[i] for i in range(0, 101, 10)])
@@ -653,7 +684,8 @@ class MaxLength(Aggregation):
 
     def run(self, table):
         """
-        :returns: :class:`int`.
+        :returns:
+            :class:`int`.
         """
         column = table.columns[self._column_name]
 

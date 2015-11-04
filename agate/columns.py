@@ -34,11 +34,15 @@ class Column(MappedSequence):
     deviate from the underlying implementation in that loading of their data
     is deferred until it is needed.
 
-    :param name: The name of this column.
-    :param data_type: An instance of :class:`.DataType`.
-    :param rows: A :class:`.MappedSequence` that contains the :class:`.Row`
-        instances containing the data for this column.
-    :param row_names: An optional list of row names (keys) for this column.
+    :param name:
+        The name of this column.
+    :param data_type:
+        An instance of :class:`.DataType`.
+    :param rows:
+        A :class:`.MappedSequence` that contains the :class:`.Row` instances
+        containing the data for this column.
+    :param row_names:
+        An optional list of row names (keys) for this column.
     """
     def __init__(self, index, name, data_type, rows, row_names=None):
         self._index = index
@@ -68,32 +72,36 @@ class Column(MappedSequence):
         """
         return self._data_type
 
-    @memoize
     def keys(self):
+        """
+        The row names for this column, if any.
+        """
         return self._row_names
 
     @memoize
     def values(self):
+        """
+        Get the values in this column, as a tuple.
+        """
         return tuple(row[self._index] for row in self._rows)
 
     @memoize
     def values_without_nulls(self):
         """
-        Get the data contained in this column with any null values removed.
+        Get the values in this column with any null values removed.
         """
         return tuple(d for d in self.values() if d is not None)
 
     @memoize
     def values_sorted(self):
         """
-        Get the data contained in this column sorted.
+        Get the values in this column sorted.
         """
         return sorted(self.values(), key=null_handler)
 
     @memoize
     def values_without_nulls_sorted(self):
         """
-        Get the data contained in this column with any null values removed and
-        sorted.
+        Get the values in this column with any null values removed and sorted.
         """
         return sorted(self.values_without_nulls(), key=null_handler)

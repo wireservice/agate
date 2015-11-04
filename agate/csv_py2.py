@@ -120,12 +120,12 @@ class UnicodeDictWriter(csv.DictWriter):
     Defer almost all implementation to :class:`csv.DictWriter`, but wraps our
     unicode writer instead of :func:`csv.writer`.
     """
-    def __init__(self, f, fieldnames, restval="", extrasaction="raise", *args, **kwds):
+    def __init__(self, f, fieldnames, restval='', extrasaction='raise', *args, **kwds):
         self.fieldnames = fieldnames
         self.restval = restval
 
-        if extrasaction.lower() not in ("raise", "ignore"):
-            raise ValueError("extrasaction (%s) must be 'raise' or 'ignore'" % extrasaction)
+        if extrasaction.lower() not in ('raise', 'ignore'):
+            raise ValueError('extrasaction (%s) must be "raise" or "ignore"' % extrasaction)
 
         self.extrasaction = extrasaction
 

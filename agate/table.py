@@ -176,13 +176,13 @@ class Table(utils.Patchable):
 
         self._columns = MappedSequence(new_columns, self._column_names)
 
-
     @property
     def column_types(self):
         """
         Get an ordered sequence of this table's column types.
 
-        :returns: A sequence of :class:`.DataType` instances.
+        :returns:
+            A tuple of :class:`.DataType` instances.
         """
         return self._column_types
 
@@ -190,6 +190,9 @@ class Table(utils.Patchable):
     def column_names(self):
         """
         Get an ordered sequence of this table's column names.
+
+        :returns:
+            A tuple of strings.
         """
         return self._column_names
 
@@ -197,27 +200,48 @@ class Table(utils.Patchable):
     def row_names(self):
         """
         Get an ordered sequence of this table's row names.
+
+        :returns:
+            A tuple of strings if this table has row names. Otherwise, `None`.
         """
         return self._row_names
 
     @property
     def columns(self):
         """
-        Get this tables' :class:`.MappedSequence` of columns.
+        Get this table's columns.
+
+        :returns:
+            :class:`.MappedSequence`
         """
         return self._columns
 
     @property
     def rows(self):
         """
-        Get this tables' :class:`.MappedSequence` of rows.
+        Get this table's rows.
+
+        :returns:
+            :class:`.MappedSequence`
         """
         return self._rows
 
     def _fork(self, rows, column_names=None, column_types=None, row_names=None):
         """
-        Create a new table using the metadata from this one.
-        Used internally by functions like :meth:`order_by`.
+        Create a new table using the metadata from this one. Used internally by
+        functions like :meth:`order_by`.
+
+        :param rows:
+            Row data for the forked table.
+        :param column_names:
+            Column names for the forked table. If not specified, fork will use
+            this table's column names.
+        :param column_types:
+            Column types for the forked table. If not specified, fork will use
+            this table's column names.
+        :param row_names:
+            Row names for the forked table. If not specified, fork will use
+            this table's row names.
         """
         if column_names is None:
             column_names = self._column_names
@@ -273,7 +297,8 @@ class Table(utils.Patchable):
 
         ``kwargs`` will be passed through to the CSV writer.
 
-        :param path: Filepath or file-like object to write to.
+        :param path:
+            Filepath or file-like object to write to.
         """
         if 'lineterminator' not in kwargs:
             kwargs['lineterminator'] = '\n'
@@ -473,9 +498,10 @@ class Table(utils.Patchable):
         """
         Reduce this table to only the specified columns.
 
-        :param selected_names: A sequence of names of columns to include in the
-            new table.
-        :returns: A new :class:`Table`.
+        :param selected_names:
+            A sequence of names of columns to include in the new table.
+        :returns:
+            A new :class:`Table`.
         """
         column_types = [self.columns[name].data_type for name in selected_names]
         new_rows = []
@@ -490,10 +516,13 @@ class Table(utils.Patchable):
         """
         Filter a to only those rows where the row passes a truth test.
 
-        :param test: A function that takes a :class:`.Row` and returns
-            :code:`True` if it should be included.
-        :type test: :class:`function`
-        :returns: A new :class:`Table`.
+        :param test:
+            A function that takes a :class:`.Row` and returns :code:`True` if
+            it should be included.
+        :type test:
+            :class:`function`
+        :returns:
+            A new :class:`Table`.
         """
         rows = []
 
@@ -516,10 +545,13 @@ class Table(utils.Patchable):
         """
         Find the first row that passes a truth test.
 
-        :param test: A function that takes a :class:`.Row` and returns
-            :code:`True` if it matches.
-        :type test: :class:`function`
-        :returns: A single :class:`.Row` or :code:`None` if not found.
+        :param test:
+            A function that takes a :class:`.Row` and returns :code:`True` if
+            it matches.
+        :type test:
+            :class:`function`
+        :returns:
+            A single :class:`.Row` if found, or `None`.
         """
         for row in self._rows:
             if test(row):
@@ -533,11 +565,13 @@ class Table(utils.Patchable):
         Sort this table by the :code:`key`. This can be either a
         column_name or callable that returns a value to sort by.
 
-        :param key: Either the name of a column to sort by or a :class:`function`
-            that takes a row and returns a value to sort by.
-        :param reverse: If :code:`True` then sort in reverse (typically,
-            descending) order.
-        :returns: A new :class:`Table`.
+        :param key:
+            Either the name of a column to sort by or a :class:`function` that
+            takes a row and returns a value to sort by.
+        :param reverse:
+            If `True` then sort in reverse (typically, descending) order.
+        :returns:
+            A new :class:`Table`.
         """
         key_is_row_function = hasattr(key, '__call__')
 
@@ -572,12 +606,16 @@ class Table(utils.Patchable):
 
         See also: Python's :func:`slice`.
 
-        :param start_or_stop: If the only argument, then how many rows to
-            include, otherwise, the index of the first row to include.
-        :param stop: The index of the last row to include.
-        :param step: The size of the jump between rows to include.
-            (*step=2* will return every other row.)
-        :returns: A new :class:`Table`.
+        :param start_or_stop:
+            If the only argument, then how many rows to include, otherwise,
+            the index of the first row to include.
+        :param stop:
+            The index of the last row to include.
+        :param step:
+            The size of the jump between rows to include. (`step=2` will return
+            every other row.)
+        :returns:
+            A new :class:`Table`.
         """
         if stop or step:
             s = slice(start_or_stop, stop, step)
@@ -597,11 +635,13 @@ class Table(utils.Patchable):
         """
         Filter data to only rows that are unique.
 
-        :param key: Either 1) the name of a column to use to identify
-            unique rows or 2) a :class:`function` that takes a row and
-            returns a value to identify unique rows or 3) :code:`None`,
-            in which case the entire row will be checked for uniqueness.
-        :returns: A new :class:`Table`.
+        :param key:
+            Either 1) the name of a column to use to identify unique rows or 2)
+            a :class:`function` that takes a row and returns a value to
+            identify unique rows or 3) `None`, in which case the entire row
+            will be checked for uniqueness.
+        :returns:
+            A new :class:`Table`.
         """
         key_is_row_function = hasattr(key, '__call__')
 
@@ -647,18 +687,21 @@ class Table(utils.Patchable):
         Column names from the right table which also exist in this table will
         be suffixed "2" in the new table.
 
-        :param right_table: The "right" table to join to.
-        :param left_key: Either the name of a column from the this table
-            to join on, or a :class:`function` that takes a row and returns
-            a value to join on.
-        :param right_key: Either the name of a column from :code:table`
-            to join on, or a :class:`function` that takes a row and returns
-            a value to join on. If :code:`None` then :code:`left_key` will be
-            used for both.
-        :param inner: Perform a SQL-style "inner join" instead of a left outer
-            join. Rows which have no match for :code:`left_key` will not be
-            included in the output table.
-        :returns: A new :class:`Table`.
+        :param right_table:
+            The "right" table to join to.
+        :param left_key:
+            Either the name of a column from the this table to join on, or a
+            :class:`function` that takes a row and returns a value to join on.
+        :param right_key:
+            Either the name of a column from :code:table` to join on, or a
+            :class:`function` that takes a row and returns a value to join on.
+            If :code:`None` then :code:`left_key` will be used for both.
+        :param inner:
+            Perform a SQL-style "inner join" instead of a left outer join. Rows
+            which have no match for :code:`left_key` will not be included in
+            the output table.
+        :returns:
+            A new :class:`Table`.
         """
         left_key_is_row_function = hasattr(left_key, '__call__')
 
@@ -759,8 +802,10 @@ class Table(utils.Patchable):
         need not be identical. The first table's column names will be the ones
         which are used.
 
-        :param tables: An array of :class:`Table`.
-        :returns: A new :class:`Table`.
+        :param tables:
+            An sequence of :class:`Table` instances.
+        :returns:
+            A new :class:`Table`.
         """
         column_names = tables[0].column_names
         column_types = tables[0].column_types
@@ -783,17 +828,20 @@ class Table(utils.Patchable):
         Note that when group names will always be coerced to a string,
         regardless of the format of the input column.
 
-        :param key: Either the name of a column from the this table
-            to group by, or a :class:`function` that takes a row and returns
-            a value to group by.
-        :param key_name: A name that describes the grouped properties.
-            Defaults to the column name that was grouped on or "group" if
-            grouping with a key function. See :class:`.TableSet` for more.
-        :param key_type: An instance some subclass of :class:`.DataType`. If
-            not provided it will default to a :class`.Text`.
-        :returns: A :class:`.TableSet` mapping where the keys are unique
-            values from the :code:`key` and the values are new :class:`Table`
-            instances containing the grouped rows.
+        :param key:
+            Either the name of a column from the this table to group by, or a
+            :class:`function` that takes a row and returns a value to group by.
+        :param key_name:
+            A name that describes the grouped properties. Defaults to the
+            column name that was grouped on or "group" if grouping with a key
+            function. See :class:`.TableSet` for more.
+        :param key_type:
+            An instance some subclass of :class:`.DataType`. If not provided
+            it will default to a :class`.Text`.
+        :returns:
+            A :class:`.TableSet` mapping where the keys are unique values from
+            the :code:`key` and the values are new :class:`Table` instances
+            containing the grouped rows.
         """
         from agate.tableset import TableSet
 
@@ -892,14 +940,16 @@ class Table(utils.Patchable):
         :code:`key_name` and :code:`key_type`, if specified. The second will be
         named :code:`count` and will be of type :class:`.Number`.
 
-        :param key: Either the name of a column from the this table
-            to count, or a :class:`function` that takes a row and returns
-            a value to count.
-        :param key_name: A name that describes the counted properties.
-            Defaults to the column name that was counted or "group" if
-            counting with a key function.
-        :param key_type: An instance some subclass of :class:`.DataType`. If
-            not provided it will default to a :class`.Text`.
+        :param key:
+            Either the name of a column from the this table to count, or a
+            :class:`function` that takes a row and returns a value to count.
+        :param key_name:
+            A name that describes the counted properties. Defaults to the
+            column name that was counted or "group" if counting with a key
+            function.
+        :param key_type:
+            An instance some subclass of :class:`.DataType`. If not provided
+            it will default to a :class`.Text`.
         """
         key_is_row_function = hasattr(key, '__call__')
 
@@ -1032,12 +1082,12 @@ class Table(utils.Patchable):
         Print a well-formatted preview of this table to the console or any
         other output.
 
-        :param max_rows: The maximum number of rows to display before
-            truncating the data.
-        :param max_columns: The maximum number of columns to display before
-            truncating the data.
-        :param output: A file-like object to print to. Defaults to
-            :code:`sys.stdout`.
+        :param max_rows:
+            The maximum number of rows to display before truncating the data.
+        :param max_columns:
+            The maximum number of columns to display before truncating the data.
+        :param output:
+            A file-like object to print to. Defaults to :code:`sys.stdout`.
         """
         print_table(self, max_rows, max_columns, output)
 
