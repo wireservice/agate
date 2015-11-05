@@ -2,12 +2,12 @@
 Extensions
 ==========
 
-agate's core featureset is designed rely on as few dependencies as possible. However, in real life you're often going to want to interface agate with SQL, numpy or other data pipelines.
+agate's core featureset is designed rely on as few dependencies as possible. However, in the real world you're often going to want to interface agate with SQL, numpy or other data processing tools.
 
 How extensions work
 ===================
 
-In order to support these use-cases, but not make things excessively complicated, agate support's a simple extensibility pattern based on `monkey patching <https://en.wikipedia.org/wiki/Monkey_patch>`_. Libraries can be created that patch new methods on :class:`.Table` and :class:`.TableSet`. For example, `agate-sql <http://agate-sql.rtfd.org/>`_ adds the ability to read and write tables from a SQL database:
+In order to support these use-cases, but not make things excessively complicated, agate support's a simple extensibility pattern based on `monkey patching <https://en.wikipedia.org/wiki/Monkey_patch>`_. Libraries can be created that patch new methods onto :class:`.Table` and :class:`.TableSet`. For example, `agate-sql <http://agate-sql.rtfd.org/>`_ adds the ability to read and write tables from a SQL database:
 
 .. code-block:: python
 
