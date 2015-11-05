@@ -656,6 +656,14 @@ class TestJSON(AgateTestCase):
             [2, 'c', 'd', 'd', 2, 'f']
         ])
 
+    def test_from_json_newline_delimited(self):
+        table1 = Table(self.rows, self.column_names, self.column_types)
+        table2 = Table.from_json('examples/test_newline.json', newline=True)
+
+        self.assertColumnNames(table2, self.column_names)
+        self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
+        self.assertRows(table2, table1.rows)
+
     def test_to_json(self):
         table = Table(self.rows, self.column_names, self.column_types)
 

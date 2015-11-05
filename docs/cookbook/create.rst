@@ -27,7 +27,7 @@ Load table from a CSV
 
 By default, loading a table from a CSV will use agate's builtin :class:`.TypeTester` to infer column types:
 
-.. code-block::
+.. code-block:: python
 
     table = agate.Table.from_csv('filename.csv')
 
@@ -36,7 +36,7 @@ Override type inference
 
 In some cases agate's :class:`.TypeTester` may guess incorrectly. To override the type for a column construct a TypeTester manually and use the `force` argument:
 
-.. code-block::
+.. code-block:: python
 
     tester = agate.TypeTester(force={
         'column_name': agate.Text()
@@ -49,7 +49,7 @@ Limit type inference
 
 For large datasets :class:`.TypeTester` may be unreasonably slow. In order to limit the amount of data it uses you can specify the `limit` argument. Note that if data after the limit invalidates the TypeTester's inference you may get errors when the data is loaded.
 
-.. code-block::
+.. code-block:: python
 
     tester = agate.TypeTester(limit=100)
 

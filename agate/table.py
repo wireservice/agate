@@ -78,11 +78,11 @@ class Table(utils.Patchable):
         any row has fewer values than the number of columns, it will be filled
         out with nulls. No row may have more values than the number of columns.
     :param column_names:
-        A sequence of string names for each column or ``None``, in which case
+        A sequence of string names for each column or `None`, in which case
         column names will be automatically assigned using :func:`.letter_name`.
     :param column_types:
         A sequence of instances of :class:`.DataType` or an instance of
-        :class:`.TypeTester` or ``None`` in which case a generic TypeTester will
+        :class:`.TypeTester` or `None` in which case a generic TypeTester will
         be used.
     :param row_names:
         Specifies unique names for each row. This parameter is
@@ -260,7 +260,7 @@ class Table(utils.Patchable):
         Create a new table for a CSV. This method uses agate's builtin
         CSV reader, which supports unicode on both Python 2 and Python 3.
 
-        ``kwargs`` will be passed through to the CSV reader.
+        `kwargs` will be passed through to the CSV reader.
 
         :param path:
             Filepath or file-like object from which to read CSV data.
@@ -295,7 +295,7 @@ class Table(utils.Patchable):
         Write this table to a CSV. This method uses agate's builtin CSV writer,
         which supports unicode on both Python 2 and Python 3.
 
-        ``kwargs`` will be passed through to the CSV writer.
+        `kwargs` will be passed through to the CSV writer.
 
         :param path:
             Filepath or file-like object to write to.
@@ -324,7 +324,7 @@ class Table(utils.Patchable):
                 f.close()
 
     @classmethod
-    def from_json(cls, path, row_names=None, key=None, **kwargs):
+    def from_json(cls, path, row_names=None, key=None, newline=False, **kwargs):
         """
         Create a new table from a JSON file. Contents should be an array
         containing a dictionary for each "row". Nested objects or lists will
@@ -361,23 +361,36 @@ class Table(utils.Patchable):
         null.
 
         If the file contains a top-level dictionary you may specify what
-        property contains the row list using the ``key`` parameter.
+        property contains the row list using the `key` parameter.
 
-        ``kwargs`` will be passed through to :meth:`json.load`.
+        `kwargs` will be passed through to :meth:`json.load`.
 
         :param path:
             Filepath or file-like object from which to read CSV data.
         :param row_names:
             See :meth:`Table.__init__`.
-        :key:
+        :param key:
             The key of the top-level dictionary that contains a list of row
             arrays.
+        :param newline:
+            If `True` then the file will be parsed as "newline-delimited JSON".
         """
-        if hasattr(path, 'read'):
-            js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
+        if newline:
+            js = []
+
+            if hasattr(path, 'read'):
+                for line in path:
+                    js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
+            else:
+                with open(path, 'r') as f:
+                    for line in f:
+                        js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
         else:
-            with open(path, 'r') as f:
-                js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
+            if hasattr(path, 'read'):
+                js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
+            else:
+                with open(path, 'r') as f:
+                    js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
 
         if isinstance(js, dict):
             if not key:
@@ -413,7 +426,7 @@ class Table(utils.Patchable):
         """
         Write this table to a JSON file or file-like object.
 
-        ``kwargs`` will be passed through to the JSON encoder.
+        `kwargs` will be passed through to the JSON encoder.
 
         :param path:
             File path or file-like object to write to.
@@ -423,7 +436,7 @@ class Table(utils.Patchable):
             unique values or a :class:`function` that takes a row and returns
             a unique value.
         :param newline:
-            If ``True``, output will be in the form of "newline-delimited JSON".
+            If `True`, output will be in the form of "newline-delimited JSON".
         :param indent:
             If specified, the number of spaces to indent the JSON for
             formatting.
@@ -1098,7 +1111,7 @@ class Table(utils.Patchable):
         A shortcut for printing a CSV directly to the csonsole. Effectively the
         same as passing :meth:`sys.stdout` to :meth:`Table.to_csv`.
 
-        ``kwargs`` will be passed on to :meth:`Table.to_csv`.
+        `kwargs` will be passed on to :meth:`Table.to_csv`.
         """
         self.to_csv(sys.stdout, **kwargs)
 
@@ -1107,7 +1120,7 @@ class Table(utils.Patchable):
         A shortcut for printing JSON directly to the console. Effectively the
         same as passing :meth:`sys.stdout` to :meth:`Table.to_json`.
 
-        ``kwargs`` will be passed on to :meth:`Table.to_json`.
+        `kwargs` will be passed on to :meth:`Table.to_json`.
         """
         self.to_json(sys.stdout, **kwargs)
 

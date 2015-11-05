@@ -41,7 +41,7 @@ Show me code
     by_county = purchases.group_by('county')
 
     totals = by_county.aggregate([
-        ('total_cost', agate.Sum(), 'county_cost')
+        ('county_cost', agate.Sum('total_cost'))
     ])
 
     totals = totals.order_by('county_cost', reverse=True)

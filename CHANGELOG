@@ -9,8 +9,8 @@ Second, the interfaces for TableSet.aggregate and Table.compute have been redesi
 
 Third, this version drops support for Python 2.6. Testing and bug-fixing for this version was taking substantial time with zero evidence that anyone was actually using it. Also, multiple agate dependencies claim to not support 2.6, even though the tests were passing.
 
-* DataType's now have stringify methods for serializing native values.
-* Added a dependency on isodate. (#233)
+* DataType's now have csvify and jsonify methods for serializing native values.
+* Added a dependency on isodate for handling iso8601 formatted dates. (#233)
 * Aggregation results are no longer cached. (#378)
 * Removed Column.aggregate. Use Table.aggregate instead. (#378)
 * Added Table.aggregate method for aggregating column results. (#378)
