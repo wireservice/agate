@@ -14,8 +14,8 @@ install_requires = [
 setup(
     name='agate',
     version='1.1.0',
-    description='A Python data analysis library designed for humans working in the real world.',
-    long_description=open('README.txt').read(),
+    description='A data analysis library that is optimized for humans instead of machines.',
+    long_description=open('README.rst').read(),
     author='Christopher Groskopf',
     author_email='chrisgroskopf@gmail.com',
     url='http://agate.readthedocs.org/',
