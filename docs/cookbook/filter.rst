@@ -24,7 +24,7 @@ This can also be useful for finding values that **don't** match your expectation
 By glob
 =======
 
-Hate regexes? You can use glob (a.k.a. :mod:`fnmatch`) syntax too!
+Hate regexes? You can use glob (:mod:`fnmatch`) syntax too!
 
 .. code-block:: python
 

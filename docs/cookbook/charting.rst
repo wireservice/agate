@@ -1,9 +1,9 @@
-================
-Rendering charts
-================
+======
+Charts
+======
 
-Fast bar charts
-===============
+Bar chart
+=========
 
 agate has a builtin text-based bar-chart generator:
 
@@ -27,8 +27,8 @@ agate has a builtin text-based bar-chart generator:
                              +-------------+------------+------------+-------------+
                              0          20,000       40,000       60,000      80,000
 
-Fast histograms
-===============
+Histogram
+=========
 
 :meth:`.Table.print_bars` can be combined with :meth:`.Table.counts` or :meth:`.Table.bins` to produce fast histograms:
 

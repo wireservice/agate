@@ -104,4 +104,4 @@ You can emulate most of the functionality of Excel's pivot tables using the :met
         ('salary_median', agate.Median('salary'))
     ])
 
-The resulting ``summary`` table will have four columns: ``job_title`, ``employee_count``, ``salary_mean`` and ``salary_median``.
+The resulting ``summary`` table will have four columns: ``job_title``, ``employee_count``, ``salary_mean`` and ``salary_median``.

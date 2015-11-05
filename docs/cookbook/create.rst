@@ -2,12 +2,8 @@
 Creating tables
 ===============
 
-You could always use Python's builtin :mod:`csv` to read and write CSV files, but agate also includes custom versions that ensure correct handling of unicode characters.
-
-Create a table
-==============
-
-To create a table from data you have in memory:
+From data in memory
+===================
 
 .. code-block:: python
 
@@ -22,8 +18,8 @@ To create a table from data you have in memory:
 
     table = agate.Table(rows, column_names, column_types)
 
-Load table from a CSV
-=====================
+From a CSV
+==========
 
 By default, loading a table from a CSV will use agate's builtin :class:`.TypeTester` to infer column types:
 
@@ -34,7 +30,7 @@ By default, loading a table from a CSV will use agate's builtin :class:`.TypeTes
 Override type inference
 =======================
 
-In some cases agate's :class:`.TypeTester` may guess incorrectly. To override the type for a column construct a TypeTester manually and use the `force` argument:
+In some cases agate's :class:`.TypeTester` may guess incorrectly. To override the type for a column construct a TypeTester manually and use the ``force`` argument:
 
 .. code-block:: python
 
@@ -47,7 +43,7 @@ In some cases agate's :class:`.TypeTester` may guess incorrectly. To override th
 Limit type inference
 ====================
 
-For large datasets :class:`.TypeTester` may be unreasonably slow. In order to limit the amount of data it uses you can specify the `limit` argument. Note that if data after the limit invalidates the TypeTester's inference you may get errors when the data is loaded.
+For large datasets :class:`.TypeTester` may be unreasonably slow. In order to limit the amount of data it uses you can specify the ``limit`` argument. Note that if data after the limit invalidates the TypeTester's inference you may get errors when the data is loaded.
 
 .. code-block:: python
 
@@ -76,20 +72,13 @@ Or, you can use this method to load data from a file that does not have a header
 
     table = agate.Table.from_csv('population.csv', column_names, column_types, header=False)
 
-Write a table to a CSV
-======================
-
-.. code-block:: python
-
-    table.to_csv('filename.csv')
-
-Load table from unicode CSV
-===========================
+From a unicode CSV
+==================
 
 You don't have to do anything special. It just works!
 
-Load table from latin1 CSV
-==========================
+From a latin1 CSV
+=================
 
 .. code-block:: python
 
@@ -97,8 +86,22 @@ Load table from latin1 CSV
 
 .. _load_a_table_from_a_sql_database:
 
-Load a table from a SQL database
-================================
+From JSON
+=========
+
+.. code-block:: python
+
+    table = agate.Table.from_json('filename.json')
+
+From newline-delimited JSON
+===========================
+
+.. code-block:: python
+
+    table = agate.Table.from_json('filename.json', newline=True)
+
+From a SQL database
+===================
 
 Use the `agate-sql <http://agate-sql.readthedocs.org/>`_ extension.
 
@@ -107,14 +110,3 @@ Use the `agate-sql <http://agate-sql.readthedocs.org/>`_ extension.
     import agatesql
 
     table = agate.Table.from_sql('postgresql:///database', 'input_table')
-
-Write a table to a SQL database
-===============================
-
-Use the `agate-sql <http://agate-sql.readthedocs.org/>`_ extension.
-
-.. code-block:: python
-
-    import agatesql
-
-    table.to_sql('postgresql:///database', 'output_table')

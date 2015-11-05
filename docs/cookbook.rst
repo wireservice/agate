@@ -6,6 +6,7 @@ Cookbook
     :maxdepth: 2
 
     cookbook/create
+    cookbook/save
     cookbook/filter
     cookbook/sort
     cookbook/search
@@ -19,3 +20,4 @@ Cookbook
     cookbook/r
     cookbook/underscore
     cookbook/charting
+    cookbook/misc

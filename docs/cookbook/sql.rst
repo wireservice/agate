@@ -135,7 +135,7 @@ agate:
 
 .. note::
 
-    Chaining commands in this way is often not a good idea. Being explicit about each step tends to produce clearer code.
+    Chaining commands in this way is sometimes not a good idea. Being explicit about each step can lead to clearer code.
 
 Aggregate functions
 ===================

@@ -14,7 +14,7 @@ Specifying your current locale works the same as with any other Python module. P
 Specify locale of numbers
 =========================
 
-To correctly parse numbers from non-US locales, you can pass a :code:`locale` parameter to the :class:`.Number` constructor. For example, to parse Dutch numbers (which use a period to separate thousands and a comma to separate decimals):
+To correctly parse numbers from non-US locales, you can pass a :code:`locale` parameter to the :class:`.Number` constructor. For example, to parse Dutch numbers (which use a period to separate thousands and a comma to separate fractions):
 
 .. code-block:: python
 

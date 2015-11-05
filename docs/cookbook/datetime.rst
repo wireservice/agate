@@ -2,27 +2,10 @@
 Dates and times
 ===============
 
-agate includes robust support for working columns of data that are instances of :class:`datetime.date`, :class:`datetime.datetime` or :class:`datetime.timedelta`.
-
-Infer a date format
-===================
-
-By default, agate will attempt to infer the format of a date column:
-
-.. code-block:: python
-
-    text_type = agate.Text()
-    date_type = agate.Date()
-
-    column_names = ['name', 'date']
-    column_types = [text_type, date_type]
-
-    table = agate.Table.from_csv('events.csv', column_names, column_types)
-
 Specify a date format
 =====================
 
-In some cases, it may not be possible to automatically parse the format of a date. In this case you can specify a :meth:`datetime.datetime.strptime` formatting string to specify how the dates should be parsed. For example, if your dates were formatted as "15-03-15" (March 15th, 2015) then you could specify:
+By default agate will attempt to guess the format of a :class:`.Date` or :class:`.DateTime` column. In some cases, it may not be possible to automatically figure out the format of a date. In this case you can specify a :meth:`datetime.datetime.strptime` formatting string to specify how the dates should be parsed. For example, if your dates were formatted as "15-03-15" (March 15th, 2015) then you could specify:
 
 .. code-block:: python
 
@@ -39,7 +22,7 @@ Another use for this feature is if you have a column that contains extraneous da
 Specify a timezone
 ==================
 
-Timezones are hard. Under normal circumstances (no arguments specified), agate will not try to parse timezone information, nor will it apply a timezone to the :class:`datetime.datetime` instances it creates. All the data it constructs will be *naive*. There are two ways to get timezone data into your agate columns.
+Timezones are hard. Under normal circumstances (no arguments specified), agate will not try to parse timezone information, nor will it apply a timezone to the :class:`datetime.datetime` instances it creates. (They will be *naive* in Python parlance.) There are two ways to force timezone data into your agate columns.
 
 The first is to use a format string, as shown above, and specify a pattern for timezone information:
 
@@ -56,7 +39,7 @@ The second way is to specify a timezone as an argument to the type constructor:
     eastern = pytz.timezone('US/Eastern')
     datetime_type = agate.DateTime(timezone=eastern)
 
-In this case all timezones that are processed will be set to have the Eastern timezone. Note, the will be **set**, not converted. You can not use this method to convert your timezones from UTC to another timezone. To do that see :ref:`convert_timezones`.
+In this case all timezones that are processed will be set to have the Eastern timezone. Note, the timezone will be **set**, not converted. You cannot use this method to convert your timezones from UTC to another timezone. To do that see :ref:`convert_timezones`.
 
 Calculate a time difference
 =============================

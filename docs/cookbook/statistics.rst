@@ -34,7 +34,7 @@ Or, get several at once:
 Aggregate statistics
 ====================
 
-You can also generate aggregate statistics for subsets of data (sometimes colloquially referred to as "rolling up".
+You can also generate aggregate statistics for subsets of data (sometimes referred to as "rolling up"):
 
 .. code-block:: python
 

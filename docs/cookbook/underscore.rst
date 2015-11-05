@@ -23,7 +23,7 @@ To simulate Underscore's :code:`reject`, simply negate the return value of the f
 find
 ====
 
-agate's :meth:`.Table.find` works exactly like Undrescore's :code:`find`.
+agate's :meth:`.Table.find` works exactly like Underscore's :code:`find`.
 
 .. code-block:: python
 
@@ -32,21 +32,19 @@ agate's :meth:`.Table.find` works exactly like Undrescore's :code:`find`.
 any
 ===
 
-agate's columns have an :meth:`.Column.any` method that functions like Underscore's :code:`any`.
+The :class:`.Any` aggregation works like Underscore's :code:`any`.
 
 .. code-block:: python
 
-    true_or_false = table.columns['salaries'].any(lambda d: d > 100000)
+    true_or_false = table.aggregate(Any('salaries', lambda d: d > 100000))
 
 You can also use :meth:`.Table.where` to filter to columns that pass the truth test.
 
 all
 ===
 
-agate's columns have an :meth:`.Column.all` method that functions like Underscore's :code:`all`.
+The :class:`.All` aggregation works like Underscore's :code:`all`.
 
 .. code-block:: python
 
-    true_or_false = table.columns['salaries'].all(lambda d: d > 100000)
-
-You can also use :meth:`.Table.where` to filter to columns that pass the truth test.
+    true_or_false = table.aggregate(All('salaries', lambda d: d > 100000))
