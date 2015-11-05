@@ -176,3 +176,16 @@ class TestDictWriter(unittest.TestCase):
         result = self.output.getvalue()
 
         self.assertEqual(result, 'line_number,a,b,c\n1,1,2,☃\n')
+
+    def test_writerows(self):
+        writer = csv_py3.DictWriter(self.output, ['a', 'b', 'c'], line_numbers=True)
+        writer.writeheader()
+        writer.writerows([{
+            u'a': u'1',
+            u'b': u'2',
+            u'c': u'☃'
+        }])
+
+        result = self.output.getvalue()
+
+        self.assertEqual(result, 'line_number,a,b,c\n1,1,2,☃\n')
