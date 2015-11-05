@@ -1,7 +1,18 @@
 #!/usr/bin/env python
 
 """
-Python3-specific CSV reader/writer.
+The classes and functions in this module serve as a replacement for Python 3's
+core :mod:`csv` module on Python 3. These versions add several minor features.
+
+If you are using Python 3, these classes and functions will automatically be
+made available as part of the ``agate`` import. This means you can access them
+by::
+
+    from agate import DictReader
+
+Or, if you want to use them as a drop-in replacement for :mod:`csv`::
+
+    import agate as csv
 """
 
 import csv

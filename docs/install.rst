@@ -5,35 +5,37 @@ Installation
 Users
 -----
 
-If you only want to use agate, install it this way::
+To use agate install it with pip::
 
     pip install agate
 
 .. note::
 
-    Need more speed? If you're running Python 2.7 or you can :code:`pip install cdecimal` for a significant speed boost. This isn't installed automatically because it can create additional complications.
+    Need more speed? Upgrade to Python 3. It's 3-5x faster than Python 2.
+
+    If you must use Python 2 you can you can :code:`pip install cdecimal` for a performance boost.
 
 Developers
 ----------
 
-If you are a developer that also wants to hack on agate, install it this way::
+If you are a developer that also wants to hack on agate, install it from git::
 
     git clone git://github.com/onyxfish/agate.git
     cd agate
     mkvirtualenv agate
 
+    # If running Python 3 (strongly recommended for development)
+    pip install -r requirements-py3.txt
+
     # If running Python 2
     pip install -r requirements-py2.txt
-
-    # If running Python 3
-    pip install -r requirements-py3.txt
 
     python setup.py develop
     tox
 
 .. note::
 
-    agate also supports running tests with coverage::
+    To run the agate tests with coverage::
 
         nosetests --with-coverage tests
 
@@ -46,7 +48,7 @@ agate supports the following versions of Python:
 * Python 3.3+
 * `PyPy <http://pypy.org/>`_
 
-It is tested on OSX, but due to its minimal dependencies should work fine on both Linux and Windows.
+It is tested primarily on OSX, but due to its minimal dependencies it should work perfectly on both Linux and Windows.
 
 .. note::
 

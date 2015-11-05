@@ -1,7 +1,19 @@
 #!/usr/bin/env python
 
 """
-Python2-specific CSV reader/writer with full support for non-ascii encodings.
+The classes and functions in this module serve as a replacement for Python 2's
+core :mod:`csv` module on Python 2. These versions add support fo non-ascii
+encodings as well as several other minor features.
+
+If you are using Python 2, these classes and functions will automatically be
+made available as part of the ``agate`` import. This means you can access them
+by::
+
+    from agate import DictReader
+
+Or, if you want to use them as a drop-in replacement for :mod:`csv`::
+
+    import agate as csv
 """
 
 import codecs

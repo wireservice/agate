@@ -5,9 +5,9 @@ Tutorial
 About this tutorial
 ===================
 
-The best way to learn to use any tool is to actually use it. In this tutorial we will answer some basic questions about a dataset using agate.
+The best way to learn to use any tool is to actually use it. In this tutorial we will use agate to answer some basic questions about a dataset.
 
-The data will be using is a copy of the `National Registery of Exonerations <http://www.law.umich.edu/special/exoneration/Pages/detaillist.aspx>`_ made on August 28th, 2015. This dataset lists individuals who are known to have been exonerated after having been wrongly convicted. At the time the data was exported there were 1,651 entries in the registry.
+The data will be using is a copy of the `National Registery of Exonerations <http://www.law.umich.edu/special/exoneration/Pages/detaillist.aspx>`_ made on August 28th, 2015. This dataset lists individuals who are known to have been exonerated after having been wrongly convicted in United States courts. At the time the data was exported there were 1,651 entries in the registry.
 
 Installing agate
 ================
@@ -37,7 +37,7 @@ You will now have a file named ``exonerations-20150828.csv`` in your ``agate_tut
 Getting setup
 =============
 
-First launch the Python interpreter::
+Launch the Python interpreter::
 
     python
 
@@ -47,20 +47,16 @@ Now let's import our dependencies:
 
     import agate
 
-.. note::
-
-    I also strongly suggest taking a look at `proof <http://proof.readthedocs.org/en/latest/>`_ for building data processing pipelines, but we won't use it in this tutorial to keep things simple.
-
 Loading data from a CSV
 =======================
 
-The :class:`.Table` is the basic class in agate. A time-saving method is included to create a table from CSV.
+The :class:`.Table` is the basic class in agate. To create a table from a CSV we use :meth:`.Table.from_csv`::
 
 .. code-block:: python
 
     exonerations = agate.Table.from_csv('exonerations-20150828.csv')
 
-With no other arguments specified, agate will automatically create an instance of :class:`.TypeTester` and use it to infer the type of each column. TypeTester is a "best guess" approach to determining the kinds of data in your table. It can guess incorrectly. In that case you can create a TypeTester manually and use the `force` argument to override its guess for a specific column:
+With no other arguments specified, agate will automatically create an instance of :class:`.TypeTester` and use it to figure out the type of each column. TypeTester is a "best guess" approach to determining the kinds of data in your table. It can guess wrong. In that case you can create a TypeTester manually and use the ``force`` argument to override its guess for a specific column:
 
 .. code-block:: python
 
@@ -70,9 +66,9 @@ With no other arguments specified, agate will automatically create an instance o
 
     exonerations = agate.Table.from_csv('exonerations-20150828.csv', column_types=tester)`
 
-If you know the types of your data you may wish to skip the TypeTester entirely. You may pass sequences of column names and column types to :meth:`.Table.from_csv` as the `column_names` and `column_types` arguments, respectively.
+If you already know the types of your data you may wish to skip the TypeTester entirely. You may pass sequences of column names and column types to :meth:`.Table.from_csv` as the ``column_names`` and ``column_types`` arguments, respectively.
 
-For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. In that case you can construct a :class:`.TypeTester` manually and specify a `limit` argument to restrict the amount of data it will use to infer types. You will pass your type tester like this:
+For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. In that case you can specify a `limit` argument to restrict the amount of data it will use to infer types:
 
 .. code-block:: python
 
@@ -80,21 +76,25 @@ For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. I
 
     exonerations = agate.Table.from_csv('exonerations-20150828.csv', tester)
 
-The dataset we are using in this tutorial is simple enough that we can rely on the built-in TypeTester to guess quicly and accurately.
+The dataset we are using in this tutorial is simple enough that we can rely on the built-in TypeTester to guess quickly and accurately.
 
 .. note::
 
-    agate's builtin CSV reader supports unicode and other encodings for both Python 2 and Python 3.
+    agate's builtin CSV :func:`.csv_py3.reader` and :func:`.csv_py3.writer` support unicode and other encodings for both Python 2 and Python 3.
+
+.. note::
+
+    agate also has :meth:`.Table.from_json` for creating tables from JSON data.
 
 Navigating table data
 =====================
 
 agate goes to great pains to make accessing the data in your tables work seamlessly for a wide variety of use-cases. Access by both :class:`.Column` and :class:`.Row` is supported, via the :attr:`.Table.columns` and :attr:`.Table.rows` attributes respectively.
 
-All four of these are examples of :class:`.MappedSequence`, the foundational type that underlies much of agate's functionality. A MappedSequence functions very similar to a Python :class:`dict`, with a few important exceptions:
+All four of these objects are examples of :class:`.MappedSequence`, the foundational type that underlies much of agate's functionality. A MappedSequence functions very similar to a standard Python :class:`dict`, with a few important exceptions:
 
 * Data may be accessed either by numeric index (e.g. column number) or by a non-integer key (e.g. column name).
-* They are ordered, just like an instance of :class:`collections.OrderedDict`.
+* Items are ordered, just like an instance of :class:`collections.OrderedDict`.
 * Iterating over the sequence returns its *values*, rather than its *keys*.
 
 To demonstrate the first point, these two lines are both valid ways of getting the first column in the :code:`exonerations` table:
@@ -104,7 +104,7 @@ To demonstrate the first point, these two lines are both valid ways of getting t
     exonerations.columns['last_name']
     exonerations.columns[0]
 
-In the same way, rows can be accessed either by numeric index or by an optional, unique "row name" specified when the table is created. In this tutorial we won't use row names, but here is an example of how they would work:
+In the same way, rows can be accessed either by numeric index or by an optional, unique "row name" specified when the table is created. In this tutorial we won't use row names, but here is an example of how they work:
 
 .. code-block:: python
 
@@ -113,7 +113,7 @@ In the same way, rows can be accessed either by numeric index or by an optional,
     exonerations.rows[0]
     exonerations.rows['Abbitt, Joseph Lamont']
 
-In this case we create our row names using a lambda function that takes a row and returns an unique identifer. If your data has a unique column, you also just pass the column name. (For example, a column of USPS abbrevations or FIPS codes.) Note, however, that your row names can never be :class:`int`, because that is reserved for indexing by numeric order. (A stringified integer is just fine.)
+In this case we create our row names using a :keyword:`lambda` function that takes a row and returns an unique identifer. If your data has a unique column, you can also just pass the column name. (For example, a column of USPS abbrevations or FIPS codes.) Note, however, that your row names can never be :class:`int`, because that is reserved for indexing by numeric order. (A :class:`decimal.Decimal` or stringified integer is just fine.)
 
 Once you've got a specific row, you can then access its individual values (cells, in spreadsheet-speak) either by numeric index or column name:
 
@@ -124,7 +124,7 @@ Once you've got a specific row, you can then access its individual values (cells
     row[0]
     row['last_name']
 
-And the same goes for columns, which can be indexed numerically or by row name (if you have one):
+And the same goes for columns, which can be indexed numerically or by row name (if one has been setup):
 
 .. code-block:: python
 
@@ -133,7 +133,7 @@ And the same goes for columns, which can be indexed numerically or by row name (
     column[0]
     column['Abbitt, Joseph Lamont']
 
-For any of these types, iteration over them returns their values, *in order*:
+For any instance of :class:`.MappedSequence`, iteration returns values, *in order*:
 
 .. code-block:: python
 
@@ -149,22 +149,22 @@ For any of these types, iteration over them returns their values, *in order*:
     Adams
     ...
 
-To summarize, the four most common parts of a Table (:class:`.Column`, :class:`.Row`, sequences of columns and sequences of rows) are all instances of :class:`.MappedSequence` and therefore all behave in a uniform way. This is also true of :class:`.TableSet`, which will get to later on.
+To summarize, the four most common data structures in agate (:class:`.Column`, :class:`.Row`, :attr:`.Table.columns` and :attr:`.Table.rows`) are all instances of :class:`.MappedSequence` and therefore all behave in a uniform way. This is also true of :class:`.TableSet`, which will discuss later on.
 
 Aggregating column data
 =======================
 
-With the basics out of the way, let's do some actual analysis. Analysis begins with questions, so that's how we'll learn about agate.
+With the basics out of the way, let's do some actual analysis. Analysis begins with questions, so let's ask some.
 
-Question: **How many exonerations involved a false confession?**
+Q: **How many exonerations involved a false confession?**
 
-Answering this question involves counting the number of "True" values in the ``false_confession`` column. When we created the table we specified that the data in this column contained :class:`.Boolean` data. Because of this, agate has taken care of coercing the original text data from the CSV into Python's ``True`` and ``False`` values.
+Answering this question involves counting the number of ``True`` values in the ``false_confession`` column. When we created the table we specified that the data in this column contained :class:`.Boolean` data. Because of this, agate has taken care of coercing the original text data from the CSV into Python's ``True`` and ``False`` values.
 
-We'll answer the question using :class:`.Count` which is a type of :class:`.Aggregation`. Aggregations in agate are used to perform "column-wise" calculations. That is, they derive a new single value from the contents of a column. In the case of :class:`.Count`, it will tell us how many times a particular value appears in the column.
+We'll answer the question using by using an instance of :class:`.Count` which is a type of :class:`.Aggregation`. Aggregations are used to perform "column-wise" calculations. That is, they derive a new single value from the contents of a column. In the case of :class:`.Count`, it will tell us how many times a particular value appears in the column.
 
-An :class:`.Aggregation` is applied to a column of a table using the :meth:`.Table.aggregate` method.
+An Aggregation is applied to a table using :meth:`.Table.aggregate`.
 
-Putting it together looks like this:
+It sounds complicated, but it's really simple. Putting it all together looks like this:
 
 .. code-block:: python
 
@@ -178,7 +178,7 @@ Putting it together looks like this:
 
 Let's look at another example, this time using a numerical aggregation.
 
-Question: **What was the median age of exonerated indviduals at time of arrest?**
+Q: **What was the median age of exonerated indviduals at time of arrest?**
 
 .. code-block:: python
 
@@ -196,11 +196,11 @@ Answer:
       ), NullCalculationWarning)
     26
 
-The answer to our question is "26 years old", however, as the warnings indicate, not every exonerated individual in the data has a value for the ``age`` column. The :class:`.Median` statistical operation has no standard way of accounting for null values, so it removes them before running the calculation. (If you're wondering about that ``Percentage`` warning, medians are calculated as the 50th percentile.)
+The answer to our question is "26 years old", however, as the warnings indicate, not every exonerated individual in the data has a value for the ``age`` column. The :class:`.Median` statistical operation has no standard way of accounting for null values, so it removes them before running the calculation.
 
-Question: **How many individuals do not have an age specified in the data?**
+Q: **How many individuals do not have an age specified in the data?**
 
-In order to be more rigorous, we might want to first investigate and remove those individuals that don't have an age. (What if that's most of the dataset?)
+Now that we know there are null values in the ``age`` column, we might worry about our sample size. What if most of the rows don't have an age?
 
 .. code-block:: python
 
@@ -214,14 +214,14 @@ Answer:
 
     9
 
-Only nine rows in this dataset don't have age, so it's certainly still useful to compute a median. In the next section you'll see how we could filter these 9 rows out, if we needed to.
+Only nine rows in this dataset don't have age, so it's certainly still useful to compute a median. However, we might still want to filter those rows out so we could have a consistent sample for all of our calculations. In the next section you'll learn how to do just that.
 
-Different :mod:`.aggregations` can be applied depending on the type of data in each column. If none of the provided aggregations suit your needs you can use :class:`.Summary` to apply a function to a column. If that still doesn't suit your needs you can also create your own from scratch by subclassing :class:`.Aggregation`.
+Different :mod:`.aggregations` can be applied depending on the type of data in each column. If none of the provided aggregations suit your needs you can use :class:`.Summary` to apply an arbitrary function to a column. If that still doesn't suit your needs you can always create your own aggregation from scratch by subclassing :class:`.Aggregation`.
 
 Selecting and filtering data
 ============================
 
-So what if those rows with no age were going to flummox our analysis? Agate's :class:`.Table` class provides a full suite of these SQL-like operations, including :meth:`.Table.select` for grabbing specific columns, :meth:`.Table.where` for selecting particular rows and :meth:`.Table.group_by` for grouping rows by common values.
+So what if those rows with no age were going to flummox our analysis? Agate's :class:`.Table` class provides a full suite of SQL-like operations including :meth:`.Table.select` for grabbing specific columns, :meth:`.Table.where` for selecting particular rows and :meth:`.Table.group_by` for grouping rows by common values.
 
 Let's use :meth:`.Table.where` to filter our exonerations table to only those individuals that have an age specified.
 
@@ -229,9 +229,9 @@ Let's use :meth:`.Table.where` to filter our exonerations table to only those in
 
     with_age = exonerations.where(lambda row: row['age'] is not None)
 
-You'll notice we provide a :keyword:`lambda` (anonymous) function to the :meth:`.Table.where`. This function is applied to each row and if it returns ``True``, then the row is included in the output table.
+You'll notice we provide a :keyword:`lambda` function to the :meth:`.Table.where`. This function is applied to each row and if it returns ``True``, then the row is included in the output table.
 
-A crucial thing to understand about these table methods is that they return **new tables**. In our example above ``exonerations`` was a :class:`.Table` instance and we applied :meth:`.Table.where`, so ``with_age`` is a :class:`Table` too. The tables themselves are immutable. You can create new tables with these methods, but you can't modify them in-place. (If this seems weird, just trust me. There are lots of good computer science-y reasons to do it this way.)
+A crucial thing to understand about these table methods is that they return **new tables**. In our example above ``exonerations`` was a :class:`.Table` instance and we applied :meth:`.Table.where`, so ``with_age`` is a new, different :class:`Table`. The tables themselves can't be changed. You can create new tables with these methods, but you can't modify them in-place. (If this seems weird, just trust me. There are lots of good computer science-y reasons to do it this way.)
 
 We can verify this did what we expected by counting the rows in the original table and rows in the new table:
 
@@ -267,9 +267,9 @@ In addition to "column-wise" :mod:`.aggregations` there are also "row-wise" :mod
 
 When one or more instances of :class:`.Computation` are applied with the :meth:`.Table.compute` method, a new table is created with additional columns.
 
-Question: **How long did individuals remain in prison before being exonerated?**
+Q: **How long did individuals remain in prison before being exonerated?**
 
-To answer this question we will apply the :class:`.Change` computation to the ``convicted`` and ``exonerated`` columns. All that :class:`.Change` does is compute the difference between two numbers. (In this case each of these columns contain is :class:`.Number` type, but this will also work with :class:`.Date` or :class:`.DateTime`)
+To answer this question we will apply the :class:`.Change` computation to the ``convicted`` and ``exonerated`` columns. Each of these columns contains the individual's age at the time of that event. All that :class:`.Change` does is compute the difference between two numbers. (In this case each of these columns contain a :class:`.Number`, but this will also work with :class:`.Date` or :class:`.DateTime`)
 
 .. code-block:: python
 
@@ -287,7 +287,7 @@ To answer this question we will apply the :class:`.Change` computation to the ``
 
 The median number of years an exonerated individual spent in prison was 8 years.
 
-Sometimes, the built-in computations, such as :class:`.Change` won't suffice. In this case, you can use the generic :class:`.Formula` to compute new values based on an arbitrary function. This is somewhat analogous to Excel's cell formulas.
+Sometimes, the built-in computations, such as :class:`.Change` won't suffice. I mentioned before that you could perform arbitrary column-wise aggregations using :class:`.Summary`. You can do the same thing for row-wise computations using :class:`.Formula`. This is somewhat analogous to Excel's cell formulas.
 
 For example, this code will create a ``full_name`` column from the ``first_name`` and ``last_name`` columns in the data:
 
@@ -297,7 +297,7 @@ For example, this code will create a ``full_name`` column from the ``first_name`
         ('full_name', agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row))
     ])
 
-For efficiency's sake, agate allows you to perform several computations at once.
+For efficiency's sake, agate allows you to perform several computations at once (though they can't depend on one another):
 
 .. code-block:: python
 
@@ -306,14 +306,12 @@ For efficiency's sake, agate allows you to perform several computations at once.
         ('years_in_prison', agate.Change('convicted', 'exonerated'))
     ])
 
-However, it should be noted that computations in the list can not depend on the values produced by those that came before. Each is applied to the original :class:`.Table`.
-
-If :class:`.Formula` still is not flexible enough (for instance, if you need to compute a new row based on the distribution of data in a column) you can always implement your own subclass of :class:`.Computation`. See the API documentation for :mod:`.computations` to see all of the supported ways to compute new data.
+If :class:`.Formula` is not flexible enough (for instance, if you needed to compute a new value based on the distribution of data in a column) you can always implement your own subclass of :class:`.Computation`. See the API documentation for :mod:`.computations` to see all of the supported ways to compute new data.
 
 Sorting and slicing
 ===================
 
-Question: **Who are the ten exonerated individuals who were youngest at the time they were arrested?**
+Q: **Who are the ten exonerated individuals who were youngest at the time they were arrested?**
 
 Remembering that methods of tables return tables, we will use :meth:`.Table.order_by` to sort our table:
 
@@ -354,7 +352,7 @@ If you find it impossible to believe that an eleven year-old was convicted of mu
 
 .. note::
 
-    In the previous example we could have omitted the :meth:`.Table.limit` and passed a ``max_rows=10`` to :meth:`.Table.print_table` instead.
+    In the previous example we could have omitted the :meth:`.Table.limit` and passed a ``max_rows=10`` to :meth:`.Table.print_table` instead. In this case they accomplish exactly the same goal.
 
 What if we were more curious about the *distribution* of ages, rather than the highest or lowest? agate includes the :meth:`.Table.counts` and :meth:`.Table.bins` methods for counting data individually or by ranges. Let's try binning the ages. Then, instead of using :meth:`.Table.print_table`, we'll use :meth:`.Table.print_bars` to generate a simple, text bar chart.
 
@@ -389,7 +387,7 @@ Notice that we specify we want :code:`10` bins spanning the range :code:`0` to :
 Grouping and aggregating
 ========================
 
-Question: **Which state has seen the most exonerations?**
+Q: **Which state has seen the most exonerations?**
 
 This question can't be answered by operating on a single column. What we need is the equivalent of SQL's ``GROUP BY``. agate supports a full set of SQL-like operations on tables. Unlike SQL, agate breaks grouping and aggregation into two discrete steps.
 
@@ -399,7 +397,9 @@ First, we use :meth:`.Table.group_by` to group the data by state.
 
     by_state = exonerations.group_by('state')
 
-This takes our original :class:`.Table` and groups it into a :class:`.TableSet`, which contains one table per county. Now we need to aggregate the total for each state. This works in a very similar way to how it did when we were aggregating columns of a single table, except that we'll use the :class:`.Length` aggregation to count the total number of values in the table.
+This takes our original :class:`.Table` and groups it into a :class:`.TableSet`, which contains one table per county. As mentioned much earlier in this tutorial, TableSet's are instances of :class:`.MappedSequence`. That means that work very much like :class:`.Column` and :class:`.Row`.
+
+Now we need to aggregate the total for each state. This works in a very similar way to how it did when we were aggregating columns of a single table, except that we'll use the :class:`.Length` aggregation to count the total number of values in the table.
 
 .. code-block:: python
 
@@ -424,11 +424,11 @@ This takes our original :class:`.Table` and groups it into a :class:`.TableSet`,
     |  ...   | ...    |
     |--------+--------|
 
-You'll notice we pass a sequence of tuples to :meth:`.TableSet.aggregate`. Each one includes two elements. The first is the new column name being created. The second is an instance of some :class:`.Aggregation`. Unsurpringly, in this case the results appear roughly proportional to population.
+You'll notice we pass a sequence of tuples to :meth:`.TableSet.aggregate`. Each one includes two elements. The first is the new column name being created. The second is an instance of some :class:`.Aggregation`. Unsurpringly, in this case the results appear to be roughly proportional to population.
 
-Question: **What state has the longest median time in prison prior to exoneration?**
+Q: **What state has the longest median time in prison prior to exoneration?**
 
-This is a much more complicated question that's going to pull together a lot of the features we've been using. We'll repeat the computations we applied before, but this time we're going to roll those computations up in our group and take the :class:`.Median` of each group. Then we'll sort the data and see where people have been stuck in prison the longest.
+This is a much more complicated question that's going to pull together a lot of the features we've been using. We'll repeat the computations we applied before, but this time we're going to roll those computations up in state-by-state groups and then take the :class:`.Median` of each group. Then we'll sort the data and see where people have been stuck in prison the longest.
 
 .. code-block:: python
 
@@ -460,20 +460,20 @@ This is a much more complicated question that's going to pull together a lot of 
     |  ...   | ...   | ...                     |
     |--------+-------+-------------------------|
 
-DC? Nebraska? What accounts for these states having the longest times in prison before exoneration? I have no idea. Given that the group sizes are small, it would probably be wise to look for outliers.
+DC? Nebraska? What accounts for these states having the longest times in prison before exoneration? I have no idea! Given that the group sizes are small, it would probably be wise to look for outliers.
 
-As with :meth:`.Table.aggregate` and :meth:`.Table.compute`, the :meth:`.TableSet.aggregate`: method takes a list of aggregations to perform. You can aggregate as many columns as you like in a single step and they will all appear in the output table.
+As with :meth:`.Table.aggregate` and :meth:`.Table.compute`, the :meth:`.TableSet.aggregate` method takes a list of aggregations to perform. You can aggregate as many columns as you like in a single step and they will all appear in the output table.
 
 Multi-dimensional aggregation
 =============================
 
-Before we wrap up, let's try one more thing. I've already shown you that you can use :class:`.TableSet` to group instances of :class:`.Table`. However, you can also use a :class:`.TableSet` to group other instances of :class:`.TableSet`. To put that another way, instances of :class:`.TableSet` can be *nested*.
+Before we wrap up, let's try one more thing. I've already shown you that you can use :class:`.TableSet` to group instances of :class:`.Table`. However, you can also use a :class:`.TableSet` to group *other TableSets*. To put that another way, instances of :class:`.TableSet` can be *nested*.
 
 The key to nesting data in this way is to use :meth:`.TableSet.group_by`. Before we used :meth:`.Table.group_by` to split data up into a group of tables. Now we'll use :meth:`.TableSet.group_by` to further subdivide that data. Let's look at a concrete example.
 
-Question: **Is there a collective relationship between race, age and time spent in prison prior to exoneration?**
+Q: **Is there a collective relationship between race, age and time spent in prison prior to exoneration?**
 
-I'm not going to explain every stage of this analysis as most of it repeats patterns used previously. The key part to look for is the two separate calls to ``group_by``:
+I'm not going to explain every stage of this analysis as most of it repeats patterns used previously. The key part to look for is the two separate uses of ``group_by``:
 
 .. code-block:: python
 
@@ -521,11 +521,13 @@ I'm not going to explain every stage of this analysis as most of it repeats patt
     |  ...             | ...       | ...   | ...                     |
     |------------------+-----------+-------+-------------------------|
 
-Well, what are you waiting for? It's your turn!
+That's it--you made it through the tutorial! Now it's your turn!
 
 Where to go next
 ================
 
-This tutorial only scratches the surface of agate's features. For many more ideas on how to apply agate, check out the :doc:`cookbook`, which includes dozens of examples showing how to substitute agate for common patterns used in Excel, SQL, R and more. Also check out the agate's :doc:`extensions` which add support for reading/writing SQL tables, rendering charts and more.
+This tutorial only scratches the surface of agate's features. For many more ideas on how to apply agate, check out the :doc:`cookbook`, which includes dozens of examples of specific features of agate as well as recipes for substituting agate for Excel, SQL, R and more. Also check out the agate's :doc:`extensions` which add support for reading/writing SQL tables, performing statistical analysis and more.
 
 Also, if you're going to be doing data processing in Python you really ought to check out `proof <http://proof.readthedocs.org/en/latest/>`_, a library for building data processing pipelines that are repeatable and self-documenting. It will make your code cleaner and save you tons of time.
+
+Good luck in your reporting!

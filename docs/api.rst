@@ -9,6 +9,8 @@ API
     api/data_types
     api/columns
     api/computations
+    api/csv_py2
+    api/csv_py3
     api/exceptions
     api/mapped_sequence
     api/rows
