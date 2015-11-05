@@ -13,7 +13,7 @@ install_requires = [
 
 setup(
     name='agate',
-    version='1.1.0',
+    version='1.1.1',
     description='A data analysis library that is optimized for humans instead of machines.',
     long_description=open('README.rst').read(),
     author='Christopher Groskopf',
