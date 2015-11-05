@@ -78,21 +78,12 @@ Table of contents
     api
     contributing
     release_process
-
-Authors
-=======
-
-.. include:: ../AUTHORS
+    changelog
 
 License
 =======
 
 .. include:: ../COPYING
-
-Changelog
-=========
-
-.. include:: ../CHANGELOG
 
 Indices and tables
 ==================

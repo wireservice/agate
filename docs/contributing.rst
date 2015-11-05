@@ -1,6 +1,11 @@
-==========================
-Contributing to agate
-==========================
+============
+Contributors
+============
+
+AUTHORS
+=======
+
+.. include:: ../AUTHORS.rst
 
 Principles
 ==========
@@ -34,4 +39,4 @@ Contributors should use the following roadmap to guide them through the process 
 Legalese
 ========
 
-To the extent that they care, contributors should keep in mind that the source of agate and therefore of any contributions are licensed under the permissive `MIT license <http://www.opensource.org/licenses/mit-license.php>`_. By submitting a patch or pull request you are agreeing to release your code under this license. You will be acknowledged in the AUTHORS file, the commit history and the hearts and minds of data analysts everywhere.
+To the extent that they care, contributors should keep in mind that the source of agate and therefore of any contributions are licensed under the permissive `MIT license <http://www.opensource.org/licenses/mit-license.php>`_. By submitting a patch or pull request you are agreeing to release your code under this license. You will be acknowledged in the AUTHORS list, the commit history and the hearts and minds of journalists everywhere.

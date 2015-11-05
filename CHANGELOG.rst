@@ -3,32 +3,32 @@
 
 This version of agate introduces several major changes.
 
-First, the Table, Table.from_csv and TableSet.from_csv methods now all take "column_names" and "column_types" as separate arguments instead of as a sequence of tuples. Was done to enable more flexible type inference and to streamline the API.
+First, :class:`.Table`, :meth:`.Table.from_csv` and :meth:`.TableSet.from_csv` now all take `column_names` and `column_types` as separate arguments instead of as a sequence of tuples. Was done to enable more flexible type inference and to streamline the API.
 
-Second, the interfaces for TableSet.aggregate and Table.compute have been redesigned. In both cases the new column name now comes first. Aggregations have also been modified so that the input column name is an argument to the aggregation class, rather than a third element in the tuple.
+Second, the interfaces for :meth:`.TableSet.aggregate` and :meth:`.Table.compute` have been changed. In both cases the new column name now comes first. Aggregations have also been modified so that the input column name is an argument to the aggregation class, rather than a third element in the tuple.
 
 Third, this version drops support for Python 2.6. Testing and bug-fixing for this version was taking substantial time with zero evidence that anyone was actually using it. Also, multiple agate dependencies claim to not support 2.6, even though the tests were passing.
 
-* DataType's now have csvify and jsonify methods for serializing native values.
-* Added a dependency on isodate for handling iso8601 formatted dates. (#233)
-* Aggregation results are no longer cached. (#378)
-* Removed Column.aggregate. Use Table.aggregate instead. (#378)
-* Added Table.aggregate method for aggregating column results. (#378)
-* Aggregations now take column names as their first argument. (#378)
-* TableSet.aggregate and Table.compute now take the new column name as the first argument. (#378)
+* DataType's now have :meth:`.DataType.csvify` and :meth:`.DataType.jsonify` methods for serializing native values.
+* Added a dependency on `isodate <https://github.com/gweis/isodate>`_ for handling ISO8601 formatted dates. (#233)
+* :class:`.Aggregation` results are no longer cached. (#378)
+* Removed `Column.aggregate` method. Use :meth:`.Table.aggregate` instead. (#378)
+* Added :meth:`.Table.aggregate` for aggregating single column results. (#378)
+* :class:`.Aggregation` subclasses now take column names as their first argument. (#378)
+* :meth:`.TableSet.aggregate` and :meth:`.Table.compute` now take the new column name as the first argument. (#378)
 * Remove support for Python 2.6.
-* Table.to_json is implemented. (#345)
-* Table.from_json is implemented. (#344, #347)
-* Date and DateTime type testing now takes specified format into account. (#361)
-* Number column now takes a float_precision argument.
-* Number columns can now be populated with float values. (#370)
-* TypeTester can now validate Python native types (not just strings). (#367)
-* TypeTester can now be used with Table, not just Table.from_csv. (#350)
-* Table, Table.from_csv and TableSet.from_csv now take column names and column types as separate parameters. (#350)
-* agate.DEFAULT_NULL_VALUES (list of strings that mean null) is now public.
-* Table.from_csv and Table.to_csv are now unicode-safe without using csvkit.
-* agate can now be used as a drop-in replacement for Python's csv module.
-* Migrated csvkit's unicode CSV reading/writing support into agate. (#354)
+* :meth:`.Table.to_json` is implemented. (#345)
+* :meth:`.Table.from_json` is implemented. (#344, #347)
+* :class:`.Date` and :class:`.DateTime` type testing now takes specified format into account. (#361)
+* :class:`.Number` data type now takes a `float_precision` argument.
+* :class:`.Number` data types now work with native float values. (#370)
+* :class:`.TypeTester` can now validate Python native types (not just strings). (#367)
+* :class:`.TypeTester` can now be used with the :class:`.Table` constructor, not just :meth:`.Table.from_csv`. (#350)
+* :class:`.Table`, :meth:`.Table.from_csv` and :meth:`.TableSet.from_csv` now take `column_names` and `column_types` as separate parameters. (#350)
+* :const:`.DEFAULT_NULL_VALUES` (the list of strings that mean null) is now importable from `agate`.
+* :meth:`.Table.from_csv` and :meth:`.Table.to_csv` are now unicode-safe without separately importing csvkit.
+* `agate` can now be used as a drop-in replacement for Python's `csv` module.
+* Migrated `csvkit <http://csvkit.readthedocs.org>`_'s unicode CSV reading/writing support into agate. (#354)
 
 1.0.1
 -----
