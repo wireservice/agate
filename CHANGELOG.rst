@@ -1,11 +1,11 @@
-1.1.0
------
+1.1.0 - November 4, 2015
+------------------------
 
 This version of agate introduces three major changes.
 
-1. :class:`.Table`, :meth:`.Table.from_csv` and :meth:`.TableSet.from_csv` now all take ``column_names`` and ``column_types`` as separate arguments instead of as a sequence of tuples. Was done to enable more flexible type inference and to streamline the API.
+1. :class:`.Table`, :meth:`.Table.from_csv` and :meth:`.TableSet.from_csv` now all take ``column_names`` and ``column_types`` as separate arguments instead of as a sequence of tuples. This was done to enable more flexible type inference and to streamline the API.
 2. The interfaces for :meth:`.TableSet.aggregate` and :meth:`.Table.compute` have been changed. In both cases the new column name now comes first. Aggregations have also been modified so that the input column name is an argument to the aggregation class, rather than a third element in the tuple.
-3. This version drops support for Python 2.6. Testing and bug-fixing for this version was taking substantial time with zero evidence that anyone was actually using it. Also, multiple agate dependencies claim to not support 2.6, even though the tests were passing.
+3. This version drops support for Python 2.6. Testing and bug-fixing for this version was taking substantial time with no evidence that anyone was actually using it. Also, multiple dependencies claim to not support 2.6, even though agate's tests were passing.
 
 * DataType's now have :meth:`.DataType.csvify` and :meth:`.DataType.jsonify` methods for serializing native values.
 * Added a dependency on `isodate <https://github.com/gweis/isodate>`_ for handling ISO8601 formatted dates. (#233)
