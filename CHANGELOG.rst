@@ -28,8 +28,8 @@ This version of agate introduces three major changes.
 * ``agate`` can now be used as a drop-in replacement for Python's ``csv`` module.
 * Migrated `csvkit <http://csvkit.readthedocs.org>`_'s unicode CSV reading/writing support into agate. (#354)
 
-1.0.1
------
+1.0.1 - October 29, 2015
+------------------------
 
 * TypeTester now takes a "limit" arg that restricts how many rows it tests. (#332)
 * Table.from_csv now supports CSVs with neither headers nor manual column names.
@@ -39,8 +39,8 @@ This version of agate introduces three major changes.
 * Fixed stripping currency symbols when casting Numbers from strings. (#333)
 * Fixed two major join issues. (#336)
 
-1.0.0
-------
+1.0.0 - October 22, 2015
+------------------------
 
 * Table.from_csv now defaults to TypeTester() if column_info is not provided. (#324)
 * New tutorial section: "Navigating table data" (#315)
@@ -74,8 +74,8 @@ This version of agate introduces three major changes.
 * Massive performance increases for joins. (#277)
 * Added join benchmark. (#73)
 
-0.11.0
-------
+0.11.0 - October 6, 2015
+------------------------
 
 * Implemented __repr__ for Table, TableSet, Column and Row. (#261)
 * Row.index property added.
@@ -95,8 +95,8 @@ This version of agate introduces three major changes.
 * Move stdev_outliers, mad_outliers and pearson_correlation into agate-stats. (#260)
 * Prevent issues with applying patches multiple times. (#258)
 
-0.10.0
-------
+0.10.0 - September 22, 2015
+---------------------------
 
 * Add reverse and cmp arguments to Rank computation. (#248)
 * Document how to use agate-sql to read/write SQL tables. (#238, #241)
@@ -110,8 +110,8 @@ This version of agate introduces three major changes.
 * Table.inner_join is now more. Use `inner` keyword to Table.join.
 * Table.left_outer_join is now Table.join.
 
-0.9.0
------
+0.9.0 - September 14, 2015
+--------------------------
 
 * Add many missing unit tests. Up to 99% coverage.
 * Add property accessors for TableSet.key_name and TableSet.key_type. (#247)
@@ -135,8 +135,8 @@ This version of agate introduces three major changes.
 * Support file-like objects in Table.to_csv and Table.from_csv. (#229)
 * Fix bug when applying multiple computations with Table.compute.
 
-0.8.0
------
+0.8.0 - September 9, 2015
+-------------------------
 
 * Cookbook: dealing with locales. (#220)
 * Cookbook: working with dates and times.
@@ -157,8 +157,8 @@ This version of agate introduces three major changes.
 * Competition ranking implemented as default. (#125)
 * TypeTester: robust type inference. (#210)
 
-0.7.0
------
+0.7.0 - September 3, 2015
+-------------------------
 
 * Cookbook: USA Today diversity index.
 * Cookbook: filter to top x%. (#47)
@@ -172,8 +172,8 @@ This version of agate introduces three major changes.
 * Added Length aggregation and removed count from TableSet.aggregate output. (#203)
 * Fix error messages for RowDoesNotExistError and ColumnDoesNotExistError.
 
-0.6.0
------
+0.6.0 - September 1, 2015
+-------------------------
 
 * Fix missing package definition in setup.py.
 * Split Analysis off into the proof library.
@@ -189,8 +189,8 @@ This version of agate introduces three major changes.
 * Added Table.format method for pretty-printing tables. (#191)
 * Analysis class now implements a caching workflow. (#171)
 
-0.5.0
------
+0.5.0 - August 28, 2015
+-----------------------
 
 * Table now takes (column_name, column_type) pairs. (#180)
 * Renamed the library to agate. (#179)
@@ -220,8 +220,8 @@ This version of agate introduces three major changes.
 * Table.group_by now returns a TableSet.
 * Implement TableSet object. (#141)
 
-0.4.0
------
+0.4.0 - September 27, 2014
+--------------------------
 
 * Upgrade to python-dateutil 2.2. (#134)
 * Wrote introductory tutorial. (#133)
