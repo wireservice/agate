@@ -60,7 +60,7 @@ With no other arguments specified, agate will automatically create an instance o
 
 .. code-block:: python
 
-    tester = TypeTester(force={
+    tester = agate.TypeTester(force={
         'false_evidence': agate.Boolean()
     })
 
@@ -72,7 +72,7 @@ For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. I
 
 .. code-block:: python
 
-    tester = TypeTester(limit=100)
+    tester = agate.TypeTester(limit=100)
 
     exonerations = agate.Table.from_csv('exonerations-20150828.csv', tester)
 
