@@ -9,3 +9,4 @@ agate is the product of a community. The following individuals have contributed 
 * `Matt Riggott <https://github.com/flother>`_
 * `Ryan Murphy <https://github.com/rdmurphy>`_
 * `Raphael Deem <https://github.com/r0fls>`_
+* `Robin Linderborg <https://github.com/vienno>`_
