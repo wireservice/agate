@@ -50,7 +50,7 @@ Now let's import our dependencies:
 Loading data from a CSV
 =======================
 
-The :class:`.Table` is the basic class in agate. To create a table from a CSV we use :meth:`.Table.from_csv`::
+The :class:`.Table` is the basic class in agate. To create a table from a CSV we use :meth:`.Table.from_csv`:
 
 .. code-block:: python
 
