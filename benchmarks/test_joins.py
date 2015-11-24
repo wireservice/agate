@@ -27,16 +27,11 @@ class TestTableJoin(unittest.TestCase):
         shuffle(left_rows)
         shuffle(right_rows)
 
-        number_type = agate.Number()
-        text_type = agate.Text()
+        column_names = ['text', 'number']
+        column_types = [agate.Text(), agate.Number()]
 
-        columns = (
-            ('text', text_type),
-            ('number', number_type)
-        )
-
-        left = agate.Table(left_rows, columns)
-        right = agate.Table(right_rows, columns)
+        left = agate.Table(left_rows, column_names, column_types)
+        right = agate.Table(right_rows, column_names, column_types)
 
         def test():
             left.join(right, 'text')
