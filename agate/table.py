@@ -832,7 +832,14 @@ class Table(utils.Patchable):
             if table.column_types != column_types:
                 raise ValueError('Only tables with identical column types may be merged.')
 
-        rows = list(chain(*[table.rows for table in tables]))
+        rows = []
+
+        for table in tables:
+            if table.column_names == column_names:
+                rows.extend(table.rows)
+            else:
+                for row in table.rows:
+                    rows.append(Row(row.values(), column_names))
 
         return Table(rows, column_names, column_types, row_names=tables[0].row_names, _is_fork=True)
 

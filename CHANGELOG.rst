@@ -1,7 +1,7 @@
 1.1.1
 -----
 
-
+* :meth:`.Table.merge` now consistently maps column names to rows. (#402)
 
 1.1.0 - November 4, 2015
 ------------------------

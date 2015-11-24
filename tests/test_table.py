@@ -1431,6 +1431,9 @@ class TestMerge(AgateTestCase):
         self.assertColumnTypes(table_c, [Number, Number, Text])
         self.assertRows(table_c, self.rows + self.rows)
 
+        for row in table_c.rows:
+            self.assertSequenceEqual(row.keys(), self.column_names)
+
     def test_merge_different_types(self):
         table_a = Table(self.rows, self.column_names, self.column_types)
 
