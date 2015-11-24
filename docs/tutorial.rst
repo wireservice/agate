@@ -294,7 +294,7 @@ For example, this code will create a ``full_name`` column from the ``first_name`
 .. code-block:: python
 
     full_names = exonerations.compute([
-        ('full_name', agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row))
+        ('full_name', agate.Formula(agate.Text(), lambda row: '%(first_name)s %(last_name)s' % row))
     ])
 
 For efficiency's sake, agate allows you to perform several computations at once (though they can't depend on one another):
@@ -302,7 +302,7 @@ For efficiency's sake, agate allows you to perform several computations at once 
 .. code-block:: python
 
     with_computations = exonerations.compute([
-        ('full_name', agate.Formula(text_type, lambda row: '%(first_name)s %(last_name)s' % row)),
+        ('full_name', agate.Formula(agate.Text(), lambda row: '%(first_name)s %(last_name)s' % row)),
         ('years_in_prison', agate.Change('convicted', 'exonerated'))
     ])
 
