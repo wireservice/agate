@@ -115,7 +115,7 @@ Implementing Levenshtein requires writing a custom :class:`.Computation`. To sav
 
             super(LevenshteinDistance, self).__init__()
 
-        def get_computed_column_type(self, table):
+        def get_computed_data_type(self, table):
             """
             The return value is a numerical distance.
             """
@@ -165,7 +165,7 @@ Assuming that your data has a column for the total population, another for the p
 .. code-block:: python
 
     class USATodayDiversityIndex(agate.Computation):
-        def get_computed_column_type(self, table):
+        def get_computed_data_type(self, table):
             return agate.Number()
 
         def run(self, row):
