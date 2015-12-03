@@ -26,6 +26,7 @@ from copy import copy
 from itertools import chain
 import json
 import sys
+import os.path
 
 try:
     from cdecimal import Decimal
@@ -304,12 +305,15 @@ class Table(utils.Patchable):
             kwargs['lineterminator'] = '\n'
 
         close = True
-
+        f = None
+        
         try:
             if hasattr(path, 'write'):
                 f = path
                 close = False
             else:
+                if os.path.dirname(path) and not os.path.exists(os.path.dirname(path)):
+                    os.makedirs(os.path.dirname(path))
                 f = open(path, 'w')
 
             writer = csv.writer(f, **kwargs)
@@ -320,7 +324,7 @@ class Table(utils.Patchable):
             for row in self._rows:
                 writer.writerow(tuple(csv_funcs[i](d) for i, d in enumerate(row)))
         finally:
-            if close:
+            if close and f is not None:
                 f.close()
 
     @classmethod
@@ -460,12 +464,15 @@ class Table(utils.Patchable):
         json_funcs = [c.jsonify for c in self._column_types]
 
         close = True
+        f = None
 
         try:
             if hasattr(path, 'write'):
                 f = path
                 close = False
             else:
+                if os.path.dirname(path) and not os.path.exists(os.path.dirname(path)):
+                    os.makedirs(os.path.dirname(path))
                 f = open(path, 'w')
 
             if six.PY2:
@@ -508,7 +515,7 @@ class Table(utils.Patchable):
 
                 dump_json(output)
         finally:
-            if close:
+            if close and f is not None:
                 f.close()
 
     @allow_tableset_proxy

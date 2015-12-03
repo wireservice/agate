@@ -575,6 +575,22 @@ class TestCSV(AgateTestCase):
             contents2 = f.read()
 
         self.assertEqual(contents1, contents2)
+    
+    def test_to_csv_make_dir(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        table.to_csv('newdir/test.csv')
+
+        with open('newdir/test.csv') as f:
+            contents1 = f.read()
+
+        with open('examples/test.csv') as f:
+            contents2 = f.read()
+
+        self.assertEqual(contents1, contents2)
+
+        os.remove('newdir/test.csv')
+        os.rmdir('newdir/')
 
     def test_print_csv(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -732,6 +748,37 @@ class TestJSON(AgateTestCase):
         with self.assertRaises(ValueError):
             table.to_json(output, key='three', newline=True)
 
+    def test_to_json_file_output(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        table.to_json('.test.json')
+        
+        with open('.test.json') as f1:    
+            js1 = json.load(f1)
+
+        with open('examples/test.json') as f2:
+            js2 = json.load(f2)
+
+        self.assertEqual(js1, js2)
+
+        os.remove('.test.json')
+
+    def test_to_json_make_dir(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        
+        table.to_json('newdir/test.json')
+        
+        with open('newdir/test.json') as f1:    
+            js1 = json.load(f1)
+
+        with open('examples/test.json') as f2:
+            js2 = json.load(f2)
+
+        self.assertEqual(js1, js2)
+
+        os.remove('newdir/test.json')
+        os.rmdir('newdir/')
+        
     def test_print_json(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
