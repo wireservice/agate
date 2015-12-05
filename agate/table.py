@@ -255,6 +255,32 @@ class Table(utils.Patchable):
 
         return Table(rows, column_names, column_types, row_names=row_names, _is_fork=True)
 
+    def _rename(self, column_names=None, row_names=None):
+        """
+        Creates a new table, but uses fork so rows are preserved. Either columns 
+        or rows can optionally be renamed. column_names can be either a sequence 
+        or a dict of replacements. row_names matches interface of Table().
+
+        :param column_names:
+            New column names for the renamed table. If not specified, fork will 
+            use this table's column names.
+        :param row_names:
+            New row names for the renamed table. If not specified, fork will use 
+            this table's row names.
+        """
+        if column_names is None:
+            column_names = self._column_names
+
+        if row_names is None:
+            row_names = self._row_names
+
+        if isinstance(column_names, dict):
+            names_from_dict = [column_names[name] if name in column_names else name for name in self.column_names]
+            
+            return self._fork(self.rows, names_from_dict, self._column_types, row_names=row_names)
+        else:    
+            return self._fork(self.rows, column_names, self._column_types, row_names=row_names)
+
     @classmethod
     def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, **kwargs):
         """

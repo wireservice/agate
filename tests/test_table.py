@@ -1569,3 +1569,19 @@ class TestData(AgateTestCase):
         self.assertIsNot(table2.rows[0], table3.rows[0])
         self.assertNotEqual(table2.rows[0], table3.rows[0])
         self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
+    
+    def test_rename(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        table2 = table._rename(row_names=['a','b','c'])
+        table3 = table._rename(column_names=['d','e','f'])
+
+        self.assertSequenceEqual(table2.row_names, ['a','b','c'])
+        self.assertSequenceEqual(table2.column_names, self.column_names)
+        self.assertIs(table3.row_names, None)
+        self.assertSequenceEqual(table3.column_names, ['d','e','f'])
+        
+    def test_rename_column_names_dict(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        table2 = table._rename(column_names={'two': 'second'})
+
+        self.assertSequenceEqual(table2.column_names, ['one','second','three'])
