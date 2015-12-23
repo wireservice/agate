@@ -108,7 +108,7 @@ In the same way, rows can be accessed either by numeric index or by an optional,
 
 .. code-block:: python
 
-    exonerations = agate.Table.from_csv('exonerations-20150828.csv', columns, row_names=lambda r: '%(last_name)s, %(first_name)s' % (row))
+    exonerations = agate.Table.from_csv('exonerations-20150828.csv', columns, row_names=lambda r: '%(last_name)s, %(first_name)s' % (r))
 
     exonerations.rows[0]
     exonerations.rows['Abbitt, Joseph Lamont']
