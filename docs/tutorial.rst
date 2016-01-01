@@ -358,7 +358,7 @@ What if we were more curious about the *distribution* of ages, rather than the h
 
 .. code-block:: python
 
-    binned_ages = table.bins('age', 10, 0, 100)
+    binned_ages = exonerations.bins('age', 10, 0, 100)
     binned_ages.print_bars('age', 'count', width=80)
 
 ::
