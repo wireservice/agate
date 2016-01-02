@@ -108,7 +108,7 @@ In the same way, rows can be accessed either by numeric index or by an optional,
 
 .. code-block:: python
 
-    exonerations = agate.Table.from_csv('exonerations-20150828.csv', columns, row_names=lambda r: '%(last_name)s, %(first_name)s' % (row))
+    exonerations = agate.Table.from_csv('exonerations-20150828.csv', columns, row_names=lambda r: '%(last_name)s, %(first_name)s' % (r))
 
     exonerations.rows[0]
     exonerations.rows['Abbitt, Joseph Lamont']
@@ -358,7 +358,7 @@ What if we were more curious about the *distribution* of ages, rather than the h
 
 .. code-block:: python
 
-    binned_ages = table.bins('age', 10, 0, 100)
+    binned_ages = exonerations.bins('age', 10, 0, 100)
     binned_ages.print_bars('age', 'count', width=80)
 
 ::
