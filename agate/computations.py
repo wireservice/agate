@@ -29,6 +29,11 @@ from agate.warns import warn_null_calculation
 class Computation(object): #pragma: no cover
     """
     Base class for row-wise computations on a :class:`.Table`.
+
+    When implementing a custom subclass, ensure that the values returned by
+    :meth:`run` are of the type specified by :meth:`get_computed_data_type`.
+    This can be easily ensured by using the :meth:`.DataType.cast` method. See
+    :class:`Formula` for an example.
     """
     def get_computed_data_type(self, table):
         """
@@ -54,16 +59,32 @@ class Computation(object): #pragma: no cover
 class Formula(Computation):
     """
     A simple drop-in computation that can apply any function to rows.
+
+    :param data_type:
+        The data type this formula will return.
+    :param func:
+        The function to be applied to each row. Must return a valid value for
+        the specified data type.
+    :param validate:
+        If ``True``, each return value will be cast to the specified
+        ``data_type`` to ensure it is valid. Only specify false if you are
+        certain your formula always returns the correct type.
     """
-    def __init__(self, data_type, func):
+    def __init__(self, data_type, func, validate=True):
         self._data_type = data_type
         self._func = func
+        self._validate = validate
 
     def get_computed_data_type(self, table):
         return self._data_type
 
     def run(self, row):
-        return self._func(row)
+        v = self._func(row)
+
+        if self._validate:
+            v = self._data_type.cast(v)
+
+        return v
 
 class Change(Computation):
     """

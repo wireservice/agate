@@ -36,6 +36,40 @@ class TestTableComputation(unittest.TestCase):
 
         self.table = Table(self.rows, self.column_names, self.column_types)
 
+    def test_formula(self):
+        new_table = self.table.compute([
+            ('test', Formula(self.number_type, lambda r: r['two'] + r['three']))
+        ])
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', Decimal('2'), Decimal('3'), Decimal('4'), Decimal('5')))
+        self.assertEqual(new_table.columns['test'][0], Decimal('5'))
+        self.assertEqual(new_table.columns['test'][1], Decimal('8'))
+        self.assertEqual(new_table.columns['test'][2], Decimal('6'))
+        self.assertEqual(new_table.columns['test'][3], Decimal('7'))
+
+    def test_formula_invalid(self):
+        with self.assertRaises(CastError):
+            new_table = self.table.compute([
+                ('test', Formula(self.number_type, lambda r: r['one']))
+            ])
+
+    def test_formula_no_validate(self):
+        new_table = self.table.compute([
+            ('test', Formula(self.number_type, lambda r: r['one'], validate=False))
+        ])
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+
+        # Now everything is screwed up
+        self.assertSequenceEqual(new_table.rows[0], ('a', Decimal('2'), Decimal('3'), Decimal('4'), 'a'))
+        self.assertEqual(new_table.columns['test'][0], 'a')
+
     def test_change(self):
         new_table = self.table.compute([
             ('test', Change('two', 'three'))

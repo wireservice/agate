@@ -1,6 +1,7 @@
 1.1.1
 -----
 
+* :class:`.Formula` now automatically casts computed values to specified data type unless ``invalidate`` is set to ``False``. (#398)
 * Added Neil Bedi to AUTHORS.
 * :meth:`.Table.rename` is implemented. (#389)
 * :meth:`.TableSet.to_json` is implemented. (#374)
