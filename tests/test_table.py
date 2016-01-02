@@ -576,6 +576,22 @@ class TestCSV(AgateTestCase):
 
         self.assertEqual(contents1, contents2)
 
+    def test_to_csv_make_dir(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        table.to_csv('newdir/test.csv')
+
+        with open('newdir/test.csv') as f:
+            contents1 = f.read()
+
+        with open('examples/test.csv') as f:
+            contents2 = f.read()
+
+        self.assertEqual(contents1, contents2)
+
+        os.remove('newdir/test.csv')
+        os.rmdir('newdir/')
+
     def test_print_csv(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
@@ -731,6 +747,37 @@ class TestJSON(AgateTestCase):
 
         with self.assertRaises(ValueError):
             table.to_json(output, key='three', newline=True)
+
+    def test_to_json_file_output(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        table.to_json('.test.json')
+
+        with open('.test.json') as f1:
+            js1 = json.load(f1)
+
+        with open('examples/test.json') as f2:
+            js2 = json.load(f2)
+
+        self.assertEqual(js1, js2)
+
+        os.remove('.test.json')
+
+    def test_to_json_make_dir(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        table.to_json('newdir/test.json')
+
+        with open('newdir/test.json') as f1:
+            js1 = json.load(f1)
+
+        with open('examples/test.json') as f2:
+            js2 = json.load(f2)
+
+        self.assertEqual(js1, js2)
+
+        os.remove('newdir/test.json')
+        os.rmdir('newdir/')
 
     def test_print_json(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -1522,3 +1569,43 @@ class TestData(AgateTestCase):
         self.assertIsNot(table2.rows[0], table3.rows[0])
         self.assertNotEqual(table2.rows[0], table3.rows[0])
         self.assertSequenceEqual(table.rows[0], (1, 4, 'a'))
+
+    def test_rename_row_names(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        table2 = table.rename(row_names=['a','b','c'])
+
+        self.assertSequenceEqual(table2.row_names, ['a','b','c'])
+        self.assertSequenceEqual(table2.column_names, self.column_names)
+
+        self.assertIs(table.row_names, None)
+        self.assertSequenceEqual(table.column_names, self.column_names)
+
+    def test_rename_row_names_dict(self):
+        table = Table(self.rows, self.column_names, self.column_types, row_names=['a', 'b', 'c'])
+        table2 = table.rename(row_names={'b': 'd'})
+
+        self.assertSequenceEqual(table2.row_names, ['a', 'd', 'c'])
+        self.assertSequenceEqual(table2.column_names, self.column_names)
+
+        self.assertSequenceEqual(table.row_names, ['a', 'b', 'c'])
+        self.assertSequenceEqual(table.column_names, self.column_names)
+
+    def test_rename_column_names(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        table2 = table.rename(column_names=['d','e','f'])
+
+        self.assertIs(table2.row_names, None)
+        self.assertSequenceEqual(table2.column_names, ['d','e','f'])
+
+        self.assertIs(table.row_names, None)
+        self.assertSequenceEqual(table.column_names, self.column_names)
+
+    def test_rename_column_names_dict(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        table2 = table.rename(column_names={'two': 'second'})
+
+        self.assertIs(table2.row_names, None)
+        self.assertSequenceEqual(table2.column_names, ['one','second','three'])
+
+        self.assertIs(table.row_names, None)
+        self.assertSequenceEqual(table.column_names, self.column_names)

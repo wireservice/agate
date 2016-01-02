@@ -8,6 +8,7 @@ except ImportError: #pragma: no cover
     from decimal import Decimal
 
 import shutil
+import json
 
 try:
     import unittest2 as unittest
@@ -90,6 +91,22 @@ class TestTableSet(AgateTestCase):
 
             with open('examples/tableset/%s.csv' % name) as f:
                 contents2 = f.read()
+
+            self.assertEqual(contents1, contents2)
+
+        shutil.rmtree('.test-tableset')
+
+    def test_to_json(self):
+        tableset = TableSet(self.tables.values(), self.tables.keys())
+
+        tableset.to_json('.test-tableset')
+
+        for name in ['table1', 'table2', 'table3']:
+            with open('.test-tableset/%s.json' % name) as f:
+                contents1 = json.load(f)
+
+            with open('examples/tableset/%s.json' % name) as f:
+                contents2 = json.load(f)
 
             self.assertEqual(contents1, contents2)
 

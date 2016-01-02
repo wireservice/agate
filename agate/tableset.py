@@ -25,12 +25,11 @@ and end up with data grouped across multiple dimensions.
 dimensions.
 """
 
-from collections import Mapping, OrderedDict
-from copy import copy
+from collections import OrderedDict
 from glob import glob
 import os
 
-from agate.data_types import Text, TypeTester
+from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
 from agate.rows import Row
 from agate.table import Table
@@ -169,7 +168,7 @@ class TableSet(MappedSequence, Patchable):
 
     def to_csv(self, dir_path, **kwargs):
         """
-        Write this each table in this set to a separate CSV in a given
+        Write each table in this set to a separate CSV in a given
         directory.
 
         See :meth:`.Table.to_csv` for additional details.
@@ -184,6 +183,24 @@ class TableSet(MappedSequence, Patchable):
             path = os.path.join(dir_path, '%s.csv' % name)
 
             table.to_csv(path, **kwargs)
+
+    def to_json(self, dir_path, **kwargs):
+        """
+        Write each table in this set to a separate JSON file in a given
+        directory.
+
+        See :meth:`.Table.to_json` for additional details.
+
+        :param dir_path:
+            Path to the directory to write the JSON files to.
+        """
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
+        for name, table in self.items():
+            path = os.path.join(dir_path, '%s.json' % name)
+
+            table.to_json(path, **kwargs)
 
     @property
     def column_types(self):

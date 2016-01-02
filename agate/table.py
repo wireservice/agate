@@ -26,6 +26,7 @@ from copy import copy
 from itertools import chain
 import json
 import sys
+import os.path
 
 try:
     from cdecimal import Decimal
@@ -254,6 +255,27 @@ class Table(utils.Patchable):
 
         return Table(rows, column_names, column_types, row_names=row_names, _is_fork=True)
 
+    def rename(self, column_names=None, row_names=None):
+        """
+        Creates a copy of this table with different column or row names.
+
+        :param column_names:
+            New column names for the renamed table. May be either an array or
+            a dictionary mapping existing column names to new names. If not
+            specified, will use this table's existing column names.
+        :param row_names:
+            New row names for the renamed table. May be either an array or
+            a dictionary mapping existing row names to new names. If not
+            specified, will use this table's existing row names.
+        """
+        if isinstance(column_names, dict):
+            column_names = [column_names[name] if name in column_names else name for name in self.column_names]
+
+        if isinstance(row_names, dict):
+            row_names = [row_names[name] if name in row_names else name for name in self.row_names]
+
+        return self._fork(self.rows, column_names, self._column_types, row_names=row_names)
+
     @classmethod
     def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, **kwargs):
         """
@@ -304,12 +326,18 @@ class Table(utils.Patchable):
             kwargs['lineterminator'] = '\n'
 
         close = True
+        f = None
 
         try:
             if hasattr(path, 'write'):
                 f = path
                 close = False
             else:
+                dirpath = os.path.dirname(path)
+
+                if dirpath and not os.path.exists(dirpath):
+                    os.makedirs(dirpath)
+
                 f = open(path, 'w')
 
             writer = csv.writer(f, **kwargs)
@@ -320,7 +348,7 @@ class Table(utils.Patchable):
             for row in self._rows:
                 writer.writerow(tuple(csv_funcs[i](d) for i, d in enumerate(row)))
         finally:
-            if close:
+            if close and f is not None:
                 f.close()
 
     @classmethod
@@ -457,15 +485,21 @@ class Table(utils.Patchable):
         if six.PY2:
             json_kwargs['encoding'] = 'utf-8'
 
+        # Pass remaining kwargs through to JSON encoder
+        json_kwargs.update(kwargs)
+
         json_funcs = [c.jsonify for c in self._column_types]
 
         close = True
+        f = None
 
         try:
             if hasattr(path, 'write'):
                 f = path
                 close = False
             else:
+                if os.path.dirname(path) and not os.path.exists(os.path.dirname(path)):
+                    os.makedirs(os.path.dirname(path))
                 f = open(path, 'w')
 
             if six.PY2:
@@ -508,7 +542,7 @@ class Table(utils.Patchable):
 
                 dump_json(output)
         finally:
-            if close:
+            if close and f is not None:
                 f.close()
 
     @allow_tableset_proxy
