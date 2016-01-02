@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from setuptools import setup
-import sys
 
 install_requires = [
     'six>=1.6.1',

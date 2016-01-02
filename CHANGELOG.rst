@@ -1,6 +1,7 @@
 1.1.1
 -----
 
+* :class:`.Boolean` will not correctly cast numerical ``0`` and ``1``. (#386)
 * :meth:`.Table.merge` now consistently maps column names to rows. (#402)
 
 1.1.0 - November 4, 2015

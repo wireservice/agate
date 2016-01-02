@@ -52,8 +52,12 @@ class TestBoolean(unittest.TestCase):
         self.assertEqual(self.type.test('N/A'), True)
         self.assertEqual(self.type.test(True), True)
         self.assertEqual(self.type.test('True'), True)
-        self.assertEqual(self.type.test(1), False)
-        self.assertEqual(self.type.test(Decimal('1')), False)
+        self.assertEqual(self.type.test('1'), True)
+        self.assertEqual(self.type.test(1), True)
+        self.assertEqual(self.type.test(Decimal('1')), True)
+        self.assertEqual(self.type.test('0'), True)
+        self.assertEqual(self.type.test(0), True)
+        self.assertEqual(self.type.test(Decimal('0')), True)
         self.assertEqual(self.type.test('2.7'), False)
         self.assertEqual(self.type.test(2.7), False)
         self.assertEqual(self.type.test('3/1/1994'), False)
@@ -65,9 +69,9 @@ class TestBoolean(unittest.TestCase):
         self.assertEqual(self.type.test('a'), False)
 
     def test_cast(self):
-        values = (True, 'yes', None, False, 'no', 'n/a')
+        values = (True, 'yes', None, False, 'no', 'n/a', '1', 0)
         casted = tuple(self.type.cast(v) for v in values)
-        self.assertSequenceEqual(casted, (True, True, None, False, False, None))
+        self.assertSequenceEqual(casted, (True, True, None, False, False, None, True, False))
 
     def test_cast_custom_strings(self):
         values = ('a', 'b', 'c', 'd', 'e', 'f')

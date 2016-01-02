@@ -1,19 +1,27 @@
 #!/usr/bin/env python
 
+try:
+    from cdecimal import Decimal
+except ImportError: #pragma: no cover
+    from decimal import Decimal
+
 import six
 
 from agate.data_types.base import DataType, DEFAULT_NULL_VALUES
 from agate.exceptions import CastError
 
 #: Default values which will be automatically cast to :code:`True`.
-DEFAULT_TRUE_VALUES = ('yes', 'y', 'true', 't')
+DEFAULT_TRUE_VALUES = ('yes', 'y', 'true', 't', '1')
 
 #: Default values which will be automatically cast to :code:`False`.
-DEFAULT_FALSE_VALUES = ('no', 'n', 'false', 'f')
+DEFAULT_FALSE_VALUES = ('no', 'n', 'false', 'f', '0')
 
 class Boolean(DataType):
     """
     Data type representing boolean values.
+
+    Note: numerical `1` and `0` are considered valid boolean values, but no
+    other numbers are.
 
     :param true_values: A sequence of values which should be cast to
         :code:`True` when encountered with this type.
@@ -37,6 +45,11 @@ class Boolean(DataType):
             return d
         elif type(d) is bool and type(d) is not int:
             return d
+        elif type(d) is int or isinstance(d, Decimal):
+            if d == 1:
+                return True
+            elif d == 0:
+                return False
         elif isinstance(d, six.string_types):
             d = d.replace(',' ,'').strip()
 
