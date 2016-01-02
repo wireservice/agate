@@ -62,10 +62,6 @@ class TestTableComputation(unittest.TestCase):
             ('test', Formula(self.number_type, lambda r: r['one'], validate=False))
         ])
 
-        self.assertIsNot(new_table, self.table)
-        self.assertEqual(len(new_table.rows), 4)
-        self.assertEqual(len(new_table.columns), 5)
-
         # Now everything is screwed up
         self.assertSequenceEqual(new_table.rows[0], ('a', Decimal('2'), Decimal('3'), Decimal('4'), 'a'))
         self.assertEqual(new_table.columns['test'][0], 'a')

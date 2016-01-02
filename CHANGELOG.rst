@@ -1,6 +1,7 @@
 1.1.1
 -----
 
+* :meth:`.Table.merge` now accepts a ``row_names`` argument. (#403)
 * :class:`.Formula` now automatically casts computed values to specified data type unless ``invalidate`` is set to ``False``. (#398)
 * Added Neil Bedi to AUTHORS.
 * :meth:`.Table.rename` is implemented. (#389)

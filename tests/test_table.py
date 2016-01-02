@@ -1493,10 +1493,17 @@ class TestMerge(AgateTestCase):
 
     def test_merge_with_row_names(self):
         table_a = Table(self.rows, self.column_names, self.column_types, row_names='three')
-        table_b = Table(self.rows, self.column_names, self.column_types)
-        table_c = Table.merge([table_a, table_b])
 
-        self.assertRowNames(table_c, table_a.row_names)
+        b_rows = (
+            (1, 4, 'd'),
+            (2, 3, 'e'),
+            (None, 2, 'f')
+        )
+
+        table_b = Table(b_rows, self.column_names, self.column_types, row_names='three')
+        table_c = Table.merge([table_a, table_b], row_names='three')
+
+        self.assertRowNames(table_c, ['a', 'b', 'c', 'd', 'e', 'f'])
 
 class TestData(AgateTestCase):
     def setUp(self):

@@ -41,7 +41,6 @@ from six.moves import range, zip #pylint: disable=W0622
 from agate.aggregations import Min, Max
 from agate.columns import Column
 from agate.data_types import TypeTester, DataType, Text, Number
-from agate.computations import Computation
 from agate.mapped_sequence import MappedSequence
 from agate.preview import print_table, print_bars
 from agate.rows import Row
@@ -90,7 +89,9 @@ class Table(utils.Patchable):
         optional. If specified it may be 1) the name of a single column that
         contains a unique identifier for each row, 2) a key function that takes
         a :class:`.Row` and returns a unique identifier or 3) a sequence of
-        unique identifiers of the same length as the sequence of rows.
+        unique identifiers of the same length as the sequence of rows. The
+        uniqueness of resulting identifiers is not validated, so be certain
+        the values you provide are truly unique.
     :param _is_fork:
         Used internally to skip certain validation steps when data
         is propagated from an existing table. When :code:`True`, rows are
@@ -847,15 +848,20 @@ class Table(utils.Patchable):
         return self._fork(rows, column_names, column_types, row_names=row_names)
 
     @classmethod
-    def merge(cls, tables):
+    def merge(cls, tables, row_names=None):
         """
         Merge an array of tables with identical columns into a single table.
         Each table must have exactly the same column types. Their column names
         need not be identical. The first table's column names will be the ones
         which are used.
 
+        Row names will be lost, but new row names can be specified with the
+        `row_names` argument.
+
         :param tables:
             An sequence of :class:`Table` instances.
+        :param row_names:
+            See :class:`Table` for the usage of this parameter.
         :returns:
             A new :class:`Table`.
         """
@@ -875,7 +881,7 @@ class Table(utils.Patchable):
                 for row in table.rows:
                     rows.append(Row(row.values(), column_names))
 
-        return Table(rows, column_names, column_types, row_names=tables[0].row_names, _is_fork=True)
+        return Table(rows, column_names, column_types, row_names=row_names, _is_fork=True)
 
     @allow_tableset_proxy
     def group_by(self, key, key_name=None, key_type=None):
