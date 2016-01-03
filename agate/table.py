@@ -547,22 +547,38 @@ class Table(utils.Patchable):
                 f.close()
 
     @allow_tableset_proxy
-    def select(self, selected_names):
+    def select(self, selected_column_names):
         """
-        Reduce this table to only the specified columns.
+        Create a new table with the same rows as this one, but only those
+        columns in the ``selected_column_names`` sequence.
 
-        :param selected_names:
+        :param selected_column_names:
             A sequence of names of columns to include in the new table.
         :returns:
             A new :class:`Table`.
         """
-        column_types = [self.columns[name].data_type for name in selected_names]
+        column_types = [self.columns[name].data_type for name in selected_column_names]
         new_rows = []
 
         for row in self._rows:
-            new_rows.append(Row(tuple(row[n] for n in selected_names), selected_names))
+            new_rows.append(Row(tuple(row[n] for n in selected_column_names), selected_column_names))
 
-        return self._fork(new_rows, selected_names, column_types)
+        return self._fork(new_rows, selected_column_names, column_types)
+
+    @allow_tableset_proxy
+    def reject(self, rejected_column_names):
+        """
+        Create a new table with the same rows as this one, but only columns
+        not in the ``rejected_column_names`` sequence.
+
+        :param rejected_column_names:
+            A sequence of names of columns to exclude from the new table.
+        :returns:
+            A new :class:`Table`.
+        """
+        selected_column_names = [n for n in self._column_names if n not in rejected_column_names]
+
+        return self.select(selected_column_names)
 
     @allow_tableset_proxy
     def where(self, test):
