@@ -19,8 +19,7 @@ from agate import Table, TableSet
 from agate.aggregations import *
 from agate.data_types import *
 from agate.computations import Formula
-
-from tests.testcase import AgateTestCase
+from agate.testcase import AgateTestCase
 
 class TestTableSet(AgateTestCase):
     def setUp(self):

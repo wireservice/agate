@@ -24,8 +24,7 @@ from agate.aggregations import Length, Sum
 from agate.data_types import *
 from agate.computations import Formula
 from agate.exceptions import DataTypeError
-
-from tests.testcase import AgateTestCase
+from agate.testcase import AgateTestCase
 
 class TestBasic(AgateTestCase):
     def setUp(self):

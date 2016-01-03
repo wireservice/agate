@@ -1,6 +1,7 @@
 1.1.1
 -----
 
+* :class:`.AgateTestCase` is available as ``agate.testcase.AgateTestCase`` for extensions to use. (#384)
 * :meth:`.Table.reject` implemented. Opposite of :meth:`.Table.select`. (#388)
 * :meth:`.Table.merge` now accepts a ``row_names`` argument. (#403)
 * :class:`.Formula` now automatically casts computed values to specified data type unless ``invalidate`` is set to ``False``. (#398)
