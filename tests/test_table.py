@@ -211,10 +211,10 @@ class TestBasic(AgateTestCase):
         with self.assertRaises(KeyError):
             table.select(('four',))
 
-    def test_reject(self):
+    def test_exclude(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        new_table = table.reject(('one', 'two'))
+        new_table = table.exclude(('one', 'two'))
 
         self.assertIsNot(new_table, table)
 
@@ -226,9 +226,9 @@ class TestBasic(AgateTestCase):
             [u'👍']
         ])
 
-    def test_reject_with_row_names(self):
+    def test_exclude_with_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
-        new_table = table.reject(('one', 'two'))
+        new_table = table.exclude(('one', 'two'))
 
         self.assertRowNames(new_table, ['a', 'b', u'👍'])
 

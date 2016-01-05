@@ -20,10 +20,6 @@ To simulate Underscore's :code:`reject`, simply negate the return value of the f
 
     new_table = table.where(lambda row: not (row['state'] == 'Texas'))
 
-.. note::
-
-    agate also has a :meth:`.Table.reject` method which is the opposite of :meth:`.Table.select`. This naming confusion is an unfortunante compromise.
-
 find
 ====
 
