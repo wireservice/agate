@@ -22,6 +22,23 @@ class Date(DataType):
 
         self.date_format = date_format
         self.parser = parsedatetime.Calendar()
+        
+    def __getstate__(self):
+        """
+        Return state values to be pickled. Exclude _parser because parsedatetime 
+        cannot be pickled.
+        """
+        odict = self.__dict__.copy()
+        del odict['parser']
+        return odict
+
+    def __setstate__(self, dict):
+        """
+        Restore state from the unpickled state values. Set _parser to an instance 
+        of the parsedatetime Calendar class.
+        """
+        self.__dict__.update(dict)
+        self.parser = parsedatetime.Calendar()
 
     def cast(self, d):
         """
