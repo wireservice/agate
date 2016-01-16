@@ -3,6 +3,8 @@
 
 import datetime
 from decimal import Decimal
+import pickle
+import parsedatetime
 
 try:
     import unittest2 as unittest
@@ -199,6 +201,11 @@ class TestDate(unittest.TestCase):
         with self.assertRaises(CastError):
             self.type.cast('quack')
 
+    def test_pickle_parser(self):
+        from_pickle = pickle.loads(pickle.dumps(self.type))
+        self.assertEqual(from_pickle.date_format, self.type.date_format)
+        self.assertIsInstance(from_pickle.parser, parsedatetime.Calendar)
+
 class TestDateTime(unittest.TestCase):
     def setUp(self):
         self.type = DateTime()
@@ -276,6 +283,13 @@ class TestDateTime(unittest.TestCase):
     def test_cast_error(self):
         with self.assertRaises(CastError):
             self.type.cast('quack')
+
+    def test_pickle_parser(self):
+        from_pickle = pickle.loads(pickle.dumps(self.type))
+        self.assertEqual(from_pickle.datetime_format, self.type.datetime_format)
+        self.assertEqual(from_pickle.timezone, self.type.timezone)
+        self.assertEqual(from_pickle._source_time, self.type._source_time)
+        self.assertIsInstance(from_pickle._parser, parsedatetime.Calendar)
 
 class TestTimeDelta(unittest.TestCase):
     def setUp(self):
