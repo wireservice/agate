@@ -1,6 +1,8 @@
 1.1.1
 -----
 
+* Printing a table (or using repr) will now print the table's structure.
+* :meth:`.Table.print_structure` implemented. (#393)
 * :meth:`.Table._repr_html` implemented. Jupyter notebooks will now render tables as HTML. (#413)
 * :meth:`.Table.print_html` implemented. (#408)
 * Instances of :class:`.Date` and :class:`.DateTime` can now be pickled. (#362)

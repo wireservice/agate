@@ -256,6 +256,16 @@ class Table(utils.Patchable):
 
         return Table(rows, column_names, column_types, row_names=row_names, _is_fork=True)
 
+    def __repr__(self):
+        """
+        Print the table's structure.
+        """
+        structure = six.StringIO()
+
+        self.print_structure(output=structure)
+
+        return structure.getvalue()
+
     def _repr_html_(self):
         """
         Print HTML version of the table automatically in Jupyter.
