@@ -42,11 +42,7 @@ from agate.aggregations import Min, Max
 from agate.columns import Column
 from agate.data_types import TypeTester, DataType, Text, Number
 from agate.mapped_sequence import MappedSequence
-<<<<<<< HEAD
-from agate.preview import print_table, print_html, print_bars
-=======
-from agate.preview import print_table, print_bars, print_structure
->>>>>>> 82ebcdf817718027eab6d3eac950423741e8f461
+from agate.preview import print_table, print_html, print_bars, print_structure
 from agate.rows import Row
 from agate import utils
 
@@ -1238,7 +1234,7 @@ class Table(utils.Patchable):
         """
         print_bars(self, label_column_name, value_column_name, domain, width, output)
 
-    def print_structure(self):
+    def print_structure(self, output=sys.stdout):
         """
         Print the column names and their respective types
 
@@ -1251,4 +1247,4 @@ class Table(utils.Patchable):
         :returns:
             None
         """
-        print_structure(self)
+        print_structure(self, output)

@@ -1126,6 +1126,15 @@ class TestPrettyPrint(AgateTestCase):
         with self.assertRaises(DataTypeError):
             table.print_bars('one', 'three')
 
+    def test_print_structure(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = six.StringIO()
+        table.print_structure(output=output)
+        lines = output.getvalue().strip().split('\n')
+
+        self.assertEqual(len(lines), 7)
+
 class TestGrouping(AgateTestCase):
     def setUp(self):
         self.rows = (
