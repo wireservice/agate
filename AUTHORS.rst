@@ -12,3 +12,4 @@ agate is the product of a community. The following individuals have contributed 
 * `Robin Linderborg <https://github.com/vienno>`_
 * `Chris Keller <https://github.com/chrislkeller>`_
 * `Neil Bedi <https://github.com/nbedi>`_
+* `Geoffrey Hing <https://github.com/ghing>`_

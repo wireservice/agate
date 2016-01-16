@@ -42,7 +42,7 @@ from agate.aggregations import Min, Max
 from agate.columns import Column
 from agate.data_types import TypeTester, DataType, Text, Number
 from agate.mapped_sequence import MappedSequence
-from agate.preview import print_table, print_bars
+from agate.preview import print_table, print_html, print_bars
 from agate.rows import Row
 from agate import utils
 
@@ -257,29 +257,16 @@ class Table(utils.Patchable):
         return Table(rows, column_names, column_types, row_names=row_names, _is_fork=True)
 
     def _repr_html_(self):
-        html = []
+        """
+        Print HTML version of the table automatically in Jupyter.
 
-        html.append('<table>')
-        html.append('<thead>')
-        html.append('<tr>')
-        for col in self.column_names:
-            html.append('<th>')
-            html.append(col)
-            html.append('</th>')
-        html.append('</tr>')
-        html.append('</thead>')
-        html.append('<tbody>')
-        for row in self.rows:
-            html.append('<tr>')
-            for col in row:
-                html.append('<td>')
-                html.append(six.text_type(col))
-                html.append('</td>')
-            html.append('</tr>')
-        html.append('</tbody>')
-        html.append('</table>')
+        See http://ipython.readthedocs.org/en/stable/config/integrating.html?highlight=_repr_html_#rich-display
+        """
+        html = six.StringIO()
 
-        return ''.join(html)
+        self.print_html(output=html)
+
+        return html.getvalue()
 
     def rename(self, column_names=None, row_names=None):
         """
@@ -1193,6 +1180,20 @@ class Table(utils.Patchable):
             A file-like object to print to. Defaults to :code:`sys.stdout`.
         """
         print_table(self, max_rows, max_columns, output)
+
+    def print_html(self, max_rows=None, max_columns=None, output=sys.stdout):
+        """
+        Print an HTML-formatted preview of this table to the console or any
+        other output.
+
+        :param max_rows:
+            The maximum number of rows to display before truncating the data.
+        :param max_columns:
+            The maximum number of columns to display before truncating the data.
+        :param output:
+            A file-like object to print to. Defaults to :code:`sys.stdout`.
+        """
+        print_html(self, max_rows, max_columns, output)
 
     def print_csv(self, **kwargs):
         """

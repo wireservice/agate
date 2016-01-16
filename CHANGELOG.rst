@@ -1,6 +1,8 @@
 1.1.1
 -----
 
+* :meth:`.Table._repr_html` implemented. Jupyter notebooks will now render tables as HTML. (#413)
+* :meth:`.Table.print_html` implemented. (#408)
 * Instances of :class:`.Date` and :class:`.DateTime` can now be pickled. (#362)
 * :class:`.AgateTestCase` is available as ``agate.testcase.AgateTestCase`` for extensions to use. (#384)
 * :meth:`.Table.exclude` implemented. Opposite of :meth:`.Table.select`. (#388)

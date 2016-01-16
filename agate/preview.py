@@ -13,7 +13,7 @@ import sys
 from babel.numbers import format_decimal
 import six
 
-from agate.aggregations import Min, Max, MaxLength
+from agate.aggregations import Min, Max
 from agate.data_types import Number, Text
 from agate.exceptions import DataTypeError
 from agate.utils import max_precision, make_number_formatter, round_limits
@@ -38,7 +38,7 @@ ELLIPSIS = u'...'
 
 def print_table(table, max_rows=None, max_columns=None, output=sys.stdout):
     """
-    See :meth:`.Table.pretty_print` for documentation.
+    See :meth:`.Table.print_table` for documentation.
     """
     if max_rows is None:
         max_rows = len(table.rows)
@@ -137,6 +137,51 @@ def print_table(table, max_rows=None, max_columns=None, output=sys.stdout):
 
     # Final divider
     write(divider)
+
+def print_html(table, max_rows=None, max_columns=None, output=sys.stdout):
+    """
+    See :meth:`.Table.print_html` for documentation.
+    """
+    if max_rows is None:
+        max_rows = len(table.rows)
+
+    if max_columns is None:
+        max_columns = len(table.columns)
+
+    output.write('<table>')
+    output.write('<thead>')
+    output.write('<tr>')
+
+    for i, col in enumerate(table.column_names):
+        if i >= max_columns:
+            break
+
+        output.write('<th>')
+        output.write(col)
+        output.write('</th>')
+
+    output.write('</tr>')
+    output.write('</thead>')
+    output.write('<tbody>')
+
+    for i, row in enumerate(table.rows):
+        if i >= max_rows:
+            break
+
+        output.write('<tr>')
+
+        for i, col in enumerate(row):
+            if i >= max_columns:
+                break
+
+            output.write('<td>')
+            output.write(six.text_type(col))
+            output.write('</td>')
+
+        output.write('</tr>')
+
+    output.write('</tbody>')
+    output.write('</table>')
 
 def print_bars(table, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout):
     """

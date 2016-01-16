@@ -1640,12 +1640,15 @@ class TestData(AgateTestCase):
 
 
 class TableHTMLParser(html_parser.HTMLParser):
-    """Parser for use in testing HTML rendering of tables"""
+    """
+    Parser for use in testing HTML rendering of tables.
+    """
     def __init__(self, *args, **kwargs):
         html_parser.HTMLParser.__init__(self, *args, **kwargs)
-        self.has_table = False 
-        self.has_thead = False 
-        self.has_tbody = False 
+
+        self.has_table = False
+        self.has_thead = False
+        self.has_tbody = False
         self.header_rows = []
         self.body_rows = []
         self._in_table = False
@@ -1684,13 +1687,13 @@ class TableHTMLParser(html_parser.HTMLParser):
         if tag == 'thead':
             if self._in_thead:
                 self.has_thead = True
-            self._in_thead = False    
+            self._in_thead = False
             return
 
         if tag == 'tbody':
             if self._in_tbody:
                 self.has_tbody = True
-            self._in_tbody = False    
+            self._in_tbody = False
             return
 
         if tag == 'tr':
@@ -1698,11 +1701,11 @@ class TableHTMLParser(html_parser.HTMLParser):
                 self.body_rows.append(self._current_row)
             elif self._in_thead:
                 self.header_rows.append(self._current_row)
-            
+
             return
 
         if tag in ('td', 'th'):
-            self._in_cell = False 
+            self._in_cell = False
             return
 
     def handle_data(self, data):
@@ -1710,14 +1713,9 @@ class TableHTMLParser(html_parser.HTMLParser):
             self._current_row.append(data)
             return
 
-
 class TestRichDisplay(AgateTestCase):
     """
-    Test support for IPython rich display
-
-    See
-    http://ipython.readthedocs.org/en/stable/config/integrating.html?highlight=_repr_html_#rich-display
-
+    Test support for IPython rich display.
     """
     def setUp(self):
         self.rows = (
@@ -1732,28 +1730,34 @@ class TestRichDisplay(AgateTestCase):
         self.column_names = ['one', 'two', 'three']
         self.column_types = [self.number_type, self.number_type, self.text_type]
 
-
     def test_repr_html(self):
         """
         Test display of HTML table in IPython using _repr_html_()
-        
         """
         table = Table(self.rows, self.column_names, self.column_types)
         table_html = table._repr_html_()
+        print(table_html)
+
         parser = TableHTMLParser()
         parser.feed(table_html)
+
         self.assertIs(parser.has_table, True)
         self.assertIs(parser.has_tbody, True)
         self.assertIs(parser.has_thead, True)
         self.assertEqual(len(parser.header_rows), 1)
         self.assertEqual(len(parser.body_rows), len(table.rows))
+
         header_cols = parser.header_rows[0]
+
         self.assertEqual(len(header_cols), len(table.column_names))
-        for i, column_name in enumerate(table.column_names): 
+
+        for i, column_name in enumerate(table.column_names):
             self.assertEqual(header_cols[i], column_name)
 
         for row_num, row in enumerate(table.rows):
             html_row = parser.body_rows[row_num]
+
             self.assertEqual(len(html_row), len(row))
+
             for i, col in enumerate(row):
                 self.assertEqual(six.text_type(col), html_row[i])
