@@ -256,6 +256,31 @@ class Table(utils.Patchable):
 
         return Table(rows, column_names, column_types, row_names=row_names, _is_fork=True)
 
+    def _repr_html_(self):
+        html = []
+
+        html.append('<table>')
+        html.append('<thead>')
+        html.append('<tr>')
+        for col in self.column_names:
+            html.append('<th>')
+            html.append(col)
+            html.append('</th>')
+        html.append('</tr>')
+        html.append('</thead>')
+        html.append('<tbody>')
+        for row in self.rows:
+            html.append('<tr>')
+            for col in row:
+                html.append('<td>')
+                html.append(six.text_type(col))
+                html.append('</td>')
+            html.append('</tr>')
+        html.append('</tbody>')
+        html.append('</table>')
+
+        return ''.join(html)
+
     def rename(self, column_names=None, row_names=None):
         """
         Creates a copy of this table with different column or row names.
