@@ -6,9 +6,7 @@ agate.
 """
 
 from collections import OrderedDict, Sequence
-import datetime
 from functools import wraps
-import json
 import string
 
 try:
