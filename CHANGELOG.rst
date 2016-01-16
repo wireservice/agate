@@ -1,6 +1,7 @@
 1.1.1
 -----
 
+* Instances of :class:`.Date` and :class:`.DateTime` can now be pickled. (#362)
 * :class:`.AgateTestCase` is available as ``agate.testcase.AgateTestCase`` for extensions to use. (#384)
 * :meth:`.Table.exclude` implemented. Opposite of :meth:`.Table.select`. (#388)
 * :meth:`.Table.merge` now accepts a ``row_names`` argument. (#403)
