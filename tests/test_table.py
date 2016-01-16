@@ -1031,6 +1031,39 @@ class TestPrettyPrint(AgateTestCase):
         self.assertEqual(len(lines), 8)
         self.assertEqual(len(lines[0]), 23)
 
+    def test_print_html(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = six.StringIO()
+        table.print_html(output=output)
+        html = output.getvalue()
+
+        self.assertEqual(html.count('<tr>'), 4)
+        self.assertEqual(html.count('<th>'), 3)
+        self.assertEqual(html.count('<td>'), 9)
+
+    def test_print_html_max_rows(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = six.StringIO()
+        table.print_html(max_rows=2, output=output)
+        html = output.getvalue()
+
+        self.assertEqual(html.count('<tr>'), 3)
+        self.assertEqual(html.count('<th>'), 3)
+        self.assertEqual(html.count('<td>'), 6)
+
+    def test_print_html_max_columns(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = six.StringIO()
+        table.print_html(max_columns=2, output=output)
+        html = output.getvalue()
+
+        self.assertEqual(html.count('<tr>'), 4)
+        self.assertEqual(html.count('<th>'), 2)
+        self.assertEqual(html.count('<td>'), 6)
+
     def test_print_bars(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
