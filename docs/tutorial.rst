@@ -86,6 +86,40 @@ The dataset we are using in this tutorial is simple enough that we can rely on t
 
     agate also has :meth:`.Table.from_json` for creating tables from JSON data.
 
+Describing the table
+====================
+
+If you're working with new data, or you just need a refresher, you may want to see what columns are in it and their types. You can do this with the :meth:`.Table.print_structure` method or by just calling :func:`print` on the table:
+
+.. code-block:: python
+
+    print(exonerations)
+
+::
+
+    |----------------------+---------------|
+    |  column_names        | column_types  |
+    |----------------------+---------------|
+    |  last_name           | Text          |
+    |  first_name          | Text          |
+    |  age                 | Number        |
+    |  race                | Text          |
+    |  state               | Text          |
+    |  tags                | Text          |
+    |  crime               | Text          |
+    |  sentence            | Text          |
+    |  convicted           | Number        |
+    |  exonerated          | Number        |
+    |  dna                 | Boolean       |
+    |  dna_essential       | Text          |
+    |  mistake_witness     | Boolean       |
+    |  false_confession    | Boolean       |
+    |  perjury             | Boolean       |
+    |  false_evidence      | Boolean       |
+    |  official_misconduct | Boolean       |
+    |  inadequate_defense  | Boolean       |
+    |----------------------+---------------|
+
 Navigating table data
 =====================
 

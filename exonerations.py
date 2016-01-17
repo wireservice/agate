@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-from collections import OrderedDict
-import csv
-
 import agate
 import proof
 

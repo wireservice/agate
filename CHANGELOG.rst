@@ -18,7 +18,7 @@
 * :meth:`.Table.rename` is implemented. (#389)
 * :meth:`.TableSet.to_json` is implemented. (#374)
 * :meth:`.Table.to_csv` and :meth:`.Table.to_json` will now create the target directory if it does not exist. (#392)
-* :class:`.Boolean` will not correctly cast numerical ``0`` and ``1``. (#386)
+* :class:`.Boolean` will now correctly cast numerical ``0`` and ``1``. (#386)
 * :meth:`.Table.merge` now consistently maps column names to rows. (#402)
 
 1.1.0 - November 4, 2015
