@@ -16,6 +16,7 @@ data in each row. If this is still not suitable, :class:`Computation` can be
 subclassed to fully customize it's behavior.
 """
 
+import decimal
 import six
 
 if six.PY3:
@@ -215,7 +216,7 @@ class Rank(Computation):
             if c in self._ranks:
                 continue
 
-            self._ranks[c] = rank
+            self._ranks[c] = decimal.Decimal(rank)
 
     def run(self, row):
         """

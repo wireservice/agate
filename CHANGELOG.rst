@@ -1,6 +1,7 @@
 1.1.1
 -----
 
+* Fix :class:`.Rank` so it returns Decimal. (#411)
 * Added Taurus Olson to AUTHORS.
 * Printing a table will now print the table's structure.
 * :meth:`.Table.print_structure` implemented. (#393)
