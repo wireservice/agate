@@ -12,6 +12,7 @@ import sys
 
 from babel.numbers import format_decimal
 import six
+from six.moves import zip
 
 from agate.aggregations import Min, Max
 from agate.data_types import Number, Text
@@ -382,82 +383,48 @@ def print_structure(table, output=sys.stdout):
         Helper function that formats individual rows.
 
         :param formatted_row:
-            A list of strings representing the cells of a row
-
+            A list of strings representing the cells of a row.
         :returns:
-            A string representing the final row of the table
+            A string representing the final row of the table.
         """
         line = VERTICAL_LINE.join(formatted_row)
+
         return '%s %s %s' % (VERTICAL_LINE, line, VERTICAL_LINE)
 
-    def max_width_column(values, name):
+    def _max_width(values, column_name):
         """
-        Return the max column width.
+        Return the width necessary to contain the longest column value.
 
         :param values:
-            The values in a column
+            The values in a column.
         :param name:
-            The name of the column
+            The name of the column.
         :returns:
-            The size of the longest string in the column
+            The length of the longest string in the column.
         """
-        max_width_column = max(len(value) for value in values)
-        return max(max_width_column, len(name))
+        return max(max(len(value) for value in values), len(column_name))
 
-    def analyze_column_names(table):
-        """
-        Analyze the names of the column in the given :class:`Table` instance.
+    column_names = [n for n in table.column_names]
+    column_types = [t.__class__.__name__ for t in table.column_types]
 
-        :param table:
-            A :class:`Table` instance.
-        :returns:
-            The list of column names and the size of the longest column name.
-        """
-        column_names = [n for n in table.column_names]
-        max_column_name_width = max_width_column(column_names, "column_names")
-        return column_names, max_column_name_width
+    column_name_width = _max_width(column_names, 'column_names')
+    column_type_width = _max_width(column_types, 'column_types')
 
-    def analyze_column_types(table):
-        """
-        Analyze the types of the column in the given :class:`Table` instance.
+    header = [
+        ' column_names '.ljust(column_name_width + 2),
+        ' column_types '.ljust(column_type_width + 2)
+    ]
 
-        :param table:
-            A :class:`Table` instance.
-        :returns:
-            The list of column types and the size of the longest column type.
-        """
-        column_types = [t.__class__.__name__ for t in table.column_types]
-        max_column_type_width = max_width_column(column_types, 'column_types')
-        return column_types, max_column_type_width
-
-    def format_rows(table):
-        """
-        Format the rows of the table.
-
-        :param table:
-            A :class:`Table` instance.
-        :returns:
-            A list of pairs (column_names, column_types)
-        """
-        column_names, max_column_name_width = analyze_column_names(table)
-        column_types, max_column_type_width = analyze_column_types(table)
-        formatted_column_names = (" %s " % n.ljust(max_column_name_width) for n in column_names)
-        formatted_column_types = (" %s " % t.ljust(max_column_type_width) for t in column_types)
-        return zip(formatted_column_names, formatted_column_types)
-
-    _, max_column_name_width = analyze_column_names(table)
-    _, max_column_type_width = analyze_column_types(table)
-
-    header = [' column_names '.ljust(max_column_name_width+2),
-              ' column_types '.ljust(max_column_type_width+2)]
-
-    divider = '|--%s--|' % '-+-'.join('-' * w for w in (max_column_name_width, max_column_type_width))
+    divider = '|--%s--|' % '-+-'.join('-' * w for w in (column_name_width, column_type_width))
 
     write(divider)
     write(_print_row(header))
     write(divider)
 
-    for formatted_row in format_rows(table):
+    formatted_column_names = (' %s ' % n.ljust(column_name_width) for n in column_names)
+    formatted_column_types = (' %s ' % t.ljust(column_type_width) for t in column_types)
+
+    for formatted_row in zip(formatted_column_names, formatted_column_types):
         write(_print_row(formatted_row))
 
     write(divider)
