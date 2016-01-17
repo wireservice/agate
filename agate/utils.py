@@ -10,9 +10,9 @@ from functools import wraps
 import string
 
 try:
-    from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING
+    from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING, getcontext
 except ImportError: #pragma: no cover
-    from decimal import Decimal, ROUND_FLOOR, ROUND_CEILING
+    from decimal import Decimal, ROUND_FLOOR, ROUND_CEILING, getcontext
 
 import six
 
@@ -138,18 +138,31 @@ def max_precision(values):
     :param values:
         The values to analyze.
     """
-    max_places = 0
+    max_whole_places = 1
+    max_decimal_places = 0
+    precision = getcontext().prec
 
-    for i, value in enumerate(values):
+    for value in values:
         if value is None:
             continue
 
-        places = value.normalize().as_tuple().exponent * -1
+        sign, digits, exponent = value.normalize().as_tuple()
 
-        if places > max_places:
-            max_places = places
+        exponent_places = exponent * -1
+        whole_places = len(digits) - exponent_places
 
-    return max_places
+        if whole_places > max_whole_places:
+            max_whole_places = whole_places
+
+        if exponent_places > max_decimal_places:
+            max_decimal_places = exponent_places
+
+    # In Python 2 it was possible for the total digits to exceed the
+    # available context precision. This ensures that can't happen. See #412
+    if max_whole_places + max_decimal_places > precision:
+        max_decimal_places = precision - max_whole_places
+
+    return max_decimal_places
 
 def make_number_formatter(decimal_places):
     """

@@ -1,6 +1,7 @@
 1.1.1
 -----
 
+* Fix a bug in Python 2 where printing a table could raise `decimal.InvalidOperation`. (#412)
 * Fix :class:`.Rank` so it returns Decimal. (#411)
 * Added Taurus Olson to AUTHORS.
 * Printing a table will now print the table's structure.
