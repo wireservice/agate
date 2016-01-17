@@ -89,7 +89,7 @@ The dataset we are using in this tutorial is simple enough that we can rely on t
 Describing the table
 ====================
 
-If you're working with new data, or you just need a refresher, you may want to see what columns are in it and their types. You can do this with the :meth:`.Table.print_structure` method or by just calling :func:`print` on the table:
+If you're working with new data, or you just need a refresher, you may want to review what columns are in the table. You can do this with the :meth:`.Table.print_structure` method or by just calling :func:`print` on the table:
 
 .. code-block:: python
 
