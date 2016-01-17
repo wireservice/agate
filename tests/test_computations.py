@@ -173,6 +173,7 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 4)
         self.assertEqual(len(new_table.columns), 5)
         self.assertSequenceEqual(new_table.columns['rank'], (1, 3, 1, 3))
+        self.assertIsInstance(new_table.columns['rank'][0], Decimal)
 
     def test_rank_number_reverse(self):
         new_table = self.table.compute([
