@@ -8,6 +8,10 @@ tester = agate.TypeTester(force={
 
 table = agate.Table.from_csv('examples/realdata/ks_1033_data.csv', column_types=tester)
 
+table.print_structure()
+import sys
+sys.exit()
+
 # Question 1: What was the total cost to Kansas City area counties?
 
 # Filter to counties containing Kansas City

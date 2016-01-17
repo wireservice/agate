@@ -2,7 +2,7 @@
 -----
 
 * Added Taurus Olson to AUTHORS.
-* Printing a table (or using repr) will now print the table's structure.
+* Printing a table will now print the table's structure.
 * :meth:`.Table.print_structure` implemented. (#393)
 * Added Geoffrey Hing to AUTHORS.
 * :meth:`.Table._repr_html` implemented. Jupyter notebooks will now render tables as HTML. (#413)

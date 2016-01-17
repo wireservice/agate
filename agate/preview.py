@@ -392,14 +392,12 @@ def print_structure(table, output=sys.stdout):
 
     def max_width_column(values, name):
         """
-        Return the max column width
+        Return the max column width.
 
         :param values:
             The values in a column
-
         :param name:
             The name of the column
-
         :returns:
             The size of the longest string in the column
         """
@@ -412,11 +410,10 @@ def print_structure(table, output=sys.stdout):
 
         :param table:
             A :class:`Table` instance.
-
         :returns:
             The list of column names and the size of the longest column name.
         """
-        column_names = [str(n) for n in table.column_names]
+        column_names = [n for n in table.column_names]
         max_column_name_width = max_width_column(column_names, "column_names")
         return column_names, max_column_name_width
 
@@ -426,21 +423,19 @@ def print_structure(table, output=sys.stdout):
 
         :param table:
             A :class:`Table` instance.
-
         :returns:
             The list of column types and the size of the longest column type.
         """
         column_types = [t.__class__.__name__ for t in table.column_types]
-        max_column_type_width = max_width_column(column_types, "column_types")
+        max_column_type_width = max_width_column(column_types, 'column_types')
         return column_types, max_column_type_width
 
     def format_rows(table):
         """
-        Format the rows of the table
+        Format the rows of the table.
 
         :param table:
             A :class:`Table` instance.
-
         :returns:
             A list of pairs (column_names, column_types)
         """
@@ -453,8 +448,8 @@ def print_structure(table, output=sys.stdout):
     _, max_column_name_width = analyze_column_names(table)
     _, max_column_type_width = analyze_column_types(table)
 
-    header = [" column_names ".ljust(max_column_name_width+2),
-              " column_types ".ljust(max_column_type_width+2)]
+    header = [' column_names '.ljust(max_column_name_width+2),
+              ' column_types '.ljust(max_column_type_width+2)]
 
     divider = '|--%s--|' % '-+-'.join('-' * w for w in (max_column_name_width, max_column_type_width))
 

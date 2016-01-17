@@ -59,6 +59,7 @@ def allow_tableset_proxy(func):
 
     return func
 
+@six.python_2_unicode_compatible
 class Table(utils.Patchable):
     """
     A dataset consisting of rows and columns. Columns refer to "vertical" slices
@@ -178,6 +179,29 @@ class Table(utils.Patchable):
 
         self._columns = MappedSequence(new_columns, self._column_names)
 
+    def __str__(self):
+        """
+        Print the table's structure via :meth:`Table.print_structure`.
+        """
+        structure = six.StringIO()
+
+        self.print_structure(output=structure)
+
+        return structure.getvalue()
+
+    def _repr_html_(self):
+        """
+        Print HTML version of the table for Jupyter
+        (via :meth:`Table.print_html`).
+
+        See http://ipython.readthedocs.org/en/stable/config/integrating.html?highlight=_repr_html_#rich-display
+        """
+        html = six.StringIO()
+
+        self.print_html(output=html)
+
+        return html.getvalue()
+        
     @property
     def column_types(self):
         """
@@ -255,28 +279,6 @@ class Table(utils.Patchable):
             row_names = self._row_names
 
         return Table(rows, column_names, column_types, row_names=row_names, _is_fork=True)
-
-    def __repr__(self):
-        """
-        Print the table's structure.
-        """
-        structure = six.StringIO()
-
-        self.print_structure(output=structure)
-
-        return structure.getvalue()
-
-    def _repr_html_(self):
-        """
-        Print HTML version of the table automatically in Jupyter.
-
-        See http://ipython.readthedocs.org/en/stable/config/integrating.html?highlight=_repr_html_#rich-display
-        """
-        html = six.StringIO()
-
-        self.print_html(output=html)
-
-        return html.getvalue()
 
     def rename(self, column_names=None, row_names=None):
         """

@@ -175,6 +175,37 @@ class TestBasic(AgateTestCase):
         self.assertSequenceEqual(table.rows[(Decimal('2'), 'b')], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[(None, u'👍')], (None, 2, u'👍'))
 
+    def test_stringify(self):
+        column_names = ['foo', 'bar', u'👍']
+
+        table = Table(self.rows, column_names)
+
+        if six.PY2:
+            u = unicode(table)
+
+            self.assertIn('foo', u)
+            self.assertIn('bar', u)
+            self.assertIn(u'👍', u)
+
+            s = str(table)
+
+            self.assertIn('foo', s)
+            self.assertIn('bar', s)
+            self.assertIn(u'👍'.encode('utf-8'), s)
+        else:
+            u = str(table)
+
+            self.assertIn('foo', u)
+            self.assertIn('bar', u)
+            self.assertIn(u'👍', u)
+
+    def test_str(self):
+        table = Table(self.rows)
+
+        self.assertColumnNames(table, ['A', 'B', 'C'])
+        self.assertColumnTypes(table, [Number, Number, Text])
+        self.assertRows(table, self.rows)
+
     def test_get_column_types(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
