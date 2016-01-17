@@ -16,5 +16,6 @@ API
     api/rows
     api/table
     api/tableset
+    api/testcase
     api/utils
     api/warns

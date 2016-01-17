@@ -8,6 +8,9 @@ except ImportError:
 import agate
 
 class AgateTestCase(unittest.TestCase):
+    """
+    Unittest case for quickly asserting logic about tables.
+    """
     def assertColumnNames(self, table, names):
         self.assertIsInstance(table, agate.Table)
 
