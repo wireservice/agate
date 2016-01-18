@@ -9,7 +9,7 @@ This version introduces one breaking change, which is only relevant if you are u
 * Added a ``SimpleMovingAverage`` implementation to the cookbook's examples of custom :class:`.Computation` classes.
 * :meth:`.Computation._prepare` has been renamed to :meth:`.Computation.validate`.
 * :meth:`.Computation.run` now takes a :class:`.Table` instance as an argument. (#415)
-* Fix a bug in Python 2 where printing a table could raise `decimal.InvalidOperation`. (#412)
+* Fix a bug in Python 2 where printing a table could raise ``decimal.InvalidOperation``. (#412)
 * Fix :class:`.Rank` so it returns Decimal. (#411)
 * Added Taurus Olson to AUTHORS.
 * Printing a table will now print the table's structure.
