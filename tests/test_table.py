@@ -1789,10 +1789,7 @@ class TableHTMLParser(html_parser.HTMLParser):
             self._current_row.append(data)
             return
 
-class TestRichDisplay(AgateTestCase):
-    """
-    Test support for IPython rich display.
-    """
+class TestPrintHTML(AgateTestCase):
     def setUp(self):
         self.rows = (
             (1, 4, 'a'),
@@ -1806,13 +1803,11 @@ class TestRichDisplay(AgateTestCase):
         self.column_names = ['one', 'two', 'three']
         self.column_types = [self.number_type, self.number_type, self.text_type]
 
-    def test_repr_html(self):
-        """
-        Test display of HTML table in IPython using _repr_html_()
-        """
+    def test_print_html(self):
         table = Table(self.rows, self.column_names, self.column_types)
-        table_html = table._repr_html_()
-        print(table_html)
+        table_html = six.StringIO()
+        table.print_html(output=table_html)
+        table_html = table_html.getvalue()
 
         parser = TableHTMLParser()
         parser.feed(table_html)
