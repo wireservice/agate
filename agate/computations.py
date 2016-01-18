@@ -43,17 +43,16 @@ class Computation(object): #pragma: no cover
         """
         raise NotImplementedError()
 
-    def prepare(self, table):
+    def validate(self, table):
         """
         Called with the table immediately prior to invoking the computation with
-        rows. Can be used to compute column-level statistics for computations.
-        By default, this does nothing.
+        rows. Can be used to verify appropriate data types.
         """
         pass
 
-    def run(self, row):
+    def run(self, table):
         """
-        When invoked with a row, returns the computed new column value.
+        When invoked with a table, returns a sequence of new column values.
         """
         raise NotImplementedError()
 
@@ -79,13 +78,18 @@ class Formula(Computation):
     def get_computed_data_type(self, table):
         return self._data_type
 
-    def run(self, row):
-        v = self._func(row)
+    def run(self, table):
+        new_column = []
 
-        if self._validate:
-            v = self._data_type.cast(v)
+        for row in table.rows:
+            v = self._func(row)
 
-        return v
+            if self._validate:
+                v = self._data_type.cast(v)
+
+            new_column.append(v)
+
+        return new_column
 
 class Change(Computation):
     """
@@ -95,7 +99,19 @@ class Change(Computation):
         self._before_column_name = before_column_name
         self._after_column_name = after_column_name
 
-    def _validate(self, table):
+    def get_computed_data_type(self, table):
+        before_column = table.columns[self._before_column_name]
+
+        if isinstance(before_column.data_type, Date):
+            return TimeDelta()
+        elif isinstance(before_column.data_type, DateTime):
+            return TimeDelta()
+        elif isinstance(before_column.data_type, TimeDelta):
+            return TimeDelta()
+        elif isinstance(before_column.data_type, Number):
+            return Number()
+
+    def validate(self, table):
         before_column = table.columns[self._before_column_name]
         after_column = table.columns[self._after_column_name]
 
@@ -110,33 +126,23 @@ class Change(Computation):
                 if HasNulls(self._after_column_name).run(table):
                     warn_null_calculation(self, after_column)
 
-                return before_column
+                return
 
         raise DataTypeError('Change before and after columns must both contain data that is one of: Number, Date, DateTime or TimeDelta.')
 
-    def get_computed_data_type(self, table):
-        before_column = self._validate(table)
+    def run(self, table):
+        new_column = []
 
-        if isinstance(before_column.data_type, Date):
-            return TimeDelta()
-        elif isinstance(before_column.data_type, DateTime):
-            return TimeDelta()
-        elif isinstance(before_column.data_type, TimeDelta):
-            return TimeDelta()
-        elif isinstance(before_column.data_type, Number):
-            return Number()
+        for row in table.rows:
+            before = row[self._before_column_name]
+            after = row[self._after_column_name]
 
-    def prepare(self, table):
-        self._validate(table)
+            if before and after:
+                new_column.append(after - before)
+            else:
+                new_column.append(None)
 
-    def run(self, row):
-        before = row[self._before_column_name]
-        after = row[self._after_column_name]
-
-        if before and after:
-            return after - before
-
-        return None
+        return new_column
 
 class PercentChange(Computation):
     """
@@ -149,7 +155,7 @@ class PercentChange(Computation):
     def get_computed_data_type(self, table):
         return Number()
 
-    def prepare(self, table):
+    def validate(self, table):
         before_column = table.columns[self._before_column_name]
         after_column = table.columns[self._after_column_name]
 
@@ -159,12 +165,17 @@ class PercentChange(Computation):
         if not isinstance(after_column.data_type, Number):
             raise DataTypeError('PercentChange after column must contain Number data.')
 
-    def run(self, row):
+    def run(self, table):
         """
         :returns:
             :class:`decimal.Decimal`
         """
-        return (row[self._after_column_name] - row[self._before_column_name]) / row[self._before_column_name] * 100
+        new_column = []
+
+        for row in table.rows:
+            new_column.append((row[self._after_column_name] - row[self._before_column_name]) / row[self._before_column_name] * 100)
+
+        return new_column
 
 class Rank(Computation):
     """
@@ -188,12 +199,14 @@ class Rank(Computation):
         self._comparer = comparer
         self._reverse = reverse
 
-        self._ranks = {}
-
     def get_computed_data_type(self, table):
         return Number()
 
-    def prepare(self, table):
+    def run(self, table):
+        """
+        :returns:
+            :class:`int`
+        """
         column = table.columns[self._column_name]
 
         if self._comparer:
@@ -207,23 +220,23 @@ class Rank(Computation):
         if self._reverse:
             data_sorted.reverse()
 
-        self._ranks = {}
+        ranks = {}
         rank = 0
 
         for c in data_sorted:
             rank += 1
 
-            if c in self._ranks:
+            if c in ranks:
                 continue
 
-            self._ranks[c] = Decimal(rank)
+            ranks[c] = Decimal(rank)
 
-    def run(self, row):
-        """
-        :returns:
-            :class:`int`
-        """
-        return self._ranks[row[self._column_name]]
+        new_column = []
+
+        for row in table.rows:
+            new_column.append(ranks[row[self._column_name]])
+
+        return new_column
 
 class PercentileRank(Rank):
     """
@@ -231,17 +244,23 @@ class PercentileRank(Rank):
 
     See :class:`.Percentiles` for implementation details.
     """
-    def prepare(self, table):
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
             raise DataTypeError('PercentileRank column must contain Number data.')
 
-        self._percentiles = Percentiles(self._column_name).run(table)
-
-    def run(self, row):
+    def run(self, table):
         """
         :returns:
             :class:`int`
         """
-        return self._percentiles.locate(row[self._column_name])
+        column = table.columns[self._column_name]
+        percentiles = Percentiles(self._column_name).run(table)
+
+        new_column = []
+
+        for row in table.rows:
+            new_column.append(percentiles.locate(row[self._column_name]))
+
+        return new_column

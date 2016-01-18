@@ -1,6 +1,13 @@
-1.1.1
+1.2.0
 -----
 
+This version introduces one breaking change, which is only relevant if you are using custom :class:`.Computation` subclasses.
+
+1. :class:`.Computation` has been modified so that :meth:`.Computation.run` takes a :class:`.Table` instance as its argument, rather than a single row. It must return a sequence of values to use for a new column. In addition, the :meth:`.Computation._prepare` method has been renamed to :meth:`.Computation.validate` to more accurately describe it's function. These changes were made to facilitate computing moving averages, streaks and other values that require data for the full column.
+
+* Added a ``SimpleMovingAverage`` implementation to the cookbook's examples of custom :class:`.Computation` classes.
+* :meth:`.Computation._prepare` has been renamed to :meth:`.Computation.validate`.
+* :meth:`.Computation.run` now takes a :class:`.Table` instance as an argument. (#415)
 * Fix a bug in Python 2 where printing a table could raise `decimal.InvalidOperation`. (#412)
 * Fix :class:`.Rank` so it returns Decimal. (#411)
 * Added Taurus Olson to AUTHORS.

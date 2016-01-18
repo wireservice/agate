@@ -113,15 +113,13 @@ Implementing Levenshtein requires writing a custom :class:`.Computation`. To sav
             self._column_name = column_name
             self._compare_string = compare_string
 
-            super(LevenshteinDistance, self).__init__()
-
         def get_computed_data_type(self, table):
             """
             The return value is a numerical distance.
             """
             return agate.Number()
 
-        def _prepare(self, table):
+        def validate(self, table):
             """
             Verify the column is text.
             """
@@ -130,20 +128,21 @@ Implementing Levenshtein requires writing a custom :class:`.Computation`. To sav
             if not isinstance(column.data_type, agate.Text):
                 raise agate.DataTypeError('Can only be applied to Text data.')
 
-            super(LevenshteinDistance, self)._prepare(table)
-
-        def run(self, row):
+        def run(self, table):
             """
             Find the distance, returning null when the input column was null.
             """
-            super(LevenshteinDistance, self).run(row)
+            new_column = []
 
-            val = row[self._column_name]
+            for row in table.rows:
+              val = row[self._column_name]
 
-            if val is None:
-                return None
+              if val is None:
+                  new_column.append(None)
+              else:
+                  new_column.append(distance(val, self._compare_string))
 
-            return distance(val, self._compare_string)
+            return new_column
 
 This code can now be applied to any :class:`.Table` just as any other :class:`.Computation` would be:
 
@@ -168,18 +167,21 @@ Assuming that your data has a column for the total population, another for the p
         def get_computed_data_type(self, table):
             return agate.Number()
 
-        def run(self, row):
-            super(USATodayDiversityIndex, self).run(row)
+        def run(self, table):
+            new_column = []
 
-            race_squares = 0
+            for row in tables.rows:
+              race_squares = 0
 
-            for race in ['white', 'black', 'asian', 'american_indian', 'pacific_islander']:
-                race_squares += (row[race] / row['population']) ** 2
+              for race in ['white', 'black', 'asian', 'american_indian', 'pacific_islander']:
+                  race_squares += (row[race] / row['population']) ** 2
 
-            hispanic_squares = (row['hispanic'] / row['population']) ** 2
-            hispanic_squares += (1 - (row['hispanic'] / row['population'])) ** 2
+              hispanic_squares = (row['hispanic'] / row['population']) ** 2
+              hispanic_squares += (1 - (row['hispanic'] / row['population'])) ** 2
 
-            return (1 - (race_squares * hispanic_squares)) * 100
+              new_column.append((1 - (race_squares * hispanic_squares)) * 100)
+
+            return new_column
 
 We apply the diversity index like any other computation:
 
@@ -187,4 +189,60 @@ We apply the diversity index like any other computation:
 
     with_index = table.compute([
         ('diversity_index', USATodayDiversityIndex())
+    ])
+
+Simple Moving Average
+=====================
+
+A simple moving average is the average of some number of prior values in a series. It is typically used to smooth out variation in time series data.
+
+The following custom :class:`.Computation` will compute a simple moving average. This example assumes your data is already sorted.
+
+.. code-block:: python
+
+    class SimpleMovingAverage(agate.Computation):
+        """
+        Computes the simple moving average of a column over some interval.
+        """
+        def __init__(self, column_name, interval):
+            self._column_name = column_name
+            self._interval = interval
+
+        def get_computed_data_type(self, table):
+            """
+            The return value is a numerical average.
+            """
+            return agate.Number()
+
+        def validate(self, table):
+            """
+            Verify the column is numerical.
+            """
+            column = table.columns[self._column_name]
+
+            if not isinstance(column.data_type, agate.Number):
+                raise agate.DataTypeError('Can only be applied to Number data.')
+
+        def run(self, table):
+            new_column = []
+
+            for i, row in enumerate(table.rows):
+                if i < self._interval:
+                    new_column.append(None)
+                else:
+                    values = tuple(r[self._column_name] for r in table.rows[i - self._interval:i])
+
+                    if None in values:
+                        new_column.append(None)
+                    else:
+                        new_column.append(sum(values) / self._interval)
+
+            return new_column
+
+You would use the simple moving average like so:
+
+.. code-block:: Python
+
+    with_average = table.compute([
+        ('six_month_moving_average', SimpleMovingAverage('price', 6))
     ])

@@ -201,7 +201,7 @@ class Table(utils.Patchable):
         self.print_html(output=html)
 
         return html.getvalue()
-        
+
     @property
     def column_types(self):
         """
@@ -1019,13 +1019,14 @@ class Table(utils.Patchable):
             column_names.append(new_column_name)
             column_types.append(computation.get_computed_data_type(self))
 
-            computation.prepare(self)
+            computation.validate(self)
 
+        new_columns = tuple(c.run(self) for n, c in computations)
         new_rows = []
 
-        for row in self._rows:
-            new_columns = tuple(c.run(row) for n, c in computations)
-            new_rows.append(Row(tuple(row) + new_columns, column_names))
+        for i, row in enumerate(self._rows):
+            values = tuple(row) + tuple(c[i] for c in new_columns)
+            new_rows.append(Row(values, column_names))
 
         return self._fork(new_rows, column_names, column_types)
 

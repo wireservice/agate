@@ -1331,6 +1331,9 @@ class TestCompute(AgateTestCase):
         self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'test'])
         self.assertColumnTypes(new_table, [Text, Number, Number, Number, Number])
 
+        print(new_table.rows[0])
+        print(new_table.columns['test'])
+
         self.assertSequenceEqual(new_table.rows[0], ('a', 2, 3, 4, 5))
         self.assertSequenceEqual(new_table.columns['test'], (5, 8, 6, 9))
 
