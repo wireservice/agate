@@ -189,19 +189,6 @@ class Table(utils.Patchable):
 
         return structure.getvalue()
 
-    def _repr_html_(self):
-        """
-        Print HTML version of the table for Jupyter
-        (via :meth:`Table.print_html`).
-
-        See http://ipython.readthedocs.org/en/stable/config/integrating.html?highlight=_repr_html_#rich-display
-        """
-        html = six.StringIO()
-
-        self.print_html(output=html)
-
-        return html.getvalue()
-
     @property
     def column_types(self):
         """
