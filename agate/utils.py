@@ -159,7 +159,7 @@ def max_precision(values):
 
     # In Python 2 it was possible for the total digits to exceed the
     # available context precision. This ensures that can't happen. See #412
-    if max_whole_places + max_decimal_places > precision:
+    if max_whole_places + max_decimal_places > precision:   #pragma: no cover
         max_decimal_places = precision - max_whole_places
 
     return max_decimal_places

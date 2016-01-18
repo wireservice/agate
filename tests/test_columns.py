@@ -33,6 +33,11 @@ class TestColumn(unittest.TestCase):
 
         self.table = Table(self.rows, self.column_names, self.column_types)
 
+    def test_index(self):
+        self.assertEqual(self.table.columns['one'].index, 0)
+        self.assertEqual(self.table.columns['two'].index, 1)
+        self.assertEqual(self.table.columns['three'].index, 2)
+
     def test_name(self):
         self.assertEqual(self.table.columns['one'].name, 'one')
 

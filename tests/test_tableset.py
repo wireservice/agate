@@ -58,6 +58,26 @@ class TestTableSet(AgateTestCase):
 
         self.assertEqual(len(tableset), 3)
 
+    def test_create_tableset_mismatched_column_names(self):
+        tables = OrderedDict([
+            ('table1', Table(self.table1, self.column_names, self.column_types)),
+            ('table2', Table(self.table2, self.column_names, self.column_types)),
+            ('table3', Table(self.table3, ['foo', 'bar'], self.column_types))
+        ])
+
+        with self.assertRaises(ValueError):
+            tableset = TableSet(tables.values(), tables.keys())
+
+    def test_create_tableset_mismatched_column_types(self):
+        tables = OrderedDict([
+            ('table1', Table(self.table1, self.column_names, self.column_types)),
+            ('table2', Table(self.table2, self.column_names, self.column_types)),
+            ('table3', Table(self.table3, self.column_names, [self.text_type, self.text_type]))
+        ])
+
+        with self.assertRaises(ValueError):
+            tableset = TableSet(tables.values(), tables.keys())
+
     def test_from_csv(self):
         tableset1 = TableSet(self.tables.values(), self.tables.keys())
         tableset2 = TableSet.from_csv('examples/tableset', self.column_names, self.column_types)
@@ -366,6 +386,11 @@ class TestTableSet(AgateTestCase):
         ])
         self.assertSequenceEqual(results.rows[('table1', 'a')], ('table1', 'a', 2, 4))
         self.assertSequenceEqual(results.rows[('table2', 'c')], ('table2', 'c', 1, 5))
+
+    def test_proxy_local(self):
+        tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='foo')
+
+        self.assertEqual(tableset._key_name, 'foo')
 
     def test_proxy_maintains_key(self):
         number_type = Number()

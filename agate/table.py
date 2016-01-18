@@ -46,7 +46,7 @@ from agate.preview import print_table, print_html, print_bars, print_structure
 from agate.rows import Row
 from agate import utils
 
-if six.PY2:
+if six.PY2:   #pragma: no cover
     from agate import csv_py2 as csv
 else:
     from agate import csv_py3 as csv

@@ -92,7 +92,7 @@ class TestTableComputation(unittest.TestCase):
 
         table = Table(rows, column_names, column_types)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(DataTypeError):
             table.compute([
                 ('test', Change('number', 'date'))
             ])
@@ -165,6 +165,11 @@ class TestTableComputation(unittest.TestCase):
                 ('test', PercentChange('one', 'three'))
             ])
 
+        with self.assertRaises(DataTypeError):
+            new_table = self.table.compute([
+                ('test', PercentChange('three', 'one'))
+            ])
+
     def test_rank_number(self):
         new_table = self.table.compute([
             ('rank', Rank('two'))
@@ -228,6 +233,12 @@ class TestTableComputation(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[500], (501, 50))
         self.assertSequenceEqual(new_table.rows[998], (999, 99))
         self.assertSequenceEqual(new_table.rows[999], (1000, 100))
+
+    def test_percentile_rank_invalid_types(self):
+        with self.assertRaises(DataTypeError):
+            self.table.compute([
+                ('test', PercentileRank('one'))
+            ])
 
 class TestDateAndTimeComputations(unittest.TestCase):
     def test_change_dates(self):

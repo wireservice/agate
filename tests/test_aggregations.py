@@ -11,12 +11,11 @@ except ImportError:
 
 try:
     from unittest.mock import Mock
-except:
+except ImportError:
     from mock import Mock
 
 from agate import Table
 from agate.aggregations import *
-from agate.columns import Column
 from agate.data_types import *
 from agate.exceptions import *
 from agate.rows import Row
@@ -43,6 +42,12 @@ class TestSimpleAggregation(unittest.TestCase):
 
         self.assertIsInstance(summary.get_aggregate_data_type(None), Boolean)
         self.assertEqual(summary.run(self.table), True)
+
+    def test_has_nulls(self):
+        has_nulls = HasNulls('one')
+
+        self.assertIsInstance(has_nulls.get_aggregate_data_type(None), Boolean)
+        self.assertEqual(has_nulls.run(self.table), True)
 
     def test_any(self):
         with self.assertRaises(ValueError):
@@ -71,6 +76,7 @@ class TestSimpleAggregation(unittest.TestCase):
 
         table = Table(rows, self.column_names, self.column_types)
 
+        self.assertIsInstance(Length().get_aggregate_data_type(table), Number)
         self.assertEqual(Length().run(table), 5)
         self.assertEqual(Length().run(table), 5)
 
@@ -85,6 +91,7 @@ class TestSimpleAggregation(unittest.TestCase):
 
         table = Table(rows, self.column_names, self.column_types)
 
+        self.assertIsInstance(Count('one', 1).get_aggregate_data_type(table), Number)
         self.assertEqual(Count('one', 1).run(table), 3)
         self.assertEqual(Count('one', 4).run(table), 0)
         self.assertEqual(Count('one', None).run(table), 1)
@@ -171,6 +178,7 @@ class TestNumberAggregation(unittest.TestCase):
         self.table = Table(self.rows, self.column_names, self.column_types)
 
     def test_max_precision(self):
+        self.assertIsInstance(MaxPrecision('one').get_aggregate_data_type(self.table), Number)
         self.assertEqual(MaxPrecision('one').run(self.table), 1)
         self.assertEqual(MaxPrecision('two').run(self.table), 2)
 
@@ -223,6 +231,7 @@ class TestNumberAggregation(unittest.TestCase):
         with self.assertRaises(DataTypeError):
             Median('three').run(self.table)
 
+        self.assertIsInstance(Median('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(Median('two').run(self.table), Decimal('3.42'))
 
     def test_mode(self):
@@ -234,6 +243,7 @@ class TestNumberAggregation(unittest.TestCase):
         with self.assertRaises(DataTypeError):
             Mode('three').run(self.table)
 
+        self.assertIsInstance(Mode('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(Mode('two').run(self.table), Decimal('3.42'))
 
     def test_iqr(self):
@@ -245,6 +255,7 @@ class TestNumberAggregation(unittest.TestCase):
         with self.assertRaises(DataTypeError):
             IQR('three').run(self.table)
 
+        self.assertIsInstance(IQR('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(IQR('two').run(self.table), Decimal('0.955'))
 
     def test_variance(self):
@@ -256,6 +267,7 @@ class TestNumberAggregation(unittest.TestCase):
         with self.assertRaises(DataTypeError):
             Variance('three').run(self.table)
 
+        self.assertIsInstance(Variance('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(
             Variance('two').run(self.table).quantize(Decimal('0.0001')),
             Decimal('0.6332')
@@ -270,6 +282,7 @@ class TestNumberAggregation(unittest.TestCase):
         with self.assertRaises(DataTypeError):
             PopulationVariance('three').run(self.table)
 
+        self.assertIsInstance(PopulationVariance('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(
             PopulationVariance('two').run(self.table).quantize(Decimal('0.0001')),
             Decimal('0.4749')
@@ -284,6 +297,7 @@ class TestNumberAggregation(unittest.TestCase):
         with self.assertRaises(DataTypeError):
             StDev('three').run(self.table)
 
+        self.assertIsInstance(StDev('two').get_aggregate_data_type(self.table), Number)
         self.assertAlmostEqual(
             StDev('two').run(self.table).quantize(Decimal('0.0001')),
             Decimal('0.7958')
@@ -298,6 +312,7 @@ class TestNumberAggregation(unittest.TestCase):
         with self.assertRaises(DataTypeError):
             PopulationStDev('three').run(self.table)
 
+        self.assertIsInstance(PopulationStDev('two').get_aggregate_data_type(self.table), Number)
         self.assertAlmostEqual(
             PopulationStDev('two').run(self.table).quantize(Decimal('0.0001')),
             Decimal('0.6891')
@@ -312,6 +327,7 @@ class TestNumberAggregation(unittest.TestCase):
         with self.assertRaises(DataTypeError):
             MAD('three').run(self.table)
 
+        self.assertIsInstance(MAD('two').get_aggregate_data_type(self.table), Number)
         self.assertAlmostEqual(MAD('two').run(self.table), Decimal('0'))
 
     def test_percentiles(self):

@@ -118,7 +118,7 @@ class Change(Computation):
         for data_type in (Number, Date, DateTime, TimeDelta):
             if isinstance(before_column.data_type, data_type):
                 if not isinstance(after_column.data_type, data_type):
-                    raise ValueError('Specified columns must be of the same type')
+                    raise DataTypeError('Specified columns must be of the same type')
 
                 if HasNulls(self._before_column_name).run(table):
                     warn_null_calculation(self, before_column)

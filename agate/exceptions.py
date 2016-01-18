@@ -24,7 +24,7 @@ class CastError(Exception):   #pragma: no cover
     """
     pass
 
-class FieldSizeLimitError(Exception):
+class FieldSizeLimitError(Exception):   #pragma: no cover
     """
     Exception raised when a field in the CSV file exceeds the default max
     or one provided by the user.

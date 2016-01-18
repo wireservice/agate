@@ -175,6 +175,16 @@ class TestBasic(AgateTestCase):
         self.assertSequenceEqual(table.rows[(Decimal('2'), 'b')], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[(None, u'👍')], (None, 2, u'👍'))
 
+    def test_row_names_invalid(self):
+
+        with self.assertRaises(ValueError):
+            table = Table(
+                self.rows,
+                self.column_names,
+                self.column_types,
+                row_names={ 'a': 1, 'b': 2, 'c': 3 }
+            )
+
     def test_stringify(self):
         column_names = ['foo', 'bar', u'👍']
 
