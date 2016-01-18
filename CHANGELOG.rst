@@ -5,6 +5,8 @@ This version introduces one breaking change, which is only relevant if you are u
 
 1. :class:`.Computation` has been modified so that :meth:`.Computation.run` takes a :class:`.Table` instance as its argument, rather than a single row. It must return a sequence of values to use for a new column. In addition, the :meth:`.Computation._prepare` method has been renamed to :meth:`.Computation.validate` to more accurately describe it's function. These changes were made to facilitate computing moving averages, streaks and other values that require data for the full column.
 
+* Existing :class:`.Aggregation` subclasses have been updated to use :meth:`.Aggregate.validate`. (This brings a noticeable performance boost.)
+* :class:`.Aggregation` now has a :meth:`.Aggregation.validate` method that functions identically to :meth:`.Computation.validate`. (#421)
 * :meth:`.Change.validate` now correctly raises :class:`.DataTypeError`.
 * Added a ``SimpleMovingAverage`` implementation to the cookbook's examples of custom :class:`.Computation` classes.
 * :meth:`.Computation._prepare` has been renamed to :meth:`.Computation.validate`.

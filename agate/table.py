@@ -983,8 +983,18 @@ class Table(utils.Patchable):
             be returned.
         """
         if isinstance(aggregations, Sequence):
-            return tuple(a.run(self) for a in aggregations)
+            results = []
+
+            for agg in aggregations:
+                agg.validate(self)
+
+            for agg in aggregations:
+                results.append(agg.run(self))
+
+            return tuple(results)
         else:
+            aggregations.validate(self)
+            
             return aggregations.run(self)
 
     @allow_tableset_proxy

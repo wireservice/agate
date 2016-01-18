@@ -26,8 +26,14 @@ from agate.warns import warn_null_calculation
 
 class Aggregation(object): #pragma: no cover
     """
-    Base class defining an operation that can be executed on a column using
+    An operation that takes a table and produces a single value summarizing
+    one of it's columns. Aggregations are invoked with
     :class:`.TableSet.aggregate`.
+
+    When implementing a custom subclass, ensure that the values returned by
+    :meth:`run` are of the type specified by :meth:`get_aggregate_data_type`.
+    This can be ensured by using the :meth:`.DataType.cast` method. See
+    :class:`Formula` for an example.
     """
     def get_aggregate_data_type(self, table):
         """
@@ -39,6 +45,14 @@ class Aggregation(object): #pragma: no cover
         does not return a single value.)
         """
         raise UnsupportedAggregationError()
+
+    def validate(self, table):
+        """
+        Perform any checks necessary to verify this aggregation can run on the
+        provided table without errors. This is called by
+        :meth:`.Table.aggregate` before :meth:`run`.
+        """
+        pass
 
     def run(self, table):
         """
@@ -79,10 +93,6 @@ class HasNulls(Aggregation):
         return Boolean()
 
     def run(self, table):
-        """
-        :returns:
-            :class:`bool`
-        """
         return None in table.columns[self._column_name].values()
 
 class Any(Aggregation):
@@ -100,18 +110,18 @@ class Any(Aggregation):
     def get_aggregate_data_type(self, table):
         return Boolean()
 
+    def validate(self, table):
+        column = table.columns[self._column_name]
+
+        if not isinstance(column.data_type, Boolean) and not self._test:
+            raise ValueError('You must supply a test function for columns containing non-Boolean data.')
+
     def run(self, table):
-        """
-        :returns:
-            :class:`bool`
-        """
         column = table.columns[self._column_name]
         data = column.values()
 
         if isinstance(column.data_type, Boolean):
             return any(data)
-        elif not self._test:
-            raise ValueError('You must supply a test function for columns containing non-Boolean data.')
 
         return any(self._test(d) for d in data)
 
@@ -130,6 +140,12 @@ class All(Aggregation):
     def get_aggregate_data_type(self, table):
         return Boolean()
 
+    def validate(self, table):
+        column = table.columns[self._column_name]
+
+        if not isinstance(column.data_type, Boolean) and not self._test:
+            raise ValueError('You must supply a test function for columns containing non-Boolean data.')
+
     def run(self, table):
         """
         :returns:
@@ -140,8 +156,6 @@ class All(Aggregation):
 
         if isinstance(column.data_type, Boolean):
             return all(data)
-        elif not self._test:
-            raise ValueError('You must supply a test function for columns containing non-Boolean data.')
 
         return all(self._test(d) for d in data)
 
@@ -155,10 +169,6 @@ class Length(Aggregation):
         return Number()
 
     def run(self, table):
-        """
-        :returns:
-            :class:`int`
-        """
         return len(table.rows)
 
 class Count(Aggregation):
@@ -179,10 +189,6 @@ class Count(Aggregation):
         return Number()
 
     def run(self, table):
-        """
-        :returns:
-            :class:`int`
-        """
         return table.columns[self._column_name].values().count(self._value)
 
 class Min(Aggregation):
@@ -201,17 +207,16 @@ class Min(Aggregation):
             isinstance(column.data_type, DateTime):
             return column.data_type
 
-    def run(self, table):
-        """
-        :returns:
-            A single value whose type is dependent on the type of the column.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not (isinstance(column.data_type, Number) or \
             isinstance(column.data_type, Date) or \
             isinstance(column.data_type, DateTime)):
             raise DataTypeError('Min can only be applied to columns containing DateTime orNumber data.')
+
+    def run(self, table):
+        column = table.columns[self._column_name]
 
         return min(column.values_without_nulls())
 
@@ -231,17 +236,16 @@ class Max(Aggregation):
             isinstance(column.data_type, DateTime):
             return column.data_type
 
-    def run(self, table):
-        """
-        :returns:
-            A single value whose type is dependent on the type of the column.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not (isinstance(column.data_type, Number) or \
             isinstance(column.data_type, Date) or \
             isinstance(column.data_type, DateTime)):
-            raise DataTypeError('Max can only be applied to columns containing DateTime or Number data.')
+            raise DataTypeError('Min can only be applied to columns containing DateTime orNumber data.')
+
+    def run(self, table):
+        column = table.columns[self._column_name]
 
         return max(column.values_without_nulls())
 
@@ -255,15 +259,14 @@ class MaxPrecision(Aggregation):
     def get_aggregate_data_type(self, table):
         return Number()
 
-    def run(self, table):
-        """
-        :returns:
-            :class:`decimal.Decimal`.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
             raise DataTypeError('MaxPrecision can only be applied to columns containing Number data.')
+
+    def run(self, table):
+        column = table.columns[self._column_name]
 
         return max_precision(column.values_without_nulls())
 
@@ -277,14 +280,14 @@ class Sum(Aggregation):
     def get_aggregate_data_type(self, table):
         return Number()
 
-    def run(self, table):
-        """
-        :returns: :class:`decimal.Decimal`.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
             raise DataTypeError('Sum can only be applied to columns containing Number data.')
+
+    def run(self, table):
+        column = table.columns[self._column_name]
 
         return sum(column.values_without_nulls())
 
@@ -294,15 +297,12 @@ class Mean(Aggregation):
     """
     def __init__(self, column_name):
         self._column_name = column_name
+        self._sum = Sum(column_name)
 
     def get_aggregate_data_type(self, table):
         return Number()
 
-    def run(self, table):
-        """
-        :returns:
-            :class:`decimal.Decimal`.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
@@ -313,7 +313,10 @@ class Mean(Aggregation):
         if has_nulls:
             warn_null_calculation(self, column)
 
-        sum_total = Sum(self._column_name).run(table)
+    def run(self, table):
+        column = table.columns[self._column_name]
+
+        sum_total = self._sum.run(table)
 
         return sum_total / len(column.values_without_nulls())
 
@@ -326,15 +329,12 @@ class Median(Aggregation):
     """
     def __init__(self, column_name):
         self._column_name = column_name
+        self._percentiles = Percentiles(column_name)
 
     def get_aggregate_data_type(self, table):
         return Number()
 
-    def run(self, table):
-        """
-        :returns:
-            :class:`decimal.Decimal`.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
@@ -345,7 +345,10 @@ class Median(Aggregation):
         if has_nulls:
             warn_null_calculation(self, column)
 
-        percentiles = Percentiles(self._column_name).run(table)
+    def run(self, table):
+        column = table.columns[self._column_name]
+
+        percentiles = self._percentiles.run(table)
 
         return percentiles[50]
 
@@ -359,20 +362,19 @@ class Mode(Aggregation):
     def get_aggregate_data_type(self, table):
         return Number()
 
-    def run(self, table):
-        """
-        :returns:
-            :class:`decimal.Decimal`.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
-            raise DataTypeError('Mode can only be applied to columns containing Number data.')
+            raise DataTypeError('Sum can only be applied to columns containing Number data.')
 
         has_nulls = HasNulls(self._column_name).run(table)
 
         if has_nulls:
             warn_null_calculation(self, column)
+
+    def run(self, table):
+        column = table.columns[self._column_name]
 
         data = column.values_without_nulls()
         state = defaultdict(int)
@@ -389,15 +391,12 @@ class IQR(Aggregation):
     """
     def __init__(self, column_name):
         self._column_name = column_name
+        self._percentiles = Percentiles(column_name)
 
     def get_aggregate_data_type(self, table):
         return Number()
 
-    def run(self, table):
-        """
-        :returns:
-            :class:`decimal.Decimal`.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
@@ -408,7 +407,10 @@ class IQR(Aggregation):
         if has_nulls:
             warn_null_calculation(self, column)
 
-        percentiles = Percentiles(self._column_name).run(table)
+    def run(self, table):
+        column = table.columns[self._column_name]
+
+        percentiles = self._percentiles.run(table)
 
         return percentiles[75] - percentiles[25]
 
@@ -419,15 +421,12 @@ class Variance(Aggregation):
     """
     def __init__(self, column_name):
         self._column_name = column_name
+        self._mean = Mean(column_name)
 
     def get_aggregate_data_type(self, table):
         return Number()
 
-    def run(self, table):
-        """
-        :returns:
-            :class:`decimal.Decimal`.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
@@ -438,8 +437,11 @@ class Variance(Aggregation):
         if has_nulls:
             warn_null_calculation(self, column)
 
+    def run(self, table):
+        column = table.columns[self._column_name]
+
         data = column.values_without_nulls()
-        mean = Mean(self._column_name).run(table)
+        mean = self._mean.run(table)
 
         return sum((n - mean) ** 2 for n in data) / (len(data) - 1)
 
@@ -450,15 +452,12 @@ class PopulationVariance(Variance):
     """
     def __init__(self, column_name):
         self._column_name = column_name
+        self._mean = Mean(column_name)
 
     def get_aggregate_data_type(self, table):
         return Number()
 
-    def run(self, table):
-        """
-        :returns:
-            :class:`decimal.Decimal`.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
@@ -469,8 +468,11 @@ class PopulationVariance(Variance):
         if has_nulls:
             warn_null_calculation(self, column)
 
+    def run(self, table):
+        column = table.columns[self._column_name]
+
         data = column.values_without_nulls()
-        mean = Mean(self._column_name).run(table)
+        mean = self._mean.run(table)
 
         return sum((n - mean) ** 2 for n in data) / len(data)
 
@@ -481,21 +483,26 @@ class StDev(Aggregation):
     """
     def __init__(self, column_name):
         self._column_name = column_name
+        self._variance = Variance(column_name)
 
     def get_aggregate_data_type(self, table):
         return Number()
 
-    def run(self, table):
-        """
-        :returns:
-            :class:`decimal.Decimal`.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
             raise DataTypeError('StDev can only be applied to columns containing Number data.')
 
-        return Variance(self._column_name).run(table).sqrt()
+        has_nulls = HasNulls(self._column_name).run(table)
+
+        if has_nulls:
+            warn_null_calculation(self, column)
+
+    def run(self, table):
+        column = table.columns[self._column_name]
+
+        return self._variance.run(table).sqrt()
 
 class PopulationStDev(StDev):
     """
@@ -504,21 +511,26 @@ class PopulationStDev(StDev):
     """
     def __init__(self, column_name):
         self._column_name = column_name
+        self._population_variance = PopulationVariance(column_name)
 
     def get_aggregate_data_type(self, table):
         return Number()
 
-    def run(self, table):
-        """
-        :returns:
-            :class:`decimal.Decimal`.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
             raise DataTypeError('PopulationStDev can only be applied to columns containing Number data.')
 
-        return PopulationVariance(self._column_name).run(table).sqrt()
+        has_nulls = HasNulls(self._column_name).run(table)
+
+        if has_nulls:
+            warn_null_calculation(self, column)
+
+    def run(self, table):
+        column = table.columns[self._column_name]
+
+        return self._population_variance.run(table).sqrt()
 
 class MAD(Aggregation):
     """
@@ -527,15 +539,12 @@ class MAD(Aggregation):
     """
     def __init__(self, column_name):
         self._column_name = column_name
+        self._median = Median(column_name)
 
     def get_aggregate_data_type(self, table):
         return Number()
 
-    def run(self, table):
-        """
-        :returns:
-            :class:`decimal.Decimal`.
-        """
+    def validate(self, table):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
@@ -546,8 +555,11 @@ class MAD(Aggregation):
         if has_nulls:
             warn_null_calculation(self, column)
 
+    def run(self, table):
+        column = table.columns[self._column_name]
+
         data = column.values_without_nulls_sorted()
-        m = Median(self._column_name).run(table)
+        m = self._median.run(table)
 
         return median(tuple(abs(n - m) for n in data))
 
@@ -570,17 +582,23 @@ class Percentiles(Aggregation):
     def __init__(self, column_name):
         self._column_name = column_name
 
+    def validate(self, table):
+        column = table.columns[self._column_name]
+
+        if not isinstance(column.data_type, Number):
+            raise DataTypeError('Percentiles can only be applied to columns containing Number data.')
+
+        has_nulls = HasNulls(self._column_name).run(table)
+
+        if has_nulls:
+            warn_null_calculation(self, column)
+
     def run(self, table):
         """
         :returns:
             An instance of :class:`Quantiles`.
         """
         column = table.columns[self._column_name]
-
-        has_nulls = HasNulls(self._column_name).run(table)
-
-        if has_nulls:
-            warn_null_calculation(self, column)
 
         data = column.values_without_nulls_sorted()
 
@@ -622,6 +640,17 @@ class Quartiles(Aggregation):
     def __init__(self, column_name):
         self._column_name = column_name
 
+    def validate(self, table):
+        column = table.columns[self._column_name]
+
+        if not isinstance(column.data_type, Number):
+            raise DataTypeError('Quartiles can only be applied to columns containing Number data.')
+
+        has_nulls = HasNulls(self._column_name).run(table)
+
+        if has_nulls:
+            warn_null_calculation(self, column)
+
     def run(self, table):
         """
         :returns:
@@ -646,6 +675,17 @@ class Quintiles(Aggregation):
     def __init__(self, column_name):
         self._column_name = column_name
 
+    def validate(self, table):
+        column = table.columns[self._column_name]
+
+        if not isinstance(column.data_type, Number):
+            raise DataTypeError('Quintiles can only be applied to columns containing Number data.')
+
+        has_nulls = HasNulls(self._column_name).run(table)
+
+        if has_nulls:
+            warn_null_calculation(self, column)
+
     def run(self, table):
         """
         :returns:
@@ -669,6 +709,17 @@ class Deciles(Aggregation):
     def __init__(self, column_name):
         self._column_name = column_name
 
+    def validate(self, table):
+        column = table.columns[self._column_name]
+
+        if not isinstance(column.data_type, Number):
+            raise DataTypeError('Deciles can only be applied to columns containing Number data.')
+
+        has_nulls = HasNulls(self._column_name).run(table)
+
+        if has_nulls:
+            warn_null_calculation(self, column)
+
     def run(self, table):
         """
         :returns:
@@ -688,14 +739,17 @@ class MaxLength(Aggregation):
     def get_aggregate_data_type(self, table):
         return Number()
 
+    def validate(self, table):
+        column = table.columns[self._column_name]
+
+        if not isinstance(column.data_type, Text):
+            raise DataTypeError('MaxLength can only be applied to columns containing Text data.')
+
     def run(self, table):
         """
         :returns:
             :class:`int`.
         """
         column = table.columns[self._column_name]
-
-        if not isinstance(column.data_type, Text):
-            raise DataTypeError('MaxLength can only be applied to columns containing Text data.')
 
         return max([len(d) for d in column.values_without_nulls()])

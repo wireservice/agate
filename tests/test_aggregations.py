@@ -41,25 +41,32 @@ class TestSimpleAggregation(unittest.TestCase):
         summary = Summary('one', Boolean(), lambda c: 2 in c)
 
         self.assertIsInstance(summary.get_aggregate_data_type(None), Boolean)
+        summary.validate(self.table)
         self.assertEqual(summary.run(self.table), True)
 
     def test_has_nulls(self):
         has_nulls = HasNulls('one')
 
         self.assertIsInstance(has_nulls.get_aggregate_data_type(None), Boolean)
+        has_nulls.validate(self.table)
         self.assertEqual(has_nulls.run(self.table), True)
 
     def test_any(self):
         with self.assertRaises(ValueError):
-            Any('one').run(self.table)
+            Any('one').validate(self.table)
+
+        Any('one', lambda d: d).validate(self.table)
 
         self.assertIsInstance(Any('one').get_aggregate_data_type(None), Boolean)
+
         self.assertEqual(Any('one', lambda d: d == 2).run(self.table), True)
         self.assertEqual(Any('one', lambda d: d == 5).run(self.table), False)
 
     def test_all(self):
         with self.assertRaises(ValueError):
-            All('one').run(self.table)
+            All('one').validate(self.table)
+
+        All('one', lambda d: d).validate(self.table)
 
         self.assertIsInstance(All('one').get_aggregate_data_type(None), Boolean)
         self.assertEqual(All('one', lambda d: d != 5).run(self.table), True)
@@ -77,6 +84,7 @@ class TestSimpleAggregation(unittest.TestCase):
         table = Table(rows, self.column_names, self.column_types)
 
         self.assertIsInstance(Length().get_aggregate_data_type(table), Number)
+        Length().validate(self.table)
         self.assertEqual(Length().run(table), 5)
         self.assertEqual(Length().run(table), 5)
 
@@ -92,6 +100,7 @@ class TestSimpleAggregation(unittest.TestCase):
         table = Table(rows, self.column_names, self.column_types)
 
         self.assertIsInstance(Count('one', 1).get_aggregate_data_type(table), Number)
+        Count('one', 1).validate(self.table)
         self.assertEqual(Count('one', 1).run(table), 3)
         self.assertEqual(Count('one', 4).run(table), 0)
         self.assertEqual(Count('one', None).run(table), 1)
@@ -105,6 +114,7 @@ class TestBooleanAggregation(unittest.TestCase):
         ]
 
         table = Table(rows, ['test'], [Boolean()])
+        Any('test').validate(table)
         self.assertEqual(Any('test').run(table), True)
 
         rows = [
@@ -114,6 +124,7 @@ class TestBooleanAggregation(unittest.TestCase):
         ]
 
         table = Table(rows, ['test'], [Boolean()])
+        Any('test').validate(table)
         self.assertEqual(Any('test').run(table), False)
 
     def test_all(self):
@@ -124,6 +135,7 @@ class TestBooleanAggregation(unittest.TestCase):
         ]
 
         table = Table(rows, ['test'], [Boolean()])
+        All('test').validate(table)
         self.assertEqual(All('test').run(table), False)
 
         rows = [
@@ -133,6 +145,7 @@ class TestBooleanAggregation(unittest.TestCase):
         ]
 
         table = Table(rows, ['test'], [Boolean()])
+        All('test').validate(table)
         self.assertEqual(All('test').run(table), True)
 
 class TestDateTimeAggregation(unittest.TestCase):
@@ -146,6 +159,7 @@ class TestDateTimeAggregation(unittest.TestCase):
         table = Table(rows, ['test'], [DateTime()])
 
         self.assertIsInstance(Min('test').get_aggregate_data_type(table), DateTime)
+        Min('test').validate(table)
         self.assertEqual(Min('test').run(table), datetime.datetime(1994, 3, 3, 6, 30))
 
     def test_max(self):
@@ -158,6 +172,7 @@ class TestDateTimeAggregation(unittest.TestCase):
         table = Table(rows, ['test'], [DateTime()])
 
         self.assertIsInstance(Max('test').get_aggregate_data_type(table), DateTime)
+        Max('test').validate(table)
         self.assertEqual(Max('test').run(table), datetime.datetime(1994, 3, 3, 6, 31))
 
 class TestNumberAggregation(unittest.TestCase):
@@ -178,30 +193,37 @@ class TestNumberAggregation(unittest.TestCase):
         self.table = Table(self.rows, self.column_names, self.column_types)
 
     def test_max_precision(self):
+        with self.assertRaises(DataTypeError):
+            MaxPrecision('three').validate(self.table)
+
         self.assertIsInstance(MaxPrecision('one').get_aggregate_data_type(self.table), Number)
+        MaxPrecision('one').validate(self.table)
         self.assertEqual(MaxPrecision('one').run(self.table), 1)
         self.assertEqual(MaxPrecision('two').run(self.table), 2)
 
-        with self.assertRaises(DataTypeError):
-            MaxPrecision('three').run(self.table)
-
     def test_sum(self):
+        with self.assertRaises(DataTypeError):
+            Sum('three').validate(self.table)
+
+        Sum('one').validate(self.table)
+
         self.assertEqual(Sum('one').run(self.table), Decimal('6.5'))
         self.assertEqual(Sum('two').run(self.table), Decimal('13.13'))
 
-        with self.assertRaises(DataTypeError):
-            Sum('three').run(self.table)
-
     def test_min(self):
         with self.assertRaises(DataTypeError):
-            Min('three').run(self.table)
+            Min('three').validate(self.table)
+
+        Min('one').validate(self.table)
 
         self.assertEqual(Min('one').run(self.table), Decimal('1.1'))
         self.assertEqual(Min('two').run(self.table), Decimal('2.19'))
 
     def test_max(self):
         with self.assertRaises(DataTypeError):
-            Max('three').run(self.table)
+            Max('three').validate(self.table)
+
+        Max('one').validate(self.table)
 
         self.assertEqual(Max('one').run(self.table), Decimal('2.7'))
         self.assertEqual(Max('two').run(self.table), Decimal('4.1'))
@@ -210,15 +232,19 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            Mean('one').run(self.table)
+            Mean('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
-            Mean('three').run(self.table)
+            Mean('three').validate(self.table)
+
+        Mean('two').validate(self.table)
 
         self.assertEqual(Mean('two').run(self.table), Decimal('3.2825'))
 
     def test_mean_with_nulls(self):
         warnings.simplefilter('ignore')
+
+        Mean('one').validate(self.table)
 
         self.assertAlmostEqual(Mean('one').run(self.table), Decimal('2.16666666'))
 
@@ -226,10 +252,12 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            Median('one').run(self.table)
+            Median('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
-            Median('three').run(self.table)
+            Median('three').validate(self.table)
+
+        Median('two').validate(self.table)
 
         self.assertIsInstance(Median('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(Median('two').run(self.table), Decimal('3.42'))
@@ -238,10 +266,12 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            Mode('one').run(self.table)
+            Mode('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
-            Mode('three').run(self.table)
+            Mode('three').validate(self.table)
+
+        Mode('two').validate(self.table)
 
         self.assertIsInstance(Mode('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(Mode('two').run(self.table), Decimal('3.42'))
@@ -250,10 +280,12 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            IQR('one').run(self.table)
+            IQR('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
-            IQR('three').run(self.table)
+            IQR('three').validate(self.table)
+
+        IQR('two').validate(self.table)
 
         self.assertIsInstance(IQR('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(IQR('two').run(self.table), Decimal('0.955'))
@@ -262,10 +294,12 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            Variance('one').run(self.table)
+            Variance('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
-            Variance('three').run(self.table)
+            Variance('three').validate(self.table)
+
+        Variance('two').validate(self.table)
 
         self.assertIsInstance(Variance('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(
@@ -277,10 +311,12 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            PopulationVariance('one').run(self.table)
+            PopulationVariance('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
-            PopulationVariance('three').run(self.table)
+            PopulationVariance('three').validate(self.table)
+
+        PopulationVariance('two').validate(self.table)
 
         self.assertIsInstance(PopulationVariance('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(
@@ -292,10 +328,12 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            StDev('one').run(self.table)
+            StDev('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
-            StDev('three').run(self.table)
+            StDev('three').validate(self.table)
+
+        StDev('two').validate(self.table)
 
         self.assertIsInstance(StDev('two').get_aggregate_data_type(self.table), Number)
         self.assertAlmostEqual(
@@ -307,10 +345,12 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            PopulationStDev('one').run(self.table)
+            PopulationStDev('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
-            PopulationStDev('three').run(self.table)
+            PopulationStDev('three').validate(self.table)
+
+        PopulationStDev('two').validate(self.table)
 
         self.assertIsInstance(PopulationStDev('two').get_aggregate_data_type(self.table), Number)
         self.assertAlmostEqual(
@@ -322,10 +362,12 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            MAD('one').run(self.table)
+            MAD('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
-            MAD('three').run(self.table)
+            MAD('three').validate(self.table)
+
+        MAD('two').validate(self.table)
 
         self.assertIsInstance(MAD('two').get_aggregate_data_type(self.table), Number)
         self.assertAlmostEqual(MAD('two').run(self.table), Decimal('0'))
@@ -334,7 +376,12 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            Percentiles('one').run(self.table)
+            Percentiles('one').validate(self.table)
+
+        with self.assertRaises(DataTypeError):
+            Percentiles('three').validate(self.table)
+
+        Percentiles('two').validate(self.table)
 
         rows = [(n,) for n in range(1, 1001)]
 
@@ -374,7 +421,12 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            Quartiles('one').run(self.table)
+            Quartiles('one').validate(self.table)
+
+        with self.assertRaises(DataTypeError):
+            Quartiles('three').validate(self.table)
+
+        Quartiles('two').validate(self.table)
 
         # N = 4
         rows = [(n,) for n in [1, 2, 3, 4]]
@@ -483,7 +535,12 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            Quintiles('one').run(self.table)
+            Quintiles('one').validate(self.table)
+
+        with self.assertRaises(DataTypeError):
+            Quintiles('three').validate(self.table)
+
+        Quintiles('two').validate(self.table)
 
         rows = [(n,) for n in range(1, 1001)]
 
@@ -495,7 +552,12 @@ class TestNumberAggregation(unittest.TestCase):
         warnings.simplefilter('error')
 
         with self.assertRaises(NullCalculationWarning):
-            Deciles('one').run(self.table)
+            Deciles('one').validate(self.table)
+
+        with self.assertRaises(DataTypeError):
+            Deciles('three').validate(self.table)
+
+        Deciles('two').validate(self.table)
 
         rows = [(n,) for n in range(1, 1001)]
 
@@ -512,6 +574,7 @@ class TestTextAggregation(unittest.TestCase):
         ]
 
         table = Table(rows, ['test'], [Text()])
+        MaxLength('test').validate(table)
         self.assertEqual(MaxLength('test').run(table), 6)
 
     def test_max_length_invalid(self):
@@ -524,4 +587,4 @@ class TestTextAggregation(unittest.TestCase):
         table = Table(rows, ['test'], [Number()])
 
         with self.assertRaises(DataTypeError):
-            MaxLength('test').run(table)
+            MaxLength('test').validate(table)

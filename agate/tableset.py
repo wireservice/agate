@@ -280,6 +280,10 @@ class TableSet(MappedSequence, Patchable):
                 column_types.append(aggregation.get_aggregate_data_type(self._sample_table))
 
             for name, table in self.items():
+                for new_column_name, aggregation in aggregations:
+                    aggregation.validate(table)
+
+            for name, table in self.items():
                 new_row = [name]
 
                 for new_column_name, aggregation in aggregations:

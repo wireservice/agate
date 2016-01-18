@@ -29,11 +29,13 @@ from agate.warns import warn_null_calculation
 
 class Computation(object): #pragma: no cover
     """
-    Base class for row-wise computations on a :class:`.Table`.
+    An operation that takes a table and produces a new column by performing
+    some computation on each row. Computations are invoked with
+    :class:`.TableSet.compute`.
 
     When implementing a custom subclass, ensure that the values returned by
     :meth:`run` are of the type specified by :meth:`get_computed_data_type`.
-    This can be easily ensured by using the :meth:`.DataType.cast` method. See
+    This can be ensured by using the :meth:`.DataType.cast` method. See
     :class:`Formula` for an example.
     """
     def get_computed_data_type(self, table):
@@ -45,8 +47,9 @@ class Computation(object): #pragma: no cover
 
     def validate(self, table):
         """
-        Called with the table immediately prior to invoking the computation with
-        rows. Can be used to verify appropriate data types.
+        Perform any checks necessary to verify this computation can run on the
+        provided table without errors. This is called by :meth:`.Table.compute`
+        before :meth:`run`.
         """
         pass
 
