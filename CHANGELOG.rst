@@ -20,7 +20,7 @@ This version introduces one breaking change, which is only relevant if you are u
 * :class:`.AgateTestCase` is available as ``agate.testcase.AgateTestCase`` for extensions to use. (#384)
 * :meth:`.Table.exclude` implemented. Opposite of :meth:`.Table.select`. (#388)
 * :meth:`.Table.merge` now accepts a ``row_names`` argument. (#403)
-* :class:`.Formula` now automatically casts computed values to specified data type unless ``validate`` is set to ``False``. (#398)
+* :class:`.Formula` now automatically casts computed values to specified data type unless ``cast`` is set to ``False``. (#398)
 * Added Neil Bedi to AUTHORS.
 * :meth:`.Table.rename` is implemented. (#389)
 * :meth:`.TableSet.to_json` is implemented. (#374)

@@ -65,15 +65,15 @@ class Formula(Computation):
     :param func:
         The function to be applied to each row. Must return a valid value for
         the specified data type.
-    :param validate:
+    :param cast:
         If ``True``, each return value will be cast to the specified
         ``data_type`` to ensure it is valid. Only specify false if you are
         certain your formula always returns the correct type.
     """
-    def __init__(self, data_type, func, validate=True):
+    def __init__(self, data_type, func, cast=True):
         self._data_type = data_type
         self._func = func
-        self._validate = validate
+        self._cast = cast
 
     def get_computed_data_type(self, table):
         return self._data_type
@@ -84,7 +84,7 @@ class Formula(Computation):
         for row in table.rows:
             v = self._func(row)
 
-            if self._validate:
+            if self._cast:
                 v = self._data_type.cast(v)
 
             new_column.append(v)

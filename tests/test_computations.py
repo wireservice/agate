@@ -59,7 +59,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_formula_no_validate(self):
         new_table = self.table.compute([
-            ('test', Formula(self.number_type, lambda r: r['one'], validate=False))
+            ('test', Formula(self.number_type, lambda r: r['one'], cast=False))
         ])
 
         # Now everything is screwed up
