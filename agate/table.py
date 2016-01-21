@@ -279,7 +279,7 @@ class Table(utils.Patchable):
             New row names for the renamed table. May be either an array or
             a dictionary mapping existing row names to new names. If not
             specified, will use this table's existing row names.
-        """    
+        """
         if isinstance(column_names, dict):
             column_names = [column_names[name] if name in column_names else name for name in self.column_names]
 
@@ -289,9 +289,6 @@ class Table(utils.Patchable):
         if column_names is not None and column_names != self.column_names:
             if row_names is None:
                 row_names = self._row_names
-            
-            if column_names is None:
-                column_names = self._column_names
                 
             return Table(self.rows, column_names, self.column_types, row_names=row_names, _is_fork=False)
         else:
