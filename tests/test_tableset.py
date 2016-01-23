@@ -7,6 +7,11 @@ try:
 except ImportError: #pragma: no cover
     from decimal import Decimal
 
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 import shutil
 import json
 
@@ -128,6 +133,26 @@ class TestTableSet(AgateTestCase):
                 contents2 = json.load(f)
 
             self.assertEqual(contents1, contents2)
+
+        shutil.rmtree('.test-tableset')
+    
+    def test_to_nested_json(self):
+        tableset = TableSet(self.tables.values(), self.tables.keys())
+        
+        output = StringIO()
+        tableset.to_json(output, nested=True)
+        tableset.to_json('.test-tableset/tableset.json', nested=True)
+
+        contents1 = json.loads(output.getvalue())
+        
+        with open('.test-tableset/tableset.json') as f:
+            contents2 = json.load(f)
+
+        with open('examples/tableset/tableset.json') as f:
+            contents3 = json.load(f)
+
+        self.assertEqual(contents1, contents3)
+        self.assertEqual(contents2, contents3)
 
         shutil.rmtree('.test-tableset')
 
