@@ -1,6 +1,8 @@
 1.2.1
 -----
 
+* Slight changes to the parsing of numbers, dates and datetimes from strings.
+* Numbers are now written to CSV without extra zeros after the decimal point. (#429)
 * Made it possible for ``datetime.date`` instances to be considered valid :class:`.DateTime` inputs. (#427)
 * Changed preference order in type testing so :class:`.Date` is preferred to :class:`.DateTime`.
 * Removed ``float_precision`` argument from :class:`.Number`. (#428)

@@ -85,6 +85,8 @@ class DateTime(DataType):
 
         if status == 3:
             return value
+        elif status == 1:
+            return datetime.datetime.combine(value.date(), datetime.time.min)
 
         try:
             dt = isodate.parse_datetime(d)

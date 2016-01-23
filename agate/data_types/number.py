@@ -40,6 +40,7 @@ class Number(DataType):
         elif type(d) is int:
             return Decimal(d)
         elif type(d) is float:
+            print(d)
             return Decimal(repr(d))
         elif isinstance(d, six.string_types):
             d = d.strip()
@@ -59,6 +60,12 @@ class Number(DataType):
             pass
 
         raise CastError('Can not parse value "%s" as Decimal.' % d)
+
+    def csvify(self, d):
+        if d is None:
+            return d
+
+        return '{:f}'.format(d.normalize())
 
     def jsonify(self, d):
         if d is None:

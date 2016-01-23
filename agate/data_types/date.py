@@ -22,10 +22,10 @@ class Date(DataType):
 
         self.date_format = date_format
         self.parser = parsedatetime.Calendar()
-        
+
     def __getstate__(self):
         """
-        Return state values to be pickled. Exclude _parser because parsedatetime 
+        Return state values to be pickled. Exclude _parser because parsedatetime
         cannot be pickled.
         """
         odict = self.__dict__.copy()
@@ -34,7 +34,7 @@ class Date(DataType):
 
     def __setstate__(self, dict):
         """
-        Restore state from the unpickled state values. Set _parser to an instance 
+        Restore state from the unpickled state values. Set _parser to an instance
         of the parsedatetime Calendar class.
         """
         self.__dict__.update(dict)
@@ -68,15 +68,23 @@ class Date(DataType):
 
             return dt.date()
 
-        value, status = self.parser.parseDT(d)
+        zero = datetime.datetime.combine(datetime.date.min, datetime.time.min)
+
+        value, status = self.parser.parseDT(d, sourceTime=zero)
 
         if status == 1:
+            if value.time() != datetime.time.min:
+                raise CastError('Value "%s" is datetime, not date.' % d)
+
             return value.date()
 
         try:
             dt = isodate.parse_date(d)
 
-            return dt
+            try:
+                dt = isodate.parse_datetime(d)
+            except:
+                return dt
         except:
             pass
 
