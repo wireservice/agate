@@ -86,7 +86,6 @@ class TestBasic(AgateTestCase):
 
         self.assertColumnNames(table, ['one', 'B', 'three'])
 
-
     def test_create_table_non_datatype_columns(self):
         column_types = [self.number_type, self.number_type, 'foo']
 
