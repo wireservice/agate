@@ -285,11 +285,11 @@ class Table(utils.Patchable):
 
         if isinstance(row_names, dict):
             row_names = [row_names[name] if name in row_names else name for name in self.row_names]
-        
+
         if column_names is not None and column_names != self.column_names:
             if row_names is None:
                 row_names = self._row_names
-                
+
             return Table(self.rows, column_names, self.column_types, row_names=row_names, _is_fork=False)
         else:
             return self._fork(self.rows, column_names, self._column_types, row_names=row_names)
@@ -1000,7 +1000,7 @@ class Table(utils.Patchable):
             return tuple(results)
         else:
             aggregations.validate(self)
-            
+
             return aggregations.run(self)
 
     @allow_tableset_proxy

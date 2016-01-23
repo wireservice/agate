@@ -1,6 +1,7 @@
 1.2.1
 -----
 
+* Removed ``float_precision`` argument from :class:`.Number`. (#428)
 * :class:`.AgateTestCase` is now available as ``agate.AgateTestCase``. (#426)
 * :meth:`.TableSet.to_json` now has an ``indent`` option for use with ``nested``.
 * :meth:`.TableSet.to_json` now has a ``nested`` option for writing a single, nested JSON file. (#417)
