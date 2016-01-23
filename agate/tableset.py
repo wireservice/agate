@@ -30,6 +30,7 @@ from glob import glob
 import os
 import json
 import six
+import sys
 
 try:
     from StringIO import StringIO
@@ -111,6 +112,16 @@ class TableSet(MappedSequence, Patchable):
 
         MappedSequence.__init__(self, tables, keys)
 
+    def __str__(self):
+        """
+        Print the tableset's structure via :meth:`TableSet.print_structure`.
+        """
+        structure = six.StringIO()
+
+        self.print_structure(output=structure)
+
+        return structure.getvalue()
+        
     def __getattr__(self, name):
         """
         Proxy method access to :class:`Table` methods via instances of
@@ -364,3 +375,19 @@ class TableSet(MappedSequence, Patchable):
             row_names = lambda r: tuple(r[n] for n in row_name_columns)
 
         return Table(output, column_names, column_types, row_names=row_names)
+
+    def print_structure(self, output=sys.stdout):
+        """
+        Print the column names and their respective types. Uses the first table 
+        as a sample table for output.
+
+        :param tableset:
+            A :class:`TableSet` instance.
+
+        :param output:
+            The output used to print the structure of the :class:`Table`.
+
+        :returns:
+            None
+        """
+        self._sample_table.print_structure(output=output)
