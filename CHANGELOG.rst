@@ -1,6 +1,7 @@
 1.2.1
 -----
 
+* :class:`.AgateTestCase` is now available as ``agate.AgateTestCase``. (#426)
 * :meth:`.TableSet.to_json` now has an ``indent`` option for use with ``nested``.
 * :meth:`.TableSet.to_json` now has a ``nested`` option for writing a single, nested JSON file. (#417)
 * :meth:`.TestCase.assertRowNames` and :meth:`.TestCase.assertColumnNames` now validate the row and column instance keys.
