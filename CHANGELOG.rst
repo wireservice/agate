@@ -1,6 +1,7 @@
 1.2.1
 -----
 
+* :class:`.Table` can now be constructed with ``None`` for some column names. Those columns will receive letter names. (#432)
 * Slight changes to the parsing of dates and datetimes from strings.
 * Numbers are now written to CSV without extra zeros after the decimal point. (#429)
 * Made it possible for ``datetime.date`` instances to be considered valid :class:`.DateTime` inputs. (#427)

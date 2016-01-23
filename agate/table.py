@@ -101,14 +101,20 @@ class Table(utils.Patchable):
     def __init__(self, rows, column_names=None, column_types=None, row_names=None, _is_fork=False):
         # Validate column names
         if column_names:
-            for column_name in column_names:
-                if not isinstance(column_name, six.string_types):
-                    raise ValueError('Column names must be strings.')
+            final_column_names = []
 
-            if len(set(column_names)) != len(column_names):
+            for i, column_name in enumerate(column_names):
+                if column_name is None:
+                    final_column_names.append(utils.letter_name(i))
+                elif isinstance(column_name, six.string_types):
+                    final_column_names.append(column_name)
+                else:
+                    raise ValueError('Column names must be strings or None.')
+
+            if len(set(final_column_names)) != len(final_column_names):
                 raise ValueError('Duplicate column names are not allowed.')
 
-            self._column_names = tuple(column_names)
+            self._column_names = tuple(final_column_names)
         else:
             self._column_names = tuple(utils.letter_name(i) for i in range(len(rows[0])))
 

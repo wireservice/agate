@@ -80,6 +80,13 @@ class TestBasic(AgateTestCase):
         with self.assertRaises(ValueError):
             Table(self.rows, column_names, self.column_types)
 
+    def test_create_table_null_column_names(self):
+        column_names = ['one', None, 'three']
+        table = Table(self.rows, column_names, self.column_types)
+
+        self.assertColumnNames(table, ['one', 'B', 'three'])
+
+
     def test_create_table_non_datatype_columns(self):
         column_types = [self.number_type, self.number_type, 'foo']
 
