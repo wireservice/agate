@@ -1,6 +1,7 @@
 1.2.1
 -----
 
+* :meth:`.TestCase.assertRowNames` and :meth:`.TestCase.assertColumnNames` now validate the row and column instance keys.
 * Fixed a bug that prevented :meth:`.Table.rename` from renaming column names in :class:`.Row` instances. (#423)
 
 1.2.0
