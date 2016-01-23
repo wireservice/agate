@@ -1,6 +1,7 @@
 1.2.1
 -----
 
+* Fixed a bug that prevented :meth:`.Table.rename` from renaming column names in :class:`.Row` instances. (#423)
 
 1.2.0
 -----
