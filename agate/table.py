@@ -36,7 +36,7 @@ except ImportError: #pragma: no cover
 from babel.numbers import format_decimal
 
 import six
-from six.moves import range, zip #pylint: disable=W0622
+from six.moves import range, zip, zip_longest #pylint: disable=W0622
 
 from agate.aggregations import Min, Max
 from agate.columns import Column
@@ -908,7 +908,7 @@ class Table(utils.Patchable):
         column_types = tables[0].column_types
 
         for table in tables[1:]:
-            if table.column_types != column_types:
+            if any(not isinstance(a, type(b)) for a,b in zip_longest(table.column_types, column_types)):
                 raise ValueError('Only tables with identical column types may be merged.')
 
         rows = []
