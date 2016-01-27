@@ -418,7 +418,7 @@ class Table(utils.Patchable):
         `kwargs` will be passed through to :meth:`json.load`.
 
         :param path:
-            Filepath or file-like object from which to read CSV data.
+            Filepath or file-like object from which to read JSON data.
         :param row_names:
             See :meth:`Table.__init__`.
         :param key:

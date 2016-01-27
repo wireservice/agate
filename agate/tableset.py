@@ -37,6 +37,11 @@ try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
+    
+try:
+    from cdecimal import Decimal
+except ImportError: #pragma: no cover
+    from decimal import Decimal
 
 from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
@@ -220,8 +225,12 @@ class TableSet(MappedSequence, Patchable):
             A list of keys of the top-level dictionaries for each file. If  
             specified, length must be equal to number of JSON files in path.
         """
-        if os.path.isdir(path):
-            tables = OrderedDict()
+        if isinstance(path, six.string_types) and not os.path.isdir(path) and not os.path.isfile(path):
+            raise IOError('Specified path doesn\'t exist.')
+        
+        tables = OrderedDict()    
+        
+        if isinstance(path, six.string_types) and os.path.isdir(path):
             filepaths = glob(os.path.join(path, '*.json'))
             
             if keys is not None and len(keys) != len(filepaths):
@@ -235,13 +244,18 @@ class TableSet(MappedSequence, Patchable):
                 else:
                     tables[name] = Table.from_json(filepath, **kwargs)
             
-            return TableSet(tables.values(), tables.keys())
-            
-        elif os.path.isfile(path):
-            pass
-            
         else:
-            raise IOError('Specified path doesn\'t exist.')
+            if hasattr(path, 'read'):
+                js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
+            else:
+                with open(path, 'r') as f:
+                    js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
+                    
+            for key,value in js.items():
+                output = StringIO(json.dumps(value))
+                tables[key] = Table.from_json(output)
+            
+        return TableSet(tables.values(), tables.keys())
 
     def to_json(self, path, nested=False, indent=None, **kwargs):
         """
