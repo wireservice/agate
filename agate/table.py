@@ -327,7 +327,12 @@ class Table(utils.Patchable):
         else:
             with open(path) as f:
                 rows = list(csv.reader(f, **kwargs))
-
+        
+        max_length = max(map(len, rows))
+        for row in rows:
+            if len(row) < max_length:
+                row.extend([None]*(max_length-len(row)))
+        
         if header:
             if column_names is None:
                 column_names = rows.pop(0)

@@ -598,7 +598,10 @@ class TestCSV(AgateTestCase):
         self.assertColumnTypes(table, [Number, Text, Boolean, Date, DateTime, TimeDelta])
 
     def test_from_csv_ragged_rows(self):
+        table1 = Table([[1, 2, 3, None]], ['A', 'B', 'C', 'D'])
         table = Table.from_csv('examples/test_ragged_rows.csv')
+        self.assertColumnNames(table, ['A', 'B', 'C', 'D'])
+        self.assertRows(table, table1.rows)
 
     def test_to_csv(self):
         table = Table(self.rows, self.column_names, self.column_types)
