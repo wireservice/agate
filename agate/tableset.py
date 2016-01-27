@@ -204,6 +204,45 @@ class TableSet(MappedSequence, Patchable):
 
             table.to_csv(path, **kwargs)
 
+    @classmethod
+    def from_json(cls, path, keys=None, **kwargs):
+        """
+        Create a new :class:`TableSet` from a directory of JSON files or a 
+        single JSON object with key value (Table key and list of row objects) 
+        pairs for each :class:`Table`. 
+
+        See :meth:`.Table.from_json` for additional details.
+
+        :param path:
+            Path to a directory containing JSON files or filepath/file-like 
+            object of nested JSON file.
+        :param keys:
+            A list of keys of the top-level dictionaries for each file. If  
+            specified, length must be equal to number of JSON files in path.
+        """
+        if os.path.isdir(path):
+            tables = OrderedDict()
+            filepaths = glob(os.path.join(path, '*.json'))
+            
+            if keys is not None and len(keys) != len(filepaths):
+                raise ValueError('If specified, keys must have length equal to number of JSON files')
+            
+            for i, filepath in enumerate(filepaths):
+                name = os.path.split(filepath)[1].strip('.json')
+                
+                if keys is not None:
+                    tables[name] = Table.from_json(filepath, keys[i], **kwargs)
+                else:
+                    tables[name] = Table.from_json(filepath, **kwargs)
+            
+            return TableSet(tables.values(), tables.keys())
+            
+        elif os.path.isfile(path):
+            pass
+            
+        else:
+            raise IOError('Specified path doesn\'t exist.')
+
     def to_json(self, path, nested=False, indent=None, **kwargs):
         """
         Write :class:`TableSet` to either a set of JSON files for each table or 
