@@ -185,6 +185,30 @@ class TestTableSet(AgateTestCase):
 
         self.assertColumnNames(table, ['foo', 'letter', 'number'])
         self.assertColumnTypes(table, [Text, Text, Number])
+    
+    def test_merge_groups(self):
+        tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='foo')
+
+        table = tableset.merge(groups=['red', 'blue', 'green'], group_name='color_code')
+
+        self.assertColumnNames(table, ['color_code', 'letter', 'number'])
+        self.assertColumnTypes(table, [Text, Text, Number])
+        
+        self.assertEqual(len(table.rows), 9)
+        self.assertSequenceEqual(table.rows[0], ['red', 'a', 1])
+        self.assertSequenceEqual(table.rows[8], ['green', 'c', 3])
+    
+    def test_merge_groups_invalid_length(self):
+        tableset = TableSet(self.tables.values(), self.tables.keys())
+
+        with self.assertRaises(ValueError):
+            table = tableset.merge(groups=['red', 'blue'], group_name='color_code')
+    
+    def test_merge_groups_invalid_type(self):
+        tableset = TableSet(self.tables.values(), self.tables.keys())
+
+        with self.assertRaises(ValueError):
+            table = tableset.merge(groups='invalid', group_name='color_code')
 
     def test_compute(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
