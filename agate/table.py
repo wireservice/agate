@@ -1269,4 +1269,8 @@ class Table(utils.Patchable):
         :returns:
             None
         """
-        print_structure(self, output)
+        left_column = [n for n in self.column_names]
+        right_column = [t.__class__.__name__ for t in self.column_types]
+        column_headers = ['column_names', 'column_types']
+        
+        print_structure(left_column, right_column, column_headers, output)
