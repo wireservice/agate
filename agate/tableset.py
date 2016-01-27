@@ -30,6 +30,7 @@ from glob import glob
 import os
 import json
 import six
+from six.moves import zip_longest
 import sys
 
 try:
@@ -105,7 +106,7 @@ class TableSet(MappedSequence, Patchable):
         self._column_names = self._sample_table.column_names
 
         for table in tables:
-            if table.column_types != self.column_types:
+            if any(not isinstance(a, type(b)) for a,b in zip_longest(table.column_types, self.column_types)):
                 raise ValueError('Not all tables have the same column types!')
 
             if table.column_names != self.column_names:

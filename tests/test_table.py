@@ -1568,7 +1568,7 @@ class TestMerge(AgateTestCase):
 
     def test_merge(self):
         table_a = Table(self.rows, self.column_names, self.column_types)
-        table_b = Table(self.rows, self.column_names, self.column_types)
+        table_b = Table(self.rows, self.column_names)
         table_c = Table.merge([table_a, table_b])
 
         self.assertIsNot(table_c, table_a)

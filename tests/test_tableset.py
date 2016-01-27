@@ -85,10 +85,10 @@ class TestTableSet(AgateTestCase):
 
     def test_from_csv(self):
         tableset1 = TableSet(self.tables.values(), self.tables.keys())
-        tableset2 = TableSet.from_csv('examples/tableset', self.column_names, self.column_types)
+        tableset2 = TableSet.from_csv('examples/tableset', self.column_names)
 
         self.assertSequenceEqual(tableset1.column_names, tableset2.column_names)
-        self.assertSequenceEqual(tableset1.column_types, tableset2.column_types)
+        self.assertSequenceEqual([type(t) for t in tableset1.column_types], [type(t) for t in tableset2.column_types])
 
         self.assertEqual(len(tableset1), len(tableset2))
 
@@ -103,6 +103,10 @@ class TestTableSet(AgateTestCase):
     def test_tableset_from_csv_invalid_dir(self):
         with self.assertRaises(IOError):
             TableSet.from_csv('quack')
+    
+    def test_from_csv_column_types_not_equal(self):
+        with self.assertRaises(ValueError):
+            TableSet.from_csv('examples/tableset/type_error')
 
     def test_to_csv(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
