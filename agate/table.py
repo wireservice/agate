@@ -304,7 +304,10 @@ class Table(utils.Patchable):
     def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, **kwargs):
         """
         Create a new table for a CSV. This method uses agate's builtin
-        CSV reader, which supports unicode on both Python 2 and Python 3.
+        CSV reader, which supports unicode on both Python 2 and Python 3. 
+        
+        If any rows are shorter than the longest row, `None`s will be added to 
+        fill gaps.
 
         `kwargs` will be passed through to the CSV reader.
 
