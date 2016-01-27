@@ -124,6 +124,47 @@ class TestTableSet(AgateTestCase):
 
         shutil.rmtree('.test-tableset')
 
+    def test_from_json_dir(self):
+        tableset1 = TableSet(self.tables.values(), self.tables.keys())
+        tableset2 = TableSet.from_json('examples/tableset')
+
+        self.assertSequenceEqual(tableset1.column_names, tableset2.column_names)
+        self.assertSequenceEqual([type(t) for t in tableset1.column_types], [type(t) for t in tableset2.column_types])
+
+        self.assertEqual(len(tableset1), len(tableset2))
+
+        for name in ['table1', 'table2', 'table3']:
+            self.assertEqual(len(tableset1[name].columns), len(tableset2[name].columns))
+            self.assertEqual(len(tableset1[name].rows), len(tableset2[name].rows))
+
+            self.assertSequenceEqual(tableset1[name].rows[0], tableset2[name].rows[0])
+            self.assertSequenceEqual(tableset1[name].rows[1], tableset2[name].rows[1])
+            self.assertSequenceEqual(tableset1[name].rows[2], tableset2[name].rows[2])
+            
+    def test_from_json_file(self):
+        tableset1 = TableSet(self.tables.values(), self.tables.keys())
+        tableset2 = TableSet.from_json('examples/test_tableset.json')
+        with open('examples/test_tableset.json') as f:
+            filelike = StringIO(f.read())
+        tableset3 = TableSet.from_json(filelike)
+
+        self.assertSequenceEqual(tableset1.column_names, tableset2.column_names, tableset3.column_names)
+        self.assertSequenceEqual([type(t) for t in tableset1.column_types], [type(t) for t in tableset2.column_types], [type(t) for t in tableset3.column_types])
+
+        self.assertEqual(len(tableset1), len(tableset2), len(tableset3))
+
+        for name in ['table1', 'table2', 'table3']:
+            self.assertEqual(len(tableset1[name].columns), len(tableset2[name].columns), len(tableset3[name].columns))
+            self.assertEqual(len(tableset1[name].rows), len(tableset2[name].rows), len(tableset3[name].rows))
+
+            self.assertSequenceEqual(tableset1[name].rows[0], tableset2[name].rows[0], tableset3[name].rows[0])
+            self.assertSequenceEqual(tableset1[name].rows[1], tableset2[name].rows[1], tableset3[name].rows[1])
+            self.assertSequenceEqual(tableset1[name].rows[2], tableset2[name].rows[2], tableset3[name].rows[2])
+
+    def test_from_json_false_path(self):
+        with self.assertRaises(IOError):
+            tableset1 = TableSet.from_json('notapath')
+
     def test_to_json(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
@@ -152,7 +193,7 @@ class TestTableSet(AgateTestCase):
         with open('.test-tableset/tableset.json') as f:
             contents2 = json.load(f)
 
-        with open('examples/tableset/tableset.json') as f:
+        with open('examples/test_tableset.json') as f:
             contents3 = json.load(f)
 
         self.assertEqual(contents1, contents3)
