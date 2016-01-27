@@ -30,6 +30,7 @@ from glob import glob
 import os
 import json
 import six
+import sys
 
 try:
     from StringIO import StringIO
@@ -40,6 +41,7 @@ from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
 from agate.rows import Row
 from agate.table import Table
+from agate.preview import print_structure
 from agate.utils import Patchable
 
 class TableMethodProxy(object):
@@ -111,6 +113,16 @@ class TableSet(MappedSequence, Patchable):
 
         MappedSequence.__init__(self, tables, keys)
 
+    def __str__(self):
+        """
+        Print the tableset's structure via :meth:`TableSet.print_structure`.
+        """
+        structure = six.StringIO()
+
+        self.print_structure(output=structure)
+
+        return structure.getvalue()
+        
     def __getattr__(self, name):
         """
         Proxy method access to :class:`Table` methods via instances of
@@ -384,3 +396,24 @@ class TableSet(MappedSequence, Patchable):
             row_names = lambda r: tuple(r[n] for n in row_name_columns)
 
         return Table(output, column_names, column_types, row_names=row_names)
+
+    def print_structure(self, max_rows=20, output=sys.stdout):
+        """
+        Print the keys and row counts of each table in the tableset. 
+
+        :param max_rows:
+            The maximum number of rows to display before truncating the data.
+            Defaults to 20.
+        :param output:
+            The output used to print the structure of the :class:`Table`.
+
+        :returns:
+            None
+        """
+        max_length = min(len(self.items()), max_rows)
+        
+        left_column = self.keys()[0:max_length]
+        right_column = [str(len(table.rows)) for key, table in self.items()[0:max_length]]
+        column_headers = ['table_keys', 'row_count']
+        
+        print_structure(left_column, right_column, column_headers, output)

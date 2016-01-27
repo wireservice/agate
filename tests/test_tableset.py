@@ -250,6 +250,27 @@ class TestTableSet(AgateTestCase):
             self.assertColumnNames(new_table, ('number',))
             self.assertColumnTypes(new_table, (Number,))
 
+    def test_print_structure(self):
+        tableset = TableSet(self.tables.values(), self.tables.keys())
+
+        output = StringIO()
+        tableset.print_structure(output=output)
+        lines = output.getvalue().strip().split('\n')
+
+        self.assertEqual(len(lines), 7)
+        
+    def test_print_structure_row_limit(self):
+        tables = self.tables
+        for i in range(25):
+            tables[str(i)] = self.tables['table1']
+            
+        tableset = TableSet(tables.values(), tables.keys())
+        output = StringIO()
+        tableset.print_structure(output=output)
+        lines = output.getvalue().strip().split('\n')
+
+        self.assertEqual(len(lines), 24)
+
     def test_aggregate_key_name(self):
         tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
 

@@ -371,9 +371,10 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
     write(axis.rjust(width))
     write(tick_text)
 
-def print_structure(table, output=sys.stdout):
+def print_structure(left_column, right_column, column_headers, output=sys.stdout):
     """
-    See :meth:`.Table.print_structure` for documentation.
+    See :meth:`.Table.print_structure` and :meth:`.TableSet.print_structure` 
+    for documentation.
     """
     def write(line):
         output.write(line + '\n')
@@ -404,27 +405,24 @@ def print_structure(table, output=sys.stdout):
         """
         return max(max(len(value) for value in values), len(column_name))
 
-    column_names = [n for n in table.column_names]
-    column_types = [t.__class__.__name__ for t in table.column_types]
-
-    column_name_width = _max_width(column_names, 'column_names')
-    column_type_width = _max_width(column_types, 'column_types')
+    left_column_width = _max_width(left_column, column_headers[0])
+    right_column_width = _max_width(right_column, column_headers[1])
 
     header = [
-        ' column_names '.ljust(column_name_width + 2),
-        ' column_types '.ljust(column_type_width + 2)
+        (' ' + column_headers[0] + ' ').ljust(left_column_width + 2),
+        (' ' + column_headers[1] + ' ').ljust(right_column_width + 2)
     ]
 
-    divider = '|--%s--|' % '-+-'.join('-' * w for w in (column_name_width, column_type_width))
+    divider = '|--%s--|' % '-+-'.join('-' * w for w in (left_column_width, right_column_width))
 
     write(divider)
     write(_print_row(header))
     write(divider)
 
-    formatted_column_names = (' %s ' % n.ljust(column_name_width) for n in column_names)
-    formatted_column_types = (' %s ' % t.ljust(column_type_width) for t in column_types)
+    formatted_left_column = (' %s ' % n.ljust(left_column_width) for n in left_column)
+    formatted_right_column = (' %s ' % t.ljust(right_column_width) for t in right_column)
 
-    for formatted_row in zip(formatted_column_names, formatted_column_types):
+    for formatted_row in zip(formatted_left_column, formatted_right_column):
         write(_print_row(formatted_row))
 
     write(divider)
