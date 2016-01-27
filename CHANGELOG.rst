@@ -1,10 +1,11 @@
 1.2.1
 -----
 
-* :meth:`TableSet.from_csv` now handles ragged rows by filling gaps with `None`s (#440)
-* Added :meth:`.TableSet.__str__` to display :class:`.Table` keys and row counts (#418)
-* Fixed a bug that incorrectly checked for column_types equivalence in :meth:`.Table.merge` and :meth:`.TableSet.__init__` (#435)
-* :meth:`.TableSet.merge` now has the ability to specify grouping factors with ``group``, ``group_name`` and ``group_type`` (#406)
+* :meth:`TableSet.from_json` implemented. (#373)
+* :meth:`TableSet.from_csv` now handles ragged rows by filling gaps with ``None``s. (#440)
+* Added :meth:`.TableSet.__str__` to display :class:`.Table` keys and row counts. (#418)
+* Fixed a bug that incorrectly checked for column_types equivalence in :meth:`.Table.merge` and :meth:`.TableSet.__init__`. (#435)
+* :meth:`.TableSet.merge` now has the ability to specify grouping factors with ``group``, ``group_name`` and ``group_type``. (#406)
 * :class:`.Table` can now be constructed with ``None`` for some column names. Those columns will receive letter names. (#432)
 * Slight changes to the parsing of dates and datetimes from strings.
 * Numbers are now written to CSV without extra zeros after the decimal point. (#429)
