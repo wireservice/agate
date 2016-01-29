@@ -30,7 +30,7 @@ Hate regexes? You can use glob (:mod:`fnmatch`) syntax too!
 
     from fnmatch import fnmatch
 
-    new_table = table.where(lambda row: fnmatch('C*', row['state'])
+    new_table = table.where(lambda row: fnmatch('C*', row['state']))
 
 Values within a range
 =====================
