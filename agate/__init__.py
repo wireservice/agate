@@ -9,6 +9,7 @@ from agate.exceptions import *
 from agate.mapped_sequence import MappedSequence
 from agate.table import Table, allow_tableset_proxy
 from agate.tableset import TableSet
+from agate.testcase import AgateTestCase
 from agate.warns import NullCalculationWarning, warn_null_calculation
 
 if six.PY2: #pragma: no cover

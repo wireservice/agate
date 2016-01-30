@@ -28,6 +28,13 @@ dimensions.
 from collections import OrderedDict
 from glob import glob
 import os
+import json
+import six
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
@@ -184,23 +191,60 @@ class TableSet(MappedSequence, Patchable):
 
             table.to_csv(path, **kwargs)
 
-    def to_json(self, dir_path, **kwargs):
+    def to_json(self, path, nested=False, indent=None, **kwargs):
         """
-        Write each table in this set to a separate JSON file in a given
-        directory.
+        Write :class:`TableSet` to either a set of JSON files for each table or 
+        a single nested JSON file.
 
         See :meth:`.Table.to_json` for additional details.
 
-        :param dir_path:
-            Path to the directory to write the JSON files to.
+        :param path:
+            Path to the directory to write the JSON file(s) to. If nested is 
+            `True`, this should be a file path or file-like object to write to.
+        :param nested:
+            If `True`, the output will be a single nested JSON file with each 
+            Table's key paired with a list of row objects. Otherwise, the output 
+            will be a set of files for each table. Defaults to `False`.
+        :param indent:
+            See :meth:`Table.to_json`.
         """
-        if not os.path.exists(dir_path):
-            os.makedirs(dir_path)
+        if not nested:
+            if not os.path.exists(path):
+                os.makedirs(path)
+                
+            for name, table in self.items():
+                filepath = os.path.join(path, '%s.json' % name)
 
-        for name, table in self.items():
-            path = os.path.join(dir_path, '%s.json' % name)
+                table.to_json(filepath, indent=indent, **kwargs)
+        else:
+            close = True
+            tableset_dict = {}
+            for name, table in self.items():
+                output = StringIO()
+                table.to_json(output, **kwargs)
+                tableset_dict[name] = json.loads(output.getvalue())
+                
+            if hasattr(path, 'write'):
+                f = path
+                close = False
+            else:
+                dirpath = os.path.dirname(path)
+                
+                if dirpath and not os.path.exists(dirpath):
+                    os.makedirs(dirpath)
 
-            table.to_json(path, **kwargs)
+                f = open(path, 'w')
+            
+            json_kwargs = { 'ensure_ascii': False, 'indent': indent }
+
+            if six.PY2:
+                json_kwargs['encoding'] = 'utf-8'
+
+            json_kwargs.update(kwargs)
+            json.dump(tableset_dict, f, json_kwargs)
+            
+            if close and f is not None:
+                f.close()
 
     @property
     def column_types(self):

@@ -44,8 +44,8 @@ class TypeTester(object):
             Boolean(),
             Number(locale=locale),
             TimeDelta(),
-            DateTime(),
             Date(),
+            DateTime(),
             Text()
         ]
 

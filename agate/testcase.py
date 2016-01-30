@@ -20,6 +20,12 @@ class AgateTestCase(unittest.TestCase):
             names
         )
 
+        for row in table.rows:
+            self.assertSequenceEqual(
+                row.keys(),
+                names
+            )
+
     def assertColumnTypes(self, table, types):
         self.assertIsInstance(table, agate.Table)
 
@@ -44,3 +50,9 @@ class AgateTestCase(unittest.TestCase):
             table.rows.keys(),
             names
         )
+
+        for column in table.columns:
+            self.assertSequenceEqual(
+                column.keys(),
+                names
+            )

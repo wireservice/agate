@@ -1724,6 +1724,14 @@ class TestData(AgateTestCase):
         self.assertIs(table.row_names, None)
         self.assertSequenceEqual(table.column_names, self.column_names)
 
+    def test_rename_column_names_renames_row_values(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        new_column_names = ['d', 'e', 'f']
+        table2 = table.rename(column_names=new_column_names)
+
+        self.assertColumnNames(table2, new_column_names)
+
 
 class TableHTMLParser(html_parser.HTMLParser):
     """

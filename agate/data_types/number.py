@@ -22,17 +22,11 @@ class Number(DataType):
     :param locale:
         A locale specification such as :code:`en_US` or :code:`de_DE` to use
         for parsing formatted numbers.
-    :param float_precision:
-        An integer specifying how many decimal places to include when
-        converting Python's native floats to Decimals. Beyond this point values
-        will be rounded. This does *not* apply to string representations of
-        fractional numbers.
     """
-    def __init__(self, locale='en_US', float_precision=10, **kwargs):
+    def __init__(self, locale='en_US', **kwargs):
         super(Number, self).__init__(**kwargs)
 
         self.locale = locale
-        self.float_format = '%%.%if' % float_precision
 
     def cast(self, d):
         """
@@ -46,7 +40,7 @@ class Number(DataType):
         elif type(d) is int:
             return Decimal(d)
         elif type(d) is float:
-            return Decimal(self.float_format % d)
+            return Decimal(repr(d))
         elif isinstance(d, six.string_types):
             d = d.strip()
             d = d.strip('%')

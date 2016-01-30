@@ -31,10 +31,10 @@ class DateTime(DataType):
             now.year, now.month, now.day, 0, 0, 0, 0, None
         )
         self._parser = parsedatetime.Calendar()
-        
+
     def __getstate__(self):
         """
-        Return state values to be pickled. Exclude _parser because parsedatetime 
+        Return state values to be pickled. Exclude _parser because parsedatetime
         cannot be pickled.
         """
         odict = self.__dict__.copy()
@@ -43,12 +43,12 @@ class DateTime(DataType):
 
     def __setstate__(self, dict):
         """
-        Restore state from the unpickled state values. Set _parser to an instance 
+        Restore state from the unpickled state values. Set _parser to an instance
         of the parsedatetime Calendar class.
         """
         self.__dict__.update(dict)
         self._parser = parsedatetime.Calendar()
-        
+
     def cast(self, d):
         """
         Cast a single value to a :class:`datetime.datetime`.
@@ -61,6 +61,8 @@ class DateTime(DataType):
         """
         if isinstance(d, datetime.datetime) or d is None:
             return d
+        elif isinstance(d, datetime.date):
+            return datetime.datetime.combine(d, datetime.time(0, 0, 0))
         elif isinstance(d, six.string_types):
             d = d.strip()
 

@@ -1,6 +1,14 @@
 1.2.1
 -----
 
+* Made it possible for ``datetime.date`` instances to be considered valid :class:`.DateTime` inputs. (#427)
+* Changed preference order in type testing so :class:`.Date` is preferred to :class:`.DateTime`.
+* Removed ``float_precision`` argument from :class:`.Number`. (#428)
+* :class:`.AgateTestCase` is now available as ``agate.AgateTestCase``. (#426)
+* :meth:`.TableSet.to_json` now has an ``indent`` option for use with ``nested``.
+* :meth:`.TableSet.to_json` now has a ``nested`` option for writing a single, nested JSON file. (#417)
+* :meth:`.TestCase.assertRowNames` and :meth:`.TestCase.assertColumnNames` now validate the row and column instance keys.
+* Fixed a bug that prevented :meth:`.Table.rename` from renaming column names in :class:`.Row` instances. (#423)
 
 1.2.0
 -----
