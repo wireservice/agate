@@ -289,7 +289,7 @@ class Table(utils.Patchable):
         return self._fork(self.rows, column_names, self._column_types, row_names=row_names)
 
     @classmethod
-    def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, **kwargs):
+    def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, line_numbers=False, **kwargs):
         """
         Create a new table for a CSV. This method uses agate's builtin
         CSV reader, which supports unicode on both Python 2 and Python 3.
@@ -309,12 +309,15 @@ class Table(utils.Patchable):
             and will be skipped. If `header` and `column_names` are both
             specified then a row will be skipped, but `column_names` will be
             used.
+        :param line_numbers:
+            If `True`, "line_numbers" will be prepended to the header row, and a
+            line number will be prepended to each row.
         """
         if hasattr(path, 'read'):
-            rows = list(csv.reader(path, **kwargs))
+            rows = list(csv.reader(path, line_numbers=line_numbers, **kwargs))
         else:
             with open(path) as f:
-                rows = list(csv.reader(f, **kwargs))
+                rows = list(csv.reader(f, line_numbers=line_numbers, **kwargs))
 
         if header:
             if column_names is None:
