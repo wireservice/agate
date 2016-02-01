@@ -78,7 +78,7 @@ class TypeTester(object):
                     continue
 
                 for column_type in copy(h):
-                    if not column_type.test(row[i]):
+                    if len(row) > i and not column_type.test(row[i]):
                         h.remove(column_type)
 
         column_types = []

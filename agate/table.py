@@ -304,10 +304,7 @@ class Table(utils.Patchable):
     def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, **kwargs):
         """
         Create a new table for a CSV. This method uses agate's builtin
-        CSV reader, which supports unicode on both Python 2 and Python 3. 
-        
-        If any rows are shorter than the longest row, `None`s will be added to 
-        fill gaps.
+        CSV reader, which supports unicode on both Python 2 and Python 3.
 
         `kwargs` will be passed through to the CSV reader.
 
@@ -330,11 +327,6 @@ class Table(utils.Patchable):
         else:
             with open(path) as f:
                 rows = list(csv.reader(f, **kwargs))
-        
-        max_length = max(map(len, rows))
-        for row in rows:
-            if len(row) < max_length:
-                row.extend([None]*(max_length-len(row)))
         
         if header:
             if column_names is None:
