@@ -115,8 +115,10 @@ class Table(utils.Patchable):
                 raise ValueError('Duplicate column names are not allowed.')
 
             self._column_names = tuple(final_column_names)
-        else:
+        elif rows:
             self._column_names = tuple(utils.letter_name(i) for i in range(len(rows[0])))
+        else:
+            self._column_names = []
 
         len_column_names = len(self._column_names)
 

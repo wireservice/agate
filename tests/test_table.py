@@ -48,6 +48,13 @@ class TestBasic(AgateTestCase):
         self.assertColumnTypes(table, [Number, Number, Text])
         self.assertRows(table, self.rows)
 
+    def test_create_empty_table(self):
+        table = Table([])
+
+        self.assertColumnNames(table, [])
+        self.assertColumnTypes(table, [])
+        self.assertRows(table, [])
+
     def test_create_table_column_types(self):
         column_types = [self.number_type, self.text_type, self.text_type]
         table = Table(self.rows, column_types=column_types)
