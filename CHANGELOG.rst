@@ -3,7 +3,7 @@
 
 * :class:`.Table` can now be constructed with zero rows
 * :meth:`TableSet.from_json` implemented. (#373)
-* :meth:`TableSet.from_csv` now handles ragged rows by filling gaps with ``None``s. (#440)
+* Fixes bug that breaks :meth:`TypeTester.run` on variable row length
 * Added :meth:`.TableSet.__str__` to display :class:`.Table` keys and row counts. (#418)
 * Fixed a bug that incorrectly checked for column_types equivalence in :meth:`.Table.merge` and :meth:`.TableSet.__init__`. (#435)
 * :meth:`.TableSet.merge` now has the ability to specify grouping factors with ``group``, ``group_name`` and ``group_type``. (#406)
