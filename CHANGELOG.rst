@@ -1,6 +1,7 @@
 1.2.1
 -----
 
+* :class:`.Table` can now be constructed with zero rows
 * :meth:`TableSet.from_json` implemented. (#373)
 * :meth:`TableSet.from_csv` now handles ragged rows by filling gaps with ``None``s. (#440)
 * Added :meth:`.TableSet.__str__` to display :class:`.Table` keys and row counts. (#418)
