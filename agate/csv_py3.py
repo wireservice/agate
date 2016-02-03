@@ -27,7 +27,7 @@ class Reader(six.Iterator):
     """
     A wrapper around Python 3's builtin :func:`csv.reader`.
     """
-    def __init__(self, f, line_numbers=False, field_size_limit=None, header=True, **kwargs):
+    def __init__(self, f, field_size_limit=None, line_numbers=False, header=True, **kwargs):
         self.reader = csv.reader(f, **kwargs)
         
         self.line_numbers = line_numbers
