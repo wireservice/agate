@@ -130,9 +130,7 @@ class Table(utils.Patchable):
         # Validate column_types
         if column_types is None:
             column_types = TypeTester()
-        elif isinstance(column_types, TypeTester):
-            pass
-        else:
+        elif not isinstance(column_types, TypeTester):
             for column_type in column_types:
                 if not isinstance(column_type, DataType):
                     raise ValueError('Column types must be instances of DataType.')
@@ -393,7 +391,7 @@ class Table(utils.Patchable):
                 f.close()
 
     @classmethod
-    def from_json(cls, path, row_names=None, key=None, newline=False, **kwargs):
+    def from_json(cls, path, row_names=None, key=None, newline=False, column_types=None, **kwargs):
         """
         Create a new table from a JSON file. Contents should be an array
         containing a dictionary for each "row". Nested objects or lists will
@@ -443,6 +441,8 @@ class Table(utils.Patchable):
             arrays.
         :param newline:
             If `True` then the file will be parsed as "newline-delimited JSON".
+        :param column_types:
+            See :meth:`Table.__init__`.
         """
         if newline:
             js = []
@@ -489,7 +489,7 @@ class Table(utils.Patchable):
 
             rows.append(r)
 
-        return Table(rows, column_names, row_names=row_names)
+        return Table(rows, column_names, row_names=row_names, column_types=column_types)
 
     def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
         """
