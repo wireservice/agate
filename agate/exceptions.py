@@ -31,5 +31,5 @@ class FieldSizeLimitError(Exception):   #pragma: no cover
     """
     def __init__(self, limit):
         super(FieldSizeLimitError, self).__init__(
-            'CSV contains fields longer than maximum length of %i characters. Try raising the maximum with the --maxfieldsize flag.' % limit
+            'CSV contains fields longer than maximum length of %i characters. Try raising the maximum with the field_size_limit parameter.' % limit
         )

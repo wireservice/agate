@@ -170,7 +170,7 @@ class TestUnicodeDictWriter(unittest.TestCase):
         self.assertEqual(result, 'a,b,c\n1,2,☃\n')
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
-class TestMaxFieldSize(unittest.TestCase):
+class TestFieldSizeLimit(unittest.TestCase):
     def setUp(self):
         self.lim = csv.field_size_limit()
 
@@ -182,10 +182,10 @@ class TestMaxFieldSize(unittest.TestCase):
         csv.field_size_limit(self.lim)
         os.remove('.test.csv')
 
-    def test_maxfieldsize(self):
-        # Testing --maxfieldsize for failure. Creating data using str * int.
+    def test_field_size_limit(self):
+        # Testing field_size_limit for failure. Creating data using str * int.
         with open('.test.csv', 'r') as f:
-            c = csv_py2.UnicodeReader(f, maxfieldsize=9)
+            c = csv_py2.UnicodeReader(f, field_size_limit=9)
             try:
                 c.next()
             except FieldSizeLimitError:
@@ -193,9 +193,9 @@ class TestMaxFieldSize(unittest.TestCase):
             else:
                 raise AssertionError('Expected FieldSizeLimitError')
 
-        # Now testing higher --maxfieldsize.
+        # Now testing higher field_size_limit.
         with open('.test.csv', 'r') as f:
-            c = csv_py2.UnicodeReader(f, maxfieldsize=11)
+            c = csv_py2.UnicodeReader(f, field_size_limit=11)
             self.assertEqual(['a' * 10], c.next())
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")

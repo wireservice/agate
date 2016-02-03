@@ -48,15 +48,16 @@ class UnicodeReader(object):
     """
     A CSV reader which will read rows from a file in a given encoding.
     """
-    def __init__(self, f, encoding='utf-8', maxfieldsize=None, line_numbers=False, **kwargs):
+    def __init__(self, f, encoding='utf-8', field_size_limit=None, line_numbers=False, header=True, **kwargs):
         self.line_numbers = line_numbers
+        self.header = header
         
         f = UTF8Recoder(f, encoding)
 
         self.reader = csv.reader(f, **kwargs)
 
-        if maxfieldsize:
-            csv.field_size_limit(maxfieldsize)
+        if field_size_limit:
+            csv.field_size_limit(field_size_limit)
 
     def next(self):
         try:
@@ -69,10 +70,10 @@ class UnicodeReader(object):
                 raise e
 
         if self.line_numbers:
-            if self.line_num == 1:
+            if self.header and self.line_num == 1:
                 row.insert(0, 'line_numbers')
             else:
-                row.insert(0, str(self.line_num-1))
+                row.insert(0, str(self.line_num - 1 if self.header else self.line_num))
 
         return [six.text_type(s, 'utf-8') for s in row]
 

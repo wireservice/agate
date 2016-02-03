@@ -343,7 +343,7 @@ class Table(utils.Patchable):
         elif sniff_limit > 0:
             kwargs['dialect'] = csv.Sniffer().sniff(contents[:sniff_limit])
         
-        rows = list(csv.reader(StringIO(contents), **kwargs))
+        rows = list(csv.reader(StringIO(contents), header=header, **kwargs))
         
         if header:
             if column_names is None:
