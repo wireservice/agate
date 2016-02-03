@@ -25,14 +25,26 @@ class Reader(six.Iterator):
     """
     A wrapper around Python 3's builtin :func:`csv.reader`.
     """
-    def __init__(self, f, **kwargs):
+    def __init__(self, f, line_numbers=False, **kwargs):
         self.reader = csv.reader(f, **kwargs)
+        self.line_numbers = line_numbers
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        return next(self.reader)
+        if not self.line_numbers:
+            return next(self.reader)
+        else:
+            row = next(self.reader)
+            
+            if self.line_numbers:
+                if self.line_num == 1:
+                    row.insert(0, 'line_numbers')
+                else:
+                    row.insert(0, str(self.line_num-1))
+            
+            return row
 
     @property
     def dialect(self):

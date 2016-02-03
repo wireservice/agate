@@ -221,6 +221,20 @@ class TestReader(unittest.TestCase):
 
         for a, b in zip(self.rows, rows):
             self.assertEqual(a, b)
+    
+    def test_line_numbers(self):
+        with open('examples/test.csv') as f:
+            rows = list(csv_py2.Reader(f, encoding='utf-8', line_numbers=True))
+
+        sample_rows = [
+            ['line_numbers', 'number', 'text', 'boolean', 'date', 'datetime', 'timedelta'],
+            ['1', '1', 'a', 'True', '2015-11-04', '2015-11-04T12:22:00', '0:04:15'],
+            ['2', '2', u'👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
+            ['3', '', 'b', '', '', '', '']
+        ]
+        
+        for a, b in zip(sample_rows, rows):
+            self.assertEqual(a, b)
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestWriter(unittest.TestCase):

@@ -1,6 +1,7 @@
 1.2.1
 -----
 
+# :class:`.csv.Reader` now has a ``line_numbers`` option to add column for line numbers (#447)
 * :meth:`.Table.from_csv` now has a ``sniff_limit`` option to use :class:`.csv.Sniffer` (#444)
 * :class:`.csv.Sniffer` implemented. (#444)
 * :meth:`.Table.__init__` no longer fails on empty rows. (#445)
