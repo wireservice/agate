@@ -605,6 +605,13 @@ class TestCSV(AgateTestCase):
 
         self.assertColumnTypes(table, [Text, Text, Boolean, Date, DateTime, TimeDelta])
 
+    def test_from_csv_no_type_tester(self):
+        tester = TypeTester(limit=0)
+
+        table = Table.from_csv('examples/test.csv', column_types=tester)
+
+        self.assertColumnTypes(table, [Text, Text, Text, Text, Text, Text])
+
     def test_from_csv_no_header(self):
         table = Table.from_csv('examples/test_no_header.csv', header=False)
 

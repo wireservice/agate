@@ -64,6 +64,8 @@ class TypeTester(object):
 
         if self._limit:
             sample_rows = rows[:self._limit]
+        elif self._limit == 0:
+            return tuple([Text()] * num_columns)
         else:
             sample_rows = rows
 
