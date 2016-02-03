@@ -1,7 +1,7 @@
 1.2.1
 -----
 
-* :meth:`.Table.from_csv` now has a ``snifflimit`` option to use :class:`.csv.Sniffer` (#444)
+* :meth:`.Table.from_csv` now has a ``sniff_limit`` option to use :class:`.csv.Sniffer` (#444)
 * :class:`.csv.Sniffer` implemented. (#444)
 * :meth:`.Table.__init__` no longer fails on empty rows. (#445)
 * :meth:`.TableSet.from_json` implemented. (#373)

@@ -617,9 +617,9 @@ class TestCSV(AgateTestCase):
         self.assertColumnNames(table, self.column_names)
         self.assertColumnTypes(table, [Number, Text, Boolean, Date, DateTime, TimeDelta])
     
-    def test_from_csv_snifflimit(self):
+    def test_from_csv_sniff_limit(self):
         table1 = Table(self.rows, self.column_names, self.column_types)
-        table2 = Table.from_csv('examples/test_csv_sniff.csv', snifflimit=None)
+        table2 = Table.from_csv('examples/test_csv_sniff.csv', sniff_limit=None)
 
         self.assertColumnNames(table2, table1.column_names)
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
