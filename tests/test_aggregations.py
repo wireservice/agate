@@ -9,17 +9,12 @@ try:
 except ImportError:
     import unittest
 
-try:
-    from unittest.mock import Mock
-except ImportError:
-    from mock import Mock
-
 from agate import Table
 from agate.aggregations import *
 from agate.data_types import *
 from agate.exceptions import *
-from agate.rows import Row
 from agate.warns import NullCalculationWarning
+
 
 class TestSimpleAggregation(unittest.TestCase):
     def setUp(self):
@@ -105,6 +100,7 @@ class TestSimpleAggregation(unittest.TestCase):
         self.assertEqual(Count('one', 4).run(table), 0)
         self.assertEqual(Count('one', None).run(table), 1)
 
+
 class TestBooleanAggregation(unittest.TestCase):
     def test_any(self):
         rows = [
@@ -148,6 +144,7 @@ class TestBooleanAggregation(unittest.TestCase):
         All('test').validate(table)
         self.assertEqual(All('test').run(table), True)
 
+
 class TestDateTimeAggregation(unittest.TestCase):
     def test_min(self):
         rows = [
@@ -174,6 +171,7 @@ class TestDateTimeAggregation(unittest.TestCase):
         self.assertIsInstance(Max('test').get_aggregate_data_type(table), DateTime)
         Max('test').validate(table)
         self.assertEqual(Max('test').run(table), datetime.datetime(1994, 3, 3, 6, 31))
+
 
 class TestNumberAggregation(unittest.TestCase):
     def setUp(self):
@@ -564,6 +562,7 @@ class TestNumberAggregation(unittest.TestCase):
         table = Table(rows, ['ints'], [self.number_type])
 
         deciles = Deciles('ints').run(table)
+
 
 class TestTextAggregation(unittest.TestCase):
     def test_max_length(self):

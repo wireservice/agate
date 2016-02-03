@@ -9,6 +9,7 @@ import six
 
 import agate
 
+
 class TestCSV(unittest.TestCase):
     def test_agate(self):
         if six.PY2:

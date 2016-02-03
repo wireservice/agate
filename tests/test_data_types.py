@@ -16,8 +16,7 @@ import pytz
 from agate.columns import *
 from agate.data_types import *
 from agate.exceptions import CastError
-from agate.table import Table
-from agate.tableset import TableSet
+
 
 class TestText(unittest.TestCase):
     def setUp(self):
@@ -44,6 +43,7 @@ class TestText(unittest.TestCase):
         values = ('a', 1, None, Decimal('2.7'), 'n/a', u'👍')
         casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None, u'👍'))
+
 
 class TestBoolean(unittest.TestCase):
     def setUp(self):
@@ -88,6 +88,7 @@ class TestBoolean(unittest.TestCase):
     def test_cast_error(self):
         with self.assertRaises(CastError):
             self.type.cast('quack')
+
 
 class TestNumber(unittest.TestCase):
     def setUp(self):
@@ -136,6 +137,7 @@ class TestNumber(unittest.TestCase):
     def test_cast_error(self):
         with self.assertRaises(CastError):
             self.type.cast('quack')
+
 
 class TestDate(unittest.TestCase):
     def setUp(self):
@@ -205,6 +207,7 @@ class TestDate(unittest.TestCase):
         from_pickle = pickle.loads(pickle.dumps(self.type))
         self.assertEqual(from_pickle.date_format, self.type.date_format)
         self.assertIsInstance(from_pickle.parser, parsedatetime.Calendar)
+
 
 class TestDateTime(unittest.TestCase):
     def setUp(self):
@@ -291,6 +294,7 @@ class TestDateTime(unittest.TestCase):
         self.assertEqual(from_pickle._source_time, self.type._source_time)
         self.assertIsInstance(from_pickle._parser, parsedatetime.Calendar)
 
+
 class TestTimeDelta(unittest.TestCase):
     def setUp(self):
         self.type = TimeDelta()
@@ -323,10 +327,10 @@ class TestTimeDelta(unittest.TestCase):
             None
         ))
 
-
     def test_cast_error(self):
         with self.assertRaises(CastError):
             self.type.cast('quack')
+
 
 class TestTypeTester(unittest.TestCase):
     def setUp(self):

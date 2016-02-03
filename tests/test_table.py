@@ -3,7 +3,7 @@
 
 try:
     from cdecimal import Decimal
-except ImportError: #pragma: no cover
+except ImportError:  # pragma: no cover
     from decimal import Decimal
 
 import json
@@ -26,6 +26,7 @@ from agate.data_types import *
 from agate.computations import Formula
 from agate.exceptions import DataTypeError
 from agate.testcase import AgateTestCase
+
 
 class TestBasic(AgateTestCase):
     def setUp(self):
@@ -55,7 +56,7 @@ class TestBasic(AgateTestCase):
         self.assertColumnNames(table, [])
         self.assertColumnTypes(table, [])
         self.assertRows(table, [])
-        
+
         self.assertColumnNames(table2, self.column_names)
         self.assertColumnTypes(table2, [Number, Number, Text])
         self.assertRows(table2, [])
@@ -133,7 +134,7 @@ class TestBasic(AgateTestCase):
             (2, None, None),
             (None, 2, None)
         ])
-        
+
         self.assertColumnTypes(table2, [Number, Number, Text])
         self.assertRows(table2, [
             (1, 4, 'a'),
@@ -208,7 +209,7 @@ class TestBasic(AgateTestCase):
                 self.rows,
                 self.column_names,
                 self.column_types,
-                row_names={ 'a': 1, 'b': 2, 'c': 3 }
+                row_names={'a': 1, 'b': 2, 'c': 3}
             )
 
     def test_stringify(self):
@@ -261,7 +262,7 @@ class TestBasic(AgateTestCase):
 
         self.assertColumnNames(new_table, ['three'])
         self.assertColumnTypes(new_table, [Text])
-        self.assertRows(new_table,[
+        self.assertRows(new_table, [
             ['a'],
             ['b'],
             [u'👍']
@@ -288,7 +289,7 @@ class TestBasic(AgateTestCase):
 
         self.assertColumnNames(new_table, ['three'])
         self.assertColumnTypes(new_table, [Text])
-        self.assertRows(new_table,[
+        self.assertRows(new_table, [
             ['a'],
             ['b'],
             [u'👍']
@@ -309,7 +310,7 @@ class TestBasic(AgateTestCase):
 
         self.assertColumnNames(new_table, self.column_names)
         self.assertColumnTypes(new_table, [Number, Number, Text])
-        self.assertRows(new_table,[
+        self.assertRows(new_table, [
             self.rows[1],
             self.rows[2]
         ])
@@ -343,7 +344,7 @@ class TestBasic(AgateTestCase):
 
         self.assertColumnNames(new_table, self.column_names)
         self.assertColumnTypes(new_table, [Number, Number, Text])
-        self.assertRows(new_table,[
+        self.assertRows(new_table, [
             self.rows[2],
             self.rows[1],
             self.rows[0]
@@ -363,11 +364,10 @@ class TestBasic(AgateTestCase):
 
         new_table = table.order_by(lambda r: (r['one'], r['two']))
 
-
         self.assertIsNot(new_table, table)
         self.assertColumnNames(new_table, self.column_names)
         self.assertColumnTypes(new_table, [Number, Number, Text])
-        self.assertRows(new_table,[
+        self.assertRows(new_table, [
             rows[2],
             rows[0],
             rows[1]
@@ -381,7 +381,7 @@ class TestBasic(AgateTestCase):
         self.assertIsNot(new_table, table)
         self.assertColumnNames(new_table, self.column_names)
         self.assertColumnTypes(new_table, [Number, Number, Text])
-        self.assertRows(new_table,[
+        self.assertRows(new_table, [
             self.rows[0],
             self.rows[1],
             self.rows[2]
@@ -560,6 +560,7 @@ class TestBasic(AgateTestCase):
             self.rows[1][:2],
         ])
 
+
 class TestCSV(AgateTestCase):
     def setUp(self):
         self.rows = (
@@ -623,7 +624,7 @@ class TestCSV(AgateTestCase):
 
         self.assertColumnNames(table, self.column_names)
         self.assertColumnTypes(table, [Number, Text, Boolean, Date, DateTime, TimeDelta])
-    
+
     def test_from_csv_sniff_limit(self):
         table1 = Table(self.rows, self.column_names, self.column_types)
         table2 = Table.from_csv('examples/test_csv_sniff.csv', sniff_limit=None)
@@ -632,7 +633,7 @@ class TestCSV(AgateTestCase):
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
 
         self.assertRows(table2, table1.rows)
-        
+
     def test_to_csv(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
@@ -713,6 +714,7 @@ class TestCSV(AgateTestCase):
             self.assertEqual(contents1, contents2)
         finally:
             sys.stdout = old
+
 
 class TestJSON(AgateTestCase):
     def setUp(self):
@@ -909,6 +911,7 @@ class TestJSON(AgateTestCase):
         finally:
             sys.stdout = old
 
+
 class TestCounts(AgateTestCase):
     def setUp(self):
         self.rows = (
@@ -968,6 +971,7 @@ class TestCounts(AgateTestCase):
             ['N', 4],
             [None, 1]
         ])
+
 
 class TestBins(AgateTestCase):
     def setUp(self):
@@ -1077,6 +1081,7 @@ class TestBins(AgateTestCase):
         self.assertSequenceEqual(new_table.rows[3], ['[0.3 - 0.4)', 10])
         self.assertSequenceEqual(new_table.rows[9], ['[0.9 - 1.0]', 10])
         self.assertSequenceEqual(new_table.rows[10], [None, 1])
+
 
 class TestPrettyPrint(AgateTestCase):
     def setUp(self):
@@ -1226,6 +1231,7 @@ class TestPrettyPrint(AgateTestCase):
 
         self.assertEqual(len(lines), 7)
 
+
 class TestGrouping(AgateTestCase):
     def setUp(self):
         self.rows = (
@@ -1330,6 +1336,7 @@ class TestGrouping(AgateTestCase):
         with self.assertRaises(KeyError):
             table.group_by('bad')
 
+
 class TestAggregate(AgateTestCase):
     def setUp(self):
         self.rows = (
@@ -1360,6 +1367,7 @@ class TestAggregate(AgateTestCase):
             ]),
             [3, 9]
         )
+
 
 class TestCompute(AgateTestCase):
     def setUp(self):
@@ -1420,6 +1428,7 @@ class TestCompute(AgateTestCase):
         ])
 
         self.assertRowNames(new_table, [3, 5, 4, 6])
+
 
 class TestJoin(AgateTestCase):
     def setUp(self):
@@ -1596,6 +1605,7 @@ class TestJoin(AgateTestCase):
 
         self.assertRowNames(new_table, ('a', 'b', 'c'))
 
+
 class TestMerge(AgateTestCase):
     def setUp(self):
         self.rows = (
@@ -1661,6 +1671,7 @@ class TestMerge(AgateTestCase):
         table_c = Table.merge([table_a, table_b], row_names='three')
 
         self.assertRowNames(table_c, ['a', 'b', 'c', 'd', 'e', 'f'])
+
 
 class TestData(AgateTestCase):
     def setUp(self):
@@ -1736,9 +1747,9 @@ class TestData(AgateTestCase):
 
     def test_rename_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types)
-        table2 = table.rename(row_names=['a','b','c'])
+        table2 = table.rename(row_names=['a', 'b', 'c'])
 
-        self.assertSequenceEqual(table2.row_names, ['a','b','c'])
+        self.assertSequenceEqual(table2.row_names, ['a', 'b', 'c'])
         self.assertSequenceEqual(table2.column_names, self.column_names)
 
         self.assertIs(table.row_names, None)
@@ -1756,10 +1767,10 @@ class TestData(AgateTestCase):
 
     def test_rename_column_names(self):
         table = Table(self.rows, self.column_names, self.column_types)
-        table2 = table.rename(column_names=['d','e','f'])
+        table2 = table.rename(column_names=['d', 'e', 'f'])
 
         self.assertIs(table2.row_names, None)
-        self.assertSequenceEqual(table2.column_names, ['d','e','f'])
+        self.assertSequenceEqual(table2.column_names, ['d', 'e', 'f'])
 
         self.assertIs(table.row_names, None)
         self.assertSequenceEqual(table.column_names, self.column_names)
@@ -1769,7 +1780,7 @@ class TestData(AgateTestCase):
         table2 = table.rename(column_names={'two': 'second'})
 
         self.assertIs(table2.row_names, None)
-        self.assertSequenceEqual(table2.column_names, ['one','second','three'])
+        self.assertSequenceEqual(table2.column_names, ['one', 'second', 'three'])
 
         self.assertIs(table.row_names, None)
         self.assertSequenceEqual(table.column_names, self.column_names)
@@ -1856,6 +1867,7 @@ class TableHTMLParser(html_parser.HTMLParser):
         if self._in_cell:
             self._current_row.append(data)
             return
+
 
 class TestPrintHTML(AgateTestCase):
     def setUp(self):

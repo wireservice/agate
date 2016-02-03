@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 try:
-    from cdecimal import Decimal, ROUND_FLOOR
-except ImportError: #pragma: no cover
-    from decimal import Decimal, ROUND_FLOOR
+    from cdecimal import Decimal
+except ImportError:  # pragma: no cover
+    from decimal import Decimal
 
 try:
     import unittest2 as unittest
@@ -15,6 +15,7 @@ from agate.mapped_sequence import MappedSequence
 from agate.table import Table
 from agate.utils import Patchable, Quantiles, round_limits, letter_name
 
+
 class TryPatch(object):
     def test(self, n):
         return n
@@ -23,12 +24,14 @@ class TryPatch(object):
     def testcls(cls, n):
         return n
 
+
 class TryPatchShadow(object):
     def __init__(self):
         self.foo = 'foo'
 
     def column_names(self):
         return 'foo'
+
 
 class TestMonkeyPatching(unittest.TestCase):
     def test_monkeypatch(self):
@@ -70,6 +73,7 @@ class TestMonkeyPatching(unittest.TestCase):
 
         self.assertSequenceEqual(Table.__bases__, [Patchable, TryPatch])
 
+
 class TestQuantiles(unittest.TestCase):
     def setUp(self):
         self.values = [0, 10, 20, 30, 40, 50]
@@ -90,6 +94,7 @@ class TestQuantiles(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self.quantiles.locate(51)
+
 
 class TestMisc(unittest.TestCase):
     def test_round_limits(self):

@@ -5,7 +5,7 @@ import pickle
 
 try:
     from cdecimal import Decimal
-except ImportError: #pragma: no cover
+except ImportError:  # pragma: no cover
     from decimal import Decimal
 
 try:
@@ -14,8 +14,8 @@ except ImportError:
     import unittest
 
 from agate import Table
-from agate.aggregations import HasNulls
 from agate.data_types import *
+
 
 class TestColumn(unittest.TestCase):
     def setUp(self):

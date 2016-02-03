@@ -14,6 +14,7 @@ import six
 from agate import csv_py2
 from agate.exceptions import FieldSizeLimitError
 
+
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestUnicodeReader(unittest.TestCase):
     def setUp(self):
@@ -51,6 +52,7 @@ class TestUnicodeReader(unittest.TestCase):
             self.assertEqual(next(reader), ['a', 'b', 'c'])
             self.assertEqual(next(reader), ['1', '2', '3'])
             self.assertEqual(next(reader), ['4', '5', u'ʤ'])
+
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestUnicodeWriter(unittest.TestCase):
@@ -114,6 +116,7 @@ class TestUnicodeWriter(unittest.TestCase):
         self.assertEqual(next(reader), ['1', '2', '3'])
         self.assertEqual(next(reader), ['4', '5', u'\u02A4'])
 
+
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestUnicodeDictReader(unittest.TestCase):
     def setUp(self):
@@ -148,6 +151,7 @@ class TestUnicodeDictReader(unittest.TestCase):
                 u'c': u'©'
             })
 
+
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestUnicodeDictWriter(unittest.TestCase):
     def setUp(self):
@@ -168,6 +172,7 @@ class TestUnicodeDictWriter(unittest.TestCase):
         result = self.output.getvalue()
 
         self.assertEqual(result, 'a,b,c\n1,2,☃\n')
+
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestFieldSizeLimit(unittest.TestCase):
@@ -198,6 +203,7 @@ class TestFieldSizeLimit(unittest.TestCase):
             c = csv_py2.UnicodeReader(f, field_size_limit=11)
             self.assertEqual(['a' * 10], c.next())
 
+
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestReader(unittest.TestCase):
     def setUp(self):
@@ -221,7 +227,7 @@ class TestReader(unittest.TestCase):
 
         for a, b in zip(self.rows, rows):
             self.assertEqual(a, b)
-    
+
     def test_line_numbers(self):
         with open('examples/test.csv') as f:
             rows = list(csv_py2.Reader(f, encoding='utf-8', line_numbers=True))
@@ -232,9 +238,10 @@ class TestReader(unittest.TestCase):
             ['2', '2', u'👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
             ['3', '', 'b', '', '', '', '']
         ]
-        
+
         for a, b in zip(sample_rows, rows):
             self.assertEqual(a, b)
+
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestWriter(unittest.TestCase):
@@ -294,6 +301,7 @@ class TestDictReader(unittest.TestCase):
 
         self.assertEqual(next(reader), dict(zip(self.rows[0], self.rows[1])))
 
+
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestDictWriter(unittest.TestCase):
     def setUp(self):
@@ -327,6 +335,7 @@ class TestDictWriter(unittest.TestCase):
         result = self.output.getvalue()
 
         self.assertEqual(result, 'a,b,c\n1,2,☃\n')
+
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestSniffer(unittest.TestCase):

@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 try:
     from cdecimal import Decimal
-except ImportError: #pragma: no cover
+except ImportError:  # pragma: no cover
     from decimal import Decimal
 
 try:
@@ -15,16 +15,12 @@ except ImportError:
 import shutil
 import json
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
 from agate import Table, TableSet
 from agate.aggregations import *
 from agate.data_types import *
 from agate.computations import Formula
 from agate.testcase import AgateTestCase
+
 
 class TestTableSet(AgateTestCase):
     def setUp(self):
@@ -103,7 +99,7 @@ class TestTableSet(AgateTestCase):
     def test_tableset_from_csv_invalid_dir(self):
         with self.assertRaises(IOError):
             TableSet.from_csv('quack')
-    
+
     def test_from_csv_column_types_not_equal(self):
         with self.assertRaises(ValueError):
             TableSet.from_csv('examples/tableset/type_error')
@@ -140,7 +136,7 @@ class TestTableSet(AgateTestCase):
             self.assertSequenceEqual(tableset1[name].rows[0], tableset2[name].rows[0])
             self.assertSequenceEqual(tableset1[name].rows[1], tableset2[name].rows[1])
             self.assertSequenceEqual(tableset1[name].rows[2], tableset2[name].rows[2])
-            
+
     def test_from_json_file(self):
         tableset1 = TableSet(self.tables.values(), self.tables.keys())
         tableset2 = TableSet.from_json('examples/test_tableset.json')
@@ -180,16 +176,16 @@ class TestTableSet(AgateTestCase):
             self.assertEqual(contents1, contents2)
 
         shutil.rmtree('.test-tableset')
-    
+
     def test_to_nested_json(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
-        
+
         output = StringIO()
         tableset.to_json(output, nested=True)
         tableset.to_json('.test-tableset/tableset.json', nested=True)
 
         contents1 = json.loads(output.getvalue())
-        
+
         with open('.test-tableset/tableset.json') as f:
             contents2 = json.load(f)
 
@@ -230,7 +226,7 @@ class TestTableSet(AgateTestCase):
 
         self.assertColumnNames(table, ['foo', 'letter', 'number'])
         self.assertColumnTypes(table, [Text, Text, Number])
-    
+
     def test_merge_groups(self):
         tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='foo')
 
@@ -238,17 +234,17 @@ class TestTableSet(AgateTestCase):
 
         self.assertColumnNames(table, ['color_code', 'letter', 'number'])
         self.assertColumnTypes(table, [Text, Text, Number])
-        
+
         self.assertEqual(len(table.rows), 9)
         self.assertSequenceEqual(table.rows[0], ['red', 'a', 1])
         self.assertSequenceEqual(table.rows[8], ['green', 'c', 3])
-    
+
     def test_merge_groups_invalid_length(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         with self.assertRaises(ValueError):
             table = tableset.merge(groups=['red', 'blue'], group_name='color_code')
-    
+
     def test_merge_groups_invalid_type(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
@@ -303,12 +299,12 @@ class TestTableSet(AgateTestCase):
         lines = output.getvalue().strip().split('\n')
 
         self.assertEqual(len(lines), 7)
-        
+
     def test_print_structure_row_limit(self):
         tables = self.tables
         for i in range(25):
             tables[str(i)] = self.tables['table1']
-            
+
         tableset = TableSet(tables.values(), tables.keys())
         output = StringIO()
         tableset.print_structure(output=output)
@@ -369,7 +365,6 @@ class TestTableSet(AgateTestCase):
             ('table2', 3, 7),
             ('table3', 3, 6)
         ])
-
 
     def test_aggregate_min(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())

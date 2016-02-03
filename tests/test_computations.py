@@ -15,6 +15,7 @@ from agate.computations import *
 from agate.exceptions import *
 from agate.warns import NullCalculationWarning
 
+
 class TestTableComputation(unittest.TestCase):
     def setUp(self):
         self.rows = (
@@ -151,7 +152,8 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(len(new_table.rows), 4)
         self.assertEqual(len(new_table.columns), 5)
 
-        to_one_place = lambda d: d.quantize(Decimal('0.1'))
+        def to_one_place(d):
+            return d.quantize(Decimal('0.1'))
 
         self.assertSequenceEqual(new_table.rows[0], ('a', Decimal('2'), Decimal('3'), Decimal('4'), Decimal('50.0')))
         self.assertEqual(to_one_place(new_table.columns['test'][0]), Decimal('50.0'))
@@ -191,7 +193,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_rank_number_key(self):
         new_table = self.table.compute([
-            ('rank', Rank('two', comparer=lambda x,y: int(y - x)))
+            ('rank', Rank('two', comparer=lambda x, y: int(y - x)))
         ])
 
         self.assertEqual(len(new_table.rows), 4)
@@ -200,7 +202,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_rank_number_reverse_key(self):
         new_table = self.table.compute([
-            ('rank', Rank('two', comparer=lambda x,y: int(y - x), reverse=True))
+            ('rank', Rank('two', comparer=lambda x, y: int(y - x), reverse=True))
         ])
 
         self.assertEqual(len(new_table.rows), 4)
@@ -239,6 +241,7 @@ class TestTableComputation(unittest.TestCase):
             self.table.compute([
                 ('test', PercentileRank('one'))
             ])
+
 
 class TestDateAndTimeComputations(unittest.TestCase):
     def test_change_dates(self):

@@ -10,6 +10,7 @@ import six
 from agate.data_types import *
 from agate.mapped_sequence import MappedSequence
 
+
 class TestMappedSequence(unittest.TestCase):
     def setUp(self):
         self.column_names = ('one', 'two', 'three')

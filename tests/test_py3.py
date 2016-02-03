@@ -13,6 +13,7 @@ except ImportError:
 from agate import csv_py3
 from agate.exceptions import FieldSizeLimitError
 
+
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestReader(unittest.TestCase):
     def setUp(self):
@@ -47,7 +48,7 @@ class TestReader(unittest.TestCase):
             next(reader)
 
             self.assertEqual(reader.line_num, 1)
-            
+
     def test_line_numbers(self):
         with open('examples/test.csv') as f:
             rows = list(csv_py3.Reader(f, line_numbers=True))
@@ -58,10 +59,11 @@ class TestReader(unittest.TestCase):
             ['2', '2', u'👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
             ['3', '', 'b', '', '', '', '']
         ]
-        
+
         for a, b in zip(sample_rows, rows):
             self.assertEqual(a, b)
-            
+
+
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestFieldSizeLimit(unittest.TestCase):
     def setUp(self):
@@ -90,6 +92,7 @@ class TestFieldSizeLimit(unittest.TestCase):
         with open('.test.csv', 'r') as f:
             c = csv_py3.Reader(f, field_size_limit=11)
             self.assertEqual(['a' * 10], c.__next__())
+
 
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestWriter(unittest.TestCase):
@@ -151,6 +154,7 @@ class TestWriter(unittest.TestCase):
         self.assertEqual(next(reader), ['1', '2', '3'])
         self.assertEqual(next(reader), ['4', '5', u'ʤ'])
 
+
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestDictReader(unittest.TestCase):
     def setUp(self):
@@ -175,6 +179,7 @@ class TestDictReader(unittest.TestCase):
         reader = csv_py3.DictReader(self.f)
 
         self.assertEqual(next(reader), dict(zip(self.rows[0], self.rows[1])))
+
 
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestDictWriter(unittest.TestCase):
@@ -235,7 +240,8 @@ class TestDictWriter(unittest.TestCase):
         result = self.output.getvalue()
 
         self.assertEqual(result, 'line_number,a,b,c\n1,1,2,☃\n')
-        
+
+
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestSniffer(unittest.TestCase):
     def setUp(self):
