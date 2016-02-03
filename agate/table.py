@@ -38,6 +38,11 @@ from babel.numbers import format_decimal
 import six
 from six.moves import range, zip, zip_longest #pylint: disable=W0622
 
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 from agate.aggregations import Min, Max
 from agate.columns import Column
 from agate.data_types import TypeTester, DataType, Text, Number
@@ -303,7 +308,7 @@ class Table(utils.Patchable):
             return self._fork(self.rows, column_names, self._column_types, row_names=row_names)
 
     @classmethod
-    def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, **kwargs):
+    def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, snifflimit=0, **kwargs):
         """
         Create a new table for a CSV. This method uses agate's builtin
         CSV reader, which supports unicode on both Python 2 and Python 3.
@@ -323,12 +328,22 @@ class Table(utils.Patchable):
             and will be skipped. If `header` and `column_names` are both
             specified then a row will be skipped, but `column_names` will be
             used.
+        :param snifflimit:
+            Limit CSV dialect sniffing to the specified number of bytes. Set to 
+            None to sniff the entire file. Defaults to 0 or no sniffing.
         """
         if hasattr(path, 'read'):
-            rows = list(csv.reader(path, **kwargs))
+            contents = path.read()
         else:
             with open(path) as f:
-                rows = list(csv.reader(f, **kwargs))
+                contents = f.read()
+        
+        if snifflimit is None:
+            kwargs['dialect'] = csv.Sniffer().sniff(contents)
+        elif snifflimit > 0:
+            kwargs['dialect'] = csv.Sniffer().sniff(contents[:snifflimit])
+        
+        rows = list(csv.reader(StringIO(contents), **kwargs))
         
         if header:
             if column_names is None:
