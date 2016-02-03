@@ -1,19 +1,20 @@
 1.2.1
 -----
 
-* :meth:`Table.from_json` and :meth:`TableSet.from_json` now have ``column_types`` as an optional argument
+* Fixed a bug that prevented :meth:`.Table.order_by` on empty table. (#454)
+* :meth:`Table.from_json` and :meth:`TableSet.from_json` now have ``column_types`` as an optional argument. (#451)
 * :class:`.csv.Reader` now has ``line_numbers`` and ``header`` options to add column for line numbers (#447)
-* Renaming ``maxfieldsize`` to ``field_size_limit`` in :class:`.csv.Reader` for consistency (#447)
+* Renamed ``maxfieldsize`` to ``field_size_limit`` in :class:`.csv.Reader` for consistency (#447)
 * :meth:`.Table.from_csv` now has a ``sniff_limit`` option to use :class:`.csv.Sniffer` (#444)
 * :class:`.csv.Sniffer` implemented. (#444)
 * :meth:`.Table.__init__` no longer fails on empty rows. (#445)
 * :meth:`.TableSet.from_json` implemented. (#373)
-* Fixes bug that breaks :meth:`TypeTester.run` on variable row length. (#440)
+* Fixed a bug that breaks :meth:`TypeTester.run` on variable row length. (#440)
 * Added :meth:`.TableSet.__str__` to display :class:`.Table` keys and row counts. (#418)
 * Fixed a bug that incorrectly checked for column_types equivalence in :meth:`.Table.merge` and :meth:`.TableSet.__init__`. (#435)
 * :meth:`.TableSet.merge` now has the ability to specify grouping factors with ``group``, ``group_name`` and ``group_type``. (#406)
 * :class:`.Table` can now be constructed with ``None`` for some column names. Those columns will receive letter names. (#432)
-* Slight changes to the parsing of dates and datetimes from strings.
+* Slightly changed the parsing of dates and datetimes from strings.
 * Numbers are now written to CSV without extra zeros after the decimal point. (#429)
 * Made it possible for ``datetime.date`` instances to be considered valid :class:`.DateTime` inputs. (#427)
 * Changed preference order in type testing so :class:`.Date` is preferred to :class:`.DateTime`.
