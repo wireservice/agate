@@ -2,7 +2,7 @@
 
 """
 The classes and functions in this module serve as a replacement for Python 2's
-core :mod:`csv` module on Python 2. These versions add support fo non-ascii
+core :mod:`csv` module on Python 2. These versions add support for non-ascii
 encodings as well as several other minor features.
 
 If you are using Python 2, these classes and functions will automatically be
@@ -28,6 +28,8 @@ EIGHT_BIT_ENCODINGS = [
     'utf-8', 'u8', 'utf', 'utf8',
     'latin-1', 'iso-8859-1', 'iso8859-1', '8859', 'cp819', 'latin', 'latin1', 'l1'
 ]
+
+POSSIBLE_DELIMITERS = [',', '\t', ';', ' ', ':', '|']
 
 class UTF8Recoder(six.Iterator):
     """
@@ -224,6 +226,22 @@ class DictWriter(UnicodeDictWriter):
     def writerows(self, rows):
         for row in rows:
             self.writerow(row)
+
+class Sniffer():
+    """
+    A functinonal wrapper of ``csv.Sniffer()``. 
+    """
+    def sniff(self, sample):
+        """
+        A functional version of ``csv.Sniffer().sniff``, that extends the
+        list of possible delimiters to include some seen in the wild.
+        """
+        try:
+            dialect = csv.Sniffer().sniff(sample, POSSIBLE_DELIMITERS)
+        except:
+            dialect = None
+
+        return dialect
 
 def reader(*args, **kwargs):
     """

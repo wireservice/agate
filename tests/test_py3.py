@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import csv
 import six
 
 try:
@@ -189,3 +190,13 @@ class TestDictWriter(unittest.TestCase):
         result = self.output.getvalue()
 
         self.assertEqual(result, 'line_number,a,b,c\n1,1,2,☃\n')
+        
+@unittest.skipIf(six.PY2, "Not supported in Python 2.")
+class TestSniffer(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def test_sniffer(self):
+        with open('examples/test.csv') as f:
+            contents = f.read()
+            self.assertEqual(csv_py3.Sniffer().sniff(contents).__dict__, csv.Sniffer().sniff(contents).__dict__)

@@ -313,3 +313,13 @@ class TestDictWriter(unittest.TestCase):
         result = self.output.getvalue()
 
         self.assertEqual(result, 'a,b,c\n1,2,☃\n')
+
+@unittest.skipIf(six.PY3, "Not supported in Python 3.")
+class TestSniffer(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def test_sniffer(self):
+        with open('examples/test.csv') as f:
+            contents = f.read()
+            self.assertEqual(csv_py2.Sniffer().sniff(contents).__dict__, csv.Sniffer().sniff(contents).__dict__)

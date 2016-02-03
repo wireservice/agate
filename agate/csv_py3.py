@@ -19,6 +19,8 @@ import csv
 
 import six
 
+POSSIBLE_DELIMITERS = [',', '\t', ';', ' ', ':', '|']
+
 class Reader(six.Iterator):
     """
     A wrapper around Python 3's builtin :func:`csv.reader`.
@@ -117,6 +119,22 @@ class DictWriter(csv.DictWriter):
     def writerows(self, rows):
         for row in rows:
             self.writerow(row)
+
+class Sniffer():
+    """
+    A functinonal wrapper of ``csv.Sniffer()``. 
+    """
+    def sniff(self, sample):
+        """
+        A functional version of ``csv.Sniffer().sniff``, that extends the
+        list of possible delimiters to include some seen in the wild.
+        """
+        try:
+            dialect = csv.Sniffer().sniff(sample, POSSIBLE_DELIMITERS)
+        except:
+            dialect = None
+
+        return dialect
 
 def reader(*args, **kwargs):
     """

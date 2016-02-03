@@ -1,9 +1,10 @@
 1.2.1
 -----
 
-* :meth:`.Table.__init__` no longer fails on empty rows (#445)
-* :meth:`TableSet.from_json` implemented. (#373)
-* Fixes bug that breaks :meth:`TypeTester.run` on variable row length (#440)
+* :class:`.csv.Sniffer` implemented. (#444)
+* :meth:`.Table.__init__` no longer fails on empty rows. (#445)
+* :meth:`.TableSet.from_json` implemented. (#373)
+* Fixes bug that breaks :meth:`TypeTester.run` on variable row length. (#440)
 * Added :meth:`.TableSet.__str__` to display :class:`.Table` keys and row counts. (#418)
 * Fixed a bug that incorrectly checked for column_types equivalence in :meth:`.Table.merge` and :meth:`.TableSet.__init__`. (#435)
 * :meth:`.TableSet.merge` now has the ability to specify grouping factors with ``group``, ``group_name`` and ``group_type``. (#406)
