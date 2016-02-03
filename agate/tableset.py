@@ -210,7 +210,7 @@ class TableSet(MappedSequence, Patchable):
             table.to_csv(path, **kwargs)
 
     @classmethod
-    def from_json(cls, path, keys=None, **kwargs):
+    def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwargs):
         """
         Create a new :class:`TableSet` from a directory of JSON files or a 
         single JSON object with key value (Table key and list of row objects) 
@@ -224,6 +224,8 @@ class TableSet(MappedSequence, Patchable):
         :param keys:
             A list of keys of the top-level dictionaries for each file. If  
             specified, length must be equal to number of JSON files in path.
+        :param column_types:
+            See :meth:`Table.__init__`.
         """
         if isinstance(path, six.string_types) and not os.path.isdir(path) and not os.path.isfile(path):
             raise IOError('Specified path doesn\'t exist.')
@@ -240,9 +242,9 @@ class TableSet(MappedSequence, Patchable):
                 name = os.path.split(filepath)[1].strip('.json')
                 
                 if keys is not None:
-                    tables[name] = Table.from_json(filepath, keys[i], **kwargs)
+                    tables[name] = Table.from_json(filepath, keys[i], column_types=column_types, **kwargs)
                 else:
-                    tables[name] = Table.from_json(filepath, **kwargs)
+                    tables[name] = Table.from_json(filepath, column_types=column_types, **kwargs)
             
         else:
             if hasattr(path, 'read'):
@@ -253,7 +255,7 @@ class TableSet(MappedSequence, Patchable):
                     
             for key,value in js.items():
                 output = StringIO(json.dumps(value))
-                tables[key] = Table.from_json(output)
+                tables[key] = Table.from_json(output, column_types=column_types, **kwargs)
             
         return TableSet(tables.values(), tables.keys())
 

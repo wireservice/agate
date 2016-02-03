@@ -1,6 +1,7 @@
 1.2.1
 -----
 
+* :meth:`Table.from_json` and :meth:`TableSet.from_json` now have ``column_types`` as an optional argument
 * :class:`.csv.Reader` now has ``line_numbers`` and ``header`` options to add column for line numbers (#447)
 * Renaming ``maxfieldsize`` to ``field_size_limit`` in :class:`.csv.Reader` for consistency (#447)
 * :meth:`.Table.from_csv` now has a ``sniff_limit`` option to use :class:`.csv.Sniffer` (#444)

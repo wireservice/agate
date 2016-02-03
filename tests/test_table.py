@@ -612,13 +612,6 @@ class TestCSV(AgateTestCase):
 
         self.assertColumnTypes(table, [Text, Text, Text, Text, Text, Text])
 
-    def test_from_json_no_type_tester(self):
-        tester = TypeTester(limit=0)
-
-        table = Table.from_json('examples/test.json', column_types=tester)
-
-        self.assertColumnTypes(table, [Text, Text, Text, Text, Text, Text])
-
     def test_from_csv_no_header(self):
         table = Table.from_csv('examples/test_no_header.csv', header=False)
 
@@ -791,6 +784,13 @@ class TestJSON(AgateTestCase):
         self.assertColumnNames(table2, self.column_names)
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
         self.assertRows(table2, table1.rows)
+
+    def test_from_json_no_type_tester(self):
+        tester = TypeTester(limit=0)
+
+        table = Table.from_json('examples/test.json', column_types=tester)
+
+        self.assertColumnTypes(table, [Text, Text, Text, Text, Text, Text])
 
     def test_to_json(self):
         table = Table(self.rows, self.column_names, self.column_types)
