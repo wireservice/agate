@@ -19,30 +19,44 @@ import csv
 
 import six
 
+from agate.exceptions import FieldSizeLimitError
+
 POSSIBLE_DELIMITERS = [',', '\t', ';', ' ', ':', '|']
 
 class Reader(six.Iterator):
     """
     A wrapper around Python 3's builtin :func:`csv.reader`.
     """
-    def __init__(self, f, line_numbers=False, **kwargs):
+    def __init__(self, f, line_numbers=False, field_size_limit=None, header=True, **kwargs):
         self.reader = csv.reader(f, **kwargs)
+        
         self.line_numbers = line_numbers
+        self.header = header
+        
+        if field_size_limit:
+            csv.field_size_limit(field_size_limit)
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        if not self.line_numbers:
-            return next(self.reader)
-        else:
+        try:
             row = next(self.reader)
-            
+        except csv.Error as e:
+            # Terrible way to test for this exception, but there is no subclass
+            if 'field larger than field limit' in str(e):
+                raise FieldSizeLimitError(csv.field_size_limit())
+            else:
+                raise e
+                
+        if not self.line_numbers:
+            return row
+        else:
             if self.line_numbers:
-                if self.line_num == 1:
+                if self.header and self.line_num == 1:
                     row.insert(0, 'line_numbers')
                 else:
-                    row.insert(0, str(self.line_num-1))
+                    row.insert(0, str(self.line_num - 1 if self.header else self.line_num))
             
             return row
 

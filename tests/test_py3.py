@@ -3,6 +3,7 @@
 
 import csv
 import six
+import os
 
 try:
     import unittest2 as unittest
@@ -10,6 +11,7 @@ except ImportError:
     import unittest
 
 from agate import csv_py3
+from agate.exceptions import FieldSizeLimitError
 
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestReader(unittest.TestCase):
@@ -59,6 +61,35 @@ class TestReader(unittest.TestCase):
         
         for a, b in zip(sample_rows, rows):
             self.assertEqual(a, b)
+            
+@unittest.skipIf(six.PY2, "Not supported in Python 2.")
+class TestFieldSizeLimit(unittest.TestCase):
+    def setUp(self):
+        self.lim = csv.field_size_limit()
+
+        with open('.test.csv', 'w') as f:
+            f.write('a' * 10)
+
+    def tearDown(self):
+        # Resetting limit to avoid failure in other tests.
+        csv.field_size_limit(self.lim)
+        os.remove('.test.csv')
+
+    def test_field_size_limit(self):
+        # Testing field_size_limit for failure. Creating data using str * int.
+        with open('.test.csv', 'r') as f:
+            c = csv_py3.Reader(f, field_size_limit=9)
+            try:
+                c.__next__()
+            except FieldSizeLimitError:
+                pass
+            else:
+                raise AssertionError('Expected FieldSizeLimitError')
+
+        # Now testing higher field_size_limit.
+        with open('.test.csv', 'r') as f:
+            c = csv_py3.Reader(f, field_size_limit=11)
+            self.assertEqual(['a' * 10], c.__next__())
 
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestWriter(unittest.TestCase):
