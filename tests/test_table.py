@@ -427,6 +427,11 @@ class TestBasic(AgateTestCase):
 
         self.assertRowNames(new_table, [u'👍', 'b', 'a'])
 
+    def test_order_by_empty_table(self):
+        table=Table([], self.column_names)
+
+        new_table = table.order_by('three')
+
     def test_limit(self):
         table = Table(self.rows, self.column_names, self.column_types)
 

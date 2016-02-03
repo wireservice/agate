@@ -682,31 +682,34 @@ class Table(utils.Patchable):
         :returns:
             A new :class:`Table`.
         """
-        key_is_row_function = hasattr(key, '__call__')
-
-        def sort_key(data):
-            row = data[1]
-
-            if key_is_row_function:
-                k = key(row)
-            else:
-                k = row[key]
-
-            if k is None:
-                return utils.NullOrder()
-
-            return k
-
-        results = sorted(enumerate(self._rows), key=sort_key, reverse=reverse)
-
-        indices, rows = zip(*results)
-
-        if self._row_names is not None:
-            row_names = [self._row_names[i] for i in indices]
+        if len(self._rows) == 0:
+            return self._fork(self._rows)
         else:
-            row_names = None
+            key_is_row_function = hasattr(key, '__call__')
 
-        return self._fork(rows, row_names=row_names)
+            def sort_key(data):
+                row = data[1]
+
+                if key_is_row_function:
+                    k = key(row)
+                else:
+                    k = row[key]
+
+                if k is None:
+                    return utils.NullOrder()
+
+                return k
+
+            results = sorted(enumerate(self._rows), key=sort_key, reverse=reverse)
+
+            indices, rows = zip(*results)
+
+            if self._row_names is not None:
+                row_names = [self._row_names[i] for i in indices]
+            else:
+                row_names = None
+
+            return self._fork(rows, row_names=row_names)
 
     @allow_tableset_proxy
     def limit(self, start_or_stop=None, stop=None, step=None):
