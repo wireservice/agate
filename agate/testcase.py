@@ -7,6 +7,7 @@ except ImportError:
 
 import agate
 
+
 class AgateTestCase(unittest.TestCase):
     """
     Unittest case for quickly asserting logic about tables.

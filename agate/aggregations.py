@@ -24,7 +24,8 @@ from agate.exceptions import DataTypeError, UnsupportedAggregationError
 from agate.utils import Quantiles, max_precision, median
 from agate.warns import warn_null_calculation
 
-class Aggregation(object): #pragma: no cover
+
+class Aggregation(object):  # pragma: no cover
     """
     An operation that takes a table and produces a single value summarizing
     one of it's columns. Aggregations are invoked with
@@ -60,6 +61,7 @@ class Aggregation(object): #pragma: no cover
         """
         raise NotImplementedError()
 
+
 class Summary(Aggregation):
     """
     An aggregation that can apply an arbitrary function to a column.
@@ -82,6 +84,7 @@ class Summary(Aggregation):
     def run(self, table):
         return self._func(table.columns[self._column_name])
 
+
 class HasNulls(Aggregation):
     """
     Returns :code:`True` if the column contains null values.
@@ -94,6 +97,7 @@ class HasNulls(Aggregation):
 
     def run(self, table):
         return None in table.columns[self._column_name].values()
+
 
 class Any(Aggregation):
     """
@@ -124,6 +128,7 @@ class Any(Aggregation):
             return any(data)
 
         return any(self._test(d) for d in data)
+
 
 class All(Aggregation):
     """
@@ -159,6 +164,7 @@ class All(Aggregation):
 
         return all(self._test(d) for d in data)
 
+
 class Length(Aggregation):
     """
     Count the total number of values in the column.
@@ -170,6 +176,7 @@ class Length(Aggregation):
 
     def run(self, table):
         return len(table.rows)
+
 
 class Count(Aggregation):
     """
@@ -191,6 +198,7 @@ class Count(Aggregation):
     def run(self, table):
         return table.columns[self._column_name].values().count(self._value)
 
+
 class Min(Aggregation):
     """
     Compute the minimum value in a column. May be applied to columns containing
@@ -202,23 +210,24 @@ class Min(Aggregation):
     def get_aggregate_data_type(self, table):
         column = table.columns[self._column_name]
 
-        if isinstance(column.data_type, Number) or \
-            isinstance(column.data_type, Date) or \
-            isinstance(column.data_type, DateTime):
+        if (isinstance(column.data_type, Number) or
+        isinstance(column.data_type, Date) or
+        isinstance(column.data_type, DateTime)):
             return column.data_type
 
     def validate(self, table):
         column = table.columns[self._column_name]
 
-        if not (isinstance(column.data_type, Number) or \
-            isinstance(column.data_type, Date) or \
-            isinstance(column.data_type, DateTime)):
+        if not (isinstance(column.data_type, Number) or
+        isinstance(column.data_type, Date) or
+        isinstance(column.data_type, DateTime)):
             raise DataTypeError('Min can only be applied to columns containing DateTime orNumber data.')
 
     def run(self, table):
         column = table.columns[self._column_name]
 
         return min(column.values_without_nulls())
+
 
 class Max(Aggregation):
     """
@@ -231,23 +240,24 @@ class Max(Aggregation):
     def get_aggregate_data_type(self, table):
         column = table.columns[self._column_name]
 
-        if isinstance(column.data_type, Number) or \
-            isinstance(column.data_type, Date) or \
-            isinstance(column.data_type, DateTime):
+        if (isinstance(column.data_type, Number) or
+        isinstance(column.data_type, Date) or
+        isinstance(column.data_type, DateTime)):
             return column.data_type
 
     def validate(self, table):
         column = table.columns[self._column_name]
 
-        if not (isinstance(column.data_type, Number) or \
-            isinstance(column.data_type, Date) or \
-            isinstance(column.data_type, DateTime)):
+        if not (isinstance(column.data_type, Number) or
+        isinstance(column.data_type, Date) or
+        isinstance(column.data_type, DateTime)):
             raise DataTypeError('Min can only be applied to columns containing DateTime orNumber data.')
 
     def run(self, table):
         column = table.columns[self._column_name]
 
         return max(column.values_without_nulls())
+
 
 class MaxPrecision(Aggregation):
     """
@@ -270,6 +280,7 @@ class MaxPrecision(Aggregation):
 
         return max_precision(column.values_without_nulls())
 
+
 class Sum(Aggregation):
     """
     Compute the sum of a column containing :class:`.Number` data.
@@ -290,6 +301,7 @@ class Sum(Aggregation):
         column = table.columns[self._column_name]
 
         return sum(column.values_without_nulls())
+
 
 class Mean(Aggregation):
     """
@@ -320,6 +332,7 @@ class Mean(Aggregation):
 
         return sum_total / len(column.values_without_nulls())
 
+
 class Median(Aggregation):
     """
     Compute the median value of a column containing :class:`.Number` data.
@@ -346,11 +359,10 @@ class Median(Aggregation):
             warn_null_calculation(self, column)
 
     def run(self, table):
-        column = table.columns[self._column_name]
-
         percentiles = self._percentiles.run(table)
 
         return percentiles[50]
+
 
 class Mode(Aggregation):
     """
@@ -384,6 +396,7 @@ class Mode(Aggregation):
 
         return max(state.keys(), key=lambda x: state[x])
 
+
 class IQR(Aggregation):
     """
     Compute the interquartile range of a column containing
@@ -408,11 +421,10 @@ class IQR(Aggregation):
             warn_null_calculation(self, column)
 
     def run(self, table):
-        column = table.columns[self._column_name]
-
         percentiles = self._percentiles.run(table)
 
         return percentiles[75] - percentiles[25]
+
 
 class Variance(Aggregation):
     """
@@ -445,6 +457,7 @@ class Variance(Aggregation):
 
         return sum((n - mean) ** 2 for n in data) / (len(data) - 1)
 
+
 class PopulationVariance(Variance):
     """
     Compute the population variance of a column containing
@@ -476,6 +489,7 @@ class PopulationVariance(Variance):
 
         return sum((n - mean) ** 2 for n in data) / len(data)
 
+
 class StDev(Aggregation):
     """
     Compute the sample standard of deviation of a column containing
@@ -500,9 +514,8 @@ class StDev(Aggregation):
             warn_null_calculation(self, column)
 
     def run(self, table):
-        column = table.columns[self._column_name]
-
         return self._variance.run(table).sqrt()
+
 
 class PopulationStDev(StDev):
     """
@@ -528,9 +541,8 @@ class PopulationStDev(StDev):
             warn_null_calculation(self, column)
 
     def run(self, table):
-        column = table.columns[self._column_name]
-
         return self._population_variance.run(table).sqrt()
+
 
 class MAD(Aggregation):
     """
@@ -562,6 +574,7 @@ class MAD(Aggregation):
         m = self._median.run(table)
 
         return median(tuple(abs(n - m) for n in data))
+
 
 class Percentiles(Aggregation):
     """
@@ -625,6 +638,7 @@ class Percentiles(Aggregation):
 
         return Quantiles(quantiles)
 
+
 class Quartiles(Aggregation):
     """
     The quartiles of a :class:`.Number` column based on the 25th, 50th and
@@ -659,6 +673,7 @@ class Quartiles(Aggregation):
         percentiles = Percentiles(self._column_name).run(table)
 
         return Quantiles([percentiles[i] for i in range(0, 101, 25)])
+
 
 class Quintiles(Aggregation):
     """
@@ -695,6 +710,7 @@ class Quintiles(Aggregation):
 
         return Quantiles([percentiles[i] for i in range(0, 101, 20)])
 
+
 class Deciles(Aggregation):
     """
     The deciles of a column based on the 10th, 20th ... 90th percentiles.
@@ -728,6 +744,7 @@ class Deciles(Aggregation):
         percentiles = Percentiles(self._column_name).run(table)
 
         return Quantiles([percentiles[i] for i in range(0, 101, 10)])
+
 
 class MaxLength(Aggregation):
     """

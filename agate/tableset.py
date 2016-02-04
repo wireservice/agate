@@ -37,10 +37,10 @@ try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
-    
+
 try:
     from cdecimal import Decimal
-except ImportError: #pragma: no cover
+except ImportError:  # pragma: no cover
     from decimal import Decimal
 
 from agate.data_types import Text
@@ -49,6 +49,7 @@ from agate.rows import Row
 from agate.table import Table
 from agate.preview import print_structure
 from agate.utils import Patchable
+
 
 class TableMethodProxy(object):
     """
@@ -71,6 +72,7 @@ class TableMethodProxy(object):
             key_name=self.tableset.key_name,
             key_type=self.tableset.key_type
         )
+
 
 class TableSet(MappedSequence, Patchable):
     """
@@ -111,7 +113,7 @@ class TableSet(MappedSequence, Patchable):
         self._column_names = self._sample_table.column_names
 
         for table in tables:
-            if any(not isinstance(a, type(b)) for a,b in zip_longest(table.column_types, self.column_types)):
+            if any(not isinstance(a, type(b)) for a, b in zip_longest(table.column_types, self.column_types)):
                 raise ValueError('Not all tables have the same column types!')
 
             if table.column_names != self.column_names:
@@ -128,7 +130,7 @@ class TableSet(MappedSequence, Patchable):
         self.print_structure(output=structure)
 
         return structure.getvalue()
-        
+
     def __getattr__(self, name):
         """
         Proxy method access to :class:`Table` methods via instances of
@@ -212,66 +214,66 @@ class TableSet(MappedSequence, Patchable):
     @classmethod
     def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwargs):
         """
-        Create a new :class:`TableSet` from a directory of JSON files or a 
-        single JSON object with key value (Table key and list of row objects) 
-        pairs for each :class:`Table`. 
+        Create a new :class:`TableSet` from a directory of JSON files or a
+        single JSON object with key value (Table key and list of row objects)
+        pairs for each :class:`Table`.
 
         See :meth:`.Table.from_json` for additional details.
 
         :param path:
-            Path to a directory containing JSON files or filepath/file-like 
+            Path to a directory containing JSON files or filepath/file-like
             object of nested JSON file.
         :param keys:
-            A list of keys of the top-level dictionaries for each file. If  
+            A list of keys of the top-level dictionaries for each file. If
             specified, length must be equal to number of JSON files in path.
         :param column_types:
             See :meth:`Table.__init__`.
         """
         if isinstance(path, six.string_types) and not os.path.isdir(path) and not os.path.isfile(path):
             raise IOError('Specified path doesn\'t exist.')
-        
-        tables = OrderedDict()    
-        
+
+        tables = OrderedDict()
+
         if isinstance(path, six.string_types) and os.path.isdir(path):
             filepaths = glob(os.path.join(path, '*.json'))
-            
+
             if keys is not None and len(keys) != len(filepaths):
                 raise ValueError('If specified, keys must have length equal to number of JSON files')
-            
+
             for i, filepath in enumerate(filepaths):
                 name = os.path.split(filepath)[1].strip('.json')
-                
+
                 if keys is not None:
                     tables[name] = Table.from_json(filepath, keys[i], column_types=column_types, **kwargs)
                 else:
                     tables[name] = Table.from_json(filepath, column_types=column_types, **kwargs)
-            
+
         else:
             if hasattr(path, 'read'):
                 js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
             else:
                 with open(path, 'r') as f:
                     js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
-                    
-            for key,value in js.items():
+
+            for key, value in js.items():
                 output = StringIO(json.dumps(value))
                 tables[key] = Table.from_json(output, column_types=column_types, **kwargs)
-            
+
         return TableSet(tables.values(), tables.keys())
 
     def to_json(self, path, nested=False, indent=None, **kwargs):
         """
-        Write :class:`TableSet` to either a set of JSON files for each table or 
+        Write :class:`TableSet` to either a set of JSON files for each table or
         a single nested JSON file.
 
         See :meth:`.Table.to_json` for additional details.
 
         :param path:
-            Path to the directory to write the JSON file(s) to. If nested is 
+            Path to the directory to write the JSON file(s) to. If nested is
             `True`, this should be a file path or file-like object to write to.
         :param nested:
-            If `True`, the output will be a single nested JSON file with each 
-            Table's key paired with a list of row objects. Otherwise, the output 
+            If `True`, the output will be a single nested JSON file with each
+            Table's key paired with a list of row objects. Otherwise, the output
             will be a set of files for each table. Defaults to `False`.
         :param indent:
             See :meth:`Table.to_json`.
@@ -279,7 +281,7 @@ class TableSet(MappedSequence, Patchable):
         if not nested:
             if not os.path.exists(path):
                 os.makedirs(path)
-                
+
             for name, table in self.items():
                 filepath = os.path.join(path, '%s.json' % name)
 
@@ -291,26 +293,26 @@ class TableSet(MappedSequence, Patchable):
                 output = StringIO()
                 table.to_json(output, **kwargs)
                 tableset_dict[name] = json.loads(output.getvalue())
-                
+
             if hasattr(path, 'write'):
                 f = path
                 close = False
             else:
                 dirpath = os.path.dirname(path)
-                
+
                 if dirpath and not os.path.exists(dirpath):
                     os.makedirs(dirpath)
 
                 f = open(path, 'w')
-            
-            json_kwargs = { 'ensure_ascii': False, 'indent': indent }
+
+            json_kwargs = {'ensure_ascii': False, 'indent': indent}
 
             if six.PY2:
                 json_kwargs['encoding'] = 'utf-8'
 
             json_kwargs.update(kwargs)
             json.dump(tableset_dict, f, json_kwargs)
-            
+
             if close and f is not None:
                 f.close()
 
@@ -343,25 +345,25 @@ class TableSet(MappedSequence, Patchable):
         process.
 
         :param groups:
-            A list of grouping factors to add to merged rows in a new column. 
-            If specified, it should have exactly one element per :class:`Table` 
-            in the :class:`TableSet`. If not specified or None, the grouping 
+            A list of grouping factors to add to merged rows in a new column.
+            If specified, it should have exactly one element per :class:`Table`
+            in the :class:`TableSet`. If not specified or None, the grouping
             factor will be the name of the :class:`Row`'s original Table.
         :param group_name:
-            This will be the column name of the grouping factors. If None, 
+            This will be the column name of the grouping factors. If None,
             defaults to the :attr:`TableSet.key_name`.
         :param group_type:
-            This will be the column type of the grouping factors. If None, 
+            This will be the column type of the grouping factors. If None,
             defaults to the :attr:`TableSet.key_type`.
         :returns:
             A new :class:`Table`.
         """
         if type(groups) is not list and groups is not None:
             raise ValueError('Groups must be None or a list.')
-            
+
         if type(groups) is list and len(groups) != len(self):
             raise ValueError('Groups length must be equal to TableSet length.')
-            
+
         column_names = list(self.column_names)
         column_types = list(self.column_types)
 
@@ -455,7 +457,7 @@ class TableSet(MappedSequence, Patchable):
 
     def print_structure(self, max_rows=20, output=sys.stdout):
         """
-        Print the keys and row counts of each table in the tableset. 
+        Print the keys and row counts of each table in the tableset.
 
         :param max_rows:
             The maximum number of rows to display before truncating the data.
@@ -467,9 +469,9 @@ class TableSet(MappedSequence, Patchable):
             None
         """
         max_length = min(len(self.items()), max_rows)
-        
+
         left_column = self.keys()[0:max_length]
         right_column = [str(len(table.rows)) for key, table in self.items()[0:max_length]]
         column_headers = ['table_keys', 'row_count']
-        
+
         print_structure(left_column, right_column, column_headers, output)
