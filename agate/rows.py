@@ -9,6 +9,7 @@ allows them to be safely shared between table instances.
 
 from agate.mapped_sequence import MappedSequence
 
+
 class Row(MappedSequence):
     """
     A row of data. Values within a row can be accessed by column name or column

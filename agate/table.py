@@ -30,13 +30,13 @@ import os.path
 
 try:
     from cdecimal import Decimal
-except ImportError: #pragma: no cover
+except ImportError:  # pragma: no cover
     from decimal import Decimal
 
 from babel.numbers import format_decimal
 
 import six
-from six.moves import range, zip, zip_longest #pylint: disable=W0622
+from six.moves import range, zip, zip_longest  # pylint: disable=W0622
 
 try:
     from StringIO import StringIO
@@ -51,10 +51,11 @@ from agate.preview import print_table, print_html, print_bars, print_structure
 from agate.rows import Row
 from agate import utils
 
-if six.PY2:   #pragma: no cover
+if six.PY2:  # pragma: no cover
     from agate import csv_py2 as csv
 else:
     from agate import csv_py3 as csv
+
 
 def allow_tableset_proxy(func):
     """
@@ -63,6 +64,7 @@ def allow_tableset_proxy(func):
     func.allow_tableset_proxy = True
 
     return func
+
 
 @six.python_2_unicode_compatible
 class Table(utils.Patchable):
@@ -327,7 +329,7 @@ class Table(utils.Patchable):
             specified then a row will be skipped, but `column_names` will be
             used.
         :param sniff_limit:
-            Limit CSV dialect sniffing to the specified number of bytes. Set to 
+            Limit CSV dialect sniffing to the specified number of bytes. Set to
             None to sniff the entire file. Defaults to 0 or no sniffing.
         """
         if hasattr(path, 'read'):
@@ -335,14 +337,14 @@ class Table(utils.Patchable):
         else:
             with open(path) as f:
                 contents = f.read()
-        
+
         if sniff_limit is None:
             kwargs['dialect'] = csv.Sniffer().sniff(contents)
         elif sniff_limit > 0:
             kwargs['dialect'] = csv.Sniffer().sniff(contents[:sniff_limit])
-        
+
         rows = list(csv.reader(StringIO(contents), header=header, **kwargs))
-        
+
         if header:
             if column_names is None:
                 column_names = rows.pop(0)
@@ -928,7 +930,7 @@ class Table(utils.Patchable):
         column_types = tables[0].column_types
 
         for table in tables[1:]:
-            if any(not isinstance(a, type(b)) for a,b in zip_longest(table.column_types, column_types)):
+            if any(not isinstance(a, type(b)) for a, b in zip_longest(table.column_types, column_types)):
                 raise ValueError('Only tables with identical column types may be merged.')
 
         rows = []
@@ -1292,5 +1294,5 @@ class Table(utils.Patchable):
         left_column = [n for n in self.column_names]
         right_column = [t.__class__.__name__ for t in self.column_types]
         column_headers = ['column_names', 'column_types']
-        
+
         print_structure(left_column, right_column, column_headers, output)

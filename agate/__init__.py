@@ -12,7 +12,7 @@ from agate.tableset import TableSet
 from agate.testcase import AgateTestCase
 from agate.warns import NullCalculationWarning, warn_null_calculation
 
-if six.PY2: #pragma: no cover
+if six.PY2:  # pragma: no cover
     from agate.csv_py2 import reader, writer, DictReader, DictWriter
-else :
+else:
     from agate.csv_py3 import reader, writer, DictReader, DictWriter

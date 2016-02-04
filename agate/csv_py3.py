@@ -23,16 +23,17 @@ from agate.exceptions import FieldSizeLimitError
 
 POSSIBLE_DELIMITERS = [',', '\t', ';', ' ', ':', '|']
 
+
 class Reader(six.Iterator):
     """
     A wrapper around Python 3's builtin :func:`csv.reader`.
     """
     def __init__(self, f, field_size_limit=None, line_numbers=False, header=True, **kwargs):
         self.reader = csv.reader(f, **kwargs)
-        
+
         self.line_numbers = line_numbers
         self.header = header
-        
+
         if field_size_limit:
             csv.field_size_limit(field_size_limit)
 
@@ -48,7 +49,7 @@ class Reader(six.Iterator):
                 raise FieldSizeLimitError(csv.field_size_limit())
             else:
                 raise e
-                
+
         if not self.line_numbers:
             return row
         else:
@@ -57,7 +58,7 @@ class Reader(six.Iterator):
                     row.insert(0, 'line_numbers')
                 else:
                     row.insert(0, str(self.line_num - 1 if self.header else self.line_num))
-            
+
             return row
 
     @property
@@ -67,6 +68,7 @@ class Reader(six.Iterator):
     @property
     def line_num(self):
         return self.reader.line_num
+
 
 class Writer(object):
     """
@@ -103,11 +105,13 @@ class Writer(object):
         for row in rows:
             self.writer.writerow(row)
 
+
 class DictReader(csv.DictReader):
     """
     A wrapper around Python 3's builtin :class:`csv.DictReader`.
     """
     pass
+
 
 class DictWriter(csv.DictWriter):
     """
@@ -146,9 +150,10 @@ class DictWriter(csv.DictWriter):
         for row in rows:
             self.writerow(row)
 
+
 class Sniffer():
     """
-    A functinonal wrapper of ``csv.Sniffer()``. 
+    A functinonal wrapper of ``csv.Sniffer()``.
     """
     def sniff(self, sample):
         """
@@ -162,12 +167,14 @@ class Sniffer():
 
         return dialect
 
+
 def reader(*args, **kwargs):
     """
     A drop-in replacement for Python's :func:`csv.reader` that leverages
     :class:`.Reader`.
     """
     return Reader(*args, **kwargs)
+
 
 def writer(*args, **kwargs):
     """

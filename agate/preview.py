@@ -4,9 +4,9 @@
 from collections import OrderedDict
 
 try:
-    from cdecimal import Decimal, ROUND_FLOOR
-except ImportError: #pragma: no cover
-    from decimal import Decimal, ROUND_FLOOR
+    from cdecimal import Decimal
+except ImportError:  # pragma: no cover
+    from decimal import Decimal
 
 import sys
 
@@ -36,6 +36,7 @@ TICK_MARK = u'+'
 
 #: Characters to render for ellipsis
 ELLIPSIS = u'...'
+
 
 def print_table(table, max_rows=None, max_columns=None, output=sys.stdout):
     """
@@ -139,6 +140,7 @@ def print_table(table, max_rows=None, max_columns=None, output=sys.stdout):
     # Final divider
     write(divider)
 
+
 def print_html(table, max_rows=None, max_columns=None, output=sys.stdout):
     """
     See :meth:`.Table.print_html` for documentation.
@@ -183,6 +185,7 @@ def print_html(table, max_rows=None, max_columns=None, output=sys.stdout):
 
     output.write('</tbody>')
     output.write('</table>')
+
 
 def print_bars(table, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout):
     """
@@ -371,9 +374,10 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
     write(axis.rjust(width))
     write(tick_text)
 
+
 def print_structure(left_column, right_column, column_headers, output=sys.stdout):
     """
-    See :meth:`.Table.print_structure` and :meth:`.TableSet.print_structure` 
+    See :meth:`.Table.print_structure` and :meth:`.TableSet.print_structure`
     for documentation.
     """
     def write(line):

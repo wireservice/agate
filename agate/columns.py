@@ -8,12 +8,13 @@ the parent (column name, data type) as well as the rows that contain their data.
 """
 import six
 
-if six.PY3: #pragma: no cover
-    #pylint: disable=W0622
-    xrange = range
-
 from agate.mapped_sequence import MappedSequence
 from agate.utils import NullOrder, memoize
+
+if six.PY3:  # pragma: no cover
+    # pylint: disable=W0622
+    xrange = range
+
 
 def null_handler(k):
     """
@@ -23,6 +24,7 @@ def null_handler(k):
         return NullOrder()
 
     return k
+
 
 class Column(MappedSequence):
     """

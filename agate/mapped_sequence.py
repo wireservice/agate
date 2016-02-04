@@ -9,9 +9,10 @@ rows and columns.
 from collections import OrderedDict, Sequence
 
 import six
-from six.moves import range #pylint: disable=W0622
+from six.moves import range  # pylint: disable=W0622
 
 from agate.utils import memoize
+
 
 class MappedSequence(Sequence):
     """
@@ -48,7 +49,7 @@ class MappedSequence(Sequence):
         """
         Print an ascii sample of the contents of this sequence.
         """
-        if six.PY2: #pragma: no cover
+        if six.PY2:  # pragma: no cover
             return str(self.__unicode__().encode('utf8'))
 
         return str(self.__unicode__())

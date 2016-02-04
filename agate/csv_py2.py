@@ -18,7 +18,6 @@ Or, if you want to use them as a drop-in replacement for :mod:`csv`::
 
 import codecs
 import csv
-import sys
 
 import six
 
@@ -30,6 +29,7 @@ EIGHT_BIT_ENCODINGS = [
 ]
 
 POSSIBLE_DELIMITERS = [',', '\t', ';', ' ', ':', '|']
+
 
 class UTF8Recoder(six.Iterator):
     """
@@ -44,6 +44,7 @@ class UTF8Recoder(six.Iterator):
     def __next__(self):
         return next(self.reader).encode('utf-8')
 
+
 class UnicodeReader(object):
     """
     A CSV reader which will read rows from a file in a given encoding.
@@ -51,7 +52,7 @@ class UnicodeReader(object):
     def __init__(self, f, encoding='utf-8', field_size_limit=None, line_numbers=False, header=True, **kwargs):
         self.line_numbers = line_numbers
         self.header = header
-        
+
         f = UTF8Recoder(f, encoding)
 
         self.reader = csv.reader(f, **kwargs)
@@ -84,6 +85,7 @@ class UnicodeReader(object):
     def line_num(self):
         return self.reader.line_num
 
+
 class UnicodeWriter(object):
     """
     A CSV writer which will write rows to a file in the specified encoding.
@@ -106,9 +108,9 @@ class UnicodeWriter(object):
 
     def writerow(self, row):
         if self._eight_bit:
-            self.writer.writerow([six.text_type(s if s != None else '').encode(self.encoding) for s in row])
+            self.writer.writerow([six.text_type(s if s is not None else '').encode(self.encoding) for s in row])
         else:
-            self.writer.writerow([six.text_type(s if s != None else '').encode('utf-8') for s in row])
+            self.writer.writerow([six.text_type(s if s is not None else '').encode('utf-8') for s in row])
             # Fetch UTF-8 output from the queue...
             data = self.queue.getvalue()
             data = data.decode('utf-8')
@@ -122,6 +124,7 @@ class UnicodeWriter(object):
     def writerows(self, rows):
         for row in rows:
             self.writerow(row)
+
 
 class UnicodeDictReader(csv.DictReader):
     """
@@ -137,6 +140,7 @@ class UnicodeDictReader(csv.DictReader):
         csv.DictReader.__init__(self, f, fieldnames, restkey, restval, *args, **kwargs)
 
         self.reader = reader
+
 
 class UnicodeDictWriter(csv.DictWriter):
     """
@@ -154,11 +158,13 @@ class UnicodeDictWriter(csv.DictWriter):
 
         self.writer = UnicodeWriter(f, *args, **kwds)
 
+
 class Reader(UnicodeReader):
     """
     A unicode-aware CSV reader.
     """
     pass
+
 
 class Writer(UnicodeWriter):
     """
@@ -195,11 +201,13 @@ class Writer(UnicodeWriter):
         for row in rows:
             self.writerow(row)
 
+
 class DictReader(UnicodeDictReader):
     """
     A unicode-aware CSV DictReader.
     """
     pass
+
 
 class DictWriter(UnicodeDictWriter):
     """
@@ -236,9 +244,10 @@ class DictWriter(UnicodeDictWriter):
         for row in rows:
             self.writerow(row)
 
+
 class Sniffer():
     """
-    A functinonal wrapper of ``csv.Sniffer()``. 
+    A functinonal wrapper of ``csv.Sniffer()``.
     """
     def sniff(self, sample):
         """
@@ -252,12 +261,14 @@ class Sniffer():
 
         return dialect
 
+
 def reader(*args, **kwargs):
     """
     A drop-in replacement for Python's :func:`csv.reader` that leverages
     :class:`.Reader`.
     """
     return Reader(*args, **kwargs)
+
 
 def writer(*args, **kwargs):
     """

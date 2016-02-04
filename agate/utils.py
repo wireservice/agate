@@ -11,10 +11,11 @@ import string
 
 try:
     from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING, getcontext
-except ImportError: #pragma: no cover
+except ImportError:  # pragma: no cover
     from decimal import Decimal, ROUND_FLOOR, ROUND_CEILING, getcontext
 
 import six
+
 
 def memoize(func):
     """
@@ -32,6 +33,7 @@ def memoize(func):
         return func(self)
 
     return wrapper
+
 
 class Patchable(object):
     """
@@ -57,6 +59,7 @@ class Patchable(object):
 
         cls.__bases__ += (patch_cls, )
 
+
 class NullOrder(object):
     """
     Dummy object used for sorting in place of None.
@@ -71,6 +74,7 @@ class NullOrder(object):
             return False
 
         return True
+
 
 class Quantiles(Sequence):
     """
@@ -112,6 +116,7 @@ class Quantiles(Sequence):
 
         return i
 
+
 def median(data_sorted):
     """
     Finds the median value of a given series of values.
@@ -129,6 +134,7 @@ def median(data_sorted):
     b = data_sorted[half]
 
     return (a + b) / 2
+
 
 def max_precision(values):
     """
@@ -159,10 +165,11 @@ def max_precision(values):
 
     # In Python 2 it was possible for the total digits to exceed the
     # available context precision. This ensures that can't happen. See #412
-    if max_whole_places + max_decimal_places > precision:   #pragma: no cover
+    if max_whole_places + max_decimal_places > precision:  # pragma: no cover
         max_decimal_places = precision - max_whole_places
 
     return max_decimal_places
+
 
 def make_number_formatter(decimal_places):
     """
@@ -172,6 +179,7 @@ def make_number_formatter(decimal_places):
     fraction = '0' * decimal_places
 
     return ''.join(['#,##0.', fraction, ';-#,##0.', fraction])
+
 
 def round_limits(minimum, maximum):
     """
@@ -213,6 +221,7 @@ def round_limits(minimum, maximum):
         maximum.quantize(q, rounding=ROUND_CEILING).normalize()
     )
 
+
 def letter_name(index):
     """
     Given a column index, assign a "letter" column name equivalent to
@@ -224,6 +233,7 @@ def letter_name(index):
 
     return letters[index % count] * ((index // count) + 1)
 
+
 def parse_object(obj, path=''):
     """
     Recursively parse JSON objects and a dictionary of paths/keys and values.
@@ -234,7 +244,7 @@ def parse_object(obj, path=''):
     elif isinstance(obj, (list, tuple)):
         iterator = enumerate(obj)
     else:
-        return { path.strip('/'): obj }
+        return {path.strip('/'): obj}
 
     d = OrderedDict()
 

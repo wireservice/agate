@@ -19,15 +19,16 @@ subclassed to fully customize it's behavior.
 from decimal import Decimal
 import six
 
-if six.PY3:
-    from functools import cmp_to_key
-
 from agate.aggregations import HasNulls, Percentiles
 from agate.data_types import Date, DateTime, Number, TimeDelta
 from agate.exceptions import DataTypeError
 from agate.warns import warn_null_calculation
 
-class Computation(object): #pragma: no cover
+if six.PY3:
+    from functools import cmp_to_key
+
+
+class Computation(object):  # pragma: no cover
     """
     An operation that takes a table and produces a new column by performing
     some computation on each row. Computations are invoked with
@@ -58,6 +59,7 @@ class Computation(object): #pragma: no cover
         When invoked with a table, returns a sequence of new column values.
         """
         raise NotImplementedError()
+
 
 class Formula(Computation):
     """
@@ -93,6 +95,7 @@ class Formula(Computation):
             new_column.append(v)
 
         return new_column
+
 
 class Change(Computation):
     """
@@ -147,6 +150,7 @@ class Change(Computation):
 
         return new_column
 
+
 class PercentChange(Computation):
     """
     Computes percent change between two columns.
@@ -179,6 +183,7 @@ class PercentChange(Computation):
             new_column.append((row[self._after_column_name] - row[self._before_column_name]) / row[self._before_column_name] * 100)
 
         return new_column
+
 
 class Rank(Computation):
     """
@@ -215,7 +220,7 @@ class Rank(Computation):
         if self._comparer:
             if six.PY3:
                 data_sorted = sorted(column.values(), key=cmp_to_key(self._comparer))
-            else:   #pragma: no cover
+            else:  # pragma: no cover
                 data_sorted = sorted(column.values(), cmp=self._comparer)
         else:
             data_sorted = column.values_sorted()
@@ -241,6 +246,7 @@ class Rank(Computation):
 
         return new_column
 
+
 class PercentileRank(Rank):
     """
     Assign each value in a column to the percentile into which it falls.
@@ -258,7 +264,6 @@ class PercentileRank(Rank):
         :returns:
             :class:`int`
         """
-        column = table.columns[self._column_name]
         percentiles = Percentiles(self._column_name).run(table)
 
         new_column = []

@@ -2,6 +2,7 @@
 
 import warnings
 
+
 class NullCalculationWarning(RuntimeWarning):  # pragma: no cover
     """
     Warning raised if a calculation which can not logically
@@ -9,6 +10,7 @@ class NullCalculationWarning(RuntimeWarning):  # pragma: no cover
     nulls.
     """
     pass
+
 
 def warn_null_calculation(operation, column):
     warnings.warn('Column "%s" contains nulls. These will be excluded from %s calculation.' % (
