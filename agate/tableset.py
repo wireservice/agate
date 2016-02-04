@@ -451,7 +451,8 @@ class TableSet(MappedSequence, Patchable):
         if len(row_name_columns) == 1:
             row_names = row_name_columns[0]
         else:
-            row_names = lambda r: tuple(r[n] for n in row_name_columns)
+            def row_names(r):
+                return tuple(r[n] for n in row_name_columns)
 
         return Table(output, column_names, column_types, row_names=row_names)
 

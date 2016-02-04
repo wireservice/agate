@@ -11,14 +11,14 @@ types from column data.
 
 from copy import copy
 
-from agate.data_types.base import DEFAULT_NULL_VALUES, DataType
+from agate.data_types.base import DEFAULT_NULL_VALUES, DataType  # noqa
 from agate.data_types.boolean import Boolean
 from agate.data_types.date import Date
 from agate.data_types.date_time import DateTime
 from agate.data_types.number import Number
 from agate.data_types.text import Text
 from agate.data_types.time_delta import TimeDelta
-from agate.exceptions import CastError
+from agate.exceptions import CastError  # noqa
 
 
 class TypeTester(object):
