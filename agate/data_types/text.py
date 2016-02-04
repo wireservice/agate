@@ -4,6 +4,7 @@ import six
 
 from agate.data_types.base import DataType
 
+
 class Text(DataType):
     """
     Data type representing text.

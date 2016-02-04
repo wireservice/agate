@@ -3,7 +3,7 @@
 
 try:
     from cdecimal import Decimal
-except ImportError: #pragma: no cover
+except ImportError:  # pragma: no cover
     from decimal import Decimal
 
 from babel.numbers import parse_decimal
@@ -14,6 +14,7 @@ from agate.exceptions import CastError
 
 #: A list of currency symbols sourced from `Xe <http://www.xe.com/symbols.php>`_.
 CURRENCY_SYMBOLS = [u'؋', u'$', u'ƒ', u'៛', u'¥', u'₡', u'₱', u'£', u'€', u'¢', u'﷼', u'₪', u'₩', u'₭', u'₮', u'₦', u'฿', u'₤', u'₫']
+
 
 class Number(DataType):
     """

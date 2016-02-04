@@ -9,6 +9,7 @@ import six
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
+
 class Date(DataType):
     """
     Data type representing dates only.

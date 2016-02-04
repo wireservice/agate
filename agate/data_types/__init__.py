@@ -20,6 +20,7 @@ from agate.data_types.text import Text
 from agate.data_types.time_delta import TimeDelta
 from agate.exceptions import CastError
 
+
 class TypeTester(object):
     """
     Infer data types for the columns in a given set of data.

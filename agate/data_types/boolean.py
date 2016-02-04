@@ -2,7 +2,7 @@
 
 try:
     from cdecimal import Decimal
-except ImportError: #pragma: no cover
+except ImportError:  # pragma: no cover
     from decimal import Decimal
 
 import six
@@ -15,6 +15,7 @@ DEFAULT_TRUE_VALUES = ('yes', 'y', 'true', 't', '1')
 
 #: Default values which will be automatically cast to :code:`False`.
 DEFAULT_FALSE_VALUES = ('no', 'n', 'false', 'f', '0')
+
 
 class Boolean(DataType):
     """
@@ -51,7 +52,7 @@ class Boolean(DataType):
             elif d == 0:
                 return False
         elif isinstance(d, six.string_types):
-            d = d.replace(',' ,'').strip()
+            d = d.replace(',', '').strip()
 
             d_lower = d.lower()
 

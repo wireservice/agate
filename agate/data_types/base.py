@@ -7,7 +7,8 @@ from agate.exceptions import CastError
 #: Default values which will be automatically cast to :code:`None`
 DEFAULT_NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
 
-class DataType(object): #pragma: no cover
+
+class DataType(object):  # pragma: no cover
     """
     Base class for data types.
 

@@ -8,6 +8,7 @@ import six
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
+
 class TimeDelta(DataType):
     """
     Data type representing the interval between two times.
