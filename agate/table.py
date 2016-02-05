@@ -396,7 +396,7 @@ class Table(utils.Patchable):
     def from_json(cls, path, row_names=None, key=None, newline=False, column_types=None, **kwargs):
         """
         Create a new table from a JSON file. Once the JSON is deseralized, the
-        resulting Python object is passed to `Table.from_object`. See the
+        resulting Python object is passed to :meth:`Table.from_object`. See the
         documentation of that method for additional details.
 
         If the file contains a top-level dictionary you may specify what
