@@ -170,7 +170,7 @@ Assuming that your data has a column for the total population, another for the p
         def run(self, table):
             new_column = []
 
-            for row in tables.rows:
+            for row in table.rows:
               race_squares = 0
 
               for race in ['white', 'black', 'asian', 'american_indian', 'pacific_islander']:
