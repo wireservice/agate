@@ -27,6 +27,8 @@ Here is a list of actively supported agate extensions:
 
 * `agate-sql <http://agate-sql.rtfd.org/>`_: Read and write tables in SQL databases
 * `agate-stats <http://agate-stats.rtfd.org/>`_: Additional statistical methods
+* `agate-excel <http://agate-excel.rtfd.org/>`_: Read excel tables (xls and xlsx)
+* `agate-dbf <http://agate-dbf.rtfd.org/>`_: Read dbf tables (from shapefiles)
 
 Writing your own extensions
 ===========================

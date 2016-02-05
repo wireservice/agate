@@ -127,4 +127,34 @@ Use the `agate-sql <http://agate-sql.readthedocs.org/>`_ extension.
 
     import agatesql
 
+    agatesql.patch()
+
     table = agate.Table.from_sql('postgresql:///database', 'input_table')
+
+From an Excel spreadsheet
+=========================
+
+Use the `agate-excel <http://agate-excel.readthedocs.org/>`_ extension. It supports both .xls and .xlsx files.
+
+.. code-block:: python
+
+    import agateexcel
+
+    agateexcel.patch()
+
+    table = agate.Table.from_xls('test.xls', sheet='data')
+
+    table2 = agate.Table.from_xlsx('test.xlsx', sheet='data')
+
+From a DBF table
+================
+
+DBF is the file format used to hold tabular data for ArcGIS shapefiles. `agate-dbf <http://agate-dbf.readthedocs.org/>`_ extension.
+
+.. code-block:: python
+
+    import agatedbf
+
+    agatedbf.patch()
+
+    table = agate.Table.from_dbf('test.dbf')

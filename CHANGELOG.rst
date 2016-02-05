@@ -1,6 +1,8 @@
 1.2.3
 -----
 
+* Cookbook: Create a table from a DBF file. (#472)
+* Cookbook: Create a table from an Excel spreadsheet.
 * Added explicit error if a filename is passed to the :class:`.Table` constructor. (#438)
 
 1.2.2 - February 5, 2016
