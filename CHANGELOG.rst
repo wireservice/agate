@@ -1,5 +1,9 @@
-1.2.1
+1.2.2
 -----
+
+
+1.2.1 - February 5, 2016
+------------------------
 
 This release implements several new features and bug fixes. There are no significant breaking changes.
 
@@ -32,8 +36,8 @@ Special thanks to `Neil Bedi <https://github.com/nbedi>`_ for his extensive cont
 * :meth:`.TestCase.assertRowNames` and :meth:`.TestCase.assertColumnNames` now validate the row and column instance keys.
 * Fixed a bug that prevented :meth:`.Table.rename` from renaming column names in :class:`.Row` instances. (#423)
 
-1.2.0
------
+1.2.0 - January 18, 2016
+------------------------
 
 This version introduces one breaking change, which is only relevant if you are using custom :class:`.Computation` subclasses.
 
