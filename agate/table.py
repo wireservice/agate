@@ -46,6 +46,7 @@ except ImportError:
 from agate.aggregations import Min, Max
 from agate.columns import Column
 from agate.data_types import TypeTester, DataType, Text, Number
+from agate.exceptions import DataTypeError
 from agate.mapped_sequence import MappedSequence
 from agate.preview import print_table, print_html, print_bars, print_structure
 from agate.rows import Row
@@ -943,21 +944,36 @@ class Table(utils.Patchable):
         :returns:
             A new :class:`Table`.
         """
-        column_names = tables[0].column_names
-        column_types = tables[0].column_types
+        new_columns = OrderedDict()
 
-        for table in tables[1:]:
-            if any(not isinstance(a, type(b)) for a, b in zip_longest(table.column_types, column_types)):
-                raise ValueError('Only tables with identical column types may be merged.')
+        for table in tables:
+            for i in range(0, len(table.columns)):
+                column_name = table.column_names[i]
+                column_type = table.column_types[i]
+
+                if column_name in new_columns:
+                    if type(column_type) != type(new_columns[column_name]):
+                        raise DataTypeError('Tables contain columns with the same names, but different types.')
+                else:
+                    new_columns[column_name] = column_type
+
+        column_names = new_columns.keys()
+        column_types = new_columns.values()
 
         rows = []
 
         for table in tables:
-            if table.column_names == column_names:
+            # Performance optimization for identical table structures
+            if table.column_names == column_names and table.column_types == column_types:
                 rows.extend(table.rows)
             else:
                 for row in table.rows:
-                    rows.append(Row(row.values(), column_names))
+                    data = []
+
+                    for column_name in column_names:
+                        data.append(row.get(column_name, None))
+
+                    rows.append(Row(data, column_names))
 
         return Table(rows, column_names, column_types, row_names=row_names, _is_fork=True)
 

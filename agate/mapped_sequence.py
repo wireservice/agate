@@ -125,8 +125,8 @@ class MappedSequence(Sequence):
         except KeyError:
             if default:
                 return default
-
-            raise
+            else:
+                return None
 
     @memoize
     def dict(self):

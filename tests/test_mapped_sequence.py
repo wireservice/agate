@@ -100,10 +100,8 @@ class TestMappedSequence(unittest.TestCase):
     def test_get(self):
         self.assertEqual(self.row.get('one'), 'a')
 
-        with self.assertRaises(KeyError):
-            self.row.get('four')
-
     def test_get_default(self):
+        self.assertEqual(self.row.get('four'), None)
         self.assertEqual(self.row.get('four', 'foo'), 'foo')
 
     def test_dict(self):
