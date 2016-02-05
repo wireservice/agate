@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-try:
-    from cdecimal import Decimal
-except ImportError: #pragma: no cover
-    from decimal import Decimal
-
 from random import shuffle
 from timeit import Timer
 
@@ -18,6 +13,7 @@ import six
 from six.moves import range
 
 import agate
+
 
 class TestTableJoin(unittest.TestCase):
     def test_join(self):

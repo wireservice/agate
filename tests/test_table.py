@@ -171,7 +171,7 @@ class TestBasic(AgateTestCase):
         )
 
         with self.assertRaises(ValueError):
-            table = Table(rows, self.column_names, self.column_types)
+            table = Table(rows, self.column_names, self.column_types)  # noqa
 
     def test_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
@@ -205,7 +205,7 @@ class TestBasic(AgateTestCase):
     def test_row_names_invalid(self):
 
         with self.assertRaises(ValueError):
-            table = Table(
+            table = Table(  # noqa
                 self.rows,
                 self.column_names,
                 self.column_types,
@@ -430,7 +430,7 @@ class TestBasic(AgateTestCase):
     def test_order_by_empty_table(self):
         table = Table([], self.column_names)
 
-        new_table = table.order_by('three')
+        new_table = table.order_by('three')  # noqa
 
     def test_limit(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -1170,7 +1170,7 @@ class TestPrettyPrint(AgateTestCase):
 
         output = six.StringIO()
         table.print_bars('three', 'one', output=output)
-        lines = output.getvalue().split('\n')
+        lines = output.getvalue().split('\n')  # noqa
 
     def test_print_bars_width(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -1661,7 +1661,7 @@ class TestMerge(AgateTestCase):
         table_b = Table(self.rows, self.column_names, column_types)
 
         with self.assertRaises(ValueError):
-            table_c = Table.merge([table_a, table_b])
+            table_c = Table.merge([table_a, table_b])  # noqa
 
     def test_merge_with_row_names(self):
         table_a = Table(self.rows, self.column_names, self.column_types, row_names='three')

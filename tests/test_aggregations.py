@@ -544,7 +544,7 @@ class TestNumberAggregation(unittest.TestCase):
 
         table = Table(rows, ['ints'], [self.number_type])
 
-        quintiles = Quintiles('ints').run(table)
+        quintiles = Quintiles('ints').run(table)  # noqa
 
     def test_deciles(self):
         warnings.simplefilter('error')
@@ -561,7 +561,7 @@ class TestNumberAggregation(unittest.TestCase):
 
         table = Table(rows, ['ints'], [self.number_type])
 
-        deciles = Deciles('ints').run(table)
+        deciles = Deciles('ints').run(table)  # noqa
 
 
 class TestTextAggregation(unittest.TestCase):

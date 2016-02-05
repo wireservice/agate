@@ -3,13 +3,16 @@
 import agate
 import proof
 
+
 def load_data(data):
     data['exonerations'] = agate.Table.from_csv('examples/realdata/exonerations-20150828.csv')
+
 
 def confessions(data):
     num_false_confessions = data['exonerations'].aggregate(agate.Count('false_confession', True))
 
     print('False confessions: %i' % num_false_confessions)
+
 
 @proof.never_cache
 def median_age(data):
@@ -22,16 +25,19 @@ def median_age(data):
 
     data['exonerations'].bins('age').print_bars('age', 'count', width=80)
 
+
 def years_in_prison(data):
     data['with_years_in_prison'] = data['exonerations'].compute([
         ('years_in_prison', agate.Change('convicted', 'exonerated'))
     ])
+
 
 def youth(data):
     sorted_by_age = data['exonerations'].order_by('age')
     youngest_ten = sorted_by_age.limit(10)
 
     youngest_ten.print_table(max_columns=7)
+
 
 def states(data):
     state_totals = data['with_years_in_prison'].group_by('state')
@@ -43,6 +49,7 @@ def states(data):
     sorted_medians = medians.order_by('median_years_in_prison', reverse=True)
 
     sorted_medians.print_table(max_rows=5)
+
 
 def race_and_age(data):
     # Filters rows without age data

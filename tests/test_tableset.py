@@ -67,7 +67,7 @@ class TestTableSet(AgateTestCase):
         ])
 
         with self.assertRaises(ValueError):
-            tableset = TableSet(tables.values(), tables.keys())
+            tableset = TableSet(tables.values(), tables.keys())  # noqa
 
     def test_create_tableset_mismatched_column_types(self):
         tables = OrderedDict([
@@ -77,7 +77,7 @@ class TestTableSet(AgateTestCase):
         ])
 
         with self.assertRaises(ValueError):
-            tableset = TableSet(tables.values(), tables.keys())
+            tableset = TableSet(tables.values(), tables.keys())  # noqa
 
     def test_from_csv(self):
         tableset1 = TableSet(self.tables.values(), self.tables.keys())
@@ -159,7 +159,7 @@ class TestTableSet(AgateTestCase):
 
     def test_from_json_false_path(self):
         with self.assertRaises(IOError):
-            tableset1 = TableSet.from_json('notapath')
+            tableset1 = TableSet.from_json('notapath')  # noqa
 
     def test_to_json(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
@@ -243,13 +243,13 @@ class TestTableSet(AgateTestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         with self.assertRaises(ValueError):
-            table = tableset.merge(groups=['red', 'blue'], group_name='color_code')
+            table = tableset.merge(groups=['red', 'blue'], group_name='color_code')  # noqa
 
     def test_merge_groups_invalid_type(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         with self.assertRaises(ValueError):
-            table = tableset.merge(groups='invalid', group_name='color_code')
+            table = tableset.merge(groups='invalid', group_name='color_code')  # noqa
 
     def test_compute(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
