@@ -1,6 +1,8 @@
 1.2.2
 -----
 
+* :class:`.TypeTester` no longer takes a ``locale`` argument. Use ``types`` instead.
+* :class:`.TypeTester` now takes a ``types`` argument that is a list of possible types to test. (#461)
 * Null conversion can now be disabled for :class:`.Text` by passing ``cast_nulls=False``. (#460)
 * Default column names are now lowercase letters instead of uppercase. (#464)
 * :meth:`.Table.merge` can now merge tables with different columns or columns in a different order. (#465)

@@ -53,7 +53,7 @@ class TestText(unittest.TestCase):
 
         t = Text(cast_nulls=False)
         casted = tuple(t.cast(v) for v in values)
-        self.assertSequenceEqual(casted, ('', 'N/A', None))        
+        self.assertSequenceEqual(casted, ('', 'N/A', None))
 
 class TestBoolean(unittest.TestCase):
     def setUp(self):
@@ -373,19 +373,6 @@ class TestTypeTester(unittest.TestCase):
 
         self.assertIsInstance(inferred[0], Number)
 
-    def test_number_locale(self):
-        rows = [
-            ('1,7',),
-            ('200.000.000',),
-            ('',)
-        ]
-
-        tester = TypeTester(locale='de_DE')
-        inferred = tester.run(rows, ['one'])
-
-        self.assertIsInstance(inferred[0], Number)
-        self.assertEqual(inferred[0].locale, 'de_DE')
-
     def test_number_percent(self):
         rows = [
             ('1.7%',),
@@ -520,3 +507,40 @@ class TestTypeTester(unittest.TestCase):
         inferred = tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0], Text)
+
+    def test_types_force_text(self):
+        rows = [
+            ('1.7',),
+            ('200000000',),
+            ('',)
+        ]
+
+        tester = TypeTester(types=[Text()])
+        inferred = tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0], Text)
+
+    def test_types_no_boolean(self):
+        rows = [
+            ('True',),
+            ('False',),
+            ('False',)
+        ]
+
+        tester = TypeTester(types=[Number(), Text()])
+        inferred = tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0], Text)
+
+    def test_types_number_locale(self):
+        rows = [
+            ('1,7',),
+            ('200.000.000',),
+            ('',)
+        ]
+
+        tester = TypeTester(types=[Number(locale='de_DE'), Text()])
+        inferred = tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0], Number)
+        self.assertEqual(inferred[0].locale, 'de_DE')

@@ -28,27 +28,35 @@ class TypeTester(object):
     :param force:
         A dictionary where each key is a column name and each value is a
         :class:`.DataType` instance that overrides inference.
-    :param locale:
-        A locale to use when evaluating the types of data. See :class:`.Number`.
     :param limit:
         An optional limit on how many rows to evaluate before selecting the
         most likely type. Note that applying a limit may mean errors arise when
         the data is cast--if the guess is proved incorrect in further rows of
         data.
+    :param types:
+        A sequence of possible types to test against. This be used to specify
+        what data formats you want to test against. For instance, you may want
+        to exclude :class:`TimeDelta` from testing. It can also be used to pass
+        options such as ``locale`` to :class:`.Number` or ``cast_nulls`` to
+        :class:`.Text`. Take care in specifying the order of the list. It is
+        the order they are tested in. :class:`.Text` should always be last.
     """
-    def __init__(self, force={}, locale='en_US', limit=None):
+    def __init__(self, force={}, limit=None, types=None):
         self._force = force
         self._limit = limit
 
-        # In order of preference
-        self._possible_types = [
-            Boolean(),
-            Number(locale=locale),
-            TimeDelta(),
-            Date(),
-            DateTime(),
-            Text()
-        ]
+        if types:
+            self._possible_types = types
+        else:
+            # In order of preference
+            self._possible_types = [
+                Boolean(),
+                Number(),
+                TimeDelta(),
+                Date(),
+                DateTime(),
+                Text()
+            ]
 
     def run(self, rows, column_names):
         """
