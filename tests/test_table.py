@@ -1611,6 +1611,53 @@ class TestJoin(AgateTestCase):
         self.assertRowNames(new_table, ('a', 'b', 'c'))
 
 
+class TestHomogenize(AgateTestCase):
+    def setUp(self):
+        self.rows = (
+            (0, 4, 'a'),
+            (1, 3, 'b'),
+            (None, 2, 'c')
+        )
+
+        self.number_type = Number()
+        self.text_type = Text()
+
+        self.column_names = ['one', 'two', 'three']
+        self.column_types = [self.number_type, self.number_type, self.text_type]
+
+    def test_homogenize(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        homogenized = table.homogenize('one', range(3), [3, 'd'])
+        rows = (
+            (0, 4, 'a'),
+            (1, 3, 'b'),
+            (None, 2, 'c'),
+            (2, 3, 'd')
+        )
+
+        self.assertColumnNames(homogenized, self.column_names)
+        self.assertColumnTypes(homogenized, [Number, Number, Text])
+        self.assertRows(homogenized, rows)
+
+    def test_homogenize_lambda(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        def default_row(d):
+            return [d * 2, chr(ord('a') + d)]
+
+        homogenized = table.homogenize('one', range(3), default_row)
+        rows = (
+            (0, 4, 'a'),
+            (1, 3, 'b'),
+            (None, 2, 'c'),
+            (2, 4, 'c')
+        )
+
+        self.assertColumnNames(homogenized, self.column_names)
+        self.assertColumnTypes(homogenized, [Number, Number, Text])
+        self.assertRows(homogenized, rows)
+
+
 class TestMerge(AgateTestCase):
     def setUp(self):
         self.rows = (

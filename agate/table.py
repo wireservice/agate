@@ -908,6 +908,44 @@ class Table(utils.Patchable):
 
         return self._fork(rows, column_names, column_types, row_names=row_names)
 
+    @allow_tableset_proxy
+    def homogenize(self, column_name, column_values, default_row):
+        """
+        Fill missing rows in a dataset with default values.
+
+        Determines what rows are missing using the given column_name and expected
+        column_values to find column values not in the table.
+
+        Values not found in the table will be used to generate new rows using
+        the given default_row. Default_row should be an array of values or a
+        lambda with length one less than the table's row length. The remaining
+        element will be the column value originally not found in the table.
+
+        :param column_name:
+            The name of the column to compare.
+        :param column_values:
+            An array of values the given column with column_name should contain.
+        :param default_row:
+            An array of values or a lambda to generate new rows. Length should
+            be row length minus one.
+        :returns:
+            A new :class:`Table`.
+        """
+        rows = list(self._rows)
+        column = self._columns.get(column_name)
+        column_index = self._column_names.index(column_name)
+
+        differences = list(set(column_values) - set(column))
+
+        for difference in differences:
+            if callable(default_row):
+                rows.append(Row([difference] + default_row(difference), self._column_names))
+            else:
+                new_row = default_row[:column_index] + [difference] + default_row[column_index:]
+                rows.append(Row(new_row, self._column_names))
+
+        return self._fork(rows, self._column_names, self._column_types)
+
     @classmethod
     def merge(cls, tables, row_names=None):
         """
