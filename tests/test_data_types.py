@@ -116,6 +116,11 @@ class TestNumber(unittest.TestCase):
         casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000')))
 
+    @unittest.skipIf(six.PY3, 'Not supported in Python 3.')
+    def test_cast_long(self):
+        self.assertEqual(self.type.test(long('141414')), True)
+        self.assertEqual(self.type.cast(long('141414')), Decimal('141414'))
+
     def test_currency_cast(self):
         values = ('$2.70', '$0.70', u'€14', u'75¢')
         casted = tuple(self.type.cast(v) for v in values)

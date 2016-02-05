@@ -38,9 +38,14 @@ class Number(DataType):
         """
         if isinstance(d, Decimal) or d is None:
             return d
-        elif type(d) is int:
+
+        t = type(d)
+
+        if t is int:
             return Decimal(d)
-        elif type(d) is float:
+        elif six.PY2 and t is long:
+            return Decimal(d)
+        elif t is float:
             return Decimal(repr(d))
         elif isinstance(d, six.string_types):
             d = d.strip()

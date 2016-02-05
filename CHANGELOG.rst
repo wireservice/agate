@@ -1,6 +1,7 @@
 1.2.2
 -----
 
+* :class:`.Number` can now test/cast the ``long`` type on Python 2.
 
 1.2.1 - February 5, 2016
 ------------------------
