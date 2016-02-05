@@ -86,6 +86,24 @@ From a latin1 CSV
 
 .. _load_a_table_from_a_sql_database:
 
+From a semicolon delimited CSV
+==============================
+
+Normally, agate will automatically guess the delimiter of your CSV, but if that guess fails you can specify it manually:
+
+.. code-block:: python
+
+    table = agate.Table.from_csv('filename.csv', delimiter=';')
+
+From a TSV (tab-delimited CSV)
+==============================
+
+This is the same as the previous example, but in this case we specify that the delimiter is a tab:
+
+.. code-block:: python
+
+    table = agate.Table.from_csv('filename.csv', delimiter='\t')
+
 From JSON
 =========
 
@@ -110,11 +128,3 @@ Use the `agate-sql <http://agate-sql.readthedocs.org/>`_ extension.
     import agatesql
 
     table = agate.Table.from_sql('postgresql:///database', 'input_table')
-
-From a semicolon delimited CSV
-===========================
-
-.. code-block:: python
-
-    table = agate.Table.from_csv('filename.csv', delimiter=';')
-
