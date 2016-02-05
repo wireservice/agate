@@ -256,8 +256,7 @@ class TableSet(MappedSequence, Patchable):
                     js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
 
             for key, value in js.items():
-                output = StringIO(json.dumps(value))
-                tables[key] = Table.from_json(output, column_types=column_types, **kwargs)
+                tables[key] = Table.from_object(value, column_types=column_types, **kwargs)
 
         return TableSet(tables.values(), tables.keys())
 
@@ -288,11 +287,12 @@ class TableSet(MappedSequence, Patchable):
                 table.to_json(filepath, indent=indent, **kwargs)
         else:
             close = True
-            tableset_dict = {}
+            tableset_dict = OrderedDict()
+
             for name, table in self.items():
                 output = StringIO()
                 table.to_json(output, **kwargs)
-                tableset_dict[name] = json.loads(output.getvalue())
+                tableset_dict[name] = json.loads(output.getvalue(), object_pairs_hook=OrderedDict)
 
             if hasattr(path, 'write'):
                 f = path

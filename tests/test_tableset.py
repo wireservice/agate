@@ -140,8 +140,10 @@ class TestTableSet(AgateTestCase):
     def test_from_json_file(self):
         tableset1 = TableSet(self.tables.values(), self.tables.keys())
         tableset2 = TableSet.from_json('examples/test_tableset.json')
+
         with open('examples/test_tableset.json') as f:
             filelike = StringIO(f.read())
+
         tableset3 = TableSet.from_json(filelike)
 
         self.assertSequenceEqual(tableset1.column_names, tableset2.column_names, tableset3.column_names)

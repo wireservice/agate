@@ -395,39 +395,9 @@ class Table(utils.Patchable):
     @classmethod
     def from_json(cls, path, row_names=None, key=None, newline=False, column_types=None, **kwargs):
         """
-        Create a new table from a JSON file. Contents should be an array
-        containing a dictionary for each "row". Nested objects or lists will
-        also be parsed. For example, this object:
-
-        .. code-block:: javascript
-
-            {
-                'one': {
-                    'a': 1,
-                    'b': 2,
-                    'c': 3
-                },
-                'two': [4, 5, 6],
-                'three': 'd'
-            }
-
-        Would generate these columns and values:
-
-        .. code-block:: python
-
-            {
-                'one/a': 1,
-                'one/b': 2,
-                'one/c': 3,
-                'two.0': 4,
-                'two.1': 5,
-                'two.2': 6,
-                'three': 'd'
-            }
-
-        Column names and types will be inferred from the data. Not all rows are
-        required to have the same keys. Missing elements will be filled in with
-        null.
+        Create a new table from a JSON file. Once the JSON is deseralized, the
+        resulting Python object is passed to `Table.from_object`. See the
+        documentation of that method for additional details.
 
         If the file contains a top-level dictionary you may specify what
         property contains the row list using the `key` parameter.
@@ -469,11 +439,58 @@ class Table(utils.Patchable):
 
             js = js[key]
 
+        return Table.from_object(js, row_names=row_names, column_types=column_types)
+
+    @classmethod
+    def from_object(cls, obj, row_names=None, column_types=None):
+        """
+        Create a new table from a Python object with a structure that mirrors
+        a deserialized JSON object. Its contents should be an array
+        containing a dictionary for each "row". Nested objects or lists will
+        also be parsed. For example, this object:
+
+        .. code-block:: python
+
+            {
+                'one': {
+                    'a': 1,
+                    'b': 2,
+                    'c': 3
+                },
+                'two': [4, 5, 6],
+                'three': 'd'
+            }
+
+        Would generate these columns and values:
+
+        .. code-block:: python
+
+            {
+                'one/a': 1,
+                'one/b': 2,
+                'one/c': 3,
+                'two.0': 4,
+                'two.1': 5,
+                'two.2': 6,
+                'three': 'd'
+            }
+
+        Column names and types will be inferred from the data. Not all rows are
+        required to have the same keys. Missing elements will be filled in with
+        null.
+
+        :param obj:
+            Filepath or file-like object from which to read JSON data.
+        :param row_names:
+            See :meth:`Table.__init__`.
+        :param column_types:
+            See :meth:`Table.__init__`.
+        """
         column_names = []
         row_objects = []
 
-        for obj in js:
-            parsed = utils.parse_object(obj)
+        for sub in obj:
+            parsed = utils.parse_object(sub)
 
             for key in parsed.keys():
                 if key not in column_names:
@@ -483,11 +500,11 @@ class Table(utils.Patchable):
 
         rows = []
 
-        for obj in row_objects:
+        for sub in row_objects:
             r = []
 
             for name in column_names:
-                r.append(obj.get(name, None))
+                r.append(sub.get(name, None))
 
             rows.append(r)
 

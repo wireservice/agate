@@ -1,42 +1,42 @@
-{  
-   "table1":[  
-      {  
+{
+   "table1":[
+      {
          "letter":"a",
          "number":1
       },
-      {  
+      {
          "letter":"a",
          "number":3
       },
-      {  
+      {
          "letter":"b",
          "number":2
       }
    ],
-   "table2":[  
-      {  
+   "table2":[
+      {
          "letter":"b",
          "number":0
       },
-      {  
+      {
          "letter":"a",
          "number":2
       },
-      {  
+      {
          "letter":"c",
          "number":5
       }
    ],
-   "table3":[  
-      {  
+   "table3":[
+      {
          "letter":"a",
          "number":1
       },
-      {  
+      {
          "letter":"a",
          "number":2
       },
-      {  
+      {
          "letter":"c",
          "number":3
       }

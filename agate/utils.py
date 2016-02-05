@@ -236,7 +236,9 @@ def letter_name(index):
 
 def parse_object(obj, path=''):
     """
-    Recursively parse JSON objects and a dictionary of paths/keys and values.
+    Recursively parse JSON-like Python objects as a dictionary of paths/keys
+    and values.
+
     Inspired by JSONPipe (https://github.com/dvxhouse/jsonpipe).
     """
     if isinstance(obj, dict):
@@ -244,7 +246,7 @@ def parse_object(obj, path=''):
     elif isinstance(obj, (list, tuple)):
         iterator = enumerate(obj)
     else:
-        return {path.strip('/'): obj}
+        return { path.strip('/'): obj }
 
     d = OrderedDict()
 

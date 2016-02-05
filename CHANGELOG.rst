@@ -1,8 +1,10 @@
 1.2.1
 -----
 
+* :meth:`.Table.from_json` now defers most functionality to :meth:`.Table.from_object`.
+* Implemented :meth:`.Table.from_object` for parsing JSON-like Python objects.
 * Fixed a bug that prevented :meth:`.Table.order_by` on empty table. (#454)
-* :meth:`Table.from_json` and :meth:`TableSet.from_json` now have ``column_types`` as an optional argument. (#451)
+* :meth:`.Table.from_json` and :meth:`TableSet.from_json` now have ``column_types`` as an optional argument. (#451)
 * :class:`.csv.Reader` now has ``line_numbers`` and ``header`` options to add column for line numbers (#447)
 * Renamed ``maxfieldsize`` to ``field_size_limit`` in :class:`.csv.Reader` for consistency (#447)
 * :meth:`.Table.from_csv` now has a ``sniff_limit`` option to use :class:`.csv.Sniffer` (#444)
