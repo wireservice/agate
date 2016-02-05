@@ -107,6 +107,9 @@ class Table(utils.Patchable):
         assumed to be :class:`.Row` instances, rather than raw data.
     """
     def __init__(self, rows, column_names=None, column_types=None, row_names=None, _is_fork=False):
+        if isinstance(rows, six.string_types):
+            raise ValueError('When created directly, the first argument to Table must be a sequence of rows. Did you want agate.Table.from_csv?')
+
         # Validate column names
         if column_names:
             final_column_names = []

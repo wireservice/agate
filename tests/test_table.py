@@ -49,6 +49,10 @@ class TestBasic(AgateTestCase):
         self.assertColumnTypes(table, [Number, Number, Text])
         self.assertRows(table, self.rows)
 
+    def test_create_filename(self):
+        with self.assertRaises(ValueError):
+            table = Table('foo.csv')
+
     def test_create_empty_table(self):
         table = Table([])
         table2 = Table([], self.column_names, self.column_types)

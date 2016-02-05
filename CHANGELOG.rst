@@ -1,7 +1,7 @@
 1.2.3
 -----
 
-
+* Added explicit error if a filename is passed to the :class:`.Table` constructor. (#438)
 
 1.2.2 - February 5, 2016
 ------------------------
