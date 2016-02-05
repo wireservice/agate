@@ -939,10 +939,12 @@ class Table(utils.Patchable):
 
         for difference in differences:
             if callable(default_row):
-                rows.append(Row([difference] + default_row(difference), self._column_names))
+                call_default = default_row(difference)
+                new_row = call_default[:column_index] + [difference] + call_default[column_index:]
             else:
                 new_row = default_row[:column_index] + [difference] + default_row[column_index:]
-                rows.append(Row(new_row, self._column_names))
+            
+            rows.append(Row(new_row, self._column_names))
 
         return self._fork(rows, self._column_names, self._column_types)
 
