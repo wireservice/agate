@@ -84,8 +84,6 @@ From a latin1 CSV
 
     table = agate.Table.from_csv('census.csv', encoding='latin1')
 
-.. _load_a_table_from_a_sql_database:
-
 From a semicolon delimited CSV
 ==============================
 
@@ -117,6 +115,8 @@ From newline-delimited JSON
 .. code-block:: python
 
     table = agate.Table.from_json('filename.json', newline=True)
+
+.. _load_a_table_from_a_sql_database:
 
 From a SQL database
 ===================
