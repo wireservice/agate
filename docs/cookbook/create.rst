@@ -110,3 +110,11 @@ Use the `agate-sql <http://agate-sql.readthedocs.org/>`_ extension.
     import agatesql
 
     table = agate.Table.from_sql('postgresql:///database', 'input_table')
+
+From a semicolon delimited CSV
+===========================
+
+.. code-block:: python
+
+    table = agate.Table.from_csv('filename.csv', delimiter=';')
+
