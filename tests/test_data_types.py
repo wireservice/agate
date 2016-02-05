@@ -44,6 +44,16 @@ class TestText(unittest.TestCase):
         casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None, u'👍'))
 
+    def test_no_cast_nulls(self):
+        values = ('', 'N/A', None)
+
+        t = Text()
+        casted = tuple(t.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (None, None, None))
+
+        t = Text(cast_nulls=False)
+        casted = tuple(t.cast(v) for v in values)
+        self.assertSequenceEqual(casted, ('', 'N/A', None))        
 
 class TestBoolean(unittest.TestCase):
     def setUp(self):
