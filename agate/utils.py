@@ -228,7 +228,7 @@ def letter_name(index):
     Excel. For example, index ``4`` would return ``E``.
     Index ``30`` would return ``EE``.
     """
-    letters = string.ascii_uppercase
+    letters = string.ascii_lowercase
     count = len(letters)
 
     return letters[index % count] * ((index // count) + 1)

@@ -132,8 +132,8 @@ class TestMisc(unittest.TestCase):
         )
 
     def test_letter_name(self):
-        self.assertEqual(letter_name(0), 'A')
-        self.assertEqual(letter_name(4), 'E')
-        self.assertEqual(letter_name(25), 'Z')
-        self.assertEqual(letter_name(30), 'EE')
-        self.assertEqual(letter_name(77), 'ZZZ')
+        self.assertEqual(letter_name(0), 'a')
+        self.assertEqual(letter_name(4), 'e')
+        self.assertEqual(letter_name(25), 'z')
+        self.assertEqual(letter_name(30), 'ee')
+        self.assertEqual(letter_name(77), 'zzz')

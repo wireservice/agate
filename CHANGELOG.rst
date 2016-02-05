@@ -1,6 +1,7 @@
 1.2.2
 -----
 
+* Default column names are now lowercase letters instead of uppercase. (#464)
 * :meth:`.Table.merge` can now merge tables with different columns or columns in a different order. (#465)
 * :meth:`.MappedSequence.get` will no longer raise ``KeyError`` if a default is not provided. (#467)
 * :class:`.Number` can now test/cast the ``long`` type on Python 2.

@@ -45,7 +45,7 @@ class TestBasic(AgateTestCase):
     def test_create_table(self):
         table = Table(self.rows)
 
-        self.assertColumnNames(table, ['A', 'B', 'C'])
+        self.assertColumnNames(table, ['a', 'b', 'c'])
         self.assertColumnTypes(table, [Number, Number, Text])
         self.assertRows(table, self.rows)
 
@@ -65,7 +65,7 @@ class TestBasic(AgateTestCase):
         column_types = [self.number_type, self.text_type, self.text_type]
         table = Table(self.rows, column_types=column_types)
 
-        self.assertColumnNames(table, ['A', 'B', 'C'])
+        self.assertColumnNames(table, ['a', 'b', 'c'])
         self.assertColumnTypes(table, [Number, Text, Text])
         self.assertRows(table, [
             (1, '4', 'a'),
@@ -97,7 +97,7 @@ class TestBasic(AgateTestCase):
         column_names = ['one', None, 'three']
         table = Table(self.rows, column_names, self.column_types)
 
-        self.assertColumnNames(table, ['one', 'B', 'three'])
+        self.assertColumnNames(table, ['one', 'b', 'three'])
 
     def test_create_table_non_datatype_columns(self):
         column_types = [self.number_type, self.number_type, 'foo']
@@ -149,7 +149,7 @@ class TestBasic(AgateTestCase):
         self.assertEqual(len(table.columns), 3)
 
         self.assertSequenceEqual(table.columns[0], (1, 2, None))
-        self.assertSequenceEqual(table.columns['A'], (1, 2, None))
+        self.assertSequenceEqual(table.columns['a'], (1, 2, None))
 
         with self.assertRaises(KeyError):
             table.columns[None]
@@ -158,7 +158,7 @@ class TestBasic(AgateTestCase):
             table.columns['one']
 
         self.assertSequenceEqual(table.columns[2], ('a', 'b', u'👍'))
-        self.assertSequenceEqual(table.columns['C'], ('a', 'b', u'👍'))
+        self.assertSequenceEqual(table.columns['c'], ('a', 'b', u'👍'))
 
         with self.assertRaises(KeyError):
             table.columns['']
@@ -239,7 +239,7 @@ class TestBasic(AgateTestCase):
     def test_str(self):
         table = Table(self.rows)
 
-        self.assertColumnNames(table, ['A', 'B', 'C'])
+        self.assertColumnNames(table, ['a', 'b', 'c'])
         self.assertColumnTypes(table, [Number, Number, Text])
         self.assertRows(table, self.rows)
 
@@ -621,7 +621,7 @@ class TestCSV(AgateTestCase):
     def test_from_csv_no_header(self):
         table = Table.from_csv('examples/test_no_header.csv', header=False)
 
-        self.assertColumnNames(table, ['A', 'B', 'C', 'D', 'E', 'F'])
+        self.assertColumnNames(table, ['a', 'b', 'c', 'd', 'e', 'f'])
         self.assertColumnTypes(table, [Number, Text, Boolean, Date, DateTime, TimeDelta])
 
     def test_from_csv_no_header_columns(self):
