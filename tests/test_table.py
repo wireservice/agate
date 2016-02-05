@@ -1132,6 +1132,22 @@ class TestPrettyPrint(AgateTestCase):
         self.assertEqual(len(lines), 8)
         self.assertEqual(len(lines[0]), 23)
 
+    def test_print_table_max_column_width(self):
+        rows = (
+            ('1.7', 2, 'this is long'),
+            ('11.18', None, None),
+            ('0', 1, 'nope')
+        )
+
+        table = Table(rows, self.column_names, self.column_types)
+
+        output = six.StringIO()
+        table.print_table(output=output, max_column_width=7)
+        lines = output.getvalue().split('\n')
+
+        self.assertIn(' this... ', lines[3])
+        self.assertIn(' nope ', lines[5])
+
     def test_print_html(self):
         table = Table(self.rows, self.column_names, self.column_types)
 

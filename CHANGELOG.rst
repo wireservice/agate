@@ -1,6 +1,7 @@
 1.2.1
 -----
 
+* Added a ``max_column_width`` argument to :meth:`.Table.print_table`. Defaults to ``20``. (#442)
 * :meth:`.Table.from_json` now defers most functionality to :meth:`.Table.from_object`.
 * Implemented :meth:`.Table.from_object` for parsing JSON-like Python objects.
 * Fixed a bug that prevented :meth:`.Table.order_by` on empty table. (#454)

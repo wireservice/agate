@@ -1228,7 +1228,7 @@ class Table(utils.Patchable):
 
         return Table(bins.items(), column_names, column_types, row_names=tuple(bins.keys()))
 
-    def print_table(self, max_rows=None, max_columns=None, output=sys.stdout):
+    def print_table(self, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=20):
         """
         Print a well-formatted preview of this table to the console or any
         other output.
@@ -1239,8 +1239,11 @@ class Table(utils.Patchable):
             The maximum number of columns to display before truncating the data.
         :param output:
             A file-like object to print to. Defaults to :code:`sys.stdout`.
+        :param max_column_width:
+            Truncate all columns to at most this width. The remainder will be
+            replaced with ellipsis.
         """
-        print_table(self, max_rows, max_columns, output)
+        print_table(self, max_rows, max_columns, output, max_column_width)
 
     def print_html(self, max_rows=None, max_columns=None, output=sys.stdout):
         """

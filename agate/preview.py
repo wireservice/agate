@@ -38,7 +38,7 @@ TICK_MARK = u'+'
 ELLIPSIS = u'...'
 
 
-def print_table(table, max_rows=None, max_columns=None, output=sys.stdout):
+def print_table(table, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=None):
     """
     See :meth:`.Table.print_table` for documentation.
     """
@@ -87,6 +87,9 @@ def print_table(table, max_rows=None, max_columns=None, output=sys.stdout):
                 v = format_decimal(v, format=number_formatters[j])
             else:
                 v = six.text_type(v)
+
+            if max_column_width is not None and len(v) > max_column_width:
+                v = '%s...' % v[:max_column_width - 3]
 
             if len(v) > widths[j]:
                 widths[j] = len(v)
