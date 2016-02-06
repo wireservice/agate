@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* Added :meth:`.Table.homogenize` to find gaps in a table and fill them with default rows. (#407)
 * :meth:`.Table.distinct` now accepts sequences of column names as a key.
 * :meth:`.Table.join` now accepts sequences of column names as either a left or right key. (#475)
 * Cookbook: Create a table from a DBF file. (#472)
