@@ -255,3 +255,10 @@ def parse_object(obj, path=''):
         d.update(parse_object(value, path + key + '/'))
 
     return d
+
+def issequence(obj):
+    """
+    Returns :code:`True` if the given object is an instance of
+    :class:`.Sequence` that is not also a string.
+    """
+    return isinstance(obj, Sequence) and not isinstance(obj, six.string_types)

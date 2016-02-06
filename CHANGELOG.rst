@@ -1,7 +1,8 @@
 1.2.3
 -----
 
-* :meth:`.Table.join` now accepts sequences of columns in addition to a single column name or lambda. (#475)
+* :meth:`.Table.distinct` now accepts sequences of column names as a key.
+* :meth:`.Table.join` now accepts sequences of column names as either a left or right key. (#475)
 * Cookbook: Create a table from a DBF file. (#472)
 * Cookbook: Create a table from an Excel spreadsheet.
 * Added explicit error if a filename is passed to the :class:`.Table` constructor. (#438)

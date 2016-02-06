@@ -771,14 +771,15 @@ class Table(utils.Patchable):
         Filter data to only rows that are unique.
 
         :param key:
-            Either 1) the name of a column to use to identify unique rows or 2)
-            a :class:`function` that takes a row and returns a value to
-            identify unique rows or 3) `None`, in which case the entire row
-            will be checked for uniqueness.
+            Either the name of a column to use to identify unique rows, a
+            sequence of such column names, a :class:`function` that takes a
+            row and returns a value to identify unique rows, or `None`, in
+            which case the entire row will be checked for uniqueness.
         :returns:
             A new :class:`Table`.
         """
         key_is_row_function = hasattr(key, '__call__')
+        key_is_sequence = utils.issequence(key)
 
         uniques = []
         rows = []
@@ -791,6 +792,8 @@ class Table(utils.Patchable):
         for i, row in enumerate(self._rows):
             if key_is_row_function:
                 k = key(row)
+            elif key_is_sequence:
+                k = (row[n] for j in key)
             elif key is None:
                 k = tuple(row)
             else:
@@ -809,7 +812,7 @@ class Table(utils.Patchable):
     def join(self, right_table, left_key, right_key=None, inner=False):
         """
         Performs the equivalent of SQL's "left outer join", combining columns
-        from this table and from :code:`right_table` anywhere that the output of
+        from this table and from :code:`right_table` anywhere that the
         :code:`left_key` and :code:`right_key` are equivalent.
 
         Where there is no match for :code:`left_key` the left columns will
@@ -817,7 +820,7 @@ class Table(utils.Patchable):
         the :code:`inner` argument is specified. (See arguments for more.)
 
         If :code:`left_key` and :code:`right_key` are column names, only
-        the left column will be included in the output table.
+        the left columns will be included in the output table.
 
         Column names from the right table which also exist in this table will
         be suffixed "2" in the new table.
@@ -847,7 +850,7 @@ class Table(utils.Patchable):
         right_key_indices = []
 
         left_key_is_func = hasattr(left_key, '__call__')
-        left_key_is_sequence = isinstance(left_key, Sequence) and not isinstance(left_key, six.string_types)
+        left_key_is_sequence = utils.issequence(left_key)
 
         # Left key is a function
         if left_key_is_func:
@@ -861,7 +864,7 @@ class Table(utils.Patchable):
             left_data = self._columns[left_key].values()
 
         right_key_is_func = hasattr(right_key, '__call__')
-        right_key_is_sequence = isinstance(right_key, Sequence) and not isinstance(right_key, six.string_types)
+        right_key_is_sequence = utils.issequence(right_key)
 
         # Right key is a function
         if right_key_is_func:

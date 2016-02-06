@@ -502,6 +502,27 @@ class TestBasic(AgateTestCase):
             rows[1]
         ])
 
+    def test_distinct_multiple_columns(self):
+        rows = (
+            (1, 2, 'a'),
+            (2, None, None),
+            (1, 1, 'c'),
+            (1, None, None)
+        )
+
+        table = Table(rows, self.column_names, self.column_types)
+
+        new_table = table.distinct(['two', 'three'])
+
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, [
+            rows[0],
+            rows[1],
+            rows[2]
+        ])
+
     def test_distinct_func(self):
         rows = (
             (1, 2, 'a'),
