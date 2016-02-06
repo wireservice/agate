@@ -698,8 +698,9 @@ class Table(utils.Patchable):
         column_name or callable that returns a value to sort by.
 
         :param key:
-            Either the name of a column to sort by or a :class:`function` that
-            takes a row and returns a value to sort by.
+            Either the name of a column to sort by, a sequence of such names,
+            or a :class:`function` that takes a row and returns a value to sort
+            by.
         :param reverse:
             If `True` then sort in reverse (typically, descending) order.
         :returns:
@@ -709,12 +710,15 @@ class Table(utils.Patchable):
             return self._fork(self._rows)
         else:
             key_is_row_function = hasattr(key, '__call__')
+            key_is_sequence = utils.issequence(key)
 
             def sort_key(data):
                 row = data[1]
 
                 if key_is_row_function:
                     k = key(row)
+                elif key_is_sequence:
+                    k = tuple(row[n] for n in key)
                 else:
                     k = row[key]
 

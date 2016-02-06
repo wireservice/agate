@@ -357,6 +357,26 @@ class TestBasic(AgateTestCase):
         # Verify old table not changed
         self.assertRows(table, self.rows)
 
+    def test_order_by_multiple_columns(self):
+        rows = (
+            (1, 2, 'a'),
+            (2, 1, 'b'),
+            (1, 1, 'c')
+        )
+
+        table = Table(rows, self.column_names, self.column_types)
+
+        new_table = table.order_by(['one', 'two'])
+
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, [
+            rows[2],
+            rows[0],
+            rows[1]
+        ])
+
     def test_order_by_func(self):
         rows = (
             (1, 2, 'a'),
