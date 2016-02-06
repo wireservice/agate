@@ -954,7 +954,7 @@ class Table(utils.Patchable):
         return self._fork(rows, column_names, column_types, row_names=row_names)
 
     @allow_tableset_proxy
-    def homogenize(self, column_names, compare_values, default_row=None):
+    def homogenize(self, key, compare_values, default_row=None):
         """
         Fills missing rows in a dataset with default values.
 
@@ -975,8 +975,8 @@ class Table(utils.Patchable):
         missing values for each new row and output a full row including those
         values.
 
-        :param column_names:
-            An array of column_names.
+        :param key:
+            Either a column name or a sequence of such names.
         :param compare_values:
             An array of lists with combinations of values that should be present
             in at least one row in the table. A row is generated for each
@@ -989,8 +989,12 @@ class Table(utils.Patchable):
             A new :class:`Table`.
         """
         rows = list(self._rows)
-        column_values = [self._columns.get(column_name) for column_name in column_names]
-        column_indexes = [self._column_names.index(column_name) for column_name in column_names]
+
+        if not utils.issequence(key):
+            key = [key]
+
+        column_values = [self._columns.get(name) for name in key]
+        column_indexes = [self._column_names.index(name) for name in key]
 
         column_values = zip(*column_values)
         differences = list(set(map(tuple, compare_values)) - set(column_values))
@@ -1002,7 +1006,7 @@ class Table(utils.Patchable):
                 if default_row is not None:
                     new_row = default_row
                 else:
-                    new_row = [None] * (len(self._column_names) - len(column_names))
+                    new_row = [None] * (len(self._column_names) - len(key))
 
                 for i, d in zip(column_indexes, difference):
                     new_row.insert(i, d)
@@ -1080,7 +1084,7 @@ class Table(utils.Patchable):
             column name that was grouped on or "group" if grouping with a key
             function. See :class:`.TableSet` for more.
         :param key_type:
-            An instance some subclass of :class:`.DataType`. If not provided
+            An instance of any subclass of :class:`.DataType`. If not provided
             it will default to a :class`.Text`.
         :returns:
             A :class:`.TableSet` mapping where the keys are unique values from

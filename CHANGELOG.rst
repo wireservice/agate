@@ -14,7 +14,7 @@
 1.2.2 - February 5, 2016
 ------------------------
 
-This release several minor features. The only breaking change is that default column names will now be lowercase instead of uppercase. If you depended on these names in your scripts you will need to update them accordingly.
+This release adds several minor features. The only breaking change is that default column names will now be lowercase instead of uppercase. If you depended on these names in your scripts you will need to update them accordingly.
 
 * :class:`.TypeTester` no longer takes a ``locale`` argument. Use ``types`` instead.
 * :class:`.TypeTester` now takes a ``types`` argument that is a list of possible types to test. (#461)

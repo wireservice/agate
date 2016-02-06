@@ -1706,7 +1706,7 @@ class TestHomogenize(AgateTestCase):
     def test_homogenize_column_name(self):
         table = Table(self.rows, self.column_names, self.column_types)
         compare_values = [[0], [1], [2]]
-        homogenized = table.homogenize(['one'], compare_values, [3, 'd'])
+        homogenized = table.homogenize('one', compare_values, [3, 'd'])
         rows = (
             (0, 4, 'a'),
             (1, 3, 'b'),
