@@ -825,12 +825,14 @@ class Table(utils.Patchable):
         :param right_table:
             The "right" table to join to.
         :param left_key:
-            Either the name of a column from the this table to join on, or a
-            :class:`function` that takes a row and returns a value to join on.
+            Either the name of a column from the this table to join on, a
+            sequence of such column names, or a :class:`function` that takes a
+            row and returns a value to join on.
         :param right_key:
-            Either the name of a column from :code:table` to join on, or a
-            :class:`function` that takes a row and returns a value to join on.
-            If :code:`None` then :code:`left_key` will be used for both.
+            Either the name of a column from :code:table` to join on, a
+            sequence of such column names, or a :class:`function` that takes a
+            row and returns a value to join on. If :code:`None` then
+            :code:`left_key` will be used for both.
         :param inner:
             Perform a SQL-style "inner join" instead of a left outer join. Rows
             which have no match for :code:`left_key` will not be included in
@@ -838,36 +840,51 @@ class Table(utils.Patchable):
         :returns:
             A new :class:`Table`.
         """
-        left_key_is_row_function = hasattr(left_key, '__call__')
-
         if right_key is None:
             right_key = left_key
 
-        right_key_is_row_function = hasattr(right_key, '__call__')
-
         # Get join columns
-        right_key_index = None
+        right_key_indices = []
 
-        if left_key_is_row_function:
+        left_key_is_func = hasattr(left_key, '__call__')
+        left_key_is_sequence = isinstance(left_key, Sequence) and not isinstance(left_key, six.string_types)
+
+        # Left key is a function
+        if left_key_is_func:
             left_data = [left_key(row) for row in self.rows]
+        # Left key is a sequence
+        elif left_key_is_sequence:
+            left_columns = [self._columns[key] for key in left_key]
+            left_data = zip(*[column.values() for column in left_columns])
+        # Left key is a column name/index
         else:
             left_data = self._columns[left_key].values()
 
-        if right_key_is_row_function:
+        right_key_is_func = hasattr(right_key, '__call__')
+        right_key_is_sequence = isinstance(right_key, Sequence) and not isinstance(right_key, six.string_types)
+
+        # Right key is a function
+        if right_key_is_func:
             right_data = [right_key(row) for row in right_table.rows]
+        # Right key is a sequence
+        elif right_key_is_sequence:
+            right_columns = [right_table.columns[key] for key in right_key]
+            right_data = zip(*[column.values() for column in right_columns])
+            right_key_indices = [right_table.columns._keys.index(key) for key in right_key]
+        # Right key is a column name/index
         else:
             right_column = right_table.columns[right_key]
             right_data = right_column.values()
-            right_key_index = right_table.columns._keys.index(right_key)
+            right_key_indices = [right_table.columns._keys.index(right_key)]
 
         # Build names and type lists
         column_names = list(self._column_names)
         column_types = list(self._column_types)
 
-        for column in right_table.columns:
+        for i, column in enumerate(right_table.columns):
             name = column.name
 
-            if name == right_key:
+            if i in right_key_indices:
                 continue
 
             if name in self._column_names:
@@ -903,7 +920,7 @@ class Table(utils.Patchable):
                     new_row = list(self._rows[left_index])
 
                     for k, v in enumerate(right_row):
-                        if k == right_key_index:
+                        if k in right_key_indices:
                             continue
 
                         new_row.append(v)
@@ -917,7 +934,7 @@ class Table(utils.Patchable):
                 new_row = list(self._rows[left_index])
 
                 for k, v in enumerate(right_table.column_names):
-                    if k == right_key_index:
+                    if k in right_key_indices:
                         continue
 
                     new_row.append(None)

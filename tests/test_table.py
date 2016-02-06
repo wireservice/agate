@@ -1548,6 +1548,23 @@ class TestJoin(AgateTestCase):
             (None, 2, 'c', None, None)
         ])
 
+    def test_join_multiple_columns(self):
+        new_table = self.left.join(
+            self.right,
+            ['two', 'three'],
+            ['five', 'six']
+        )
+
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, self.right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 1),
+            (2, 3, 'b', 2),
+            (None, 2, 'c', None)
+        ])
+
     def test_join_func(self):
         new_table = self.left.join(
             self.right,
