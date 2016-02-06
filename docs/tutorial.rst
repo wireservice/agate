@@ -194,7 +194,7 @@ Q: **How many exonerations involved a false confession?**
 
 Answering this question involves counting the number of ``True`` values in the ``false_confession`` column. When we created the table we specified that the data in this column contained :class:`.Boolean` data. Because of this, agate has taken care of coercing the original text data from the CSV into Python's ``True`` and ``False`` values.
 
-We'll answer the question using by using an instance of :class:`.Count` which is a type of :class:`.Aggregation`. Aggregations are used to perform "column-wise" calculations. That is, they derive a new single value from the contents of a column. In the case of :class:`.Count`, it will tell us how many times a particular value appears in the column.
+We'll answer the question using an instance of :class:`.Count` which is a type of :class:`.Aggregation`. Aggregations are used to perform "column-wise" calculations. That is, they derive a new single value from the contents of a column. In the case of :class:`.Count`, it will tell us how many times a particular value appears in the column.
 
 An Aggregation is applied to a table using :meth:`.Table.aggregate`.
 
