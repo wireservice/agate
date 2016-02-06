@@ -1640,6 +1640,21 @@ class TestHomogenize(AgateTestCase):
         self.assertColumnTypes(homogenized, [Number, Number, Text])
         self.assertRows(homogenized, rows)
 
+    def test_homogenize_default_row(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        compare_values = [[0], [1], [2]]
+        homogenized = table.homogenize(['one'], compare_values)
+        rows = (
+            (0, 4, 'a'),
+            (1, 3, 'b'),
+            (None, 2, 'c'),
+            (2, None, None)
+        )
+
+        self.assertColumnNames(homogenized, self.column_names)
+        self.assertColumnTypes(homogenized, [Number, Number, Text])
+        self.assertRows(homogenized, rows)
+
     def test_homogenize_multiple_columns(self):
         table = Table(self.rows, self.column_names, self.column_types)
 

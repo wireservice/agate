@@ -909,9 +909,9 @@ class Table(utils.Patchable):
         return self._fork(rows, column_names, column_types, row_names=row_names)
 
     @allow_tableset_proxy
-    def homogenize(self, column_names, compare_values, default_row):
+    def homogenize(self, column_names, compare_values, default_row=None):
         """
-        Fill missing rows in a dataset with default values.
+        Fills missing rows in a dataset with default values.
 
         Determines what rows are missing by comparing the values in the given
         column_names with the expected compare_values.
@@ -920,18 +920,22 @@ class Table(utils.Patchable):
         the given default_row.
 
         Default_row should be an array of values or an array-generating lambda.
+        If not specified, the new rows will have `None` in columns not given in
+        column_names.
 
         If it is an array of values, the length should be row length minus
         column_names count and the gap will be filled with the missing values.
 
         If it is an array-generating lambda, the lambda should take an array of
-        missing values for the new row and output a full row including those
+        missing values for each new row and output a full row including those
         values.
 
         :param column_names:
             An array of column_names.
         :param compare_values:
-            An array of key values that should be present in the table.
+            An array of lists with combinations of values that should be present
+            in at least one row in the table. A row is generated for each
+            combination not found.
         :param default_row:
             An array of values or a lambda to generate new rows. Length of input
             array should be equal to row length minus column_names count. Length
@@ -950,7 +954,11 @@ class Table(utils.Patchable):
             if callable(default_row):
                 rows.append(Row(default_row(difference), self._column_names))
             else:
-                new_row = default_row
+                if default_row is not None:
+                    new_row = default_row
+                else:
+                    new_row = [None] * (len(self._column_names) - len(column_names))
+
                 for i, d in zip(column_indexes, difference):
                     new_row.insert(i, d)
 
