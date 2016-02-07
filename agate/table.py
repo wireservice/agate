@@ -629,17 +629,20 @@ class Table(utils.Patchable):
         return self._fork(new_rows, selected_column_names, column_types)
 
     @allow_tableset_proxy
-    def exclude(self, excluded_column_names):
+    def exclude(self, key):
         """
         Create a new table with the same rows as this one, but only columns
-        not in the ``excluded_column_names`` sequence.
+        not in the ``key``.
 
-        :param excluded_column_names:
-            A sequence of names of columns to exclude from the new table.
+        :param key:
+            Either the name of a column to exclude or a sequence of such names.
         :returns:
             A new :class:`Table`.
         """
-        selected_column_names = [n for n in self._column_names if n not in excluded_column_names]
+        if not utils.issequence(key):
+            key = [key]
+
+        selected_column_names = [n for n in self._column_names if n not in key]
 
         return self.select(selected_column_names)
 
