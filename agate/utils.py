@@ -246,7 +246,7 @@ def parse_object(obj, path=''):
     elif isinstance(obj, (list, tuple)):
         iterator = enumerate(obj)
     else:
-        return { path.strip('/'): obj }
+        return {path.strip('/'): obj}
 
     d = OrderedDict()
 
@@ -255,6 +255,7 @@ def parse_object(obj, path=''):
         d.update(parse_object(value, path + key + '/'))
 
     return d
+
 
 def issequence(obj):
     """

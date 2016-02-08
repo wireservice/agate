@@ -55,6 +55,7 @@ class TestText(unittest.TestCase):
         casted = tuple(t.cast(v) for v in values)
         self.assertSequenceEqual(casted, ('', 'N/A', None))
 
+
 class TestBoolean(unittest.TestCase):
     def setUp(self):
         self.type = Boolean()

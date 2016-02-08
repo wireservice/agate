@@ -36,7 +36,7 @@ except ImportError:  # pragma: no cover
 from babel.numbers import format_decimal
 
 import six
-from six.moves import range, zip, zip_longest  # pylint: disable=W0622
+from six.moves import range, zip  # pylint: disable=W0622
 
 try:
     from StringIO import StringIO
@@ -800,7 +800,7 @@ class Table(utils.Patchable):
             if key_is_row_function:
                 k = key(row)
             elif key_is_sequence:
-                k = (row[n] for j in key)
+                k = (row[j] for j in key)
             elif key is None:
                 k = tuple(row)
             else:
@@ -1044,7 +1044,7 @@ class Table(utils.Patchable):
                 column_type = table.column_types[i]
 
                 if column_name in new_columns:
-                    if type(column_type) != type(new_columns[column_name]):
+                    if not isinstance(column_type, type(new_columns[column_name])):
                         raise DataTypeError('Tables contain columns with the same names, but different types.')
                 else:
                     new_columns[column_name] = column_type
