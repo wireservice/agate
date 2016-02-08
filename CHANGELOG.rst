@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* :meth:`.Table.merge` now takes a ``column_names`` argument to specify columns included in new table. (#481)
 * :meth:`.Table.select` now accepts a single column name as a key.
 * :meth:`.Table.exclude` now accepts a single column name as a key.
 * Added :meth:`.Table.homogenize` to find gaps in a table and fill them with default rows. (#407)
