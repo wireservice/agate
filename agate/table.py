@@ -610,23 +610,26 @@ class Table(utils.Patchable):
                 f.close()
 
     @allow_tableset_proxy
-    def select(self, selected_column_names):
+    def select(self, key):
         """
         Create a new table with the same rows as this one, but only those
-        columns in the ``selected_column_names`` sequence.
+        columns in the ``key``.
 
-        :param selected_column_names:
-            A sequence of names of columns to include in the new table.
+        :param key:
+            Either the name of a column to include or a sequence of such names.
         :returns:
             A new :class:`Table`.
         """
-        column_types = [self.columns[name].data_type for name in selected_column_names]
+        if not utils.issequence(key):
+            key = [key]
+
+        column_types = [self.columns[name].data_type for name in key]
         new_rows = []
 
         for row in self._rows:
-            new_rows.append(Row(tuple(row[n] for n in selected_column_names), selected_column_names))
+            new_rows.append(Row(tuple(row[n] for n in key), key))
 
-        return self._fork(new_rows, selected_column_names, column_types)
+        return self._fork(new_rows, key, column_types)
 
     @allow_tableset_proxy
     def exclude(self, key):

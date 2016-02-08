@@ -260,9 +260,21 @@ class TestBasic(AgateTestCase):
     def test_select(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        new_table = table.select(('three',))
+        new_table = table.select(('two', 'three'))
 
         self.assertIsNot(new_table, table)
+
+        self.assertColumnNames(new_table, ['two', 'three'])
+        self.assertColumnTypes(new_table, [Number, Text])
+        self.assertRows(new_table, [
+            [4, 'a'],
+            [3, 'b'],
+            [2, u'👍']
+        ])
+
+    def test_select_single(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        new_table = table.select('three')
 
         self.assertColumnNames(new_table, ['three'])
         self.assertColumnTypes(new_table, [Text])
