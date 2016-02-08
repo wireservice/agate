@@ -1,6 +1,8 @@
 1.2.3
 -----
 
+* :meth:`.Table.select` now accepts a single column name as a key.
+* :meth:`.Table.exclude` now accepts a single column name as a key.
 * Added :meth:`.Table.homogenize` to find gaps in a table and fill them with default rows. (#407)
 * :meth:`.Table.distinct` now accepts sequences of column names as a key.
 * :meth:`.Table.join` now accepts sequences of column names as either a left or right key. (#475)
