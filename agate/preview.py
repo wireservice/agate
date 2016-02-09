@@ -67,7 +67,12 @@ def print_table(table, max_rows=None, max_columns=None, output=sys.stdout, max_c
 
         if isinstance(c.data_type, Number):
             max_places = max_precision(c[:max_rows])
-            number_formatters.append(make_number_formatter(max_places))
+            number_formatters.append(
+                (
+                    make_number_formatter(max_places),
+                    c.data_type.locale
+                )
+            )
         else:
             number_formatters.append(None)
 
@@ -84,7 +89,8 @@ def print_table(table, max_rows=None, max_columns=None, output=sys.stdout, max_c
             elif v is None:
                 v = ''
             elif number_formatters[j] is not None:
-                v = format_decimal(v, format=number_formatters[j])
+                format, locale = number_formatters[j]
+                v = format_decimal(v, format=format, locale=locale)
             else:
                 v = six.text_type(v)
 
