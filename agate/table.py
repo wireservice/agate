@@ -51,6 +51,7 @@ from agate.mapped_sequence import MappedSequence
 from agate.preview import print_table, print_html, print_bars, print_structure
 from agate.rows import Row
 from agate import utils
+from agate.warns import warn_duplicate_column
 
 if six.PY2:  # pragma: no cover
     from agate import csv_py2 as csv
@@ -116,14 +117,22 @@ class Table(utils.Patchable):
 
             for i, column_name in enumerate(column_names):
                 if column_name is None:
-                    final_column_names.append(utils.letter_name(i))
+                    new_column_name = utils.letter_name(i)
                 elif isinstance(column_name, six.string_types):
-                    final_column_names.append(column_name)
+                    new_column_name = column_name
                 else:
                     raise ValueError('Column names must be strings or None.')
 
-            if len(set(final_column_names)) != len(final_column_names):
-                raise ValueError('Duplicate column names are not allowed.')
+                final_column_name = new_column_name
+                duplicates = 0
+                while final_column_name in final_column_names:
+                    final_column_name = new_column_name + '_' + str(duplicates + 2)
+                    duplicates += 1
+
+                if duplicates > 0:
+                    warn_duplicate_column(new_column_name, final_column_name)
+
+                final_column_names.append(final_column_name)
 
             self._column_names = tuple(final_column_names)
         elif rows:
@@ -1031,7 +1040,7 @@ class Table(utils.Patchable):
 
         It is possible to limit the columns included in the new :class:`Table`
         with `column_names` argument. For example, to only include columns from
-        the a specific table, set `column_names` equal to `table.column_names`.
+        a specific table, set `column_names` equal to `table.column_names`.
 
         :param tables:
             An sequence of :class:`Table` instances.

@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* :meth:`.Table.__init__` no longer fails on duplicate columns. Instead it renames them and throws warning. (#484)
 * :meth:`.Table.merge` now takes a ``column_names`` argument to specify columns included in new table. (#481)
 * :meth:`.Table.select` now accepts a single column name as a key.
 * :meth:`.Table.exclude` now accepts a single column name as a key.

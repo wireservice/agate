@@ -6,6 +6,7 @@ try:
 except ImportError:  # pragma: no cover
     from decimal import Decimal
 
+import warnings
 import json
 
 try:
@@ -26,6 +27,7 @@ from agate.data_types import *
 from agate.computations import Formula
 from agate.exceptions import DataTypeError
 from agate.testcase import AgateTestCase
+from agate.warns import DuplicateColumnWarning
 
 
 class TestBasic(AgateTestCase):
@@ -112,8 +114,18 @@ class TestBasic(AgateTestCase):
     def test_create_duplicate_column_names(self):
         column_names = ['one', 'two', 'two']
 
-        with self.assertRaises(ValueError):
-            Table(self.rows, column_names, self.column_types)
+        warnings.simplefilter('error')
+
+        with self.assertRaises(DuplicateColumnWarning):
+            table = Table(self.rows, column_names, self.column_types)
+
+        warnings.simplefilter('ignore')
+
+        table = Table(self.rows, column_names, self.column_types)
+
+        self.assertColumnNames(table, ['one', 'two', 'two_2'])
+        self.assertColumnTypes(table, [Number, Number, Text])
+        self.assertRows(table, self.rows)
 
     def test_column_names_types_different_lengths(self):
         column_names = ['one', 'two', 'three', 'four']
