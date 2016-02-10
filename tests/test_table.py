@@ -1181,10 +1181,15 @@ class TestPrettyPrint(AgateTestCase):
         )
 
         self.number_type = Number()
+        self.international_number_type = Number(locale='de_DE')
         self.text_type = Text()
 
         self.column_names = ['one', 'two', 'three']
-        self.column_types = [self.number_type, self.number_type, self.text_type]
+        self.column_types = [
+            self.number_type,
+            self.international_number_type,
+            self.text_type
+        ]
 
     def test_print_table(self):
         table = Table(self.rows, self.column_names, self.column_types)
