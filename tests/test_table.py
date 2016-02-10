@@ -1175,7 +1175,7 @@ class TestBins(AgateTestCase):
 class TestPrettyPrint(AgateTestCase):
     def setUp(self):
         self.rows = (
-            ('1.7', 2, 'a'),
+            ('1.7', 2000, 'a'),
             ('11.18', None, None),
             ('0', 1, 'c')
         )
@@ -1199,7 +1199,7 @@ class TestPrettyPrint(AgateTestCase):
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 25)
+        self.assertEqual(len(lines[0]), 27)
 
     def test_print_table_max_rows(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -1209,7 +1209,7 @@ class TestPrettyPrint(AgateTestCase):
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 25)
+        self.assertEqual(len(lines[0]), 27)
 
     def test_print_table_max_columns(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -1219,7 +1219,7 @@ class TestPrettyPrint(AgateTestCase):
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 23)
+        self.assertEqual(len(lines[0]), 25)
 
     def test_print_table_max_column_width(self):
         rows = (
@@ -1236,6 +1236,18 @@ class TestPrettyPrint(AgateTestCase):
 
         self.assertIn(' this... ', lines[3])
         self.assertIn(' nope ', lines[5])
+
+    def test_print_table_locale(self):
+        """
+        Verify that the locale of the international number is correctly
+        controlling the format of how it is printed.
+        """
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = six.StringIO()
+        table.print_table(max_columns=2, output=output)
+        # If it's working, the english '2,000' should appear as '2.000'
+        self.assertTrue("2.000" in output.getvalue())
 
     def test_print_html(self):
         table = Table(self.rows, self.column_names, self.column_types)
