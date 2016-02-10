@@ -89,8 +89,8 @@ def print_table(table, max_rows=None, max_columns=None, output=sys.stdout, max_c
             elif v is None:
                 v = ''
             elif number_formatters[j] is not None:
-                format, locale = number_formatters[j]
-                v = format_decimal(v, format=format, locale=locale)
+                fmt, lcl = number_formatters[j]
+                v = format_decimal(v, format=fmt, locale=lcl)
             else:
                 v = six.text_type(v)
 
