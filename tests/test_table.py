@@ -1245,7 +1245,7 @@ class TestPrettyPrint(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types)
 
         output = six.StringIO()
-        table.print_table(max_columns=2, output=output)
+        table.print_table(max_columns=2, output=output, locale='de_DE')
         # If it's working, the english '2,000' should appear as '2.000'
         self.assertTrue("2.000" in output.getvalue())
 
