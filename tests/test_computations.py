@@ -155,13 +155,6 @@ class TestTableComputation(unittest.TestCase):
         def to_one_place(d):
             return d.quantize(Decimal('0.1'))
 
-        # self.rows = (
-        #     ('a', 2, 3, 4),
-        #     (None, 3, 5, None),
-        #     ('a', 2, 4, None),
-        #     ('b', 3, 4, None)
-        # )
-
         self.assertSequenceEqual(
             new_table.rows[0],
             ('a', Decimal('2'), Decimal('3'), Decimal('4'), Decimal('20.0'))
