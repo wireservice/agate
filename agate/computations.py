@@ -166,6 +166,8 @@ class Percent(Computation):
         column = table.columns[self._column_name]
         if not isinstance(column.data_type, Number):
             raise DataTypeError('Percent column must contain Number data.')
+        if self._total is not None and self._total <= 0:
+            raise DataTypeError('The total must be a positive number')
         # Throw a warning if there are nulls in there
         if HasNulls(self._column_name).run(table):
             warn_null_calculation(self, column)
@@ -176,7 +178,7 @@ class Percent(Computation):
             :class:`decimal.Decimal`
         """
         # If the user has provided a total, use that
-        if self._total:
+        if self._total is not None:
             total = self._total
         # Otherwise compute the sum of all the values in that column to
         # act as our denominator
@@ -188,20 +190,14 @@ class Percent(Computation):
         for row in table.rows:
             # Pull the value
             value = row[self._column_name]
-            # If the value is None, don't even try to do the math
             if value is None:
                 new_column.append(None)
                 continue
-            try:
-                # Try to divide it out of the total
-                percent = value / total
-                # And multiply it by 100
-                percent = percent * 100
-            # If the value is zero it will throw this error
-            except ZeroDivisionError:
-                # So we manually set the result as zero
-                percent = 0
-            # Append the value to the new list
+            # Try to divide it out of the total
+            percent = value / total
+            # And multiply it by 100
+            percent = percent * 100
+        # Append the value to the new list
             new_column.append(percent)
         # Pass out the list
         return new_column

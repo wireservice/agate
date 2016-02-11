@@ -177,6 +177,14 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('40.0'))
         self.assertEqual(to_one_place(new_table.columns['test'][3]), Decimal('60.0'))
 
+        with self.assertRaises(DataTypeError):
+            new_table = self.table.compute([
+                ('test', Percent('two', 0))
+            ])
+            new_table = self.table.compute([
+                ('test', Percent('two', -1))
+            ])
+
     def test_percent_zeros(self):
         column_names = ['label', 'value']
         rows = (
@@ -204,7 +212,10 @@ class TestTableComputation(unittest.TestCase):
         def to_one_place(d):
             return d.quantize(Decimal('0.1'))
 
-        self.assertEqual(to_one_place(new_table.columns['test'][0]), Decimal('100.0'))
+        self.assertEqual(
+            to_one_place(new_table.columns['test'][0]),
+            Decimal('100.0')
+        )
         self.assertEqual(new_table.columns['test'][1], None)
         self.assertEqual(new_table.columns['test'][2], None)
         self.assertEqual(new_table.columns['test'][3], None)
