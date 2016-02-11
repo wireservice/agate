@@ -883,6 +883,10 @@ class TestJSON(AgateTestCase):
 
         self.assertColumnTypes(table, [Text, Text, Text, Text, Text, Text])
 
+    def test_from_json_error_newline_key(self):
+        with self.assertRaises(ValueError):
+            table = Table.from_json('examples/test.json', newline=True, key='test')  # noqa
+
     def test_to_json(self):
         table = Table(self.rows, self.column_names, self.column_types)
 

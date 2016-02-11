@@ -429,6 +429,9 @@ class Table(utils.Patchable):
         :param column_types:
             See :meth:`Table.__init__`.
         """
+        if key is not None and newline:
+            raise ValueError('key and newline may not be specified together.')
+
         if newline:
             js = []
 
