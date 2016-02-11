@@ -197,7 +197,7 @@ class Percent(Computation):
             percent = value / total
             # And multiply it by 100
             percent = percent * 100
-        # Append the value to the new list
+            # Append the value to the new list
             new_column.append(percent)
         # Pass out the list
         return new_column
