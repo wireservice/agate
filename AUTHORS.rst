@@ -14,3 +14,4 @@ agate is the product of a community. The following individuals have contributed 
 * `Neil Bedi <https://github.com/nbedi>`_
 * `Geoffrey Hing <https://github.com/ghing>`_
 * `Taurus Olson <https://github.com/TaurusOlson>`_
+* `Ben Welsh <https://github.com/palewire>`_

@@ -181,9 +181,13 @@ class TestTableComputation(unittest.TestCase):
             new_table = self.table.compute([
                 ('test', Percent('two', 0))
             ])
+        with self.assertRaises(DataTypeError):
             new_table = self.table.compute([
                 ('test', Percent('two', -1))
             ])
+        with self.assertRaises(DataTypeError):
+            zero_table = Table([[0]], ['zero'], [self.number_type])
+            new_table = zero_table.compute([('test', Percent('zero'))])
 
     def test_percent_zeros(self):
         column_names = ['label', 'value']

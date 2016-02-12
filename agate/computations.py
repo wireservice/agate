@@ -184,6 +184,10 @@ class Percent(Computation):
         # act as our denominator
         else:
             total = table.aggregate(Sum(self._column_name))
+            # Raise error if sum is less than or equal to zero
+            if total <= 0:
+                raise DataTypeError('The sum of column values must be a positive number')
+
         # Create a list new rows
         new_column = []
         # Loop through the existing rows
