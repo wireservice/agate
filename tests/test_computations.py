@@ -143,6 +143,83 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(new_table.columns['test'][2], None)
         self.assertEqual(new_table.columns['test'][3], None)
 
+    def test_percent(self):
+        new_table = self.table.compute([
+            ('test', Percent('two'))
+        ])
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+
+        def to_one_place(d):
+            return d.quantize(Decimal('0.1'))
+
+        self.assertSequenceEqual(
+            new_table.rows[0],
+            ('a', Decimal('2'), Decimal('3'), Decimal('4'), Decimal('20.0'))
+        )
+        self.assertEqual(to_one_place(new_table.columns['test'][0]), Decimal('20.0'))
+        self.assertEqual(to_one_place(new_table.columns['test'][1]), Decimal('30.0'))
+        self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('20.0'))
+        self.assertEqual(to_one_place(new_table.columns['test'][3]), Decimal('30.0'))
+
+    def test_percent_total_override(self):
+        new_table = self.table.compute([
+            ('test', Percent('two', 5))
+        ])
+
+        def to_one_place(d):
+            return d.quantize(Decimal('0.1'))
+
+        self.assertEqual(to_one_place(new_table.columns['test'][0]), Decimal('40.0'))
+        self.assertEqual(to_one_place(new_table.columns['test'][1]), Decimal('60.0'))
+        self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('40.0'))
+        self.assertEqual(to_one_place(new_table.columns['test'][3]), Decimal('60.0'))
+
+        with self.assertRaises(DataTypeError):
+            new_table = self.table.compute([
+                ('test', Percent('two', 0))
+            ])
+            new_table = self.table.compute([
+                ('test', Percent('two', -1))
+            ])
+
+    def test_percent_zeros(self):
+        column_names = ['label', 'value']
+        rows = (
+            ('one', 25),
+            ('two', 25),
+            ('three', 0)
+        )
+        new_table = Table(rows, column_names)
+        new_table = new_table.compute([
+            ('test', Percent('value')),
+        ])
+
+        def to_one_place(d):
+            return d.quantize(Decimal('0.1'))
+
+        self.assertEqual(to_one_place(new_table.columns['test'][0]), Decimal('50.0'))
+        self.assertEqual(to_one_place(new_table.columns['test'][1]), Decimal('50.0'))
+        self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('0.0'))
+
+    def test_percent_nulls(self):
+        new_table = self.table.compute([
+            ('test', Percent('four'))
+        ])
+
+        def to_one_place(d):
+            return d.quantize(Decimal('0.1'))
+
+        self.assertEqual(
+            to_one_place(new_table.columns['test'][0]),
+            Decimal('100.0')
+        )
+        self.assertEqual(new_table.columns['test'][1], None)
+        self.assertEqual(new_table.columns['test'][2], None)
+        self.assertEqual(new_table.columns['test'][3], None)
+
     def test_percent_change(self):
         new_table = self.table.compute([
             ('test', PercentChange('two', 'three'))
