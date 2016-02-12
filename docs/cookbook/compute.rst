@@ -25,6 +25,52 @@ Or, better yet, compute the whole decade using a loop:
 
     new_table = table.compute(computations)
 
+Percent
+=======
+
+Calculate the percentage for each value in a column with :class:`.Percent`.
+Values are divided into the sum of the column by default. 
+
+.. code-block:: python
+
+    columns = ('value',)
+    rows = ([1],[2],[2],[5])
+    new_table = agate.Table(rows, columns)
+
+    new_table = new_table.compute([
+        ('percent', agate.Percent('value'))
+    ])
+
+    new_table.print_table()
+
+    |--------+----------|
+    |  value | percent  |
+    |--------+----------|
+    |      1 |      10  |
+    |      2 |      20  |
+    |      2 |      20  |
+    |      5 |      50  |
+    |--------+----------|
+
+Override the denominator with a keyword argument.
+
+.. code-block:: python
+
+    new_table = new_table.compute([
+        ('percent', agate.Percent('value', 5))
+    ])
+
+    new_table.print_table()
+
+    |--------+----------|
+    |  value | percent  |
+    |--------+----------|
+    |      1 |      20  |
+    |      2 |      40  |
+    |      2 |      40  |
+    |      5 |     100  |
+    |--------+----------|
+
 Percent change
 ==============
 
