@@ -1089,6 +1089,50 @@ class Table(utils.Patchable):
 
         return Table(rows, column_keys, column_types, row_names=row_names, _is_fork=True)
 
+    def normalize(self, column_names):
+        """
+        Normalize a sequence of columns into two columns for field and value.
+
+        For example:
+
+        |---------+----------+--------+-------|
+        |  name   | gender   | race   | age   |
+        |---------+----------+--------+-------|
+        |  Jane   | female   | black  | 24    |
+        |  Jack   | male     | white  | 35    |
+        |  Joe    | male     | black  | 28    |
+        |---------+----------+--------+-------|
+
+        can be normalized on columns 'gender' and 'race':
+
+        |---------+-----------+---------+
+        |  name   | field     | value   |
+        |---------+-----------+---------+
+        |  Jane   | gender    | female  |
+        |  Jane   | race      | black   |
+        |  Jane   | age       | 24      |
+        |  ...    |  ...      |  ...    |
+        |---------+-----------+---------+
+
+        :param column_names:
+            A sequence of column names to normalize.
+        :returns:
+            A new :class:`Table`.
+        """
+        new_rows = []
+
+        left_names = list(set(self.column_names) - set(column_names))
+
+        new_column_names = left_names + ['field', 'value']
+        new_column_types = [self.column_types[self.column_names.index(name)] for name in left_names] + [Text(), Text()]
+
+        for row in self.rows:
+            left_row = [row[n] for n in left_names]
+            for column_name in column_names:
+                new_rows.append(Row(tuple(left_row + [column_name, row[column_name]]), new_column_names))
+
+        return Table(new_rows, new_column_names, new_column_types)
+
     @allow_tableset_proxy
     def group_by(self, key, key_name=None, key_type=None):
         """
