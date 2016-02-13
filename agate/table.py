@@ -1146,14 +1146,14 @@ class Table(utils.Patchable):
             ])
 
         # Get each distinct value from key and pivot columns
-        distinct_key_values = sorted(list(set(table.columns[k].values()) for k in key))
+        distinct_key_values = sorted(set(table.columns[k].values()) for k in key)
         # Pivot columns are paired with the column name for later access
-        distinct_pivot_values = [(p, value) for p in pivot for value in sorted(list(set(table.columns[p].values())))]
+        distinct_pivot_values = [(p, value) for p in pivot for value in sorted(set(table.columns[p].values()))]
 
         # New column names are key columns with distinct pivot values
         new_column_names = key + [str(pivot_value[1]) for pivot_value in distinct_pivot_values]
         # New column types are key column types with Number for each pivot value
-        new_column_types = table.column_types[:len(key)] + (Number(), ) * (len(new_column_names) - len(key))
+        new_column_types = table.column_types[:len(key)] + (Number(), ) * len(distinct_pivot_values)
 
         def count_pivots(key_value, pivot_value):
             # Counts number of instances key_value and pivot_value are found in table
