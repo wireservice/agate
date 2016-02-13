@@ -1135,10 +1135,15 @@ class Table(utils.Patchable):
 
         table = self.select(key + pivot)
 
-        # Group by keys to get initial table for counts
+        # Group by keys and pivots to get tables for counts
+        count_tables = {}
         group_by_key = table
         for k in key:
             group_by_key = group_by_key.group_by(k)
+        for p in pivot:
+            count_tables[p] = group_by_key.group_by(p).aggregate([
+                ('count', Length()),
+            ])
 
         # Get each distinct value from key and pivot columns
         distinct_key_values = sorted(list(set(table.columns[k].values()) for k in key))
@@ -1152,16 +1157,10 @@ class Table(utils.Patchable):
 
         def count_pivots(key_value, pivot_value):
             # Counts number of instances key_value and pivot_value are found in table
-            pivot_counts = group_by_key.group_by(pivot_value[0])
-            counts = pivot_counts.aggregate([
-                ('count', Length()),
-            ])
-
             def row_check(row):
                 return row == Row(key_value + (pivot_value[1], row['count']), key + [pivot_value[0], 'count'])
 
-            count = counts.where(row_check)
-
+            count = count_tables[pivot_value[0]].where(row_check)
             return count.rows[0]['count'] if len(count.rows) > 0 else 0
 
         # Iterate over every possible combination of key values
