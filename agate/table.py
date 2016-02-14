@@ -23,7 +23,7 @@ rows, row names are optional.)
 import codecs
 from collections import OrderedDict, Sequence
 from copy import copy
-from itertools import chain
+from itertools import chain, product
 import json
 import sys
 import os.path
@@ -44,7 +44,7 @@ try:
 except ImportError:
     from io import StringIO
 
-from agate.aggregations import Min, Max
+from agate.aggregations import Min, Max, Length
 from agate.columns import Column
 from agate.data_types import TypeTester, DataType, Text, Number
 from agate.exceptions import DataTypeError
@@ -1091,6 +1091,88 @@ class Table(utils.Patchable):
                     rows.append(Row(data, column_keys))
 
         return Table(rows, column_keys, column_types, row_names=row_names, _is_fork=True)
+
+    def pivot(self, pivot, key=None):
+        """
+        Pivot the table on two sequences of columns. Generates a new :class:`Table`
+        with aggregated counts of key columns on pivoted columns.
+
+        For example:
+
+        |---------+---------+--------|
+        |  name   |  race   | gender |
+        |---------+---------+--------|
+        |  Joe    |  white  | male   |
+        |  Jane   |  black  | female |
+        |  Josh   |  black  | male   |
+        |  Jim    |  asian  | female |
+        |---------+---------+--------|
+
+        can be pivoted with key equal to race and pivot equal to gender:
+
+        |---------+---------+--------|
+        |  race   |  male   | female |
+        |---------+---------+--------|
+        |  white  |  1      | 0      |
+        |  black  |  1      | 1      |
+        |  asian  |  0      | 1      |
+        |---------+---------+--------|
+
+        :param pivot:
+            Either a column name or a sequence of such names.
+        :param key:
+            Either a column name or a sequence of such names. Defaults to all
+            column names in table not in pivot.
+        :returns:
+            A new :class:`Table`.
+        """
+        new_rows = []
+
+        if key is None:
+            key = list(set(self.column_names) - set(pivot))
+
+        if not utils.issequence(key):
+            key = [key]
+        if not utils.issequence(pivot):
+            pivot = [pivot]
+
+        table = self.select(key + pivot)
+
+        # Group by keys and pivots to get tables for counts
+        count_tables = {}
+        group_by_key = table
+        for k in key:
+            group_by_key = group_by_key.group_by(k)
+        for p in pivot:
+            count_tables[p] = group_by_key.group_by(p).aggregate([
+                ('count', Length()),
+            ])
+
+        # Get each distinct value from key and pivot columns
+        distinct_key_values = sorted(set(table.columns[k].values()) for k in key)
+        # Pivot columns are paired with the column name for later access
+        distinct_pivot_values = [(p, value) for p in pivot for value in sorted(set(table.columns[p].values()))]
+
+        # New column names are key columns with distinct pivot values
+        new_column_names = key + [str(pivot_value[1]) for pivot_value in distinct_pivot_values]
+        # New column types are key column types with Number for each pivot value
+        new_column_types = table.column_types[:len(key)] + (Number(), ) * len(distinct_pivot_values)
+
+        def count_pivots(key_value, pivot_value):
+            # Counts number of instances key_value and pivot_value are found in table
+            def row_check(row):
+                return row == Row(key_value + (pivot_value[1], row['count']), key + [pivot_value[0], 'count'])
+
+            count = count_tables[pivot_value[0]].where(row_check)
+            return count.rows[0]['count'] if len(count.rows) > 0 else 0
+
+        # Iterate over every possible combination of key values
+        for key_value in sorted(product(*distinct_key_values)):
+            counts = tuple(count_pivots(key_value, pivot_value) for pivot_value in distinct_pivot_values)
+
+            new_rows.append(Row(key_value + counts, new_column_names))
+
+        return Table(new_rows, new_column_names, new_column_types)
 
     @allow_tableset_proxy
     def group_by(self, key, key_name=None, key_type=None):
