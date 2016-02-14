@@ -27,6 +27,7 @@ from itertools import chain
 import json
 import sys
 import os.path
+import warnings
 
 try:
     from cdecimal import Decimal
@@ -118,6 +119,7 @@ class Table(utils.Patchable):
             for i, column_name in enumerate(column_names):
                 if column_name is None:
                     new_column_name = utils.letter_name(i)
+                    warnings.warn('Column name not specified. "%s" will be used as name.' % new_column_name, RuntimeWarning)
                 elif isinstance(column_name, six.string_types):
                     new_column_name = column_name
                 else:
@@ -137,6 +139,7 @@ class Table(utils.Patchable):
             self._column_names = tuple(final_column_names)
         elif rows:
             self._column_names = tuple(utils.letter_name(i) for i in range(len(rows[0])))
+            warnings.warn('Column names not specified. "%s" will be used as names.' % str(self._column_names), RuntimeWarning, stacklevel=2)
         else:
             self._column_names = []
 
