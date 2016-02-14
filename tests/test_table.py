@@ -101,9 +101,19 @@ class TestBasic(AgateTestCase):
 
     def test_create_table_null_column_names(self):
         column_names = ['one', None, 'three']
-        table = Table(self.rows, column_names, self.column_types)
 
-        self.assertColumnNames(table, ['one', 'b', 'three'])
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
+
+            with self.assertRaises(RuntimeWarning):
+                table1 = Table(self.rows, column_types=self.column_types)  # noqa
+
+            with self.assertRaises(RuntimeWarning):
+                table2 = Table(self.rows, column_names, self.column_types)  # noqa
+
+        table3 = Table(self.rows, column_names, self.column_types)
+
+        self.assertColumnNames(table3, ['one', 'b', 'three'])
 
     def test_create_table_non_datatype_columns(self):
         column_types = [self.number_type, self.number_type, 'foo']
