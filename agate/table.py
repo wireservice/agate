@@ -1103,7 +1103,7 @@ class Table(utils.Patchable):
         |  Joe    | male     | black  | 28    |
         |---------+----------+--------+-------|
 
-        can be normalized on columns 'gender' and 'race':
+        can be normalized on columns 'gender', 'race' and 'age':
 
         |---------+-----------+---------+
         |  name   | field     | value   |
