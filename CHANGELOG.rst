@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* Cookbook: Rename columns in a table. (#469)
 * :meth:`.Table.normalize` implemented. (#487)
 * Added :class:`.Percent` computation with example in Cookbook. (#490)
 * Added Ben Welsh to AUTHORS.
