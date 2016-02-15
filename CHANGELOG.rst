@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* :meth:`.Table.normalize` implemented. (#487)
 * Added :class:`.Percent` computation with example in Cookbook. (#490)
 * Added Ben Welsh to AUTHORS.
 * :meth:`.Table.__init__` now throws warning if auto-generated columns are used. (#483)
