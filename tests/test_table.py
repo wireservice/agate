@@ -1935,6 +1935,57 @@ class TestMerge(AgateTestCase):
         self.assertRows(table_c, c_rows)
 
 
+class TestNormalize(AgateTestCase):
+    def setUp(self):
+        self.rows = (
+            (1, 4, 'a'),
+            (2, 3, 'b'),
+            (None, 2, 'c')
+        )
+
+        self.number_type = Number()
+        self.text_type = Text()
+
+        self.column_names = ['one', 'two', 'three']
+        self.column_types = [self.number_type, self.number_type, self.text_type]
+
+    def test_normalize(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        normalized_table = table.normalize(['two', 'three'])
+
+        normal_rows = (
+            (1, 'two', '4'),
+            (1, 'three', 'a'),
+            (2, 'two', '3'),
+            (2, 'three', 'b'),
+            (None, 'two', '2'),
+            (None, 'three', 'c')
+        )
+
+        self.assertRows(normalized_table, normal_rows)
+        self.assertColumnNames(normalized_table, ['one', 'field', 'value'])
+        self.assertColumnTypes(normalized_table, [Number, Text, Text])
+
+    def test_normalize_change_order(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        normalized_table = table.normalize(['one', 'three'])
+
+        normal_rows = (
+            (4, 'one', '1'),
+            (4, 'three', 'a'),
+            (3, 'one', '2'),
+            (3, 'three', 'b'),
+            (2, 'one', None),
+            (2, 'three', 'c')
+        )
+
+        self.assertRows(normalized_table, normal_rows)
+        self.assertColumnNames(normalized_table, ['two', 'field', 'value'])
+        self.assertColumnTypes(normalized_table, [Number, Text, Text])
+
+
 class TestData(AgateTestCase):
     def setUp(self):
         self.rows = (
