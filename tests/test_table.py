@@ -1741,6 +1741,15 @@ class TestJoin(AgateTestCase):
 
         self.assertRowNames(new_table, ('a', 'b', 'c'))
 
+    def test_join_require_match(self):
+        with self.assertRaises(ValueError):
+            new_table = self.left.join(self.right, 'one', 'five', require_match=True)  # noqa
+
+        with self.assertRaises(ValueError):
+            new_table = self.left.join(self.right, 'one', 'five', require_match=True)  # noqa
+
+        new_table = self.left.join(self.right, 'one', 'four', require_match=True)  # noqa
+
 
 class TestHomogenize(AgateTestCase):
     def setUp(self):

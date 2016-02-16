@@ -834,7 +834,7 @@ class Table(utils.Patchable):
         return self._fork(rows, row_names=row_names)
 
     @allow_tableset_proxy
-    def join(self, right_table, left_key, right_key=None, inner=False):
+    def join(self, right_table, left_key, right_key=None, inner=False, require_match=False):
         """
         Performs the equivalent of SQL's "left outer join", combining columns
         from this table and from :code:`right_table` anywhere that the
@@ -865,6 +865,9 @@ class Table(utils.Patchable):
             Perform a SQL-style "inner join" instead of a left outer join. Rows
             which have no match for :code:`left_key` will not be included in
             the output table.
+        :param require_match:
+            If true, an exception will be raised if there is a left_key with no
+            matching right_key.
         :returns:
             A new :class:`Table`.
         """
@@ -941,6 +944,9 @@ class Table(utils.Patchable):
         # Iterate over left column
         for left_index, left_value in enumerate(left_data):
             matching_rows = right_hash.get(left_value, None)
+
+            if require_match and matching_rows is None:
+                raise ValueError('Left key "%s" does not have a matching right key.' % left_value)
 
             # Rows with matches
             if matching_rows:
