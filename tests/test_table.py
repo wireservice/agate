@@ -1945,7 +1945,7 @@ class TestPivot(AgateTestCase):
     def test_pivot(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        pivot_table = table.pivot(['gender', 'age'], ['race'])
+        pivot_table = table.pivot(['race'], ['gender', 'age'])
 
         pivot_rows = (
             ('asian', 1, 0, 0, 1),
@@ -1961,23 +1961,23 @@ class TestPivot(AgateTestCase):
     def test_pivot_no_keys(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        pivot_table = table.select(['race', 'gender', 'age']).pivot(['gender', 'age'])
+        pivot_table = table.select(['race', 'gender', 'age']).pivot(['race'])
 
         pivot_rows = (
-            ('asian', 1, 0, 0, 1),
-            ('black', 0, 1, 1, 0),
+            ('asian', 0, 1, 1, 0),
+            ('black', 1, 0, 0, 1),
             ('latino', 0, 1, 0, 1),
             ('white', 2, 1, 2, 1)
         )
 
         self.assertRows(pivot_table, pivot_rows)
-        self.assertColumnNames(pivot_table, ['race', 'female', 'male', '20', '25'])
+        self.assertColumnNames(pivot_table, ['race', '20', '25', 'female', 'male'])
         self.assertColumnTypes(pivot_table, [Text, Number, Number, Number, Number])
 
     def test_pivot_multiple_keys(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        pivot_table = table.pivot(['age', 'color'], ['race', 'gender'])
+        pivot_table = table.pivot(['race', 'gender'], ['age', 'color'])
 
         pivot_rows = (
             ('asian', 'female', 0, 1, 0, 1),

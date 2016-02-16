@@ -1089,7 +1089,7 @@ class Table(utils.Patchable):
 
         return Table(rows, column_keys, column_types, row_names=row_names, _is_fork=True)
 
-    def pivot(self, pivot, key=None):
+    def pivot(self, key, pivot=None):
         """
         Pivot the table on two sequences of columns. Generates a new :class:`Table`
         with aggregated counts of key columns on pivoted columns.
@@ -1115,18 +1115,18 @@ class Table(utils.Patchable):
         |  asian  |  0      | 1      |
         |---------+---------+--------|
 
-        :param pivot:
-            Either a column name or a sequence of such names.
         :param key:
+            Either a column name or a sequence of such names.
+        :param pivot:
             Either a column name or a sequence of such names. Defaults to all
-            column names in table not in pivot.
+            column names in table not in key.
         :returns:
             A new :class:`Table`.
         """
         new_rows = []
 
-        if key is None:
-            key = list(set(self.column_names) - set(pivot))
+        if pivot is None:
+            pivot = sorted(set(self.column_names) - set(key))
 
         if not utils.issequence(key):
             key = [key]
@@ -1145,18 +1145,15 @@ class Table(utils.Patchable):
                 ('count', Length()),
             ])
 
-        # Get each distinct value from key and pivot columns
+        # Get each distinct value from key and pivot columns, pivot paired with column_name
         distinct_key_values = sorted(set(table.columns[k].values()) for k in key)
-        # Pivot columns are paired with the column name for later access
         distinct_pivot_values = [(p, value) for p in pivot for value in sorted(set(table.columns[p].values()))]
 
-        # New column names are key columns with distinct pivot values
+        # Generate new column_names and column_types from distinct values
         new_column_names = key + [str(pivot_value[1]) for pivot_value in distinct_pivot_values]
-        # New column types are key column types with Number for each pivot value
         new_column_types = table.column_types[:len(key)] + (Number(), ) * len(distinct_pivot_values)
 
         def count_pivots(key_value, pivot_value):
-            # Counts number of instances key_value and pivot_value are found in table
             def row_check(row):
                 return row == Row(key_value + (pivot_value[1], row['count']), key + [pivot_value[0], 'count'])
 
