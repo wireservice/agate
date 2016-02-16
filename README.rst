@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/onyxfish/agate.png
-    :target: https://travis-ci.org/onyxfish/agate
+.. image:: https://travis-ci.org/wireservice/agate.png
+    :target: https://travis-ci.org/wireservice/agate
     :alt: Build status
 
 .. image:: https://img.shields.io/pypi/dw/agate.svg
@@ -25,5 +25,5 @@ agate was previously known as journalism.
 Important links:
 
 * Documentation:    http://agate.rtfd.org
-* Repository:       https://github.com/onyxfish/agate
-* Issues:           https://github.com/onyxfish/agate/issues
+* Repository:       https://github.com/wireservice/agate
+* Issues:           https://github.com/wireservice/agate/issues
