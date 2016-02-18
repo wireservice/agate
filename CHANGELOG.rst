@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* :class:`.MappedSequence` now throws explicit error on __setitem__. (#499)
 * Added a ``require_match`` argument to :meth:`.Table.join`. (#480)
 * Cookbook: Rename columns in a table. (#469)
 * :meth:`.Table.normalize` implemented. (#487)

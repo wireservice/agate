@@ -73,9 +73,8 @@ class MappedSequence(Sequence):
         """
         Set values by index, which we want to fail loudly.
         """
-        raise TypeError("Rows are read only and do not support item \
-assignment. Rather that overwrite your existing data, you could create a \
-new column based on its contents. Learn how here: \
+        raise TypeError("Agate data structures are read-only by design. \
+Consider creating a new column based on this structure's contents. Learn how here: \
 http://agate.readthedocs.org/en/latest/tutorial.html#computing-new-columns")
 
     def __iter__(self):
