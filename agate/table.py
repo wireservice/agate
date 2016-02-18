@@ -1316,7 +1316,7 @@ class Table(utils.Patchable):
         return Table(output.items(), column_names, column_types, row_names=tuple(output.keys()))
 
     @allow_tableset_proxy
-    def percents(self, key, key_name=None):
+    def percents(self, key, key_name='percent'):
         """
         Computers the percentage of occurrences of each distinct value in a
         column. Creates a new table with the percent column appended.
@@ -1332,7 +1332,6 @@ class Table(utils.Patchable):
             column name that was counted or "group" if counting with a key
             function.
         """
-        key_name = key_name or 'percent'
         return self.compute([(key_name, Percent(key))])
 
     @allow_tableset_proxy
