@@ -1316,7 +1316,7 @@ class Table(utils.Patchable):
         return Table(output.items(), column_names, column_types, row_names=tuple(output.keys()))
 
     @allow_tableset_proxy
-    def percents(self, key, key_name='percent'):
+    def percents(self, key, key_name='percent', total=None):
         """
         Computers the percentage of occurrences of each distinct value in a
         column. Creates a new table with the percent column appended.
@@ -1331,8 +1331,12 @@ class Table(utils.Patchable):
             A name that describes the counted properties. Defaults to the
             column name that was counted or "group" if counting with a key
             function.
+        :param total:
+            An option on the percent computation that allows you to override
+            the denominator each value will be divided against. The default
+            behavior is to use the sum of the column's values.
         """
-        return self.compute([(key_name, Percent(key))])
+        return self.compute([(key_name, Percent(key, total=total))])
 
     @allow_tableset_proxy
     def bins(self, column_name, count=10, start=None, end=None):
