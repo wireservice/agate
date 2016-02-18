@@ -46,6 +46,7 @@ except ImportError:
 
 from agate.aggregations import Min, Max
 from agate.columns import Column
+from agate.computations import Percent
 from agate.data_types import TypeTester, DataType, Text, Number
 from agate.exceptions import DataTypeError
 from agate.mapped_sequence import MappedSequence
@@ -1313,6 +1314,26 @@ class Table(utils.Patchable):
         column_types = [key_type, Number()]
 
         return Table(output.items(), column_names, column_types, row_names=tuple(output.keys()))
+
+    @allow_tableset_proxy
+    def percents(self, key, key_name=None):
+        """
+        Computers the percentage of occurrences of each distinct value in a
+        column. Creates a new table with the percent column appended.
+
+        This is effectively equivalent to doing a :meth:`.TableSet.compute`
+        with a :class:`.Percent` aggregator.
+
+        :param key:
+            Either the name of a column from the this table to compute, or a
+            :class:`function` that takes a row and returns a value to count.
+        :param key_name:
+            A name that describes the counted properties. Defaults to the
+            column name that was counted or "group" if counting with a key
+            function.
+        """
+        key_name = key_name or 'percent'
+        return self.compute([(key_name, Percent(key))])
 
     @allow_tableset_proxy
     def bins(self, column_name, count=10, start=None, end=None):
