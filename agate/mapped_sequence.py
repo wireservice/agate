@@ -69,6 +69,15 @@ class MappedSequence(Sequence):
         else:
             return self.dict()[key]
 
+    def __setitem__(self, key, value):
+        """
+        Set values by index, which we want to fail loudly.
+        """
+        raise TypeError("Rows are read only and do not support item \
+assignment. Rather that overwrite your existing data, you could create a \
+new column based on its contents. Learn how here: \
+http://agate.readthedocs.org/en/latest/tutorial.html#computing-new-columns")
+
     def __iter__(self):
         """
         Iterate over values.
