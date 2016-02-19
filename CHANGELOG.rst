@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* Cookbook: Fuzzy phonetic search example. (#207)
 * Cookbook: Create a table from a remote file. (#473)
 * Added ``printable`` argument to :meth:`.Table.print_bars` to use only printable characters. (#500)
 * :class:`.MappedSequence` now throws explicit error on __setitem__. (#499)
