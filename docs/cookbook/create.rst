@@ -158,3 +158,25 @@ DBF is the file format used to hold tabular data for ArcGIS shapefiles. `agate-d
     agatedbf.patch()
 
     table = agate.Table.from_dbf('test.dbf')
+
+From a remote file
+==================
+
+Use the `agate-remote <http://agate-remote.readthedocs.org/>`_ extension.
+
+
+.. code-block:: python
+
+    import agateremote
+
+    agateremote.patch()
+
+    table = agate.Table.from_url('https://raw.githubusercontent.com/onyxfish/agate/master/examples/test.csv')
+
+agate-remote also let’s you create an Archive, which is a reference to a group of tables with a known path structure.
+
+.. code-block:: python
+
+    archive = agateremote.Archive('https://github.com/vincentarelbundock/Rdatasets/raw/master/csv/')
+
+    table = archive.get_table('sandwich/PublicSchools.csv')

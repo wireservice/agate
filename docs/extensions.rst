@@ -29,6 +29,7 @@ Here is a list of actively supported agate extensions:
 * `agate-stats <http://agate-stats.rtfd.org/>`_: Additional statistical methods
 * `agate-excel <http://agate-excel.rtfd.org/>`_: Read excel tables (xls and xlsx)
 * `agate-dbf <http://agate-dbf.rtfd.org/>`_: Read dbf tables (from shapefiles)
+* `agate-remote <http://agate-remote.rtfd.org/>`_: Read from remote files
 
 Writing your own extensions
 ===========================
