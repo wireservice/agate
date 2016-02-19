@@ -1458,7 +1458,7 @@ class Table(utils.Patchable):
         """
         self.to_json(sys.stdout, **kwargs)
 
-    def print_bars(self, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout):
+    def print_bars(self, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout, printable=False):
         """
         Print a text-based bar chart of the columns names `label_column_name`
         and `value_column_name`.
@@ -1476,8 +1476,10 @@ class Table(utils.Patchable):
             `120`.
         :param output:
             A file-like object to print to. Defaults to :code:`sys.stdout`.
+        :param printable:
+            If true, only printable characters will be outputed.
         """
-        print_bars(self, label_column_name, value_column_name, domain, width, output)
+        print_bars(self, label_column_name, value_column_name, domain, width, output, printable)
 
     def print_structure(self, output=sys.stdout):
         """
