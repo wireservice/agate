@@ -28,8 +28,14 @@ VERTICAL_LINE = u'|'
 #: Character to render for bar chart units
 BAR_MARK = u'░'
 
+#: Printable character to render for bar chart units
+P_BAR_MARK = u':'
+
 #: Character to render for zero line units
 ZERO_MARK = u'▓'
+
+#: Printable character to render for zero line units
+P_ZERO_MARK = u'|'
 
 #: Character to render for axis ticks
 TICK_MARK = u'+'
@@ -190,7 +196,7 @@ def print_html(table, max_rows=None, max_columns=None, output=sys.stdout):
     output.write('</table>')
 
 
-def print_bars(table, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout):
+def print_bars(table, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout, printable=False):
     """
     Print a bar chart representation of two columns.
     """
@@ -329,22 +335,22 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
 
         label_text = label.ljust(max_label_width)
         value_text = formatted_values[i].rjust(max_value_width)
-        bar = BAR_MARK * bar_width
+        bar = BAR_MARK * bar_width if not printable else P_BAR_MARK * bar_width
 
         if value >= 0:
             gap = (u' ' * plot_negative_width)
 
             # All positive
             if x_min <= 0:
-                bar = gap + ZERO_MARK + bar
+                bar = gap + ZERO_MARK + bar if not printable else gap + P_ZERO_MARK + bar
             else:
-                bar = bar + gap + ZERO_MARK
+                bar = bar + gap + ZERO_MARK if not printable else bar + gap + P_ZERO_MARK
         else:
             bar = u' ' * (plot_negative_width - bar_width) + bar
 
             # All negative or mixed signs
             if x_max > value:
-                bar = bar + ZERO_MARK
+                bar = bar + ZERO_MARK if not printable else bar + P_ZERO_MARK
 
         bar = bar.ljust(plot_width)
 

@@ -1,8 +1,9 @@
 1.2.3
 -----
 
+* Added ``printable`` argument to :meth:`.Table.print_bars` to use only printable characters. (#500)
 * :class:`.MappedSequence` now throws explicit error on __setitem__. (#499)
-* Added a ``require_match`` argument to :meth:`.Table.join`. (#480)
+* Added ``require_match`` argument to :meth:`.Table.join`. (#480)
 * Cookbook: Rename columns in a table. (#469)
 * :meth:`.Table.normalize` implemented. (#487)
 * Added :class:`.Percent` computation with example in Cookbook. (#490)
