@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* Cookbook: Fuzzy phonetic search example. (#207)
 * Cookbook: Create a table from a remote file. (#473)
 * :class:`.MappedSequence` now throws explicit error on __setitem__. (#499)
 * Added a ``require_match`` argument to :meth:`.Table.join`. (#480)
