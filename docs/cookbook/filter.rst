@@ -100,5 +100,5 @@ You can retrieve a distinct list of values in a column using :meth:`.Column.valu
     rows = ([1],[2],[2],[5])
     new_table = agate.Table(rows, columns)
 
-    new_table.columns['values'].values_distinct()
-    (1, 2, 5)
+    new_table.columns['value'].values_distinct()
+    (Decimal('1'), Decimal('2'), Decimal('5'))
