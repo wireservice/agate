@@ -88,3 +88,17 @@ With can also get an ordered sample by simply using the :code:`step` parameter o
 .. code-block:: python
 
     sampled = table.limit(step=10)
+
+Distinct values
+===============
+
+You can retrieve a distinct list of values in a column using :meth:`.Column.values_distinct`.
+
+.. code-block:: python
+
+    columns = ('value',)
+    rows = ([1],[2],[2],[5])
+    new_table = agate.Table(rows, columns)
+
+    new_table.columns['values'].values_distinct()
+    (1, 2, 5)
