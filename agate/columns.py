@@ -88,6 +88,13 @@ class Column(MappedSequence):
         return tuple(row[self._index] for row in self._rows)
 
     @memoize
+    def values_distinct(self):
+        """
+        Get the distinct values in this column, as a tuple.
+        """
+        return tuple(set(row[self._index] for row in self._rows))
+
+    @memoize
     def values_without_nulls(self):
         """
         Get the values in this column with any null values removed.

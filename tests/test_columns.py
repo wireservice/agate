@@ -66,6 +66,19 @@ class TestColumn(unittest.TestCase):
             [Decimal('1'), Decimal('2'), None]
         )
 
+    def test_values_distinct(self):
+        rows = (
+            (1, 2),
+            (2, 3),
+            (None, 3)
+        )
+
+        table = Table(rows, ('one', 'two'), [self.number_type, self.number_type])
+        self.assertSequenceEqual(
+            table.columns['two'].values_distinct(),
+            [Decimal('2'), Decimal('3')]
+        )
+
     def test_items(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
 
