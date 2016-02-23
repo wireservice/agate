@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* Cookbook: Filter for distinct values of a column (#498)
 * Added :meth:`.Column.values_distinct()` (#498)
 * Cookbook: Fuzzy phonetic search example. (#207)
 * Cookbook: Create a table from a remote file. (#473)

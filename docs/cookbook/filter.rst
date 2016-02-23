@@ -92,7 +92,9 @@ With can also get an ordered sample by simply using the :code:`step` parameter o
 Distinct values
 ===============
 
-You can retrieve a distinct list of values in a column using :meth:`.Column.values_distinct`.
+You can retrieve a distinct list of values in a column using :meth:`.Column.values_distinct` or :meth:`.Table.distinct`.
+
+:meth:`.Table.distinct` returns the entire row so it's necessary to chain a select on the specific column.
 
 .. code-block:: python
 
@@ -101,4 +103,6 @@ You can retrieve a distinct list of values in a column using :meth:`.Column.valu
     new_table = agate.Table(rows, columns)
 
     new_table.columns['value'].values_distinct()
+    # or
+    new_table.distinct('value').columns['value'].values()
     (Decimal('1'), Decimal('2'), Decimal('5'))
