@@ -65,6 +65,13 @@ class TestMappedSequence(unittest.TestCase):
         self.assertTrue('a' in self.row)
         self.assertFalse('d' in self.row)
 
+    def test_set_item(self):
+        with self.assertRaises(TypeError):
+            self.row['one'] = u't'
+
+        with self.assertRaises(TypeError):
+            self.row['five'] = u'g'
+
     def test_get_item(self):
         self.assertEqual(self.row['one'], 'a')
         self.assertEqual(self.row['two'], 'b')
