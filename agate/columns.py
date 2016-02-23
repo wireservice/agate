@@ -92,7 +92,7 @@ class Column(MappedSequence):
         """
         Get the distinct values in this column, as a tuple.
         """
-        return tuple(set(row[self._index] for row in self._rows))
+        return tuple(set(self.values()))
 
     @memoize
     def values_without_nulls(self):
