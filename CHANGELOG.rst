@@ -1,6 +1,8 @@
 1.2.3
 -----
 
+* Add Kevin Schaul to AUTHORS.
+* :meth:`Quantiles.locate` now correctly returns `Decimal` instances. (#509)
 * Cookbook: Filter for distinct values of a column (#498)
 * Added :meth:`.Column.values_distinct()` (#498)
 * Cookbook: Fuzzy phonetic search example. (#207)
