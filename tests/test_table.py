@@ -1076,6 +1076,66 @@ class TestCounts(AgateTestCase):
         ])
 
 
+class TestPercents(AgateTestCase):
+    def setUp(self):
+        self.rows = (
+            (2, 'N'),
+            (2, 'N'),
+            (1, 'N'),
+            (None, None),
+            (3, 'N')
+        )
+
+        self.number_type = Number()
+        self.text_type = Text()
+
+        self.column_names = ['one', 'two']
+        self.column_types = [self.number_type, self.text_type]
+
+    def test_percents_numbers(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        new_table = table.percents("one")
+
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, ['one', 'two', 'percent'])
+        self.assertColumnTypes(new_table, [Number, Text, Number])
+        self.assertRows(new_table, [
+            [2, 'N', 25.0],
+            [2, 'N', 25.0],
+            [1, 'N', 12.5],
+            [None, None, None],
+            [3, 'N', 37.5]
+        ])
+
+    def test_percents_counts_numbers(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        new_table = table.counts('one').percents("count")
+
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, ['one', 'count', 'percent'])
+        self.assertColumnTypes(new_table, [Number, Number, Number])
+        self.assertRowNames(new_table, [2, 1, None, 3])
+        self.assertRows(new_table, [
+            [2, 2, 40.0],
+            [1, 1, 20.0],
+            [None, 1, 20.0],
+            [3, 1, 20.0]
+        ])
+
+    def test_counts_counts_text(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        new_table = table.counts('two').percents("count", "pct")
+
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, ['two', 'count', 'pct'])
+        self.assertColumnTypes(new_table, [Text, Number, Number])
+        self.assertRowNames(new_table, ['N', None])
+        self.assertRows(new_table, [
+            ['N', 4, 80.0],
+            [None, 1, 20.0]
+        ])
+
+
 class TestBins(AgateTestCase):
     def setUp(self):
         self.number_type = Number()
