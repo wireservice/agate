@@ -73,3 +73,20 @@ The second, more robust, method for identifying outliers is by identifying value
     outliers = table.mad_outliers('salary', deviations=3, reject=False)
 
 As with the first example, you can specify :code:`reject=True` to exclude outliers in the resulting table.
+
+Custom statistics
+==================
+
+You can also generate custom aggregated statistics for your data by defining your own 'summary' aggregation. This might be especially useful for performing calculations unique to your data. Here's a simple example:
+
+.. code-block:: python
+
+    # Create a custom summary aggregation with agate.Summary 
+    # Input a column name, a return data type and a function to apply on the column
+    count_millionaires = agate.Summary('salary', agate.Number(), lambda r: sum(salary > 1000000 for salary in r.values()))
+
+    table.aggregate([
+        count_millionaires
+    ])
+
+Your custom aggregation can be used to determine both descriptive and aggregate statistics shown above.
