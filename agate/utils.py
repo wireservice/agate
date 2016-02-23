@@ -109,12 +109,12 @@ class Quantiles(Sequence):
             raise ValueError('Value is greater than maximum quantile value.')
 
         if value == self._quantiles[-1]:
-            return len(self._quantiles) - 1
+            return Decimal(len(self._quantiles) - 1)
 
         while value >= self._quantiles[i + 1]:
             i += 1
 
-        return i
+        return Decimal(i)
 
 
 def median(data_sorted):

@@ -316,6 +316,8 @@ class TestTableComputation(unittest.TestCase):
         self.assertSequenceEqual(new_table.rows[500], (501, 50))
         self.assertSequenceEqual(new_table.rows[998], (999, 99))
         self.assertSequenceEqual(new_table.rows[999], (1000, 100))
+        self.assertIsInstance(new_table.columns['percentiles'][0], Decimal)
+        self.assertIsInstance(new_table.columns['percentiles'][-1], Decimal)
 
     def test_percentile_rank_invalid_types(self):
         with self.assertRaises(DataTypeError):
