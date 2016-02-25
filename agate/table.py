@@ -1184,7 +1184,7 @@ class Table(utils.Patchable):
         return table.denormalize(key, pivot, 'PIVOT', missing_value=missing_value)
 
     @allow_tableset_proxy
-    def normalize(self, key, field, field_name='property', value_name='value'):
+    def normalize(self, key, properties, property_column='property', value_column='value'):
         """
         Normalize a sequence of columns into two columns for field and value.
 
@@ -1215,12 +1215,12 @@ class Table(utils.Patchable):
             A column name or a sequence of column names that should be
             maintained as they are in the normalized table. Typically these
             are the tables unique identifiers and any metadata about them.
-        :param field:
+        :param properties:
             A column name or a sequence of column names that should be
-            converted to
-        :param field_name:
+            converted to properties in the new table.
+        :param property_column:
             The name to use for the column containing the property names.
-        :param value_name:
+        :param value_column:
             The name to use for the column containing the property values.
         :returns:
             A new :class:`Table`.
@@ -1230,22 +1230,22 @@ class Table(utils.Patchable):
         if not utils.issequence(key):
             key = [key]
 
-        if not utils.issequence(field):
-            field = [field]
+        if not utils.issequence(properties):
+            properties = [properties]
 
-        new_column_names = key + [field_name, value_name]
+        new_column_names = key + [property_column, value_column]
         new_column_types = [self.column_types[self.column_names.index(name)] for name in key] + [Text(), Text()]
 
         for row in self.rows:
             left_row = [row[n] for n in key]
 
-            for f in field:
+            for f in properties:
                 new_rows.append(Row(tuple(left_row + [f, row[f]]), new_column_names))
 
         return Table(new_rows, new_column_names, new_column_types)
 
     @allow_tableset_proxy
-    def denormalize(self, key=None, field='property', value='value', missing_value='default'):
+    def denormalize(self, key=None, property_column='property', value_column='value', missing_value='default'):
         """
         Denormalize a dataset so that unique values in a column become their
         own columns.
@@ -1278,9 +1278,9 @@ class Table(utils.Patchable):
             A column name or a sequence of column names that should be
             maintained as they are in the normalized table. Typically these
             are the tables unique identifiers and any metadata about them.
-        :param field:
+        :param field_column:
             The column whose values should become column names in the new table.
-        :param value:
+        :param property_column:
             The column whose values should become the values of the property
             columns in the new table.
         :param missing_value:
@@ -1296,9 +1296,6 @@ class Table(utils.Patchable):
         elif not utils.issequence(key):
             key = [key]
 
-        field_column = self.columns[field]
-        value_column = self.columns[value]
-
         field_names = []
         row_data = OrderedDict()
 
@@ -1308,8 +1305,8 @@ class Table(utils.Patchable):
             if row_key not in row_data:
                 row_data[row_key] = OrderedDict()
 
-            f = six.text_type(row[field])
-            v = row[value]
+            f = six.text_type(row[property_column])
+            v = row[value_column]
 
             if f not in field_names:
                 field_names.append(f)
@@ -1317,12 +1314,12 @@ class Table(utils.Patchable):
             row_data[row_key][f] = v
 
         if missing_value == 'default':
-            if isinstance(value_column.data_type, Number):
+            if isinstance(self.columns[value_column].data_type, Number):
                 missing_value = Decimal(0)
             else:
                 missing_value = None
 
-        data_types = [value_column.data_type] * len(field_names)
+        data_types = [self.columns[value_column].data_type] * len(field_names)
         new_column_names = key + field_names
         new_column_types = [self.column_types[self.column_names.index(name)] for name in key] + data_types
 
