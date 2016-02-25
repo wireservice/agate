@@ -1,8 +1,9 @@
 1.2.3
 -----
 
+* Added ``columns`` argument to :meth:`Table.join`. (#479)
 * Cookbook: Custom statistics/agate.Summary
-* Add Kevin Schaul to AUTHORS.
+* Added Kevin Schaul to AUTHORS.
 * :meth:`Quantiles.locate` now correctly returns `Decimal` instances. (#509)
 * Cookbook: Filter for distinct values of a column (#498)
 * Added :meth:`.Column.values_distinct()` (#498)
