@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* :meth:`.Table.pivot` implemented. (#495)
 * :meth:`.Table.denormalize` implemented. (#493)
 * Added ``columns`` argument to :meth:`Table.join`. (#479)
 * Cookbook: Custom statistics/agate.Summary
