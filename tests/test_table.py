@@ -1750,6 +1750,32 @@ class TestJoin(AgateTestCase):
 
         new_table = self.left.join(self.right, 'one', 'four', require_match=True)  # noqa
 
+    def test_join_columns_kwarg(self):
+        new_table = self.left.join(self.right, 'one', 'four', columns=['two', 'six'])
+
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, self.right)
+        self.assertColumnNames(new_table, ['two', 'six'])
+        self.assertColumnTypes(new_table, [Number, Text])
+        self.assertRows(new_table, [
+            (4, 'a'),
+            (3, 'b'),
+            (2, 'c')
+        ])
+
+    def test_join_columns_kwarg_right_key(self):
+        new_table = self.left.join(self.right, 'one', 'four', columns=['two', 'four', 'six'])
+
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, self.right)
+        self.assertColumnNames(new_table, ['two', 'four', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, [
+            (4, 1, 'a'),
+            (3, 2, 'b'),
+            (2, None, 'c')
+        ])
+
 
 class TestHomogenize(AgateTestCase):
     def setUp(self):

@@ -834,7 +834,7 @@ class Table(utils.Patchable):
         return self._fork(rows, row_names=row_names)
 
     @allow_tableset_proxy
-    def join(self, right_table, left_key, right_key=None, inner=False, require_match=False):
+    def join(self, right_table, left_key, right_key=None, inner=False, require_match=False, columns=None):
         """
         Performs the equivalent of SQL's "left outer join", combining columns
         from this table and from :code:`right_table` anywhere that the
@@ -868,6 +868,9 @@ class Table(utils.Patchable):
         :param require_match:
             If true, an exception will be raised if there is a left_key with no
             matching right_key.
+        :param columns:
+            A sequence of column names to include in the final output table.
+            Defaults to all columns not in :code:`right_key`.
         :returns:
             A new :class:`Table`.
         """
@@ -909,13 +912,20 @@ class Table(utils.Patchable):
             right_key_indices = [right_table.columns._keys.index(right_key)]
 
         # Build names and type lists
-        column_names = list(self._column_names)
-        column_types = list(self._column_types)
+        if columns is None:
+            column_names = list(self._column_names)
+            column_types = list(self._column_types)
+        else:
+            column_names = [name for name in self._column_names if name in columns]
+            column_types = [self._columns[name].data_type for name in column_names]
 
         for i, column in enumerate(right_table.columns):
             name = column.name
 
-            if i in right_key_indices:
+            if columns is None and i in right_key_indices:
+                continue
+
+            if columns is not None and name not in columns:
                 continue
 
             if name in self._column_names:
@@ -924,6 +934,12 @@ class Table(utils.Patchable):
                 column_names.append(name)
 
             column_types.append(column.data_type)
+
+        if columns is not None:
+            right_table = right_table.select([n for n in right_table._column_names if n in columns])
+            left_table = self.select([n for n in self._column_names if n in columns])
+        else:
+            left_table = self
 
         right_hash = {}
 
@@ -936,7 +952,7 @@ class Table(utils.Patchable):
         # Collect new rows
         rows = []
 
-        if self._row_names is not None:
+        if left_table._row_names is not None:
             row_names = []
         else:
             row_names = None
@@ -951,34 +967,34 @@ class Table(utils.Patchable):
             # Rows with matches
             if matching_rows:
                 for right_row in matching_rows:
-                    new_row = list(self._rows[left_index])
+                    new_row = list(left_table._rows[left_index])
 
                     for k, v in enumerate(right_row):
-                        if k in right_key_indices:
+                        if columns is None and k in right_key_indices:
                             continue
 
                         new_row.append(v)
 
                     rows.append(Row(new_row, column_names))
 
-                    if self._row_names is not None:
-                        row_names.append(self._row_names[left_index])
+                    if left_table._row_names is not None:
+                        row_names.append(left_table._row_names[left_index])
             # Rows without matches
             elif not inner:
-                new_row = list(self._rows[left_index])
+                new_row = list(left_table._rows[left_index])
 
                 for k, v in enumerate(right_table.column_names):
-                    if k in right_key_indices:
+                    if columns is None and k in right_key_indices:
                         continue
 
                     new_row.append(None)
 
                 rows.append(Row(new_row, column_names))
 
-                if self._row_names is not None:
-                    row_names.append(self._row_names[left_index])
+                if left_table._row_names is not None:
+                    row_names.append(left_table._row_names[left_index])
 
-        return self._fork(rows, column_names, column_types, row_names=row_names)
+        return left_table._fork(rows, column_names, column_types, row_names=row_names)
 
     @allow_tableset_proxy
     def homogenize(self, key, compare_values, default_row=None):
