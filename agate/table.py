@@ -1170,13 +1170,7 @@ class Table(utils.Patchable):
             ('PIVOT', aggregation)
         ])
 
-        table.print_structure(output=sys.stdout)
-
-        print(key)
-
         table = table.denormalize(key, pivot, 'PIVOT')
-
-        table.print_structure(output=sys.stdout)
 
         return table
 
