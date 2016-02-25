@@ -1115,7 +1115,7 @@ class Table(utils.Patchable):
         return Table(rows, column_keys, column_types, row_names=row_names, _is_fork=True)
 
     @allow_tableset_proxy
-    def pivot(self, key, pivot, aggregation=None):
+    def pivot(self, key, pivot, aggregation=None, missing_value=Decimal(0)):
         """
         Pivot the table on two sequences of columns. Generates a new :class:`Table`
         with aggregated counts of key columns on pivoted columns.
@@ -1141,14 +1141,24 @@ class Table(utils.Patchable):
         |  asian  |  0      | 1      |
         |---------+---------+--------|
 
+        See also the related method :meth:`Table.denormalize`.
+
         :param key:
             Either a column name or a sequence of such names to group by in the
             pivot table. Or, `None`, in which case there will be no groups.
         :param pivot:
-            A column name whose values will become columns in the new table.
+            A column name whose unique values will become columns in the new
+            table.
         :param aggregation:
-            An operation to perform on each group of data in the pivot table.
-            (Each cell is the result of an aggregation of the grouped data.)
+            An instance of an :class:`.Aggregation` to perform on each group of
+            data in the pivot table. (Each cell is the result of an aggregation
+            of the grouped data.)
+
+            If not specified this defaults to :class:`.Length`.
+        :param missing_value:
+            Value to be used for missing values in the pivot table. Defaults to
+            :code:`Decimal(0)`. If performing non-mathematical aggregations you
+            may wish to set this to :code:`None`.
         :returns:
             A new :class:`Table`.
         """
@@ -1171,9 +1181,7 @@ class Table(utils.Patchable):
             ('PIVOT', aggregation)
         ])
 
-        table = table.denormalize(key, pivot, 'PIVOT')
-
-        return table
+        return table.denormalize(key, pivot, 'PIVOT', missing_value=missing_value)
 
     @allow_tableset_proxy
     def normalize(self, key, field, field_name='property', value_name='value'):
@@ -1237,7 +1245,7 @@ class Table(utils.Patchable):
         return Table(new_rows, new_column_names, new_column_types)
 
     @allow_tableset_proxy
-    def denormalize(self, key=None, field='property', value='value'):
+    def denormalize(self, key=None, field='property', value='value', missing_value='default'):
         """
         Denormalize a dataset so that unique values in a column become their
         own columns.
@@ -1275,6 +1283,11 @@ class Table(utils.Patchable):
         :param value:
             The column whose values should become the values of the property
             columns in the new table.
+        :param missing_value:
+            Value to be used for missing values in the pivot table. If not
+            specified :code:`Decimal(0)` will be used for aggregations that
+            return :class:`.Number` data and :code:`None` will be used for
+            all others.
         :returns:
             A new :class:`Table`.
         """
@@ -1303,6 +1316,12 @@ class Table(utils.Patchable):
 
             row_data[row_key][f] = v
 
+        if missing_value == 'default':
+            if isinstance(value_column.data_type, Number):
+                missing_value = Decimal(0)
+            else:
+                missing_value = None
+
         data_types = [value_column.data_type] * len(field_names)
         new_column_names = key + field_names
         new_column_types = [self.column_types[self.column_names.index(name)] for name in key] + data_types
@@ -1316,7 +1335,7 @@ class Table(utils.Patchable):
                 if f in v:
                     row.append(v[f])
                 else:
-                    row.append(None)
+                    row.append(missing_value)
 
             new_rows.append(Row(row, new_column_names))
 

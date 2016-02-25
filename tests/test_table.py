@@ -1991,9 +1991,9 @@ class TestPivot(AgateTestCase):
 
         pivot_rows = (
             ('white', 1, 2),
-            ('black', 1, None),
-            ('latino', 1, None),
-            ('asian', None, 1)
+            ('black', 1, 0),
+            ('latino', 1, 0),
+            ('asian', 0, 1)
         )
 
         self.assertColumnNames(pivot_table, ['race', 'male', 'female'])
@@ -2007,9 +2007,9 @@ class TestPivot(AgateTestCase):
 
         pivot_rows = (
             ('white', 20, 45),
-            ('black', 20, None),
-            ('latino', 25, None),
-            ('asian', None, 25)
+            ('black', 20, 0),
+            ('latino', 25, 0),
+            ('asian', 0, 25)
         )
 
         self.assertColumnNames(pivot_table, ['race', 'male', 'female'])
@@ -2035,16 +2035,32 @@ class TestPivot(AgateTestCase):
         pivot_table = table.pivot(['race', 'gender'], 'age')
 
         pivot_rows = (
-            ('white', 'male', 1, None),
+            ('white', 'male', 1, 0),
             ('white', 'female', 1, 1),
-            ('black', 'male', 1, None),
-            ('latino', 'male', None, 1),
-            ('asian', 'female', None, 1),
+            ('black', 'male', 1, 0),
+            ('latino', 'male', 0, 1),
+            ('asian', 'female', 0, 1),
         )
 
         self.assertRows(pivot_table, pivot_rows)
         self.assertColumnNames(pivot_table, ['race', 'gender', '20', '25'])
         self.assertColumnTypes(pivot_table, [Text, Text, Number, Number])
+
+    def test_pivot_missing_value(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        pivot_table = table.pivot('race', 'gender', missing_value=None)
+
+        pivot_rows = (
+            ('white', 1, 2),
+            ('black', 1, None),
+            ('latino', 1, None),
+            ('asian', None, 1)
+        )
+
+        self.assertColumnNames(pivot_table, ['race', 'male', 'female'])
+        self.assertColumnTypes(pivot_table, [Text, Number, Number])
+        self.assertRows(pivot_table, pivot_rows)
 
 
 class TestNormalize(AgateTestCase):
@@ -2182,6 +2198,21 @@ class TestDenormalize(AgateTestCase):
             ('Jane', 'Code', 'female', '27'),
             ('Jim', 'Program', 'male', None),
             ('Jim', 'Bytes', None, '24'),
+        )
+
+        self.assertRows(normalized_table, normal_rows)
+        self.assertColumnNames(normalized_table, ['first_name', 'last_name', 'gender', 'age'])
+        self.assertColumnTypes(normalized_table, [Text, Text, Text, Text])
+
+    def test_denormalize_missing_value(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        normalized_table = table.denormalize(['first_name', 'last_name'], 'property', 'value', missing_value='hello')
+
+        normal_rows = (
+            ('Jane', 'Code', 'female', '27'),
+            ('Jim', 'Program', 'male', 'hello'),
+            ('Jim', 'Bytes', 'hello', '24'),
         )
 
         self.assertRows(normalized_table, normal_rows)
