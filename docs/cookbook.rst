@@ -10,6 +10,7 @@ Cookbook
     cookbook/filter
     cookbook/sort
     cookbook/search
+    cookbook/transform
     cookbook/statistics
     cookbook/compute
     cookbook/rank

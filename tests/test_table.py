@@ -2063,6 +2063,23 @@ class TestPivot(AgateTestCase):
         self.assertColumnNames(pivot_table, ['race', 'gender', '20', '25'])
         self.assertColumnTypes(pivot_table, [Text, Text, Number, Number])
 
+    def test_pivot_multiple_keys_no_pivot(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        pivot_table = table.pivot(['race', 'gender'])
+
+        pivot_rows = (
+            ('white', 'male', 1),
+            ('white', 'female', 2),
+            ('black', 'male', 1),
+            ('latino', 'male', 1),
+            ('asian', 'female', 1),
+        )
+
+        self.assertRows(pivot_table, pivot_rows)
+        self.assertColumnNames(pivot_table, ['race', 'gender', 'pivot'])
+        self.assertColumnTypes(pivot_table, [Text, Text, Number])
+
     def test_pivot_default_value(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
