@@ -1114,6 +1114,7 @@ class Table(utils.Patchable):
 
         return Table(rows, column_keys, column_types, row_names=row_names, _is_fork=True)
 
+    @allow_tableset_proxy
     def pivot(self, key, pivot, aggregation=None):
         """
         Pivot the table on two sequences of columns. Generates a new :class:`Table`
@@ -1174,7 +1175,7 @@ class Table(utils.Patchable):
 
         return table
 
-
+    @allow_tableset_proxy
     def normalize(self, key, field, field_name='property', value_name='value'):
         """
         Normalize a sequence of columns into two columns for field and value.
@@ -1235,6 +1236,7 @@ class Table(utils.Patchable):
 
         return Table(new_rows, new_column_names, new_column_types)
 
+    @allow_tableset_proxy
     def denormalize(self, key=None, field='property', value='value'):
         """
         Denormalize a dataset so that unique values in a column become their
