@@ -1109,7 +1109,7 @@ class Table(utils.Patchable):
         return Table(rows, column_keys, column_types, row_names=row_names, _is_fork=True)
 
     @allow_tableset_proxy
-    def pivot(self, key, pivot=None, aggregation=None, default_value=Decimal(0)):
+    def pivot(self, key, pivot=None, aggregation=None, computation=None, default_value='default'):
         """
         Pivot the table on two sequences of columns. Generates a new :class:`Table`
         with aggregated counts of key columns on pivoted columns.
@@ -1149,6 +1149,14 @@ class Table(utils.Patchable):
             of the grouped data.)
 
             If not specified this defaults to :class:`.Length`.
+        :param computation:
+            An optional :class:`.Computation` instance to be applied to the
+            aggregated sequence of values before they are transposed into the
+            pivot table.
+
+            Use the column name :code:`"pivot"` when constructing your
+            computation. (This is a placeholder and will not appear in the
+            output.)
         :param default_value:
             Value to be used for missing values in the pivot table. Defaults to
             :code:`Decimal(0)`. If performing non-mathematical aggregations you
@@ -1173,10 +1181,20 @@ class Table(utils.Patchable):
             groups = groups.group_by(pivot)
 
             table = groups.aggregate([
-                ('PIVOT', aggregation)
+                ('pivot', aggregation)
             ])
 
-            table = table.denormalize(key, pivot, 'PIVOT', default_value=default_value)
+            if computation:
+                table = table.compute([
+                    ('computed', computation)
+                ])
+
+                table = table.exclude(['pivot'])
+                table = table.rename({ 'computed': 'pivot' })
+
+            table.print_table(output=sys.stdout)
+
+            table = table.denormalize(key, pivot, 'pivot', default_value=default_value)
         else:
             table = groups.aggregate([
                 (aggregation.__class__.__name__, aggregation)

@@ -23,6 +23,7 @@ from six.moves import range
 
 from agate import Table, TableSet
 from agate.aggregations import Length, Sum
+from agate.computations import Percent
 from agate.data_types import *
 from agate.computations import Formula
 from agate.exceptions import DataTypeError
@@ -2075,6 +2076,38 @@ class TestPivot(AgateTestCase):
         )
 
         self.assertColumnNames(pivot_table, ['race', 'male', 'female'])
+        self.assertColumnTypes(pivot_table, [Text, Number, Number])
+        self.assertRows(pivot_table, pivot_rows)
+
+    def test_pivot_compute(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        pivot_table = table.pivot('gender', 'color', computation=Percent('pivot'))
+
+        pivot_table.print_table(output=sys.stdout)
+
+        pivot_rows = (
+            ('male', Decimal(50), 0),
+            ('female', Decimal(1) / Decimal(6) * Decimal(100), Decimal(1) / Decimal(3) * Decimal(100)),
+        )
+
+        self.assertColumnNames(pivot_table, ['gender', 'blue', 'green'])
+        self.assertColumnTypes(pivot_table, [Text, Number, Number])
+        self.assertRows(pivot_table, pivot_rows)
+
+    def test_pivot_compute_kwargs(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        pivot_table = table.pivot('gender', 'color', computation=Percent('pivot', total=8))
+
+        pivot_table.print_table(output=sys.stdout)
+
+        pivot_rows = (
+            ('male', Decimal(3) / Decimal(8) * Decimal(100), 0),
+            ('female', Decimal(1) / Decimal(8) * Decimal(100), Decimal(2) / Decimal(8) * Decimal(100)),
+        )
+
+        self.assertColumnNames(pivot_table, ['gender', 'blue', 'green'])
         self.assertColumnTypes(pivot_table, [Text, Number, Number])
         self.assertRows(pivot_table, pivot_rows)
 
