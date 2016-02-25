@@ -1155,8 +1155,7 @@ class Table(utils.Patchable):
             pivot table.
 
             Use the column name :code:`"pivot"` when constructing your
-            computation. (This is a placeholder and will not appear in the
-            output.)
+            computation.
         :param default_value:
             Value to be used for missing values in the pivot table. Defaults to
             :code:`Decimal(0)`. If performing non-mathematical aggregations you
@@ -1177,6 +1176,16 @@ class Table(utils.Patchable):
         for k in key:
             groups = groups.group_by(k)
 
+        def apply_computation(table):
+            table = table.compute([
+                ('computed', computation)
+            ])
+
+            table = table.exclude(['pivot'])
+            table = table.rename({ 'computed': 'pivot' })
+
+            return table
+
         if pivot:
             groups = groups.group_by(pivot)
 
@@ -1185,20 +1194,16 @@ class Table(utils.Patchable):
             ])
 
             if computation:
-                table = table.compute([
-                    ('computed', computation)
-                ])
-
-                table = table.exclude(['pivot'])
-                table = table.rename({ 'computed': 'pivot' })
-
-            table.print_table(output=sys.stdout)
+                table = apply_computation(table)
 
             table = table.denormalize(key, pivot, 'pivot', default_value=default_value)
         else:
             table = groups.aggregate([
-                (aggregation.__class__.__name__, aggregation)
+                ('pivot', aggregation)
             ])
+
+            if computation:
+                table = apply_computation(table)
 
         return table
 

@@ -2013,7 +2013,7 @@ class TestPivot(AgateTestCase):
             ('asian', 1)
         )
 
-        self.assertColumnNames(pivot_table, ['race', 'Length'])
+        self.assertColumnNames(pivot_table, ['race', 'pivot'])
         self.assertColumnTypes(pivot_table, [Text, Number])
         self.assertRows(pivot_table, pivot_rows)
 

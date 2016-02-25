@@ -8,6 +8,13 @@ tester = agate.TypeTester(force={
 
 table = agate.Table.from_csv('examples/realdata/ks_1033_data.csv', column_types=tester)
 
+a = table.pivot('county', computation=agate.Percent('pivot'))
+
+a.print_table(max_rows=10)
+
+import sys
+sys.exit()
+
 # Question 1: What was the total cost to Kansas City area counties?
 
 # Filter to counties containing Kansas City
