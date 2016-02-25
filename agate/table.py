@@ -1141,27 +1141,25 @@ class Table(utils.Patchable):
         |---------+---------+--------|
 
         :param key:
-            Either a column name or a sequence of such names.
+            Either a column name or a sequence of such names to group by in the
+            pivot table. Or, `None`, in which case there will be no groups.
         :param pivot:
-            A column name.
+            A column name whose values will become columns in the new table.
+        :param aggregation:
+            An operation to perform on each group of data in the pivot table.
+            (Each cell is the result of an aggregation of the grouped data.)
         :returns:
             A new :class:`Table`.
         """
-        new_rows = []
-
-        if not utils.issequence(key):
+        if key is None:
+            key = []
+        elif not utils.issequence(key):
             key = [key]
 
         if not aggregation:
             aggregation = Length()
 
-        print(key)
-        print(pivot)
-
-        table = self.select(key + [pivot])
-
-        subtables = []
-        groups = table
+        groups = self
 
         for k in key:
             groups = groups.group_by(k)
@@ -1172,40 +1170,16 @@ class Table(utils.Patchable):
             ('PIVOT', aggregation)
         ])
 
-        table.print_table(output=sys.stdout)
+        table.print_structure(output=sys.stdout)
 
-        table = table.denormalize(key, 'PIVOT')
+        print(key)
 
-        table.print_table(output=sys.stdout)
+        table = table.denormalize(key, pivot, 'PIVOT')
+
+        table.print_structure(output=sys.stdout)
 
         return table
 
-        # count_tables[p] = groups.group_by(p).aggregate([
-        #     ('count', Length()),
-        # ])
-        #
-        # # Get each distinct value from key and pivot columns, pivot paired with column_name
-        # distinct_key_values = sorted(set(table.columns[k].values()) for k in key)
-        # distinct_pivot_values = [(p, value) for p in pivot for value in sorted(set(table.columns[p].values()))]
-        #
-        # # Generate new column_names and column_types from distinct values
-        # new_column_names = key + [str(pivot_value[1]) for pivot_value in distinct_pivot_values]
-        # new_column_types = table.column_types[:len(key)] + (Number(), ) * len(distinct_pivot_values)
-        #
-        # def count_pivots(key_value, pivot_value):
-        #     def row_check(row):
-        #         return row == Row(key_value + (pivot_value[1], row['count']), key + [pivot_value[0], 'count'])
-        #
-        #     count = count_tables[pivot_value[0]].where(row_check)
-        #     return count.rows[0]['count'] if len(count.rows) > 0 else 0
-        #
-        # # Iterate over every possible combination of key values
-        # for key_value in sorted(product(*distinct_key_values)):
-        #     counts = tuple(count_pivots(key_value, pivot_value) for pivot_value in distinct_pivot_values)
-        #
-        #     new_rows.append(Row(key_value + counts, new_column_names))
-
-        # return Table(new_rows, new_column_names, new_column_types)
 
     def normalize(self, key, field, field_name='property', value_name='value'):
         """
@@ -1267,7 +1241,7 @@ class Table(utils.Patchable):
 
         return Table(new_rows, new_column_names, new_column_types)
 
-    def denormalize(self, key, field='property', value='value'):
+    def denormalize(self, key=None, field='property', value='value'):
         """
         Denormalize a dataset so that unique values in a column become their
         own columns.
@@ -1308,10 +1282,13 @@ class Table(utils.Patchable):
         :returns:
             A new :class:`Table`.
         """
-        if not utils.issequence(key):
+        if key is None:
+            key = []
+        elif not utils.issequence(key):
             key = [key]
 
         field_column = self.columns[field]
+        value_column = self.columns[value]
 
         field_names = []
         row_data = OrderedDict()
@@ -1322,7 +1299,7 @@ class Table(utils.Patchable):
             if row_key not in row_data:
                 row_data[row_key] = OrderedDict()
 
-            f = row[field]
+            f = six.text_type(row[field])
             v = row[value]
 
             if f not in field_names:
@@ -1330,7 +1307,7 @@ class Table(utils.Patchable):
 
             row_data[row_key][f] = v
 
-        data_types = [field_column.data_type] * len(field_names)
+        data_types = [value_column.data_type] * len(field_names)
         new_column_names = key + field_names
         new_column_types = [self.column_types[self.column_names.index(name)] for name in key] + data_types
 

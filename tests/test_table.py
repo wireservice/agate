@@ -1993,51 +1993,63 @@ class TestPivot(AgateTestCase):
         pivot_table = table.pivot('race', 'gender')
 
         pivot_rows = (
-            ('asian', 1, 0, 0, 1),
-            ('black', 0, 1, 1, 0),
-            ('latino', 0, 1, 0, 1),
-            ('white', 2, 1, 2, 1)
+            ('white', 1, 2),
+            ('black', 1, None),
+            ('latino', 1, None),
+            ('asian', None, 1)
         )
 
+        self.assertColumnNames(pivot_table, ['race', 'male', 'female'])
+        self.assertColumnTypes(pivot_table, [Text, Number, Number])
         self.assertRows(pivot_table, pivot_rows)
-        self.assertColumnNames(pivot_table, ['race', 'female', 'male', '20', '25'])
-        self.assertColumnTypes(pivot_table, [Text, Number, Number, Number, Number])
 
-    def test_pivot_no_keys(self):
+    def test_pivot_sum(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        pivot_table = table.select(['race', 'gender', 'age']).pivot(['race'])
+        pivot_table = table.pivot('race', 'gender', Sum('age'))
 
         pivot_rows = (
-            ('asian', 0, 1, 1, 0),
-            ('black', 1, 0, 0, 1),
-            ('latino', 0, 1, 0, 1),
-            ('white', 2, 1, 2, 1)
+            ('white', 20, 45),
+            ('black', 20, None),
+            ('latino', 25, None),
+            ('asian', None, 25)
         )
 
+        self.assertColumnNames(pivot_table, ['race', 'male', 'female'])
+        self.assertColumnTypes(pivot_table, [Text, Number, Number])
         self.assertRows(pivot_table, pivot_rows)
-        self.assertColumnNames(pivot_table, ['race', '20', '25', 'female', 'male'])
-        self.assertColumnTypes(pivot_table, [Text, Number, Number, Number, Number])
+
+    def test_pivot_no_key(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        pivot_table = table.select(['race', 'gender', 'age']).pivot(None, 'gender')
+
+        pivot_rows = (
+            (3, 3),
+        )
+
+        self.assertColumnNames(pivot_table, ['male', 'female'])
+        self.assertColumnTypes(pivot_table, [Number, Number])
+        self.assertRows(pivot_table, pivot_rows)
 
     def test_pivot_multiple_keys(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        pivot_table = table.pivot(['race', 'gender'], ['age', 'color'])
+        pivot_table = table.pivot(['race', 'gender'], 'age')
+
+        pivot_table.print_table(output=sys.stdout)
 
         pivot_rows = (
-            ('asian', 'female', 0, 1, 0, 1),
-            ('asian', 'male', 0, 0, 0, 0),
-            ('black', 'female', 0, 0, 0, 0),
-            ('black', 'male', 1, 0, 1, 0),
-            ('latino', 'female', 0, 0, 0, 0),
-            ('latino', 'male', 0, 1, 1, 0),
-            ('white', 'female', 1, 1, 1, 1),
-            ('white', 'male', 1, 0, 1, 0)
+            ('white', 'male', 1, None),
+            ('white', 'female', 1, 1),
+            ('black', 'male', 1, None),
+            ('latino', 'male', None, 1),
+            ('asian', 'female', None, 1),
         )
 
         self.assertRows(pivot_table, pivot_rows)
-        self.assertColumnNames(pivot_table, ['race', 'gender', '20', '25', 'blue', 'green'])
-        self.assertColumnTypes(pivot_table, [Text, Text, Number, Number, Number, Number])
+        self.assertColumnNames(pivot_table, ['race', 'gender', '20', '25'])
+        self.assertColumnTypes(pivot_table, [Text, Text, Number, Number])
 
 
 class TestNormalize(AgateTestCase):
@@ -2151,6 +2163,20 @@ class TestDenormalize(AgateTestCase):
         self.assertRows(normalized_table, normal_rows)
         self.assertColumnNames(normalized_table, ['first_name', 'gender', 'age'])
         self.assertColumnTypes(normalized_table, [Text, Text, Text])
+
+    def test_denormalize_no_key(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        normalized_table = table.denormalize(None, 'property', 'value')
+
+        # NB: value has been overwritten
+        normal_rows = (
+            ('male', '24'),
+        )
+
+        self.assertRows(normalized_table, normal_rows)
+        self.assertColumnNames(normalized_table, ['gender', 'age'])
+        self.assertColumnTypes(normalized_table, [Text, Text])
 
     def test_denormalize_multiple_keys(self):
         table = Table(self.rows, self.column_names, self.column_types)
