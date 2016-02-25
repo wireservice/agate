@@ -23,7 +23,7 @@ rows, row names are optional.)
 import codecs
 from collections import OrderedDict, Sequence
 from copy import copy
-from itertools import chain
+from itertools import chain, product
 import json
 import sys
 import os.path
@@ -44,7 +44,7 @@ try:
 except ImportError:
     from io import StringIO
 
-from agate.aggregations import Min, Max
+from agate.aggregations import Min, Max, Length
 from agate.columns import Column
 from agate.data_types import TypeTester, DataType, Text, Number
 from agate.exceptions import DataTypeError
@@ -1114,7 +1114,94 @@ class Table(utils.Patchable):
 
         return Table(rows, column_keys, column_types, row_names=row_names, _is_fork=True)
 
-    def normalize(self, column_names):
+    def pivot(self, key, pivot, aggregation=None):
+        """
+        Pivot the table on two sequences of columns. Generates a new :class:`Table`
+        with aggregated counts of key columns on pivoted columns.
+
+        For example:
+
+        |---------+---------+--------|
+        |  name   |  race   | gender |
+        |---------+---------+--------|
+        |  Joe    |  white  | male   |
+        |  Jane   |  black  | female |
+        |  Josh   |  black  | male   |
+        |  Jim    |  asian  | female |
+        |---------+---------+--------|
+
+        can be pivoted with key equal to race and pivot equal to gender:
+
+        |---------+---------+--------|
+        |  race   |  male   | female |
+        |---------+---------+--------|
+        |  white  |  1      | 0      |
+        |  black  |  1      | 1      |
+        |  asian  |  0      | 1      |
+        |---------+---------+--------|
+
+        :param key:
+            Either a column name or a sequence of such names.
+        :param pivot:
+            A column name.
+        :returns:
+            A new :class:`Table`.
+        """
+        new_rows = []
+
+        if not utils.issequence(key):
+            key = [key]
+
+        if not aggregation:
+            aggregation = Length()
+
+        print(key)
+        print(pivot)
+
+        table = self.select(key + [pivot])
+
+        subtables = []
+        groups = table
+
+        for k in key:
+            groups = groups.group_by(k)
+
+        groups = groups.group_by(pivot)
+
+        table = groups.aggregate([
+            (aggregation.__class__.__name__, aggregation)
+        ])
+
+        table.print_table(output=sys.stdout)
+
+        count_tables[p] = groups.group_by(p).aggregate([
+            ('count', Length()),
+        ])
+
+        # Get each distinct value from key and pivot columns, pivot paired with column_name
+        distinct_key_values = sorted(set(table.columns[k].values()) for k in key)
+        distinct_pivot_values = [(p, value) for p in pivot for value in sorted(set(table.columns[p].values()))]
+
+        # Generate new column_names and column_types from distinct values
+        new_column_names = key + [str(pivot_value[1]) for pivot_value in distinct_pivot_values]
+        new_column_types = table.column_types[:len(key)] + (Number(), ) * len(distinct_pivot_values)
+
+        def count_pivots(key_value, pivot_value):
+            def row_check(row):
+                return row == Row(key_value + (pivot_value[1], row['count']), key + [pivot_value[0], 'count'])
+
+            count = count_tables[pivot_value[0]].where(row_check)
+            return count.rows[0]['count'] if len(count.rows) > 0 else 0
+
+        # Iterate over every possible combination of key values
+        for key_value in sorted(product(*distinct_key_values)):
+            counts = tuple(count_pivots(key_value, pivot_value) for pivot_value in distinct_pivot_values)
+
+            new_rows.append(Row(key_value + counts, new_column_names))
+
+        return Table(new_rows, new_column_names, new_column_types)
+
+    def normalize(self, key, field, field_name='property', value_name='value'):
         """
         Normalize a sequence of columns into two columns for field and value.
 
@@ -1131,7 +1218,7 @@ class Table(utils.Patchable):
         can be normalized on columns 'gender', 'race' and 'age':
 
         |---------+-----------+---------+
-        |  name   | field     | value   |
+        |  name   | property  | value   |
         |---------+-----------+---------+
         |  Jane   | gender    | female  |
         |  Jane   | race      | black   |
@@ -1139,22 +1226,120 @@ class Table(utils.Patchable):
         |  ...    |  ...      |  ...    |
         |---------+-----------+---------+
 
-        :param column_names:
-            A sequence of column names to normalize.
+        This is the opposite of :meth:`Table.denormalize`.
+
+        :param key:
+            A column name or a sequence of column names that should be
+            maintained as they are in the normalized table. Typically these
+            are the tables unique identifiers and any metadata about them.
+        :param field:
+            A column name or a sequence of column names that should be
+            converted to
+        :param field_name:
+            The name to use for the column containing the property names.
+        :param value_name:
+            The name to use for the column containing the property values.
         :returns:
             A new :class:`Table`.
         """
         new_rows = []
 
-        left_names = list(set(self.column_names) - set(column_names))
+        if not utils.issequence(key):
+            key = [key]
 
-        new_column_names = left_names + ['field', 'value']
-        new_column_types = [self.column_types[self.column_names.index(name)] for name in left_names] + [Text(), Text()]
+        if not utils.issequence(field):
+            field = [field]
+
+        new_column_names = key + [field_name, value_name]
+        new_column_types = [self.column_types[self.column_names.index(name)] for name in key] + [Text(), Text()]
 
         for row in self.rows:
-            left_row = [row[n] for n in left_names]
-            for column_name in column_names:
-                new_rows.append(Row(tuple(left_row + [column_name, row[column_name]]), new_column_names))
+            left_row = [row[n] for n in key]
+
+            for f in field:
+                new_rows.append(Row(tuple(left_row + [f, row[f]]), new_column_names))
+
+        return Table(new_rows, new_column_names, new_column_types)
+
+    def denormalize(self, key, field='property', value='value'):
+        """
+        Denormalize a dataset so that unique values in a column become their
+        own columns.
+
+        For example:
+
+        |---------+-----------+---------+
+        |  name   | property  | value   |
+        |---------+-----------+---------+
+        |  Jane   | gender    | female  |
+        |  Jane   | race      | black   |
+        |  Jane   | age       | 24      |
+        |  ...    |  ...      |  ...    |
+        |---------+-----------+---------+
+
+        Can be denormalized so that each unique value in `field` becomes a
+        column with `value` used for its values.
+
+        |---------+----------+--------+-------|
+        |  name   | gender   | race   | age   |
+        |---------+----------+--------+-------|
+        |  Jane   | female   | black  | 24    |
+        |  Jack   | male     | white  | 35    |
+        |  Joe    | male     | black  | 28    |
+        |---------+----------+--------+-------|
+
+        This is the opposite of :meth:`Table.normalize`.
+
+        :param key:
+            A column name or a sequence of column names that should be
+            maintained as they are in the normalized table. Typically these
+            are the tables unique identifiers and any metadata about them.
+        :param field:
+            The column whose values should become column names in the new table.
+        :param value:
+            The column whose values should become the values of the property
+            columns in the new table.
+        :returns:
+            A new :class:`Table`.
+        """
+        if not utils.issequence(key):
+            key = [key]
+
+        field_column = self.columns[field]
+
+        field_names = []
+        row_data = OrderedDict()
+
+        for row in self.rows:
+            row_key = tuple(row[k] for k in key)
+
+            if row_key not in row_data:
+                row_data[row_key] = OrderedDict()
+
+            f = row[field]
+            v = row[value]
+
+            if f not in field_names:
+                field_names.append(f)
+
+            row_data[row_key][f] = v
+
+        data_types = [field_column.data_type] * len(field_names)
+        new_column_names = key + field_names
+        new_column_types = [self.column_types[self.column_names.index(name)] for name in key] + data_types
+
+        new_rows = []
+
+        for k, v in row_data.items():
+            row = list(k)
+
+            for f in field_names:
+                if f in v:
+                    row.append(v[f])
+                else:
+                    row.append(None)
+
+            new_rows.append(Row(row, new_column_names))
 
         return Table(new_rows, new_column_names, new_column_types)
 

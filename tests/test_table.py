@@ -1970,55 +1970,202 @@ class TestMerge(AgateTestCase):
         self.assertRows(table_c, c_rows)
 
 
-class TestNormalize(AgateTestCase):
+class TestPivot(AgateTestCase):
     def setUp(self):
         self.rows = (
-            (1, 4, 'a'),
-            (2, 3, 'b'),
-            (None, 2, 'c')
+            ('joe', 'white', 'male', 20, 'blue'),
+            ('jane', 'white', 'female', 20, 'blue'),
+            ('josh', 'black', 'male', 20, 'blue'),
+            ('jim', 'latino', 'male', 25, 'blue'),
+            ('julia', 'white', 'female', 25, 'green'),
+            ('joan', 'asian', 'female', 25, 'green')
         )
 
         self.number_type = Number()
         self.text_type = Text()
 
-        self.column_names = ['one', 'two', 'three']
-        self.column_types = [self.number_type, self.number_type, self.text_type]
+        self.column_names = ['name', 'race', 'gender', 'age', 'color']
+        self.column_types = [self.text_type, self.text_type, self.text_type, self.number_type, self.text_type]
+
+    def test_pivot(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        pivot_table = table.pivot('race', 'gender')
+
+        pivot_rows = (
+            ('asian', 1, 0, 0, 1),
+            ('black', 0, 1, 1, 0),
+            ('latino', 0, 1, 0, 1),
+            ('white', 2, 1, 2, 1)
+        )
+
+        self.assertRows(pivot_table, pivot_rows)
+        self.assertColumnNames(pivot_table, ['race', 'female', 'male', '20', '25'])
+        self.assertColumnTypes(pivot_table, [Text, Number, Number, Number, Number])
+
+    def test_pivot_no_keys(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        pivot_table = table.select(['race', 'gender', 'age']).pivot(['race'])
+
+        pivot_rows = (
+            ('asian', 0, 1, 1, 0),
+            ('black', 1, 0, 0, 1),
+            ('latino', 0, 1, 0, 1),
+            ('white', 2, 1, 2, 1)
+        )
+
+        self.assertRows(pivot_table, pivot_rows)
+        self.assertColumnNames(pivot_table, ['race', '20', '25', 'female', 'male'])
+        self.assertColumnTypes(pivot_table, [Text, Number, Number, Number, Number])
+
+    def test_pivot_multiple_keys(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        pivot_table = table.pivot(['race', 'gender'], ['age', 'color'])
+
+        pivot_rows = (
+            ('asian', 'female', 0, 1, 0, 1),
+            ('asian', 'male', 0, 0, 0, 0),
+            ('black', 'female', 0, 0, 0, 0),
+            ('black', 'male', 1, 0, 1, 0),
+            ('latino', 'female', 0, 0, 0, 0),
+            ('latino', 'male', 0, 1, 1, 0),
+            ('white', 'female', 1, 1, 1, 1),
+            ('white', 'male', 1, 0, 1, 0)
+        )
+
+        self.assertRows(pivot_table, pivot_rows)
+        self.assertColumnNames(pivot_table, ['race', 'gender', '20', '25', 'blue', 'green'])
+        self.assertColumnTypes(pivot_table, [Text, Text, Number, Number, Number, Number])
+
+
+class TestNormalize(AgateTestCase):
+    def setUp(self):
+        self.rows = (
+            (1, 'c', 4, 'a'),
+            (2, 'e', 3, 'b'),
+            (None, 'g', 2, 'c')
+        )
+
+        self.number_type = Number()
+        self.text_type = Text()
+
+        self.column_names = ['one', 'two', 'three', 'four']
+        self.column_types = [self.number_type, self.text_type, self.number_type, self.text_type]
 
     def test_normalize(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        normalized_table = table.normalize(['two', 'three'])
+        normalized_table = table.normalize('one', 'three')
 
         normal_rows = (
-            (1, 'two', '4'),
-            (1, 'three', 'a'),
-            (2, 'two', '3'),
-            (2, 'three', 'b'),
-            (None, 'two', '2'),
-            (None, 'three', 'c')
+            (1, 'three', '4'),
+            (2, 'three', '3'),
+            (None, 'three', '2')
         )
 
         self.assertRows(normalized_table, normal_rows)
-        self.assertColumnNames(normalized_table, ['one', 'field', 'value'])
+        self.assertColumnNames(normalized_table, ['one', 'property', 'value'])
         self.assertColumnTypes(normalized_table, [Number, Text, Text])
+
+    def test_normalize_multiple_fields(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        normalized_table = table.normalize('one', ['three', 'four'])
+
+        normal_rows = (
+            (1, 'three', '4'),
+            (1, 'four', 'a'),
+            (2, 'three', '3'),
+            (2, 'four', 'b'),
+            (None, 'three', '2'),
+            (None, 'four', 'c')
+        )
+
+        self.assertRows(normalized_table, normal_rows)
+        self.assertColumnNames(normalized_table, ['one', 'property', 'value'])
+        self.assertColumnTypes(normalized_table, [Number, Text, Text])
+
+    def test_normalize_multiple_keys(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        normalized_table = table.normalize(['one', 'two'], ['three', 'four'])
+
+        normal_rows = (
+            (1, 'c', 'three', '4'),
+            (1, 'c', 'four', 'a'),
+            (2, 'e', 'three', '3'),
+            (2, 'e', 'four', 'b'),
+            (None, 'g', 'three', '2'),
+            (None, 'g', 'four', 'c')
+        )
+
+        self.assertRows(normalized_table, normal_rows)
+        self.assertColumnNames(normalized_table, ['one', 'two', 'property', 'value'])
+        self.assertColumnTypes(normalized_table, [Number, Text, Text, Text])
 
     def test_normalize_change_order(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        normalized_table = table.normalize(['one', 'three'])
+        normalized_table = table.normalize('three', ['one', 'four'])
 
         normal_rows = (
             (4, 'one', '1'),
-            (4, 'three', 'a'),
+            (4, 'four', 'a'),
             (3, 'one', '2'),
-            (3, 'three', 'b'),
+            (3, 'four', 'b'),
             (2, 'one', None),
-            (2, 'three', 'c')
+            (2, 'four', 'c')
         )
 
         self.assertRows(normalized_table, normal_rows)
-        self.assertColumnNames(normalized_table, ['two', 'field', 'value'])
+        self.assertColumnNames(normalized_table, ['three', 'property', 'value'])
         self.assertColumnTypes(normalized_table, [Number, Text, Text])
+
+
+class TestDenormalize(AgateTestCase):
+    def setUp(self):
+        self.rows = (
+            ('Jane', 'Code', 'gender', 'female'),
+            ('Jane', 'Code', 'age', '27'),
+            ('Jim', 'Program', 'gender', 'male'),
+            ('Jim', 'Bytes', 'age', '24')
+        )
+
+        self.text_type = Text()
+
+        self.column_names = ['first_name', 'last_name', 'property', 'value']
+        self.column_types = [self.text_type, self.text_type, self.text_type, self.text_type]
+
+    def test_denormalize(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        normalized_table = table.denormalize('first_name', 'property', 'value')
+
+        normal_rows = (
+            ('Jane', 'female', '27'),
+            ('Jim', 'male', '24'),
+        )
+
+        self.assertRows(normalized_table, normal_rows)
+        self.assertColumnNames(normalized_table, ['first_name', 'gender', 'age'])
+        self.assertColumnTypes(normalized_table, [Text, Text, Text])
+
+    def test_denormalize_multiple_keys(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        normalized_table = table.denormalize(['first_name', 'last_name'], 'property', 'value')
+
+        normal_rows = (
+            ('Jane', 'Code', 'female', '27'),
+            ('Jim', 'Program', 'male', None),
+            ('Jim', 'Bytes', None, '24'),
+        )
+
+        self.assertRows(normalized_table, normal_rows)
+        self.assertColumnNames(normalized_table, ['first_name', 'last_name', 'gender', 'age'])
+        self.assertColumnTypes(normalized_table, [Text, Text, Text, Text])
 
 
 class TestData(AgateTestCase):
