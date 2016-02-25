@@ -1169,37 +1169,43 @@ class Table(utils.Patchable):
         groups = groups.group_by(pivot)
 
         table = groups.aggregate([
-            (aggregation.__class__.__name__, aggregation)
+            ('PIVOT', aggregation)
         ])
 
         table.print_table(output=sys.stdout)
 
-        count_tables[p] = groups.group_by(p).aggregate([
-            ('count', Length()),
-        ])
+        table = table.denormalize(key, 'PIVOT')
 
-        # Get each distinct value from key and pivot columns, pivot paired with column_name
-        distinct_key_values = sorted(set(table.columns[k].values()) for k in key)
-        distinct_pivot_values = [(p, value) for p in pivot for value in sorted(set(table.columns[p].values()))]
+        table.print_table(output=sys.stdout)
 
-        # Generate new column_names and column_types from distinct values
-        new_column_names = key + [str(pivot_value[1]) for pivot_value in distinct_pivot_values]
-        new_column_types = table.column_types[:len(key)] + (Number(), ) * len(distinct_pivot_values)
+        return table
 
-        def count_pivots(key_value, pivot_value):
-            def row_check(row):
-                return row == Row(key_value + (pivot_value[1], row['count']), key + [pivot_value[0], 'count'])
+        # count_tables[p] = groups.group_by(p).aggregate([
+        #     ('count', Length()),
+        # ])
+        #
+        # # Get each distinct value from key and pivot columns, pivot paired with column_name
+        # distinct_key_values = sorted(set(table.columns[k].values()) for k in key)
+        # distinct_pivot_values = [(p, value) for p in pivot for value in sorted(set(table.columns[p].values()))]
+        #
+        # # Generate new column_names and column_types from distinct values
+        # new_column_names = key + [str(pivot_value[1]) for pivot_value in distinct_pivot_values]
+        # new_column_types = table.column_types[:len(key)] + (Number(), ) * len(distinct_pivot_values)
+        #
+        # def count_pivots(key_value, pivot_value):
+        #     def row_check(row):
+        #         return row == Row(key_value + (pivot_value[1], row['count']), key + [pivot_value[0], 'count'])
+        #
+        #     count = count_tables[pivot_value[0]].where(row_check)
+        #     return count.rows[0]['count'] if len(count.rows) > 0 else 0
+        #
+        # # Iterate over every possible combination of key values
+        # for key_value in sorted(product(*distinct_key_values)):
+        #     counts = tuple(count_pivots(key_value, pivot_value) for pivot_value in distinct_pivot_values)
+        #
+        #     new_rows.append(Row(key_value + counts, new_column_names))
 
-            count = count_tables[pivot_value[0]].where(row_check)
-            return count.rows[0]['count'] if len(count.rows) > 0 else 0
-
-        # Iterate over every possible combination of key values
-        for key_value in sorted(product(*distinct_key_values)):
-            counts = tuple(count_pivots(key_value, pivot_value) for pivot_value in distinct_pivot_values)
-
-            new_rows.append(Row(key_value + counts, new_column_names))
-
-        return Table(new_rows, new_column_names, new_column_types)
+        # return Table(new_rows, new_column_names, new_column_types)
 
     def normalize(self, key, field, field_name='property', value_name='value'):
         """
