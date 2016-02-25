@@ -1748,29 +1748,29 @@ class TestJoin(AgateTestCase):
         new_table = self.left.join(self.right, 'one', 'four', require_match=True)  # noqa
 
     def test_join_columns_kwarg(self):
-        new_table = self.left.join(self.right, 'one', 'four', columns=['two', 'six'])
+        new_table = self.left.join(self.right, 'one', 'four', columns=['six'])
 
         self.assertIsNot(new_table, self.left)
         self.assertIsNot(new_table, self.right)
-        self.assertColumnNames(new_table, ['two', 'six'])
-        self.assertColumnTypes(new_table, [Number, Text])
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Text])
         self.assertRows(new_table, [
-            (4, 'a'),
-            (3, 'b'),
-            (2, 'c')
+            (1, 4, 'a', 'a'),
+            (2, 3, 'b', 'b'),
+            (None, 2, 'c', 'c')
         ])
 
     def test_join_columns_kwarg_right_key(self):
-        new_table = self.left.join(self.right, 'one', 'four', columns=['two', 'four', 'six'])
+        new_table = self.left.join(self.right, 'one', 'four', columns=['four', 'six'])
 
         self.assertIsNot(new_table, self.left)
         self.assertIsNot(new_table, self.right)
-        self.assertColumnNames(new_table, ['two', 'four', 'six'])
-        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Text])
         self.assertRows(new_table, [
-            (4, 1, 'a'),
-            (3, 2, 'b'),
-            (2, None, 'c')
+            (1, 4, 'a', 1, 'a'),
+            (2, 3, 'b', 2, 'b'),
+            (None, 2, 'c', None, 'c')
         ])
 
 
