@@ -2149,6 +2149,36 @@ class TestNormalize(AgateTestCase):
         normalized_table = table.normalize('one', 'three')
 
         normal_rows = (
+            (1, 'three', 4),
+            (2, 'three', 3),
+            (None, 'three', 2)
+        )
+
+        self.assertRows(normalized_table, normal_rows)
+        self.assertColumnNames(normalized_table, ['one', 'property', 'value'])
+        self.assertColumnTypes(normalized_table, [Number, Text, Number])
+
+    def test_normalize_column_types(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        normalized_table = table.normalize('one', 'three', column_types=[Text(), Text()])
+
+        normal_rows = (
+            (1, 'three', '4'),
+            (2, 'three', '3'),
+            (None, 'three', '2')
+        )
+
+        self.assertRows(normalized_table, normal_rows)
+        self.assertColumnNames(normalized_table, ['one', 'property', 'value'])
+        self.assertColumnTypes(normalized_table, [Number, Text, Text])
+
+    def test_normalize_column_type_tester(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        normalized_table = table.normalize('one', 'three', column_types=TypeTester(force={'value': Text()}))
+
+        normal_rows = (
             (1, 'three', '4'),
             (2, 'three', '3'),
             (None, 'three', '2')

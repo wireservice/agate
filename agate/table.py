@@ -1187,7 +1187,7 @@ class Table(utils.Patchable):
             ])
 
             table = table.exclude(['pivot'])
-            table = table.rename({ 'computed': 'pivot' })
+            table = table.rename({'computed': 'pivot'})
 
             return table
 
@@ -1213,7 +1213,7 @@ class Table(utils.Patchable):
         return table
 
     @allow_tableset_proxy
-    def normalize(self, key, properties, property_column='property', value_column='value'):
+    def normalize(self, key, properties, property_column='property', value_column='value', column_types=None):
         """
         Normalize a sequence of columns into two columns for field and value.
 
@@ -1256,6 +1256,10 @@ class Table(utils.Patchable):
             The name to use for the column containing the property names.
         :param value_column:
             The name to use for the column containing the property values.
+        :param column_types:
+            A sequence of two column types for the property and value column in
+            that order or an instance of :class:`.TypeTester`. Defaults to a
+            generic :class:`.TypeTester`.
         :returns:
             A new :class:`Table`.
         """
@@ -1268,13 +1272,24 @@ class Table(utils.Patchable):
             properties = [properties]
 
         new_column_names = key + [property_column, value_column]
-        new_column_types = [self.column_types[self.column_names.index(name)] for name in key] + [Text(), Text()]
 
         for row in self.rows:
             left_row = [row[n] for n in key]
 
             for f in properties:
                 new_rows.append(Row(tuple(left_row + [f, row[f]]), new_column_names))
+
+        key_column_types = [self.column_types[self.column_names.index(name)] for name in key]
+
+        if column_types is None or isinstance(column_types, TypeTester):
+            tester = TypeTester() if column_types is None else column_types
+            force_update = dict(zip(key, key_column_types))
+            force_update.update(tester._force)
+            tester._force = force_update
+
+            new_column_types = tester.run(new_rows, new_column_names)
+        else:
+            new_column_types = key_column_types + list(column_types)
 
         return Table(new_rows, new_column_names, new_column_types)
 
