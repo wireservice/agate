@@ -2325,6 +2325,34 @@ class TestDenormalize(AgateTestCase):
         self.assertColumnNames(normalized_table, ['first_name', 'last_name', 'gender', 'age'])
         self.assertColumnTypes(normalized_table, [Text, Text, Text, Text])
 
+    def test_denormalize_column_types(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        normalized_table = table.denormalize(None, 'property', 'value', column_types=[Text(), Number()])
+
+        # NB: value has been overwritten
+        normal_rows = (
+            ('male', 24),
+        )
+
+        self.assertRows(normalized_table, normal_rows)
+        self.assertColumnNames(normalized_table, ['gender', 'age'])
+        self.assertColumnTypes(normalized_table, [Text, Number])
+
+    def test_denormalize_column_type_tester(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        normalized_table = table.denormalize(None, 'property', 'value', column_types=TypeTester(force={'gender': Text()}))
+
+        # NB: value has been overwritten
+        normal_rows = (
+            ('male', 24),
+        )
+
+        self.assertRows(normalized_table, normal_rows)
+        self.assertColumnNames(normalized_table, ['gender', 'age'])
+        self.assertColumnTypes(normalized_table, [Text, Number])
+
 
 class TestData(AgateTestCase):
     def setUp(self):

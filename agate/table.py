@@ -1305,7 +1305,7 @@ class Table(utils.Patchable):
         return Table(new_rows, new_column_names, new_column_types, row_names=row_names)
 
     @allow_tableset_proxy
-    def denormalize(self, key=None, property_column='property', value_column='value', default_value='default'):
+    def denormalize(self, key=None, property_column='property', value_column='value', default_value='default', column_types=None):
         """
         Denormalize a dataset so that unique values in a column become their
         own columns.
@@ -1357,6 +1357,10 @@ class Table(utils.Patchable):
             specified :code:`Decimal(0)` will be used for aggregations that
             return :class:`.Number` data and :code:`None` will be used for
             all others.
+        :param column_types:
+            A sequence of column types with length equal to number of unique
+            values in field_column or an instance of :class:`.TypeTester`.
+            Defaults to a sequence of column types equal to type of value_column.
         :returns:
             A new :class:`Table`.
         """
@@ -1388,9 +1392,7 @@ class Table(utils.Patchable):
             else:
                 default_value = None
 
-        data_types = [self.columns[value_column].data_type] * len(field_names)
         new_column_names = key + field_names
-        new_column_types = [self.column_types[self.column_names.index(name)] for name in key] + data_types
 
         new_rows = []
         row_names = []
@@ -1411,7 +1413,18 @@ class Table(utils.Patchable):
 
             new_rows.append(Row(row, new_column_names))
 
-        print(new_rows[0])
+        key_column_types = [self.column_types[self.column_names.index(name)] for name in key]
+
+        if column_types is None:
+            new_column_types = key_column_types + [self.columns[value_column].data_type] * len(field_names)
+        elif isinstance(column_types, TypeTester):
+            force_update = dict(zip(key, key_column_types))
+            force_update.update(column_types._force)
+            column_types._force = force_update
+
+            new_column_types = column_types.run(new_rows, new_column_names)
+        else:
+            new_column_types = key_column_types + list(column_types)
 
         return Table(new_rows, new_column_names, new_column_types, row_names=row_names)
 
