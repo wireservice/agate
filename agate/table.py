@@ -1176,7 +1176,7 @@ class Table(utils.Patchable):
         elif not utils.issequence(key):
             key = [key]
 
-        if not aggregation:
+        if aggregation is None:
             aggregation = Length()
 
         groups = self
@@ -1194,17 +1194,24 @@ class Table(utils.Patchable):
 
             return table
 
-        if pivot:
+        if pivot is not None:
             groups = groups.group_by(pivot)
+
+            column_type = aggregation.get_aggregate_data_type(groups)
 
             table = groups.aggregate([
                 ('pivot', aggregation)
             ])
 
-            if computation:
+            pivot_count = len(set(table.columns[pivot].values()))
+
+            if computation is not None:
+                column_types = computation.get_computed_data_type(table)
                 table = apply_computation(table)
 
-            table = table.denormalize(key, pivot, 'pivot', default_value=default_value)
+            column_types = [column_type] * pivot_count
+
+            table = table.denormalize(key, pivot, 'pivot', default_value=default_value, column_types=column_types)
         else:
             table = groups.aggregate([
                 ('pivot', aggregation)
@@ -1360,7 +1367,7 @@ class Table(utils.Patchable):
         :param column_types:
             A sequence of column types with length equal to number of unique
             values in field_column or an instance of :class:`.TypeTester`.
-            Defaults to a sequence of column types equal to type of value_column.
+            Defaults to a generic :class:`.TypeTester`.
         :returns:
             A new :class:`Table`.
         """
@@ -1415,14 +1422,13 @@ class Table(utils.Patchable):
 
         key_column_types = [self.column_types[self.column_names.index(name)] for name in key]
 
-        if column_types is None:
-            new_column_types = key_column_types + [self.columns[value_column].data_type] * len(field_names)
-        elif isinstance(column_types, TypeTester):
+        if column_types is None or isinstance(column_types, TypeTester):
+            tester = TypeTester() if column_types is None else column_types
             force_update = dict(zip(key, key_column_types))
-            force_update.update(column_types._force)
-            column_types._force = force_update
+            force_update.update(tester._force)
+            tester._force = force_update
 
-            new_column_types = column_types.run(new_rows, new_column_names)
+            new_column_types = tester.run(new_rows, new_column_names)
         else:
             new_column_types = key_column_types + list(column_types)
 
