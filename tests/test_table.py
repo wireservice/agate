@@ -1998,6 +1998,7 @@ class TestPivot(AgateTestCase):
         )
 
         self.assertColumnNames(pivot_table, ['race', 'male', 'female'])
+        self.assertRowNames(pivot_table, ['white', 'black', 'latino', 'asian'])
         self.assertColumnTypes(pivot_table, [Text, Number, Number])
         self.assertRows(pivot_table, pivot_rows)
 
@@ -2061,6 +2062,13 @@ class TestPivot(AgateTestCase):
 
         self.assertRows(pivot_table, pivot_rows)
         self.assertColumnNames(pivot_table, ['race', 'gender', '20', '25'])
+        self.assertRowNames(pivot_table, [
+            ('white', 'male'),
+            ('white', 'female'),
+            ('black', 'male'),
+            ('latino', 'male'),
+            ('asian', 'female'),
+        ])
         self.assertColumnTypes(pivot_table, [Text, Text, Number, Number])
 
     def test_pivot_multiple_keys_no_pivot(self):
@@ -2240,6 +2248,7 @@ class TestDenormalize(AgateTestCase):
         self.assertRows(normalized_table, normal_rows)
         self.assertColumnNames(normalized_table, ['first_name', 'gender', 'age'])
         self.assertColumnTypes(normalized_table, [Text, Text, Text])
+        self.assertRowNames(normalized_table, ['Jane', 'Jim'])
 
     def test_denormalize_no_key(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -2269,6 +2278,7 @@ class TestDenormalize(AgateTestCase):
         self.assertRows(normalized_table, normal_rows)
         self.assertColumnNames(normalized_table, ['first_name', 'last_name', 'gender', 'age'])
         self.assertColumnTypes(normalized_table, [Text, Text, Text, Text])
+        self.assertRowNames(normalized_table, [('Jane', 'Code'), ('Jim', 'Program'), ('Jim', 'Bytes')])
 
     def test_denormalize_default_value(self):
         table = Table(self.rows, self.column_names, self.column_types)

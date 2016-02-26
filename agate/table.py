@@ -1140,6 +1140,9 @@ class Table(utils.Patchable):
         |  asian  |  0      | 1      |
         +---------+---------+--------+
 
+        If one or more keys are specified then the resulting table will
+        automatically have `row_names` set to those keys.
+
         See also the related method :meth:`Table.denormalize`.
 
         :param key:
@@ -1270,13 +1273,21 @@ class Table(utils.Patchable):
         new_column_names = key + [property_column, value_column]
         new_column_types = [self.column_types[self.column_names.index(name)] for name in key] + [Text(), Text()]
 
+        row_names = []
+
         for row in self.rows:
-            left_row = [row[n] for n in key]
+            k = tuple(row[n] for n in key)
+            left_row = list(k)
+
+            if len(k) == 1:
+                row_names.append(k[0])
+            else:
+                row_names.append(k)
 
             for f in properties:
                 new_rows.append(Row(tuple(left_row + [f, row[f]]), new_column_names))
 
-        return Table(new_rows, new_column_names, new_column_types)
+        return Table(new_rows, new_column_names, new_column_types, row_names=row_names)
 
     @allow_tableset_proxy
     def denormalize(self, key=None, property_column='property', value_column='value', default_value='default'):
@@ -1311,12 +1322,16 @@ class Table(utils.Patchable):
         |  Joe    | male     | black  | 28    |
         +---------+----------+--------+-------+
 
+        If one or more keys are specified then the resulting table will
+        automatically have `row_names` set to those keys.
+
         This is the opposite of :meth:`Table.normalize`.
 
         :param key:
             A column name or a sequence of column names that should be
             maintained as they are in the normalized table. Typically these
-            are the tables unique identifiers and any metadata about them.
+            are the tables unique identifiers and any metadata about them. Or,
+            :code:`None` if there are no key columns.
         :param field_column:
             The column whose values should become column names in the new table.
         :param property_column:
@@ -1363,9 +1378,15 @@ class Table(utils.Patchable):
         new_column_types = [self.column_types[self.column_names.index(name)] for name in key] + data_types
 
         new_rows = []
+        row_names = []
 
         for k, v in row_data.items():
             row = list(k)
+
+            if len(k) == 1:
+                row_names.append(k[0])
+            else:
+                row_names.append(k)
 
             for f in field_names:
                 if f in v:
@@ -1375,7 +1396,9 @@ class Table(utils.Patchable):
 
             new_rows.append(Row(row, new_column_names))
 
-        return Table(new_rows, new_column_names, new_column_types)
+        print(new_rows[0])
+
+        return Table(new_rows, new_column_names, new_column_types, row_names=row_names)
 
     @allow_tableset_proxy
     def group_by(self, key, key_name=None, key_type=None):
