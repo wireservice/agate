@@ -1149,11 +1149,14 @@ class Table(utils.Patchable):
         See also the related method :meth:`Table.denormalize`.
 
         :param key:
-            Either a column name or a sequence of such names to group by in the
-            pivot table. Or, `None`, in which case there will be no groups.
+            Either the name of a column from the this table to group by, a
+            sequence of such column names, a :class:`function` that takes a
+            row and returns a value to group by, or :code:`None`, in which case
+            there will be only a single row in the output table.
         :param pivot:
             A column name whose unique values will become columns in the new
-            table.
+            table, or :code:`None` in which case there will be a single value
+            column named "pivot" in the output table.
         :param aggregation:
             An instance of an :class:`.Aggregation` to perform on each group of
             data in the pivot table. (Each cell is the result of an aggregation

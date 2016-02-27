@@ -2002,6 +2002,21 @@ class TestPivot(AgateTestCase):
         self.assertColumnTypes(pivot_table, [Text, Number, Number])
         self.assertRows(pivot_table, pivot_rows)
 
+    def test_pivot_by_lambda(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        pivot_table = table.pivot(lambda r: r['gender'])
+
+        pivot_rows = (
+            ('male', 3),
+            ('female', 3)
+        )
+
+        self.assertColumnNames(pivot_table, ['group', 'pivot'])
+        self.assertRowNames(pivot_table, ['male', 'female'])
+        self.assertColumnTypes(pivot_table, [Text, Number])
+        self.assertRows(pivot_table, pivot_rows)
+
     def test_pivot_no_key(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
