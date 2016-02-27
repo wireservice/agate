@@ -27,7 +27,7 @@ from agate.warns import warn_null_calculation
 if six.PY3:
     from functools import cmp_to_key
 
-
+@six.python_2_unicode_compatible
 class Computation(object):  # pragma: no cover
     """
     An operation that takes a table and produces a new column by performing
@@ -39,6 +39,13 @@ class Computation(object):  # pragma: no cover
     This can be ensured by using the :meth:`.DataType.cast` method. See
     :class:`Formula` for an example.
     """
+    def __str__(self):
+        """
+        String representation of this column. May be used as a column name in
+        generated tables.
+        """
+        return self.__class__.__name__
+
     def get_computed_data_type(self, table):
         """
         Returns an instantiated :class:`.DataType` which will be appended to

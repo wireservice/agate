@@ -2074,6 +2074,22 @@ class TestPivot(AgateTestCase):
     def test_pivot_compute(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
+        pivot_table = table.pivot('gender', computation=Percent('Count'))
+
+        pivot_table.print_table(output=sys.stdout)
+
+        pivot_rows = (
+            ('male', Decimal(50)),
+            ('female', Decimal(50)),
+        )
+
+        self.assertColumnNames(pivot_table, ['gender', 'Percent'])
+        self.assertColumnTypes(pivot_table, [Text, Number])
+        self.assertRows(pivot_table, pivot_rows)
+
+    def test_pivot_compute_pivots(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
         pivot_table = table.pivot('gender', 'color', computation=Percent('Count'))
 
         pivot_table.print_table(output=sys.stdout)

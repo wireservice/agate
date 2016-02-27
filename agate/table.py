@@ -1191,15 +1191,15 @@ class Table(utils.Patchable):
         for k in key:
             groups = groups.group_by(k)
 
-        pivot_name = six.text_type(aggregation)
+        aggregation_name = six.text_type(aggregation)
+        computation_name = six.text_type(computation) if computation else None
 
         def apply_computation(table):
             table = table.compute([
-                ('computed', computation)
+                (computation_name, computation)
             ])
 
-            table = table.exclude([pivot_name])
-            table = table.rename({'computed': pivot_name})
+            table = table.exclude([aggregation_name])
 
             return table
 
@@ -1209,7 +1209,7 @@ class Table(utils.Patchable):
             column_type = aggregation.get_aggregate_data_type(groups)
 
             table = groups.aggregate([
-                (pivot_name, aggregation)
+                (aggregation_name, aggregation)
             ])
 
             pivot_count = len(set(table.columns[pivot].values()))
@@ -1220,10 +1220,10 @@ class Table(utils.Patchable):
 
             column_types = [column_type] * pivot_count
 
-            table = table.denormalize(key, pivot, pivot_name, default_value=default_value, column_types=column_types)
+            table = table.denormalize(key, pivot, computation_name or aggregation_name, default_value=default_value, column_types=column_types)
         else:
             table = groups.aggregate([
-                (pivot_name, aggregation)
+                (aggregation_name, aggregation)
             ])
 
             if computation:
@@ -1561,7 +1561,7 @@ class Table(utils.Patchable):
         return self._fork(new_rows, column_names, column_types)
 
     @allow_tableset_proxy
-    def bins(self, column_name, count=10, start=None, end=None):
+    def bins(self, column_name, count=10, start=None, end=None, computation=None):
         """
         Generates (approximately) evenly sized bins for the values in a column.
         Bins may not be perfectly even if the spread of the data does not divide
@@ -1583,6 +1583,10 @@ class Table(utils.Patchable):
         :param end:
             The maximum value to end the bins at. If not specified the maximum
             value in the column will be used.
+        :param computation:
+            An optional computation to be applied after binning. For example
+            :code:`Percent('Count')` would return the percent of values in each
+            bin.
         :returns:
             A new :class:`Table`.
         """
@@ -1651,7 +1655,7 @@ class Table(utils.Patchable):
             return bin_names[i - 1]
 
         # Pivot by lambda then sort by bin order
-        return self.pivot(binner).order_by(lambda r: bin_names.index(r['group']))
+        return self.pivot(binner, computation=computation).order_by(lambda r: bin_names.index(r['group']))
 
     def print_table(self, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=20):
         """
