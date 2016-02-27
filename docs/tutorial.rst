@@ -388,7 +388,7 @@ If you find it impossible to believe that an eleven year-old was convicted of mu
 
     In the previous example we could have omitted the :meth:`.Table.limit` and passed a ``max_rows=10`` to :meth:`.Table.print_table` instead. In this case they accomplish exactly the same goal.
 
-What if we were more curious about the *distribution* of ages, rather than the highest or lowest? agate includes the :meth:`.Table.counts` and :meth:`.Table.bins` methods for counting data individually or by ranges. Let's try binning the ages. Then, instead of using :meth:`.Table.print_table`, we'll use :meth:`.Table.print_bars` to generate a simple, text bar chart.
+What if we were more curious about the *distribution* of ages, rather than the highest or lowest? agate includes the :meth:`.Table.pivot` and :meth:`.Table.bins` methods for counting values individually or by ranges. Let's try binning the ages. Then, instead of using :meth:`.Table.print_table`, we'll use :meth:`.Table.print_bars` to generate a simple, text bar chart.
 
 .. code-block:: python
 

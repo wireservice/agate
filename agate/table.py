@@ -1156,7 +1156,7 @@ class Table(utils.Patchable):
         :param pivot:
             A column name whose unique values will become columns in the new
             table, or :code:`None` in which case there will be a single value
-            column named "pivot" in the output table.
+            column in the output table.
         :param aggregation:
             An instance of an :class:`.Aggregation` to perform on each group of
             data in the pivot table. (Each cell is the result of an aggregation
@@ -1168,8 +1168,9 @@ class Table(utils.Patchable):
             aggregated sequence of values before they are transposed into the
             pivot table.
 
-            Use the column name :code:`"pivot"` when constructing your
-            computation.
+            Use the class name of the aggregation as your column name argument
+            when constructing your computation. (This is "Count" if using the
+            default value for :code:`aggregation`.)
         :param default_value:
             Value to be used for missing values in the pivot table. Defaults to
             :code:`Decimal(0)`. If performing non-mathematical aggregations you
@@ -1190,13 +1191,15 @@ class Table(utils.Patchable):
         for k in key:
             groups = groups.group_by(k)
 
+        pivot_name = six.text_type(aggregation)
+
         def apply_computation(table):
             table = table.compute([
                 ('computed', computation)
             ])
 
-            table = table.exclude(['pivot'])
-            table = table.rename({'computed': 'pivot'})
+            table = table.exclude([pivot_name])
+            table = table.rename({'computed': pivot_name})
 
             return table
 
@@ -1206,7 +1209,7 @@ class Table(utils.Patchable):
             column_type = aggregation.get_aggregate_data_type(groups)
 
             table = groups.aggregate([
-                ('pivot', aggregation)
+                (pivot_name, aggregation)
             ])
 
             pivot_count = len(set(table.columns[pivot].values()))
@@ -1217,10 +1220,10 @@ class Table(utils.Patchable):
 
             column_types = [column_type] * pivot_count
 
-            table = table.denormalize(key, pivot, 'pivot', default_value=default_value, column_types=column_types)
+            table = table.denormalize(key, pivot, pivot_name, default_value=default_value, column_types=column_types)
         else:
             table = groups.aggregate([
-                ('pivot', aggregation)
+                (pivot_name, aggregation)
             ])
 
             if computation:
@@ -1556,61 +1559,6 @@ class Table(utils.Patchable):
             new_rows.append(Row(values, column_names))
 
         return self._fork(new_rows, column_names, column_types)
-
-    @allow_tableset_proxy
-    def counts(self, key, key_name=None, key_type=None):
-        """
-        Count the number of occurrences of each distinct value in a column.
-        Creates a new table with only the value and the count. This is
-        effectively equivalent to doing a :meth:`Table.group_by` followed by an
-        :meth:`.TableSet.aggregate` with a :class:`.Count` aggregator.
-
-        The resulting table will have two columns. The first will have
-        the name and type of the specified :code:`key` column or
-        :code:`key_name` and :code:`key_type`, if specified. The second will be
-        named :code:`count` and will be of type :class:`.Number`.
-
-        :param key:
-            Either the name of a column from the this table to count, or a
-            :class:`function` that takes a row and returns a value to count.
-        :param key_name:
-            A name that describes the counted properties. Defaults to the
-            column name that was counted or "group" if counting with a key
-            function.
-        :param key_type:
-            An instance some subclass of :class:`.DataType`. If not provided
-            it will default to a :class`.Text`.
-        """
-        key_is_row_function = hasattr(key, '__call__')
-
-        if key_is_row_function:
-            key_name = key_name or 'group'
-            key_type = key_type or Text()
-        else:
-            column = self._columns[key]
-
-            key_name = key_name or column.name
-            key_type = key_type or column.data_type
-
-        output = OrderedDict()
-
-        for row in self._rows:
-            if key_is_row_function:
-                group_name = key(row)
-            else:
-                group_name = row[key_name]
-
-            group_name = key_type.cast(group_name)
-
-            if group_name not in output:
-                output[group_name] = 0
-
-            output[group_name] += 1
-
-        column_names = [key_name, 'count']
-        column_types = [key_type, Number()]
-
-        return Table(output.items(), column_names, column_types, row_names=tuple(output.keys()))
 
     @allow_tableset_proxy
     def bins(self, column_name, count=10, start=None, end=None):

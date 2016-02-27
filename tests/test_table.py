@@ -1016,67 +1016,6 @@ class TestJSON(AgateTestCase):
             sys.stdout = old
 
 
-class TestCounts(AgateTestCase):
-    def setUp(self):
-        self.rows = (
-            (1, 'Y'),
-            (2, 'N'),
-            (2, 'N'),
-            (1, 'N'),
-            (None, None),
-            (3, 'N')
-        )
-
-        self.number_type = Number()
-        self.text_type = Text()
-
-        self.column_names = ['one', 'two']
-        self.column_types = [self.number_type, self.text_type]
-
-    def test_counts_numbers(self):
-        table = Table(self.rows, self.column_names, self.column_types)
-        new_table = table.counts('one')
-
-        self.assertIsNot(new_table, table)
-        self.assertColumnNames(new_table, ['one', 'count'])
-        self.assertColumnTypes(new_table, [Number, Number])
-        self.assertRowNames(new_table, [1, 2, None, 3])
-        self.assertRows(new_table, [
-            [1, 2],
-            [2, 2],
-            [None, 1],
-            [3, 1]
-        ])
-
-    def test_counts_text(self):
-        table = Table(self.rows, self.column_names, self.column_types)
-        new_table = table.counts('two')
-
-        self.assertIsNot(new_table, table)
-        self.assertColumnNames(new_table, ['two', 'count'])
-        self.assertColumnTypes(new_table, [Text, Number])
-        self.assertRowNames(new_table, ['Y', 'N', None])
-        self.assertRows(new_table, [
-            ['Y', 1],
-            ['N', 4],
-            [None, 1]
-        ])
-
-    def test_counts_key_func(self):
-        table = Table(self.rows, self.column_names, self.column_types)
-        new_table = table.counts(lambda r: r['two'])
-
-        self.assertIsNot(new_table, table)
-        self.assertColumnNames(new_table, ['group', 'count'])
-        self.assertColumnTypes(new_table, [Text, Number])
-        self.assertRowNames(new_table, ['Y', 'N', None])
-        self.assertRows(new_table, [
-            ['Y', 1],
-            ['N', 4],
-            [None, 1]
-        ])
-
-
 class TestBins(AgateTestCase):
     def setUp(self):
         self.number_type = Number()
@@ -2012,7 +1951,7 @@ class TestPivot(AgateTestCase):
             ('female', 3)
         )
 
-        self.assertColumnNames(pivot_table, ['group', 'pivot'])
+        self.assertColumnNames(pivot_table, ['group', 'Count'])
         self.assertRowNames(pivot_table, ['male', 'female'])
         self.assertColumnTypes(pivot_table, [Text, Number])
         self.assertRows(pivot_table, pivot_rows)
@@ -2042,7 +1981,7 @@ class TestPivot(AgateTestCase):
             ('asian', 1)
         )
 
-        self.assertColumnNames(pivot_table, ['race', 'pivot'])
+        self.assertColumnNames(pivot_table, ['race', 'Count'])
         self.assertColumnTypes(pivot_table, [Text, Number])
         self.assertRows(pivot_table, pivot_rows)
 
@@ -2113,7 +2052,7 @@ class TestPivot(AgateTestCase):
         )
 
         self.assertRows(pivot_table, pivot_rows)
-        self.assertColumnNames(pivot_table, ['race', 'gender', 'pivot'])
+        self.assertColumnNames(pivot_table, ['race', 'gender', 'Count'])
         self.assertColumnTypes(pivot_table, [Text, Text, Number])
 
     def test_pivot_default_value(self):
@@ -2135,7 +2074,7 @@ class TestPivot(AgateTestCase):
     def test_pivot_compute(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        pivot_table = table.pivot('gender', 'color', computation=Percent('pivot'))
+        pivot_table = table.pivot('gender', 'color', computation=Percent('Count'))
 
         pivot_table.print_table(output=sys.stdout)
 
@@ -2151,7 +2090,7 @@ class TestPivot(AgateTestCase):
     def test_pivot_compute_kwargs(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        pivot_table = table.pivot('gender', 'color', computation=Percent('pivot', total=8))
+        pivot_table = table.pivot('gender', 'color', computation=Percent('Count', total=8))
 
         pivot_table.print_table(output=sys.stdout)
 

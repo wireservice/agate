@@ -19,12 +19,14 @@ with a column for each aggregation and a row for each table in the set.
 from collections import defaultdict
 import math
 
+import six
+
 from agate.data_types import Boolean, Date, DateTime, Number, Text
 from agate.exceptions import DataTypeError, UnsupportedAggregationError
 from agate.utils import Quantiles, default, max_precision, median
 from agate.warns import warn_null_calculation
 
-
+@six.python_2_unicode_compatible
 class Aggregation(object):  # pragma: no cover
     """
     An operation that takes a table and produces a single value summarizing
@@ -36,6 +38,13 @@ class Aggregation(object):  # pragma: no cover
     This can be ensured by using the :meth:`.DataType.cast` method. See
     :class:`Formula` for an example.
     """
+    def __str__(self):
+        """
+        String representation of this column. May be used as a column name in
+        generated tables.
+        """
+        return self.__class__.__name__
+
     def get_aggregate_data_type(self, table):
         """
         Get the data type that should be used when using this aggregation with

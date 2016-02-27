@@ -112,11 +112,11 @@ The default pivot aggregation is :class:`.Count` but you can also supply other o
 Pivot to percent of total
 =========================
 
-Pivot allows you to apply a :class:`.Computation` the each row of aggregated results prior to returning the table. Use the "magic" column name `pivot` when constructing your computation. For example, to compute the percent of the total years of age represented by each group:
+Pivot allows you to apply a :class:`.Computation` the each row of aggregated results prior to returning the table. Use the stringified name of the aggregation as the column argument to your computation:
 
 .. code-block:: python
 
-    transformed = table.pivot('race', 'gender', aggregation=agate.Sum('age'), computation=agate.Percent('pivot'))
+    transformed = table.pivot('race', 'gender', aggregation=agate.Sum('age'), computation=agate.Percent('sum'))
 
 +---------+--------+--------+
 | race    | male   | female |

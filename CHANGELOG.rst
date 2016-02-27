@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* :meth:`.Table.counts` has been removed. Use :meth:`.Table.pivot` instead. (#)
 * :class:`.Count` can now count non-null values in a column.
 * Removed :class:`.Length`. :class:`.Count` now works without any arguments. (#520)
 * :meth:`.Table.pivot` implemented. (#495)

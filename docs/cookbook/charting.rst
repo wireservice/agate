@@ -30,7 +30,7 @@ agate has a builtin text-based bar-chart generator:
 Histogram
 =========
 
-:meth:`.Table.print_bars` can be combined with :meth:`.Table.counts` or :meth:`.Table.bins` to produce fast histograms:
+:meth:`.Table.print_bars` can be combined with :meth:`.Table.pivot` or :meth:`.Table.bins` to produce fast histograms:
 
 .. code-block:: Python
 
