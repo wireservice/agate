@@ -667,7 +667,7 @@ class Table(utils.Patchable):
     @allow_tableset_proxy
     def where(self, test):
         """
-        Filter a to only those rows where the row passes a truth test.
+        Create a new table with the rows from this table that pass a truth test.
 
         :param test:
             A function that takes a :class:`.Row` and returns :code:`True` if
