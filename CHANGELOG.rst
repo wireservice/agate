@@ -2,7 +2,7 @@
 -----
 
 * Added cookbook examples of using :meth:`.Table.pivot` to count frequency/distribution.
-* :meth:`.Table.bins` now accepts a `computation` argument.
+* :meth:`.Table.bins` now has smarter output column names. (#524)
 * :meth:`.Table.bins` is now a wrapper around pivot. (#522)
 * :meth:`.Table.counts` has been removed. Use :meth:`.Table.pivot` instead. (#508)
 * :class:`.Count` can now count non-null values in a column.

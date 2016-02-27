@@ -34,11 +34,11 @@ Histogram
 
 .. code-block:: Python
 
-    table.bins('TOTAL', start=0, end=100000).print_bars(width=80)
+    table.bins('TOTAL', start=0, end=100000).print_bars('TOTAL', width=80)
 
 .. code-block:: bash
 
-    group              Count
+    TOTAL              Count
     [0 - 10,000)          30 ▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
     [10,000 - 20,000)     12 ▓░░░░░░░░░░░░░░░░░░░░░░
     [20,000 - 30,000)      7 ▓░░░░░░░░░░░░░

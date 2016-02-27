@@ -1030,7 +1030,7 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number')
 
-        self.assertColumnNames(new_table, ['group', 'Count'])
+        self.assertColumnNames(new_table, ['number', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
         self.assertSequenceEqual(new_table.rows[0], ['[0 - 10)', 10])
@@ -1058,7 +1058,7 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number', 10, -100, 0)
 
-        self.assertColumnNames(new_table, ['group', 'Count'])
+        self.assertColumnNames(new_table, ['number', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
         self.assertSequenceEqual(new_table.rows[0], ['[-100 - -90)', 9])
@@ -1073,7 +1073,7 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number')
 
-        self.assertColumnNames(new_table, ['group', 'Count'])
+        self.assertColumnNames(new_table, ['number', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
         self.assertSequenceEqual(new_table.rows[0], ['[-50 - -40)', 9])
@@ -1100,7 +1100,7 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number')
 
-        self.assertColumnNames(new_table, ['group', 'Count'])
+        self.assertColumnNames(new_table, ['number', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
         self.assertSequenceEqual(new_table.rows[0], ['[0.0 - 0.1)', 10])
@@ -1117,7 +1117,7 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number')
 
-        self.assertColumnNames(new_table, ['group', 'Count'])
+        self.assertColumnNames(new_table, ['number', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
         self.assertSequenceEqual(new_table.rows[0], ['[0.0 - 0.1)', 10])
@@ -1955,6 +1955,27 @@ class TestPivot(AgateTestCase):
         self.assertRowNames(pivot_table, ['male', 'female'])
         self.assertColumnTypes(pivot_table, [Text, Number])
         self.assertRows(pivot_table, pivot_rows)
+
+    def test_pivot_by_lambda_group_name(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        pivot_table = table.pivot(lambda r: r['gender'], key_name='gender')
+
+        pivot_rows = (
+            ('male', 3),
+            ('female', 3)
+        )
+
+        self.assertColumnNames(pivot_table, ['gender', 'Count'])
+        self.assertRowNames(pivot_table, ['male', 'female'])
+        self.assertColumnTypes(pivot_table, [Text, Number])
+        self.assertRows(pivot_table, pivot_rows)
+
+    def test_pivot_by_lambda_group_name_sequence_invalid(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        with self.assertRaises(ValueError):
+            pivot_table = table.pivot(['race', 'gender'], key_name='foo')
 
     def test_pivot_no_key(self):
         table = Table(self.rows, self.column_names, self.column_types)
