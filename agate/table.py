@@ -1176,7 +1176,7 @@ class Table(utils.Patchable):
         elif not utils.issequence(key):
             key = [key]
 
-        if not aggregation:
+        if aggregation is None:
             aggregation = Count()
 
         groups = self
@@ -1194,17 +1194,24 @@ class Table(utils.Patchable):
 
             return table
 
-        if pivot:
+        if pivot is not None:
             groups = groups.group_by(pivot)
+
+            column_type = aggregation.get_aggregate_data_type(groups)
 
             table = groups.aggregate([
                 ('pivot', aggregation)
             ])
 
-            if computation:
+            pivot_count = len(set(table.columns[pivot].values()))
+
+            if computation is not None:
+                column_types = computation.get_computed_data_type(table)
                 table = apply_computation(table)
 
-            table = table.denormalize(key, pivot, 'pivot', default_value=default_value)
+            column_types = [column_type] * pivot_count
+
+            table = table.denormalize(key, pivot, 'pivot', default_value=default_value, column_types=column_types)
         else:
             table = groups.aggregate([
                 ('pivot', aggregation)
@@ -1305,7 +1312,7 @@ class Table(utils.Patchable):
         return Table(new_rows, new_column_names, new_column_types, row_names=row_names)
 
     @allow_tableset_proxy
-    def denormalize(self, key=None, property_column='property', value_column='value', default_value=utils.default):
+    def denormalize(self, key=None, property_column='property', value_column='value', default_value=utils.default, column_types=None):
         """
         Denormalize a dataset so that unique values in a column become their
         own columns.
@@ -1357,6 +1364,10 @@ class Table(utils.Patchable):
             specified :code:`Decimal(0)` will be used for aggregations that
             return :class:`.Number` data and :code:`None` will be used for
             all others.
+        :param column_types:
+            A sequence of column types with length equal to number of unique
+            values in field_column or an instance of :class:`.TypeTester`.
+            Defaults to a generic :class:`.TypeTester`.
         :returns:
             A new :class:`Table`.
         """
@@ -1388,9 +1399,7 @@ class Table(utils.Patchable):
             else:
                 default_value = None
 
-        data_types = [self.columns[value_column].data_type] * len(field_names)
         new_column_names = key + field_names
-        new_column_types = [self.column_types[self.column_names.index(name)] for name in key] + data_types
 
         new_rows = []
         row_names = []
@@ -1411,7 +1420,17 @@ class Table(utils.Patchable):
 
             new_rows.append(Row(row, new_column_names))
 
-        print(new_rows[0])
+        key_column_types = [self.column_types[self.column_names.index(name)] for name in key]
+
+        if column_types is None or isinstance(column_types, TypeTester):
+            tester = TypeTester() if column_types is None else column_types
+            force_update = dict(zip(key, key_column_types))
+            force_update.update(tester._force)
+            tester._force = force_update
+
+            new_column_types = tester.run(new_rows, new_column_names)
+        else:
+            new_column_types = key_column_types + list(column_types)
 
         return Table(new_rows, new_column_names, new_column_types, row_names=row_names)
 
