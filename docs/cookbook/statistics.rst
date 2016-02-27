@@ -47,6 +47,37 @@ You can also generate aggregate statistics for subsets of data (sometimes referr
 
 The resulting table will have four columns: ``doctor``, ``patient_count``, ``age_mean`` and ``age_median``.
 
+
+Distribution by count (frequency)
+=================================
+
+Counting the number of each unique value in a column can be accomplished with the :meth:`.Table.pivot` method:
+
+.. code-block:: python
+
+    # Counts of a single column's values
+    table.pivot('doctor')
+
+    # Counts of all combinations of more than one column's values
+    table.pivot(['doctor', 'hospital'])
+
+The resulting tables will have a column for each key column and another :code:`Count` column counting the number of instances of each value.
+
+Distribution by percent
+=======================
+
+:meth:`.Table.pivot` can also be used to calculate the distribution of values as a percentage of the total number:
+
+.. code-block:: python
+
+    # Percents of a single column's values
+    table.pivot('doctor', computation=Percent('Count'))
+
+    # Percents of all combinations of more than one column's values
+    table.pivot(['doctor', 'hospital'], computation=Percent('Count'))
+
+The output table will be the same format as the previous example, except the value column will be named :code:`Percent`.
+
 Identify outliers
 =================
 

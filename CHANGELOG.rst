@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* Added cookbook examples of using :meth:`.Table.pivot` to count frequency/distribution.
 * :meth:`.Table.bins` now accepts a `computation` argument.
 * :meth:`.Table.bins` is now a wrapper around pivot. (#522)
 * :meth:`.Table.counts` has been removed. Use :meth:`.Table.pivot` instead. (#508)
