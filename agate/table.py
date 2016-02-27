@@ -1586,6 +1586,7 @@ class Table(utils.Patchable):
         :returns:
             A new :class:`Table`.
         """
+        # Infer bin start/end positions
         if start is None or end is None:
             start, end = utils.round_limits(
                 Min(column_name).run(self),
@@ -1595,16 +1596,19 @@ class Table(utils.Patchable):
             start = Decimal(start)
             end = Decimal(end)
 
+        # Calculate bin size
         spread = abs(end - start)
         size = spread / count
 
         breaks = [start]
 
+        # Calculate breakpoints
         for i in range(1, count + 1):
             top = start + (size * i)
 
             breaks.append(top)
 
+        # Format bin names
         decimal_places = utils.max_precision(breaks)
         break_formatter = utils.make_number_formatter(decimal_places)
 
@@ -1618,24 +1622,23 @@ class Table(utils.Patchable):
 
             return output
 
-        bins = OrderedDict()
+        # Generate bins
+        bin_names = []
 
         for i in range(1, len(breaks)):
             last_exclusive = (i == len(breaks) - 1)
             name = name_bin(breaks[i - 1], breaks[i], last_exclusive=last_exclusive)
 
-            bins[name] = Decimal('0')
+            bin_names.append(name)
 
-        for row in self._rows:
+        bin_names.append(None)
+
+        # Lambda method for actually assigning values to bins
+        def binner(row):
             value = row[column_name]
 
             if value is None:
-                try:
-                    bins[None] += 1
-                except KeyError:
-                    bins[None] = Decimal('1')
-
-                continue    # pragma: no cover
+                return None
 
             i = 1
 
@@ -1645,15 +1648,10 @@ class Table(utils.Patchable):
             except IndexError:
                 i -= 1
 
-            last_exclusive = (i == len(breaks) - 1)
-            name = name_bin(breaks[i - 1], breaks[i], last_exclusive=last_exclusive)
+            return bin_names[i - 1]
 
-            bins[name] += 1
-
-        column_names = [column_name, 'count']
-        column_types = [Text(), Number()]
-
-        return Table(bins.items(), column_names, column_types, row_names=tuple(bins.keys()))
+        # Pivot by lambda then sort by bin order
+        return self.pivot(binner).order_by(lambda r: bin_names.index(r['group']))
 
     def print_table(self, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=20):
         """
@@ -1704,15 +1702,17 @@ class Table(utils.Patchable):
         """
         self.to_json(sys.stdout, **kwargs)
 
-    def print_bars(self, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout, printable=False):
+    def print_bars(self, label_column_name='group', value_column_name='Count', domain=None, width=120, output=sys.stdout, printable=False):
         """
         Print a text-based bar chart of the columns names `label_column_name`
         and `value_column_name`.
 
         :param label_column_name:
-            The column containing the label values.
+            The column containing the label values. Defaults to "group", which
+            is the default output of :meth:`Table.pivot` or :meth:`Table.bins`.
         :param value_column_name:
-            The column containing the bar values.
+            The column containing the bar values. Defaults to "Count", which
+            is the default output of :meth:`Table.pivot` or :meth:`Table.bins`.
         :param domain:
             A 2-tuple containing the minimum and maximum values for the chart's
             x-axis. The domain must be large enough to contain all values in

@@ -1030,7 +1030,7 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number')
 
-        self.assertColumnNames(new_table, ['number', 'count'])
+        self.assertColumnNames(new_table, ['group', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
         self.assertSequenceEqual(new_table.rows[0], ['[0 - 10)', 10])
@@ -1058,7 +1058,7 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number', 10, -100, 0)
 
-        self.assertColumnNames(new_table, ['number', 'count'])
+        self.assertColumnNames(new_table, ['group', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
         self.assertSequenceEqual(new_table.rows[0], ['[-100 - -90)', 9])
@@ -1073,7 +1073,7 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number')
 
-        self.assertColumnNames(new_table, ['number', 'count'])
+        self.assertColumnNames(new_table, ['group', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
         self.assertSequenceEqual(new_table.rows[0], ['[-50 - -40)', 9])
@@ -1100,7 +1100,7 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number')
 
-        self.assertColumnNames(new_table, ['number', 'count'])
+        self.assertColumnNames(new_table, ['group', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
         self.assertSequenceEqual(new_table.rows[0], ['[0.0 - 0.1)', 10])
@@ -1117,7 +1117,7 @@ class TestBins(AgateTestCase):
 
         new_table = Table(rows, self.column_names, self.column_types).bins('number')
 
-        self.assertColumnNames(new_table, ['number', 'count'])
+        self.assertColumnNames(new_table, ['group', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
         self.assertSequenceEqual(new_table.rows[0], ['[0.0 - 0.1)', 10])
