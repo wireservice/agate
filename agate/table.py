@@ -1109,10 +1109,11 @@ class Table(utils.Patchable):
         return Table(rows, column_keys, column_types, row_names=row_names, _is_fork=True)
 
     @allow_tableset_proxy
-    def pivot(self, key, pivot=None, aggregation=None, computation=None, default_value=utils.default):
+    def pivot(self, key=None, pivot=None, aggregation=None, computation=None, default_value=utils.default):
         """
-        Pivot the table on two sequences of columns. Generates a new :class:`Table`
-        with aggregated counts of key columns on pivoted columns.
+        Pivot reorganizes the data in a table by grouping the data, aggregating
+        those groups, optionally applying a computation, and then organizing
+        the groups into new rows and columns.
 
         For example:
 
@@ -1128,7 +1129,9 @@ class Table(utils.Patchable):
         |  Jim    |  asian  | female |
         +---------+---------+--------+
 
-        can be pivoted with key equal to race and pivot equal to gender:
+        This table can be pivoted with :code:`key` equal to "race" and
+        :code:`pivot` equal to "gender". The default aggregation is
+        :class:`.Count`. This would result in the following table.
 
         +---------+---------+--------+
         |  race   |  male   | female |
