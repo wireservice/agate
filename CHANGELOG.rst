@@ -1,6 +1,8 @@
 1.2.3
 -----
 
+* :class:`.Count` can now count non-null values in a column.
+* Removed :class:`.Length`. :class:`.Count` now works without any arguments. (#520)
 * :meth:`.Table.pivot` implemented. (#495)
 * :meth:`.Table.denormalize` implemented. (#493)
 * Added ``columns`` argument to :meth:`Table.join`. (#479)

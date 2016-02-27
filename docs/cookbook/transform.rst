@@ -91,7 +91,7 @@ Result:
 Pivot to sum
 ============
 
-The default pivot aggregation is :class:`.Length` but you can also supply other operations. For example, to aggregate each group by :class:`.Sum` of their ages:
+The default pivot aggregation is :class:`.Count` but you can also supply other operations. For example, to aggregate each group by :class:`.Sum` of their ages:
 
 .. code-block:: python
 

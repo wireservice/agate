@@ -40,7 +40,7 @@ You can also generate aggregate statistics for subsets of data (sometimes referr
 
     doctors = patients.group_by('doctor')
     patient_ages = doctors.aggregate([
-        ('patient_count', agate.Length())
+        ('patient_count', agate.Count())
         ('age_mean', agate.Mean('age')),
         ('age_median', agate.Median('age'))
     ])
@@ -81,7 +81,7 @@ You can also generate custom aggregated statistics for your data by defining you
 
 .. code-block:: python
 
-    # Create a custom summary aggregation with agate.Summary 
+    # Create a custom summary aggregation with agate.Summary
     # Input a column name, a return data type and a function to apply on the column
     count_millionaires = agate.Summary('salary', agate.Number(), lambda r: sum(salary > 1000000 for salary in r.values()))
 

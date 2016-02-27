@@ -152,7 +152,7 @@ agate:
 
     doctors = patients.group_by('doctor')
     patient_ages = doctors.aggregate([
-        ('patient_count', agate.Length())
+        ('patient_count', agate.Count())
         ('age_mean', agate.Mean('age')),
         ('age_median', agate.Median('age'))
     ])

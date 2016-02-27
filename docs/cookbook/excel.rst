@@ -99,7 +99,7 @@ You can emulate most of the functionality of Excel's pivot tables using the :met
 
     jobs = employees.group_by('job_title')
     summary = jobs.aggregate([
-        ('employee_count', agate.Length())
+        ('employee_count', agate.Count())
         ('salary_mean', agate.Mean('salary')),
         ('salary_median', agate.Median('salary'))
     ])

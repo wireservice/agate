@@ -22,7 +22,7 @@ from six.moves import html_parser
 from six.moves import range
 
 from agate import Table, TableSet
-from agate.aggregations import Length, Sum
+from agate.aggregations import Count, Sum
 from agate.computations import Percent
 from agate.data_types import *
 from agate.computations import Formula
@@ -1473,8 +1473,8 @@ class TestAggregate(AgateTestCase):
 
         self.table = Table(self.rows, self.column_names, self.column_types)
 
-    def test_length(self):
-        self.assertEqual(self.table.aggregate(Length()), 3)
+    def test_count(self):
+        self.assertEqual(self.table.aggregate(Count()), 3)
 
     def test_sum(self):
         self.assertEqual(self.table.aggregate(Sum('two')), 9)
@@ -1482,7 +1482,7 @@ class TestAggregate(AgateTestCase):
     def test_multiple(self):
         self.assertSequenceEqual(
             self.table.aggregate([
-                Length(),
+                Count(),
                 Sum('two')
             ]),
             [3, 9]

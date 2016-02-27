@@ -318,7 +318,7 @@ class TestTableSet(AgateTestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
 
         new_table = tableset.aggregate([
-            ('count', Length())
+            ('count', Count())
         ])
 
         self.assertIsInstance(new_table, Table)
@@ -335,7 +335,7 @@ class TestTableSet(AgateTestCase):
         tableset = TableSet(tables.values(), tables.keys(), key_name='test', key_type=self.number_type)
 
         new_table = tableset.aggregate([
-            ('count', Length())
+            ('count', Count())
         ])
 
         self.assertIsInstance(new_table, Table)
@@ -346,7 +346,7 @@ class TestTableSet(AgateTestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
 
         new_table = tableset.aggregate([
-            ('count', Length())
+            ('count', Count())
         ])
 
         self.assertRowNames(new_table, ['table1', 'table2', 'table3'])
@@ -355,7 +355,7 @@ class TestTableSet(AgateTestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_table = tableset.aggregate([
-            ('count', Length()),
+            ('count', Count()),
             ('number_sum', Sum('number'))
         ])
 
@@ -372,7 +372,7 @@ class TestTableSet(AgateTestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_table = tableset.aggregate([
-            ('count', Length()),
+            ('count', Count()),
             ('number_min', Min('number'))
         ])
 
@@ -389,7 +389,7 @@ class TestTableSet(AgateTestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_table = tableset.aggregate([
-            ('count', Length()),
+            ('count', Count()),
             ('number_sum', Sum('number')),
             ('number_mean', Mean('number'))
         ])
@@ -407,7 +407,7 @@ class TestTableSet(AgateTestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         new_table = tableset.aggregate([
-            ('count', Length()),
+            ('count', Count()),
             ('letter_max_length', MaxLength('letter'))
         ])
 
@@ -460,7 +460,7 @@ class TestTableSet(AgateTestCase):
         nested = tableset.group_by('letter')
 
         results = nested.aggregate([
-            ('count', Length()),
+            ('count', Count()),
             ('number_sum', Sum('number'))
         ])
 
@@ -483,7 +483,7 @@ class TestTableSet(AgateTestCase):
         nested = tableset.group_by('letter')
 
         results = nested.aggregate([
-            ('count', Length()),
+            ('count', Count()),
             ('number_sum', Sum('number'))
         ])
 

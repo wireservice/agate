@@ -67,7 +67,7 @@ class TestSimpleAggregation(unittest.TestCase):
         self.assertEqual(All('one', lambda d: d != 5).run(self.table), True)
         self.assertEqual(All('one', lambda d: d == 2).run(self.table), False)
 
-    def test_length(self):
+    def test_count(self):
         rows = (
             (1, 2, 'a'),
             (2, 3, 'b'),
@@ -78,12 +78,28 @@ class TestSimpleAggregation(unittest.TestCase):
 
         table = Table(rows, self.column_names, self.column_types)
 
-        self.assertIsInstance(Length().get_aggregate_data_type(table), Number)
-        Length().validate(self.table)
-        self.assertEqual(Length().run(table), 5)
-        self.assertEqual(Length().run(table), 5)
+        self.assertIsInstance(Count().get_aggregate_data_type(table), Number)
+        Count().validate(self.table)
+        self.assertEqual(Count().run(table), 5)
+        self.assertEqual(Count().run(table), 5)
 
-    def test_count(self):
+    def test_count_column(self):
+        rows = (
+            (1, 2, 'a'),
+            (2, 3, 'b'),
+            (None, 4, 'c'),
+            (1, 2, 'a'),
+            (1, 2, 'a')
+        )
+
+        table = Table(rows, self.column_names, self.column_types)
+
+        self.assertIsInstance(Count('one').get_aggregate_data_type(table), Number)
+        Count('one').validate(self.table)
+        self.assertEqual(Count('one').run(table), 4)
+        self.assertEqual(Count('two').run(table), 5)
+
+    def test_count_value(self):
         rows = (
             (1, 2, 'a'),
             (2, 3, 'b'),

@@ -44,7 +44,7 @@ try:
 except ImportError:
     from io import StringIO
 
-from agate.aggregations import Min, Max, Length
+from agate.aggregations import Count, Min, Max
 from agate.columns import Column
 from agate.data_types import TypeTester, DataType, Text, Number
 from agate.exceptions import DataTypeError
@@ -1109,7 +1109,7 @@ class Table(utils.Patchable):
         return Table(rows, column_keys, column_types, row_names=row_names, _is_fork=True)
 
     @allow_tableset_proxy
-    def pivot(self, key, pivot=None, aggregation=None, computation=None, default_value='default'):
+    def pivot(self, key, pivot=None, aggregation=None, computation=None, default_value=utils.default):
         """
         Pivot the table on two sequences of columns. Generates a new :class:`Table`
         with aggregated counts of key columns on pivoted columns.
@@ -1156,7 +1156,7 @@ class Table(utils.Patchable):
             data in the pivot table. (Each cell is the result of an aggregation
             of the grouped data.)
 
-            If not specified this defaults to :class:`.Length`.
+            If not specified this defaults to :class:`.Count` with no arguments.
         :param computation:
             An optional :class:`.Computation` instance to be applied to the
             aggregated sequence of values before they are transposed into the
@@ -1177,7 +1177,7 @@ class Table(utils.Patchable):
             key = [key]
 
         if not aggregation:
-            aggregation = Length()
+            aggregation = Count()
 
         groups = self
 
@@ -1305,7 +1305,7 @@ class Table(utils.Patchable):
         return Table(new_rows, new_column_names, new_column_types, row_names=row_names)
 
     @allow_tableset_proxy
-    def denormalize(self, key=None, property_column='property', value_column='value', default_value='default'):
+    def denormalize(self, key=None, property_column='property', value_column='value', default_value=utils.default):
         """
         Denormalize a dataset so that unique values in a column become their
         own columns.
@@ -1382,7 +1382,7 @@ class Table(utils.Patchable):
 
             row_data[row_key][f] = v
 
-        if default_value == 'default':
+        if default_value == utils.default:
             if isinstance(self.columns[value_column].data_type, Number):
                 default_value = Decimal(0)
             else:
@@ -1538,7 +1538,7 @@ class Table(utils.Patchable):
         Count the number of occurrences of each distinct value in a column.
         Creates a new table with only the value and the count. This is
         effectively equivalent to doing a :meth:`Table.group_by` followed by an
-        :meth:`.TableSet.aggregate` with a :class:`.Length` aggregator.
+        :meth:`.TableSet.aggregate` with a :class:`.Count` aggregator.
 
         The resulting table will have two columns. The first will have
         the name and type of the specified :code:`key` column or

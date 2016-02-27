@@ -17,6 +17,9 @@ except ImportError:  # pragma: no cover
 import six
 
 
+default = object()
+
+
 def memoize(func):
     """
     Dead-simple memoize decorator for instance methods that take no arguments.
