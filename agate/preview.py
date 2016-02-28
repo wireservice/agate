@@ -10,6 +10,7 @@ except ImportError:  # pragma: no cover
 
 import sys
 
+from babel.core import default_locale
 from babel.numbers import format_decimal
 import six
 from six.moves import zip
@@ -43,8 +44,12 @@ TICK_MARK = u'+'
 #: Characters to render for ellipsis
 ELLIPSIS = u'...'
 
+# Get the default locale for number formatting
+# (Falls back to English to work around a Windows bug)
+LC_NUMERIC = default_locale('LC_NUMERIC') or 'en_US'
 
-def print_table(table, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=None):
+
+def print_table(table, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=None, locale=None):
     """
     See :meth:`.Table.print_table` for documentation.
     """
@@ -90,7 +95,11 @@ def print_table(table, max_rows=None, max_columns=None, output=sys.stdout, max_c
             elif v is None:
                 v = ''
             elif number_formatters[j] is not None:
-                v = format_decimal(v, format=number_formatters[j])
+                v = format_decimal(
+                    v,
+                    format=number_formatters[j],
+                    locale=locale or LC_NUMERIC
+                )
             else:
                 v = six.text_type(v)
 
@@ -227,7 +236,12 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
     formatted_values = []
 
     for value in value_column:
-        formatted_values.append(format_decimal(value, format=value_formatter))
+        formatted_values.append(format_decimal(
+                value,
+                format=value_formatter,
+                locale=LC_NUMERIC
+            )
+        )
 
     max_label_width = max(max([len(l) for l in formatted_labels]), len(y_label))
     max_value_width = max(max([len(v) for v in formatted_values]), len(x_label))
@@ -313,7 +327,11 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
     ticks_formatted = OrderedDict()
 
     for k, v in ticks.items():
-        ticks_formatted[k] = format_decimal(v, format=tick_formatter)
+        ticks_formatted[k] = format_decimal(
+            v,
+            format=tick_formatter,
+            locale=LC_NUMERIC
+        )
 
     def write(line):
         output.write(line + '\n')

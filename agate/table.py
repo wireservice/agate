@@ -1663,7 +1663,7 @@ class Table(utils.Patchable):
         # Sort by bin order
         return table.order_by(lambda r: bin_names.index(r[column_name]))
 
-    def print_table(self, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=20):
+    def print_table(self, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=20, locale=None):
         """
         Print a well-formatted preview of this table to the console or any
         other output.
@@ -1677,8 +1677,11 @@ class Table(utils.Patchable):
         :param max_column_width:
             Truncate all columns to at most this width. The remainder will be
             replaced with ellipsis.
+        :param locale:
+            Provide a locale you would like to be used to format the output.
+            By default it will use the system's setting.
         """
-        print_table(self, max_rows, max_columns, output, max_column_width)
+        print_table(self, max_rows, max_columns, output, max_column_width, locale)
 
     def print_html(self, max_rows=None, max_columns=None, output=sys.stdout):
         """
