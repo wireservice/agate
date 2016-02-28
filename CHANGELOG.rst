@@ -1,6 +1,7 @@
 1.2.3
 -----
 
+* Fix number rendering in :meth:`.Table.print_table` on Windows. (#528)
 * Added cookbook examples of using :meth:`.Table.pivot` to count frequency/distribution.
 * :meth:`.Table.bins` now has smarter output column names. (#524)
 * :meth:`.Table.bins` is now a wrapper around pivot. (#522)
