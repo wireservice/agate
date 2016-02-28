@@ -1,6 +1,8 @@
 1.2.3
 -----
 
+* Updated Excel cookbook entry for pivot tables. (#536)
+* Updated Excel cookbook entry for VLOOKUP. (#537)
 * Fix number rendering in :meth:`.Table.print_table` on Windows. (#528)
 * Added cookbook examples of using :meth:`.Table.pivot` to count frequency/distribution.
 * :meth:`.Table.bins` now has smarter output column names. (#524)
