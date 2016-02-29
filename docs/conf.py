@@ -22,8 +22,8 @@ master_doc = 'index'
 # Metadata
 project = u'agate'
 copyright = u'2016, Christopher Groskopf'
-version = '1.3.0'
-release = '1.3.0'
+version = '1.3.1'
+release = '1.3.1'
 
 exclude_patterns = ['_build']
 pygments_style = 'sphinx'
