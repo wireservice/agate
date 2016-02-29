@@ -80,7 +80,7 @@ The dataset we are using in this tutorial is simple enough that we can rely on t
 
 .. note::
 
-    agate's builtin CSV :func:`.csv_py3.reader` and :func:`.csv_py3.writer` support unicode and other encodings for both Python 2 and Python 3.
+    agate's CSV reader and writer support unicode and other encodings for both Python 2 and Python 3. Try using them as a replacement for Python's builtin module: :code:`from agate import csv`.
 
 .. note::
 
