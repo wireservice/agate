@@ -237,11 +237,10 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
 
     for value in value_column:
         formatted_values.append(format_decimal(
-                value,
-                format=value_formatter,
-                locale=LC_NUMERIC
-            )
-        )
+            value,
+            format=value_formatter,
+            locale=LC_NUMERIC
+        ))
 
     max_label_width = max(max([len(l) for l in formatted_labels]), len(y_label))
     max_value_width = max(max([len(v) for v in formatted_values]), len(x_label))

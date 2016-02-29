@@ -26,6 +26,7 @@ from agate.exceptions import DataTypeError, UnsupportedAggregationError
 from agate.utils import Quantiles, default, max_precision, median
 from agate.warns import warn_null_calculation
 
+
 @six.python_2_unicode_compatible
 class Aggregation(object):  # pragma: no cover
     """

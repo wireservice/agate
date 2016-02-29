@@ -1747,7 +1747,7 @@ class TestHomogenize(AgateTestCase):
 
     def test_homogenize_column_name(self):
         table = Table(self.rows, self.column_names, self.column_types)
-        compare_values = [[0], [1], [2]]
+        compare_values = range(3)
         homogenized = table.homogenize('one', compare_values, [3, 'd'])
         rows = (
             (0, 4, 'a'),
@@ -1762,7 +1762,7 @@ class TestHomogenize(AgateTestCase):
 
     def test_homogenize_default_row(self):
         table = Table(self.rows, self.column_names, self.column_types)
-        compare_values = [[0], [1], [2]]
+        compare_values = [0, 1, 2]
         homogenized = table.homogenize(['one'], compare_values)
         rows = (
             (0, 4, 'a'),
@@ -1992,7 +1992,7 @@ class TestPivot(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types)
 
         with self.assertRaises(ValueError):
-            pivot_table = table.pivot(['race', 'gender'], key_name='foo')
+            pivot_table = table.pivot(['race', 'gender'], key_name='foo')  # noqa
 
     def test_pivot_no_key(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -2037,19 +2037,6 @@ class TestPivot(AgateTestCase):
 
         self.assertColumnNames(pivot_table, ['race', 'male', 'female'])
         self.assertColumnTypes(pivot_table, [Text, Number, Number])
-        self.assertRows(pivot_table, pivot_rows)
-
-    def test_pivot_no_key(self):
-        table = Table(self.rows, self.column_names, self.column_types)
-
-        pivot_table = table.select(['race', 'gender', 'age']).pivot(None, 'gender')
-
-        pivot_rows = (
-            (3, 3),
-        )
-
-        self.assertColumnNames(pivot_table, ['male', 'female'])
-        self.assertColumnTypes(pivot_table, [Number, Number])
         self.assertRows(pivot_table, pivot_rows)
 
     def test_pivot_multiple_keys(self):

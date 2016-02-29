@@ -1015,9 +1015,10 @@ class Table(utils.Patchable):
         :param key:
             Either a column name or a sequence of such names.
         :param compare_values:
-            An array of lists with combinations of values that should be present
-            in at least one row in the table. A row is generated for each
-            combination not found.
+            Either an array of column values if key is a single column name or a
+            sequence of arrays of values if key is a sequence of names. It can
+            also be a generator that yields one of the two. A row is created for
+            each value or list of values not found in the rows of the table.
         :param default_row:
             An array of values or a function to generate new rows. The length of
             the input array should be equal to row length minus column_names
@@ -1030,6 +1031,10 @@ class Table(utils.Patchable):
 
         if not utils.issequence(key):
             key = [key]
+
+        if len(key) == 1:
+            if any(not utils.issequence(compare_value) for compare_value in compare_values):
+                compare_values = [[compare_value] for compare_value in compare_values]
 
         column_values = [self._columns.get(name) for name in key]
         column_indexes = [self._column_names.index(name) for name in key]
