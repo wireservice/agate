@@ -1,4 +1,4 @@
-1.2.3
+1.3.0
 -----
 
 * Updated Excel cookbook entry for pivot tables. (#536)
