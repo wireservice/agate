@@ -1,20 +1,22 @@
 1.3.0 - February 28, 2016
 -------------------------
 
-This is a version implements several new features and includes one major breaking changes
+This version implements several new features and includes two major breaking changes.
 
-The major features in this release are related to transforming (reshaping) tables. They are:
+Please take note of the following breaking changes:
+
+1. There is no longer a :code:`Length` aggregation. The more obvious :class:`.Count` is now used instead.
+
+2. Agate's replacements for Python's CSV reader and writer have been moved to the :code:`agate.csv` namespace. To use as a drop-in replacement: :code:`from agate import csv`.
+
+The major new features in this release are primarly related to transforming (reshaping) tables. They are:
 
 1. :meth:`.Table.normalize` for converting columns to rows.
 2. :meth:`.Table.denormalize` for converting rows to columns.
 3. :meth:`.Table.pivot` for generating "crosstabs".
 4. :meth:`.Table.homogenize` for filling gaps in data series.
 
-Please take note of the following breaking changes:
-
-1. There is no longer a :code:`Length` aggregation. :class:`.Count` is now used instead.
-
-2. Agate's replacement's for Python's CSV reader/writer are now in the :code:`agate.csv` namespace. To use as a drop-in replacement do :code:`from agate import csv`.
+Please see the following complete list of changes for a variety of other bug fixes and improvements.
 
 * Moved CSV reader/writer to :code:`agate.csv` namespace.
 * Added numerous new examples to the R section of the cookbook. (#529-#535)
