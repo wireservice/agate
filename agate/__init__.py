@@ -13,6 +13,6 @@ from agate.testcase import AgateTestCase  # noqa
 from agate.warns import NullCalculationWarning, warn_null_calculation  # noqa
 
 if six.PY2:  # pragma: no cover
-    from agate.csv_py2 import reader, writer, DictReader, DictWriter  # noqa
+    import agate.csv_py2 as csv  # noqa
 else:
-    from agate.csv_py3 import reader, writer, DictReader, DictWriter  # noqa
+    import agate.csv_py3 as csv  # noqa

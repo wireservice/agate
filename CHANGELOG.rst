@@ -10,10 +10,13 @@ The major features in this release are related to transforming (reshaping) table
 3. :meth:`.Table.pivot` for generating "crosstabs".
 4. :meth:`.Table.homogenize` for filling gaps in data series.
 
-Please take note of the following breaking change:
+Please take note of the following breaking changes:
 
 1. There is no longer a :code:`Length` aggregation. :class:`.Count` is now used instead.
 
+2. Agate's replacement's for Python's CSV reader/writer are now in the :code:`agate.csv` namespace. To use as a drop-in replacement do :code:`from agate import csv`.
+
+* Moved CSV reader/writer to :code:`agate.csv` namespace.
 * Added numerous new examples to the R section of the cookbook. (#529-#535)
 * Updated Excel cookbook entry for pivot tables. (#536)
 * Updated Excel cookbook entry for VLOOKUP. (#537)
