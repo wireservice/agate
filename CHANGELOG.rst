@@ -1,5 +1,18 @@
-1.3.0
------
+1.3.0 - February 28, 2016
+-------------------------
+
+This is a version implements several new features and includes one major breaking changes
+
+The major features in this release are related to transforming (reshaping) tables. They are:
+
+1. :meth:`.Table.normalize` for converting columns to rows.
+2. :meth:`.Table.denormalize` for converting rows to columns.
+3. :meth:`.Table.pivot` for generating "crosstabs".
+4. :meth:`.Table.homogenize` for filling gaps in data series.
+
+Please take note of the following breaking change:
+
+1. There is no longer a :code:`Length` aggregation. :class:`.Count` is now used instead.
 
 * Added numerous new examples to the R section of the cookbook. (#529-#535)
 * Updated Excel cookbook entry for pivot tables. (#536)
@@ -22,14 +35,14 @@
 * Cookbook: Fuzzy phonetic search example. (#207)
 * Cookbook: Create a table from a remote file. (#473)
 * Added ``printable`` argument to :meth:`.Table.print_bars` to use only printable characters. (#500)
-* :class:`.MappedSequence` now throws explicit error on __setitem__. (#499)
+* :class:`.MappedSequence` now throws an explicit error on __setitem__. (#499)
 * Added ``require_match`` argument to :meth:`.Table.join`. (#480)
 * Cookbook: Rename columns in a table. (#469)
 * :meth:`.Table.normalize` implemented. (#487)
 * Added :class:`.Percent` computation with example in Cookbook. (#490)
 * Added Ben Welsh to AUTHORS.
-* :meth:`.Table.__init__` now throws warning if auto-generated columns are used. (#483)
-* :meth:`.Table.__init__` no longer fails on duplicate columns. Instead it renames them and throws warning. (#484)
+* :meth:`.Table.__init__` now throws a warning if auto-generated columns are used. (#483)
+* :meth:`.Table.__init__` no longer fails on duplicate columns. Instead it renames them and throws a warning. (#484)
 * :meth:`.Table.merge` now takes a ``column_names`` argument to specify columns included in new table. (#481)
 * :meth:`.Table.select` now accepts a single column name as a key.
 * :meth:`.Table.exclude` now accepts a single column name as a key.
