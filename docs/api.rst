@@ -2,6 +2,8 @@
 API
 ===
 
+All of agate's public classes are available as part of the root :code:`agate` module. For example, to use the :class:`.Count` aggregation you would reference :code:`agate.Count`. The hierarchy shown here reflects the organization of the underlying code.
+
 .. toctree::
     :maxdepth: 2
 
