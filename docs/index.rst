@@ -8,15 +8,15 @@ Why agate?
 ==========
 
 * A readable and user-friendly API.
-* A robust set of SQL-like operations.
+* A complete set of SQL-like operations.
 * Unicode support everywhere.
 * Decimal precision everywhere.
 * Exhaustive user documentation.
-* Pluggable extensions to add `SQL integration <http://agate-sql.readthedocs.org/>`_, `statistical methods <http://agate-stats.readthedocs.org/>`_, etc.
+* Pluggable `extensions <extensions>`_ that add SQL integration, Excel support, and more.
 * Designed with `iPython <http://ipython.org/>`_, `Jupyter <https://jupyter.org/>`_ and `atom/hydrogen <https://atom.io/packages/hydrogen>`_ in mind.
-* Pure Python. No huge C dependencies to compile.
-* 100% test coverage.
-* MIT licensed. Free for all purposes.
+* Pure Python. No C dependencies to compile.
+* Exhaustive test coverage.
+* MIT licensed and free for all purposes.
 * Zealously `zen <https://www.python.org/dev/peps/pep-0020/>`_.
 
 Show me code
@@ -53,7 +53,7 @@ Show me code
                            +-------------+-------------+-------------+-------------+
                            0          250,000       500,000       750,000  1,000,000
 
-This example, with explanation, is available as a `Jupyter notebook <http://nbviewer.ipython.org/urls/gist.githubusercontent.com/onyxfish/36f459dab02545cbdce3/raw/534698388e5c404996a7b570a7228283344adbb1/example.py.ipynb>`_.
+This example, complete with a detailed explanation, is available as a `Jupyter notebook <http://nbviewer.ipython.org/urls/gist.githubusercontent.com/onyxfish/36f459dab02545cbdce3/raw/534698388e5c404996a7b570a7228283344adbb1/example.py.ipynb>`_.
 
 Table of contents
 =================
