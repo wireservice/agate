@@ -1,6 +1,7 @@
 1.3.0
 -----
 
+* Added numerous new examples to the R section of the cookbook. (#529-#535)
 * Updated Excel cookbook entry for pivot tables. (#536)
 * Updated Excel cookbook entry for VLOOKUP. (#537)
 * Fix number rendering in :meth:`.Table.print_table` on Windows. (#528)
