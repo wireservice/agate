@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+try:
+    from cdecimal import Decimal
+except ImportError:  # pragma: no cover
+    from decimal import Decimal
+
 import six
 
 from agate.data_types.base import DataType, DEFAULT_NULL_VALUES
@@ -26,7 +31,7 @@ class Binary(DataType):
 
         if d is None:
             return d
-        elif type(d) is int:
+        elif type(d) is int or isinstance(d, Decimal):
             if d is 0 or d is 1:
                 return d
         elif isinstance(d, six.string_types):
