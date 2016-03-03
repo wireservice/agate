@@ -18,6 +18,7 @@ from agate.data_types.date_time import DateTime
 from agate.data_types.number import Number
 from agate.data_types.text import Text
 from agate.data_types.time_delta import TimeDelta
+from agate.data_types.binary import Binary
 from agate.exceptions import CastError  # noqa
 
 
@@ -50,6 +51,7 @@ class TypeTester(object):
         else:
             # In order of preference
             self._possible_types = [
+                Binary(),
                 Boolean(),
                 Number(),
                 TimeDelta(),

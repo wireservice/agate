@@ -348,6 +348,28 @@ class TestTimeDelta(unittest.TestCase):
             self.type.cast('quack')
 
 
+class TestBinary(unittest.TestCase):
+    def setUp(self):
+        self.type = Binary()
+
+    def test_test(self):
+        self.assertEqual(self.type.test(1), True)
+        self.assertEqual(self.type.test(0), True)
+        self.assertEqual(self.type.test('1'), True)
+        self.assertEqual(self.type.test('0'), True)
+        self.assertEqual(self.type.test(5), False)
+        self.assertEqual(self.type.test('a'), False)
+
+    def test_cast_parser(self):
+        values = (1, 0, '1', '0')
+        casted = tuple(self.type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (1, 0, 1, 0))
+
+    def test_cast_error(self):
+        with self.assertRaises(CastError):
+            self.type.cast('quack')
+
+
 class TestTypeTester(unittest.TestCase):
     def setUp(self):
         self.tester = TypeTester()
@@ -417,6 +439,18 @@ class TestTypeTester(unittest.TestCase):
         inferred = self.tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0], Boolean)
+
+    def test_binary_type(self):
+        rows = [
+            (1,),
+            (0,),
+            ('1',),
+            ('0',)
+        ]
+
+        inferred = self.tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0], Binary)
 
     def test_date_type(self):
         rows = [
