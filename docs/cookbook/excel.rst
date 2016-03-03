@@ -122,7 +122,7 @@ On the other hand, if what you want is to summarize your table with descriptive 
 
     jobs = employees.group_by('job_title')
     summary = jobs.aggregate([
-        ('employee_count', agate.Count())
+        ('employee_count', agate.Count()),
         ('salary_mean', agate.Mean('salary')),
         ('salary_median', agate.Median('salary'))
     ])
