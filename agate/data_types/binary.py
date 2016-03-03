@@ -32,14 +32,14 @@ class Binary(DataType):
         if d is None:
             return d
         elif type(d) is int or isinstance(d, Decimal):
-            if d is 0 or d is 1:
+            if d == 0 or d == 1:
                 return d
         elif isinstance(d, six.string_types):
             d = d.replace(',', '').strip()
             
             if d in self.null_values:
                 return None
-            elif d is '0' or d is '1':
+            elif d == '0' or d == '1':
                 return int(d)
 
         raise CastError('Can not convert value %s to binary.' % d)
