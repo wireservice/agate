@@ -13,8 +13,8 @@ class Binary(DataType):
     other numbers are.
 
     """
-    def __init__(self):
-        super(Binary, self).__init__()
+    def __init__(self, null_values=DEFAULT_NULL_VALUES):
+        super(Binary, self).__init__(null_values=null_values)
 
     def cast(self, d):
         """
