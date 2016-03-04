@@ -32,7 +32,7 @@ In the very simplest case, this table can be pivoted to count the number occuren
 Result:
 
 +---------+--------+
-| race    | pivot  |
+| race    | Count  |
 +=========+========+
 | white   | 1      |
 +---------+--------+
@@ -55,7 +55,7 @@ You can pivot by multiple columns either as additional row-groups, or as interse
 Result:
 
 +---------+--------+-------+
-| race    | gender | pivot |
+| race    | gender | Count |
 +=========+========+=======+
 | white   | female | 1     |
 +---------+--------+-------+
@@ -116,7 +116,7 @@ Pivot allows you to apply a :class:`.Computation` to each row of aggregated resu
 
 .. code-block:: python
 
-    transformed = table.pivot('race', 'gender', aggregation=agate.Sum('age'), computation=agate.Percent('sum'))
+    transformed = table.pivot('race', 'gender', aggregation=agate.Sum('age'), computation=agate.Percent('Sum'))
 
 +---------+--------+--------+
 | race    | male   | female |
