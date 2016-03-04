@@ -23,7 +23,7 @@ agate:
         return (row['a'] + row['b']) / row['c']
 
     new_table = table.compute([
-        ('new_column', Formula(f))
+        ('new_column', agate.Formula(agate.Number(), f))
     ])
 
 If this still isn't enough flexibility, you can also create your own subclass of :class:`.Computation`.
@@ -52,7 +52,7 @@ TRIM
 .. code-block:: python
 
     new_table = table.compute([
-        ('name_stripped', Formula(text_type, lambda r: r['name'].strip()))
+        ('name_stripped', agate.Formula(text_type, lambda r: r['name'].strip()))
     ])
 
 CONCATENATE
@@ -61,7 +61,7 @@ CONCATENATE
 .. code-block:: python
 
     new_table = table.compute([
-        ('full_name', Formula(text_type, lambda r: '%(first_name)s %(middle_name)s %(last_name)s' % r))
+        ('full_name', agate.Formula(text_type, lambda r: '%(first_name)s %(middle_name)s %(last_name)s' % r))
     ])
 
 IF
@@ -70,7 +70,7 @@ IF
 .. code-block:: python
 
     new_table = table.compute([
-        ('mvp_candidate', Formula(boolean_type, lambda r: row['batting_average'] > 0.3))
+        ('mvp_candidate', agate.Formula(boolean_type, lambda r: row['batting_average'] > 0.3))
     ])
 
 
@@ -97,7 +97,7 @@ If you're lookup source is a Python dictionary or some other object you can impl
     }
 
     new_table = table.compute([
-        ('mvp_candidate', Formula(text_type, lambda r: states[row['state_abbr']]))
+        ('mvp_candidate', agate.Formula(text_type, lambda r: states[row['state_abbr']]))
     ])
 
 Pivot tables as cross-tabulations
