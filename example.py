@@ -26,6 +26,11 @@ totals = counties.aggregate([
     ('total_cost_sum', agate.Sum('total_cost'))
 ])
 
+# Add percents
+totals = totals.compute([
+    ('total_cost_percent', agate.Percent("total_cost_sum")),
+])
+
 totals = totals.order_by('total_cost_sum', reverse=True)
 totals.limit(20).print_bars('county', 'total_cost_sum', width=80)
 
