@@ -30,6 +30,7 @@ Here is a list of actively supported agate extensions:
 * `agate-excel <http://agate-excel.rtfd.org/>`_: Read excel tables (xls and xlsx)
 * `agate-dbf <http://agate-dbf.rtfd.org/>`_: Read dbf tables (from shapefiles)
 * `agate-remote <http://agate-remote.rtfd.org/>`_: Read from remote files
+* `agate-lookup <http://agate-lookup.rtfd.org/>`_: Instantly join to hosted `lookup <https://github.com/wireservice/lookup>`_ tables.
 
 Writing your own extensions
 ===========================
