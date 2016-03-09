@@ -27,6 +27,7 @@ from agate.warns import warn_null_calculation
 if six.PY3:
     from functools import cmp_to_key
 
+
 @six.python_2_unicode_compatible
 class Computation(object):  # pragma: no cover
     """

@@ -1,6 +1,7 @@
 1.3.1
 -----
 
+* :meth:`.Table.homogenize` now accepts an array of values as compare values if key is a single column name. (#539)
 
 1.3.0 - February 28, 2016
 -------------------------

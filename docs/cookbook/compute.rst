@@ -8,9 +8,9 @@ Change
 .. code-block:: python
 
     new_table = table.compute([
-        ('2000_change', Change('2000', '2001')),
-        ('2001_change', Change('2001', '2002')),
-        ('2002_change', Change('2002', '2003'))
+        ('2000_change', agate.Change('2000', '2001')),
+        ('2001_change', agate.Change('2001', '2002')),
+        ('2002_change', agate.Change('2002', '2003'))
     ])
 
 Or, better yet, compute the whole decade using a loop:
@@ -20,7 +20,7 @@ Or, better yet, compute the whole decade using a loop:
     computations = []
 
     for year in range(2000, 2010):
-        change = Change(year, year + 1)
+        change = agate.Change(year, year + 1)
         computations.append(('%i_change' % year, change))
 
     new_table = table.compute(computations)
@@ -29,7 +29,7 @@ Percent
 =======
 
 Calculate the percentage for each value in a column with :class:`.Percent`.
-Values are divided into the sum of the column by default. 
+Values are divided into the sum of the column by default.
 
 .. code-block:: python
 
@@ -81,7 +81,7 @@ Want percent change instead of value change? Just swap out the :class:`.Computat
     computations = []
 
     for year in range(2000, 2010):
-        change = PercentChange(year, year + 1)
+        change = agate.PercentChange(year, year + 1)
         computations.append(('%i_change' % year, change))
 
     new_table = table.compute(computations)
@@ -96,7 +96,7 @@ Need your change indexed to a starting year? Just fix the first argument:
     computations = []
 
     for year in range(2000, 2010):
-        change = Change(2000, year + 1)
+        change = agate.Change(2000, year + 1)
         computations.append(('%i_change' % year, change))
 
     new_table = table.compute(computations)
@@ -120,7 +120,7 @@ We can use :meth:`.Table.compute` to apply the quantize to generate a rounded co
         return row['price'].quantize(Decimal('0.01'))
 
     new_table = table.compute([
-        ('price_rounded', Formula(number_type, round_price))
+        ('price_rounded', agate.Formula(number_type, round_price))
     ])
 
 To round to one decimal place you would simply change :code:`0.01` to :code:`0.1`.
@@ -135,7 +135,7 @@ Calculating the difference between dates (or dates and times) works exactly the 
 .. code-block:: python
 
     new_table = table.compute([
-        ('age_at_death', Change('born', 'died'))
+        ('age_at_death', agate.Change('born', 'died'))
     ])
 
 Levenshtein edit distance

@@ -112,7 +112,7 @@ The default pivot aggregation is :class:`.Count` but you can also supply other o
 Pivot to percent of total
 =========================
 
-Pivot allows you to apply a :class:`.Computation` the each row of aggregated results prior to returning the table. Use the stringified name of the aggregation as the column argument to your computation:
+Pivot allows you to apply a :class:`.Computation` to each row of aggregated results prior to returning the table. Use the stringified name of the aggregation as the column argument to your computation:
 
 .. code-block:: python
 

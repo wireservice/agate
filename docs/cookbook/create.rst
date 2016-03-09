@@ -5,6 +5,8 @@ Creating tables
 From data in memory
 ===================
 
+From a list of lists.
+
 .. code-block:: python
 
     column_names = ['letter', 'number']
@@ -17,6 +19,19 @@ From data in memory
     ]
 
     table = agate.Table(rows, column_names, column_types)
+
+From a list of dictionaries.
+
+.. code-block:: python
+
+    rows = [
+        dict(letter='a', number=1),
+        dict(letter='b', number=2),
+        dict(letter='c', number=None)
+    ]
+
+    table = agate.Table.from_object(rows)
+
 
 From a CSV
 ==========
