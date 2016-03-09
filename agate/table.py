@@ -39,11 +39,6 @@ from babel.numbers import format_decimal
 import six
 from six.moves import range, zip  # pylint: disable=W0622
 
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-
 from agate.aggregations import Count, Min, Max
 from agate.columns import Column
 from agate.data_types import TypeTester, DataType, Text, Number
@@ -359,7 +354,7 @@ class Table(utils.Patchable):
         elif sniff_limit > 0:
             kwargs['dialect'] = csv.Sniffer().sniff(contents[:sniff_limit])
 
-        rows = list(csv.reader(StringIO(contents), header=header, **kwargs))
+        rows = list(csv.reader(six.StringIO(contents), header=header, **kwargs))
 
         if header:
             if column_names is None:
