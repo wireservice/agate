@@ -22,7 +22,7 @@ class Date(DataType):
         super(Date, self).__init__(**kwargs)
 
         self.date_format = date_format
-        self.parser = parsedatetime.Calendar()
+        self.parser = parsedatetime.Calendar(version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def __getstate__(self):
         """
@@ -39,7 +39,7 @@ class Date(DataType):
         of the parsedatetime Calendar class.
         """
         self.__dict__.update(dict)
-        self.parser = parsedatetime.Calendar()
+        self.parser = parsedatetime.Calendar(version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def cast(self, d):
         """
@@ -71,12 +71,9 @@ class Date(DataType):
 
         zero = datetime.datetime.combine(datetime.date.min, datetime.time.min)
 
-        value, status = self.parser.parseDT(d, sourceTime=zero)
+        value, ctx = self.parser.parseDT(d, sourceTime=zero)
 
-        if status == 1:
-            if value.time() != datetime.time.min:
-                raise CastError('Value "%s" is datetime, not date.' % d)
-
+        if ctx.hasDate and not ctx.hasTime:
             return value.date()
 
         try:

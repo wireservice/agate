@@ -31,7 +31,7 @@ class DateTime(DataType):
         self._source_time = datetime.datetime(
             now.year, now.month, now.day, 0, 0, 0, 0, None
         )
-        self._parser = parsedatetime.Calendar()
+        self._parser = parsedatetime.Calendar(version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def __getstate__(self):
         """
@@ -48,7 +48,7 @@ class DateTime(DataType):
         of the parsedatetime Calendar class.
         """
         self.__dict__.update(dict)
-        self._parser = parsedatetime.Calendar()
+        self._parser = parsedatetime.Calendar(version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def cast(self, d):
         """
@@ -78,15 +78,15 @@ class DateTime(DataType):
             except:
                 raise CastError('Value "%s" does not match date format.' % d)
 
-        value, status = self._parser.parseDT(
+        value, ctx = self._parser.parseDT(
             d,
             sourceTime=self._source_time,
             tzinfo=self.timezone
         )
 
-        if status == 3:
+        if ctx.hasDate and ctx.hasTime:
             return value
-        elif status == 1:
+        elif ctx.hasDate and not ctx.hasTime:
             return datetime.datetime.combine(value.date(), datetime.time.min)
 
         try:
