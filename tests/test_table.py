@@ -6,13 +6,9 @@ try:
 except ImportError:  # pragma: no cover
     from decimal import Decimal
 
-import warnings
+import io
 import json
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
+import warnings
 
 import os
 import sys
@@ -689,7 +685,7 @@ class TestCSV(AgateTestCase):
     def test_from_csv_file_like_object(self):
         table1 = Table(self.rows, self.column_names, self.column_types)
 
-        with open('examples/test.csv') as f:
+        with io.open('examples/test.csv', encoding='utf-8') as f:
             table2 = Table.from_csv(f)
 
         self.assertColumnNames(table2, table1.column_names)
@@ -771,7 +767,7 @@ class TestCSV(AgateTestCase):
     def test_to_csv_to_stdout(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = StringIO()
+        output = six.StringIO()
         table.to_csv(output)
 
         contents1 = output.getvalue()
@@ -801,7 +797,7 @@ class TestCSV(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types)
 
         old = sys.stdout
-        sys.stdout = StringIO()
+        sys.stdout = six.StringIO()
 
         try:
             table.print_csv()
@@ -901,7 +897,7 @@ class TestJSON(AgateTestCase):
     def test_to_json(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = StringIO()
+        output = six.StringIO()
         table.to_json(output, indent=4)
 
         js1 = json.loads(output.getvalue())
@@ -914,7 +910,7 @@ class TestJSON(AgateTestCase):
     def test_to_json_key(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = StringIO()
+        output = six.StringIO()
         table.to_json(output, key='text', indent=4)
 
         js1 = json.loads(output.getvalue())
@@ -927,7 +923,7 @@ class TestJSON(AgateTestCase):
     def test_to_json_key_func(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = StringIO()
+        output = six.StringIO()
         table.to_json(output, key=lambda r: r['text'], indent=4)
 
         js1 = json.loads(output.getvalue())
@@ -940,7 +936,7 @@ class TestJSON(AgateTestCase):
     def test_to_json_newline_delimited(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = StringIO()
+        output = six.StringIO()
         table.to_json(output, newline=True)
 
         js1 = json.loads(output.getvalue().split('\n')[0])
@@ -953,7 +949,7 @@ class TestJSON(AgateTestCase):
     def test_to_json_error_newline_indent(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = StringIO()
+        output = six.StringIO()
 
         with self.assertRaises(ValueError):
             table.to_json(output, newline=True, indent=4)
@@ -961,7 +957,7 @@ class TestJSON(AgateTestCase):
     def test_to_json_error_newline_key(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = StringIO()
+        output = six.StringIO()
 
         with self.assertRaises(ValueError):
             table.to_json(output, key='three', newline=True)
@@ -1001,7 +997,7 @@ class TestJSON(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types)
 
         old = sys.stdout
-        sys.stdout = StringIO()
+        sys.stdout = six.StringIO()
 
         try:
             table.print_json()

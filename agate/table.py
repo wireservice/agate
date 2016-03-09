@@ -23,6 +23,7 @@ rows, row names are optional.)
 import codecs
 from collections import OrderedDict, Sequence
 from copy import copy
+import io
 from itertools import chain
 import json
 import sys
@@ -319,7 +320,7 @@ class Table(utils.Patchable):
             return self._fork(self.rows, column_names, self._column_types, row_names=row_names)
 
     @classmethod
-    def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, sniff_limit=0, **kwargs):
+    def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, sniff_limit=0, encoding='utf-8', **kwargs):
         """
         Create a new table for a CSV. This method uses agate's builtin
         CSV reader, which supports unicode on both Python 2 and Python 3.
@@ -342,17 +343,24 @@ class Table(utils.Patchable):
         :param sniff_limit:
             Limit CSV dialect sniffing to the specified number of bytes. Set to
             None to sniff the entire file. Defaults to 0 or no sniffing.
+        :param encoding:
+            Character encoding of the CSV file. Note: if passing in a file
+            handle it is assumed you have already opened it with the correct
+            encoding specified.
         """
         if hasattr(path, 'read'):
             contents = path.read()
         else:
-            with open(path) as f:
+            with io.open(path, encoding=encoding) as f:
                 contents = f.read()
 
         if sniff_limit is None:
             kwargs['dialect'] = csv.Sniffer().sniff(contents)
         elif sniff_limit > 0:
             kwargs['dialect'] = csv.Sniffer().sniff(contents[:sniff_limit])
+
+        if six.PY2:
+            contents = contents.encode('utf-8')
 
         rows = list(csv.reader(six.StringIO(contents), header=header, **kwargs))
 

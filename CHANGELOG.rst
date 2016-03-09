@@ -1,6 +1,7 @@
 1.3.1
 -----
 
+* Fixed bug when using non-unicode encodings with :meth:`.Table.from_csv`. (#560)
 * :meth:`.Table.homogenize` now accepts an array of values as compare values if key is a single column name. (#539)
 
 1.3.0 - February 28, 2016
