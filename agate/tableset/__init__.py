@@ -47,7 +47,7 @@ from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
 from agate.rows import Row
 from agate.table import Table
-from agate.table.preview import print_structure
+from agate.table.print_structure import print_structure
 from agate.utils import Patchable
 
 
@@ -465,7 +465,6 @@ class TableSet(MappedSequence, Patchable):
             Defaults to 20.
         :param output:
             The output used to print the structure of the :class:`Table`.
-
         :returns:
             None
         """

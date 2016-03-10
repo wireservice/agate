@@ -1310,7 +1310,7 @@ class Table(utils.Patchable):
             Provide a locale you would like to be used to format the output.
             By default it will use the system's setting.
         """
-        from agate.table.preview import print_table
+        from agate.table.print_table import print_table
 
         print_table(self, max_rows, max_columns, output, max_column_width, locale)
 
@@ -1326,7 +1326,7 @@ class Table(utils.Patchable):
         :param output:
             A file-like object to print to. Defaults to :code:`sys.stdout`.
         """
-        from agate.table.preview import print_html
+        from agate.table.print_html import print_html
 
         print_html(self, max_rows, max_columns, output)
 
@@ -1371,7 +1371,7 @@ class Table(utils.Patchable):
         :param printable:
             If true, only printable characters will be outputed.
         """
-        from agate.table.preview import print_bars
+        from agate.table.print_bars import print_bars
 
         print_bars(self, label_column_name, value_column_name, domain, width, output, printable)
 
@@ -1381,17 +1381,15 @@ class Table(utils.Patchable):
 
         :param table:
             A :class:`Table` instance.
-
         :param output:
             The output used to print the structure of the :class:`Table`.
-
         :returns:
             None
         """
+        from agate.table.print_structure import print_structure
+
         left_column = [n for n in self.column_names]
         right_column = [t.__class__.__name__ for t in self.column_types]
         column_headers = ['column_names', 'column_types']
-
-        from agate.table.preview import print_structure
 
         print_structure(left_column, right_column, column_headers, output)
