@@ -45,7 +45,6 @@ from agate.columns import Column
 from agate.data_types import TypeTester, DataType, Text, Number
 from agate.exceptions import DataTypeError
 from agate.mapped_sequence import MappedSequence
-from agate.preview import print_table, print_html, print_bars, print_structure
 from agate.rows import Row
 from agate import utils
 from agate.warns import warn_duplicate_column
@@ -878,120 +877,9 @@ class Table(utils.Patchable):
         :returns:
             A new :class:`Table`.
         """
-        if right_key is None:
-            right_key = left_key
+        from agate.table.join import join
 
-        # Get join columns
-        right_key_indices = []
-
-        left_key_is_func = hasattr(left_key, '__call__')
-        left_key_is_sequence = utils.issequence(left_key)
-
-        # Left key is a function
-        if left_key_is_func:
-            left_data = [left_key(row) for row in self.rows]
-        # Left key is a sequence
-        elif left_key_is_sequence:
-            left_columns = [self._columns[key] for key in left_key]
-            left_data = zip(*[column.values() for column in left_columns])
-        # Left key is a column name/index
-        else:
-            left_data = self._columns[left_key].values()
-
-        right_key_is_func = hasattr(right_key, '__call__')
-        right_key_is_sequence = utils.issequence(right_key)
-
-        # Right key is a function
-        if right_key_is_func:
-            right_data = [right_key(row) for row in right_table.rows]
-        # Right key is a sequence
-        elif right_key_is_sequence:
-            right_columns = [right_table.columns[key] for key in right_key]
-            right_data = zip(*[column.values() for column in right_columns])
-            right_key_indices = [right_table.columns._keys.index(key) for key in right_key]
-        # Right key is a column name/index
-        else:
-            right_column = right_table.columns[right_key]
-            right_data = right_column.values()
-            right_key_indices = [right_table.columns._keys.index(right_key)]
-
-        # Build names and type lists
-        column_names = list(self._column_names)
-        column_types = list(self._column_types)
-
-        for i, column in enumerate(right_table.columns):
-            name = column.name
-
-            if columns is None and i in right_key_indices:
-                continue
-
-            if columns is not None and name not in columns:
-                continue
-
-            if name in self._column_names:
-                column_names.append('%s2' % name)
-            else:
-                column_names.append(name)
-
-            column_types.append(column.data_type)
-
-        if columns is not None:
-            right_table = right_table.select([n for n in right_table._column_names if n in columns])
-
-        right_hash = {}
-
-        for i, value in enumerate(right_data):
-            if value not in right_hash:
-                right_hash[value] = []
-
-            right_hash[value].append(right_table._rows[i])
-
-        # Collect new rows
-        rows = []
-
-        if self._row_names is not None:
-            row_names = []
-        else:
-            row_names = None
-
-        # Iterate over left column
-        for left_index, left_value in enumerate(left_data):
-            matching_rows = right_hash.get(left_value, None)
-
-            if require_match and matching_rows is None:
-                raise ValueError('Left key "%s" does not have a matching right key.' % left_value)
-
-            # Rows with matches
-            if matching_rows:
-                for right_row in matching_rows:
-                    new_row = list(self._rows[left_index])
-
-                    for k, v in enumerate(right_row):
-                        if columns is None and k in right_key_indices:
-                            continue
-
-                        new_row.append(v)
-
-                    rows.append(Row(new_row, column_names))
-
-                    if self._row_names is not None:
-                        row_names.append(self._row_names[left_index])
-            # Rows without matches
-            elif not inner:
-                new_row = list(self._rows[left_index])
-
-                for k, v in enumerate(right_table.column_names):
-                    if columns is None and k in right_key_indices:
-                        continue
-
-                    new_row.append(None)
-
-                rows.append(Row(new_row, column_names))
-
-                if self._row_names is not None:
-                    row_names.append(self._row_names[left_index])
-
-        return self._fork(rows, column_names, column_types, row_names=row_names)
+        return join(self, right_table, left_key, right_key, inner, require_match, columns)
 
     @allow_tableset_proxy
     def homogenize(self, key, compare_values, default_row=None):
@@ -1220,7 +1108,7 @@ class Table(utils.Patchable):
             A new :class:`Table`.
         """
         from agate.table.normalize import normalize
-        
+
         return normalize(self, key, properties, property_column, value_column, column_types)
 
     @allow_tableset_proxy
@@ -1518,6 +1406,8 @@ class Table(utils.Patchable):
             Provide a locale you would like to be used to format the output.
             By default it will use the system's setting.
         """
+        from agate.table.preview import print_table
+
         print_table(self, max_rows, max_columns, output, max_column_width, locale)
 
     def print_html(self, max_rows=None, max_columns=None, output=sys.stdout):
@@ -1532,6 +1422,8 @@ class Table(utils.Patchable):
         :param output:
             A file-like object to print to. Defaults to :code:`sys.stdout`.
         """
+        from agate.table.preview import print_html
+
         print_html(self, max_rows, max_columns, output)
 
     def print_csv(self, **kwargs):
@@ -1575,6 +1467,8 @@ class Table(utils.Patchable):
         :param printable:
             If true, only printable characters will be outputed.
         """
+        from agate.table.preview import print_bars
+
         print_bars(self, label_column_name, value_column_name, domain, width, output, printable)
 
     def print_structure(self, output=sys.stdout):
@@ -1593,5 +1487,7 @@ class Table(utils.Patchable):
         left_column = [n for n in self.column_names]
         right_column = [t.__class__.__name__ for t in self.column_types]
         column_headers = ['column_names', 'column_types']
+
+        from agate.table.preview import print_structure
 
         print_structure(left_column, right_column, column_headers, output)
