@@ -1993,7 +1993,7 @@ class TestPivot(AgateTestCase):
     def test_pivot_no_key(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        pivot_table = table.pivot(columns='gender')
+        pivot_table = table.pivot(pivot='gender')
 
         pivot_rows = (
             (3, 3),

@@ -3,9 +3,48 @@
 from agate.rows import Row
 from agate import utils
 
-def join(table, right_table, left_key, right_key=None, inner=False, require_match=False, columns=None):
+
+@utils.allow_tableset_proxy
+def join(self, right_table, left_key, right_key=None, inner=False, require_match=False, columns=None):
     """
-    See :meth:`.Table.join`.
+    Performs the equivalent of SQL's "left outer join", combining columns
+    from this table and from :code:`right_table` anywhere that the
+    :code:`left_key` and :code:`right_key` are equivalent.
+
+    Where there is no match for :code:`left_key` the left columns will
+    be included with the right columns set to :code:`None` unless
+    the :code:`inner` argument is specified. (See arguments for more.)
+
+    If :code:`left_key` and :code:`right_key` are column names, only
+    the left columns will be included in the output table.
+
+    Column names from the right table which also exist in this table will
+    be suffixed "2" in the new table.
+
+    :param right_table:
+        The "right" table to join to.
+    :param left_key:
+        Either the name of a column from the this table to join on, a
+        sequence of such column names, or a :class:`function` that takes a
+        row and returns a value to join on.
+    :param right_key:
+        Either the name of a column from :code:table` to join on, a
+        sequence of such column names, or a :class:`function` that takes a
+        row and returns a value to join on. If :code:`None` then
+        :code:`left_key` will be used for both.
+    :param inner:
+        Perform a SQL-style "inner join" instead of a left outer join. Rows
+        which have no match for :code:`left_key` will not be included in
+        the output table.
+    :param require_match:
+        If true, an exception will be raised if there is a left_key with no
+        matching right_key.
+    :param columns:
+        A sequence of column names from :code:`right_table` to include in
+        the final output table. Defaults to all columns not in
+        :code:`right_key`.
+    :returns:
+        A new :class:`Table`.
     """
     if right_key is None:
         right_key = left_key
@@ -18,14 +57,14 @@ def join(table, right_table, left_key, right_key=None, inner=False, require_matc
 
     # Left key is a function
     if left_key_is_func:
-        left_data = [left_key(row) for row in table.rows]
+        left_data = [left_key(row) for row in self.rows]
     # Left key is a sequence
     elif left_key_is_sequence:
-        left_columns = [table.columns[key] for key in left_key]
+        left_columns = [self.columns[key] for key in left_key]
         left_data = zip(*[column.values() for column in left_columns])
     # Left key is a column name/index
     else:
-        left_data = table.columns[left_key].values()
+        left_data = self.columns[left_key].values()
 
     right_key_is_func = hasattr(right_key, '__call__')
     right_key_is_sequence = utils.issequence(right_key)
@@ -45,8 +84,8 @@ def join(table, right_table, left_key, right_key=None, inner=False, require_matc
         right_key_indices = [right_table.columns._keys.index(right_key)]
 
     # Build names and type lists
-    column_names = list(table.column_names)
-    column_types = list(table.column_types)
+    column_names = list(self.column_names)
+    column_types = list(self.column_types)
 
     for i, column in enumerate(right_table.columns):
         name = column.name
@@ -57,7 +96,7 @@ def join(table, right_table, left_key, right_key=None, inner=False, require_matc
         if columns is not None and name not in columns:
             continue
 
-        if name in table.column_names:
+        if name in self.column_names:
             column_names.append('%s2' % name)
         else:
             column_names.append(name)
@@ -78,7 +117,7 @@ def join(table, right_table, left_key, right_key=None, inner=False, require_matc
     # Collect new rows
     rows = []
 
-    if table.row_names is not None:
+    if self.row_names is not None:
         row_names = []
     else:
         row_names = None
@@ -93,7 +132,7 @@ def join(table, right_table, left_key, right_key=None, inner=False, require_matc
         # Rows with matches
         if matching_rows:
             for right_row in matching_rows:
-                new_row = list(table.rows[left_index])
+                new_row = list(self.rows[left_index])
 
                 for k, v in enumerate(right_row):
                     if columns is None and k in right_key_indices:
@@ -103,11 +142,11 @@ def join(table, right_table, left_key, right_key=None, inner=False, require_matc
 
                 rows.append(Row(new_row, column_names))
 
-                if table.row_names is not None:
-                    row_names.append(table.row_names[left_index])
+                if self.row_names is not None:
+                    row_names.append(self.row_names[left_index])
         # Rows without matches
         elif not inner:
-            new_row = list(table.rows[left_index])
+            new_row = list(self.rows[left_index])
 
             for k, v in enumerate(right_table.column_names):
                 if columns is None and k in right_key_indices:
@@ -117,7 +156,7 @@ def join(table, right_table, left_key, right_key=None, inner=False, require_matc
 
             rows.append(Row(new_row, column_names))
 
-            if table.row_names is not None:
-                row_names.append(table.row_names[left_index])
+            if self.row_names is not None:
+                row_names.append(self.row_names[left_index])
 
-    return table._fork(rows, column_names, column_types, row_names=row_names)
+    return self._fork(rows, column_names, column_types, row_names=row_names)

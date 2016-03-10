@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import sys
+
 from babel.numbers import format_decimal
 import six
 
@@ -7,20 +9,34 @@ from agate.data_types import Number, Text
 from agate import utils
 
 
-def print_table(table, max_rows, max_columns, output, max_column_width, locale):
+def print_table(self, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=20, locale=None):
     """
-    See :meth:`.Table.print_table`.
+    Print a well-formatted preview of this self to the console or any
+    other output.
+
+    :param max_rows:
+        The maximum number of rows to display before truncating the data.
+    :param max_columns:
+        The maximum number of columns to display before truncating the data.
+    :param output:
+        A file-like object to print to. Defaults to :code:`sys.stdout`.
+    :param max_column_width:
+        Truncate all columns to at most this width. The remainder will be
+        replaced with ellipsis.
+    :param locale:
+        Provide a locale you would like to be used to format the output.
+        By default it will use the system's setting.
     """
     if max_rows is None:
-        max_rows = len(table.rows)
+        max_rows = len(self.rows)
 
     if max_columns is None:
-        max_columns = len(table.columns)
+        max_columns = len(self.columns)
 
-    rows_truncated = max_rows < len(table.rows)
-    columns_truncated = max_columns < len(table.column_names)
+    rows_truncated = max_rows < len(self.rows)
+    columns_truncated = max_columns < len(self.column_names)
 
-    column_names = list(table.column_names[:max_columns])
+    column_names = list(self.column_names[:max_columns])
 
     if columns_truncated:
         column_names.append(utils.ELLIPSIS)
@@ -30,7 +46,7 @@ def print_table(table, max_rows, max_columns, output, max_column_width, locale):
     formatted_data = []
 
     # Determine correct number of decimal places for each Number column
-    for i, c in enumerate(table.columns):
+    for i, c in enumerate(self.columns):
         if i >= max_columns:
             break
 
@@ -41,7 +57,7 @@ def print_table(table, max_rows, max_columns, output, max_column_width, locale):
             number_formatters.append(None)
 
     # Format data and display column widths
-    for i, row in enumerate(table.rows):
+    for i, row in enumerate(self.rows):
         if i >= max_rows:
             break
 
@@ -82,7 +98,7 @@ def print_table(table, max_rows, max_columns, output, max_column_width, locale):
 
         for j, d in enumerate(formatted_row):
             # Text is left-justified, all other values are right-justified
-            if isinstance(table.column_types[j], Text):
+            if isinstance(self.column_types[j], Text):
                 row_output.append(' %s ' % d.ljust(widths[j]))
             else:
                 row_output.append(' %s ' % d.rjust(widths[j]))

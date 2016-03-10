@@ -824,235 +824,6 @@ class Table(utils.Patchable):
 
         return self._fork(rows, row_names=row_names)
 
-    @allow_tableset_proxy
-    def join(self, right_table, left_key, right_key=None, inner=False, require_match=False, columns=None):
-        """
-        Performs the equivalent of SQL's "left outer join", combining columns
-        from this table and from :code:`right_table` anywhere that the
-        :code:`left_key` and :code:`right_key` are equivalent.
-
-        Where there is no match for :code:`left_key` the left columns will
-        be included with the right columns set to :code:`None` unless
-        the :code:`inner` argument is specified. (See arguments for more.)
-
-        If :code:`left_key` and :code:`right_key` are column names, only
-        the left columns will be included in the output table.
-
-        Column names from the right table which also exist in this table will
-        be suffixed "2" in the new table.
-
-        :param right_table:
-            The "right" table to join to.
-        :param left_key:
-            Either the name of a column from the this table to join on, a
-            sequence of such column names, or a :class:`function` that takes a
-            row and returns a value to join on.
-        :param right_key:
-            Either the name of a column from :code:table` to join on, a
-            sequence of such column names, or a :class:`function` that takes a
-            row and returns a value to join on. If :code:`None` then
-            :code:`left_key` will be used for both.
-        :param inner:
-            Perform a SQL-style "inner join" instead of a left outer join. Rows
-            which have no match for :code:`left_key` will not be included in
-            the output table.
-        :param require_match:
-            If true, an exception will be raised if there is a left_key with no
-            matching right_key.
-        :param columns:
-            A sequence of column names from :code:`right_table` to include in
-            the final output table. Defaults to all columns not in
-            :code:`right_key`.
-        :returns:
-            A new :class:`Table`.
-        """
-        from agate.table.join import join
-
-        return join(self, right_table, left_key, right_key, inner, require_match, columns)
-
-    @classmethod
-    def merge(cls, tables, row_names=None, column_names=None):
-        """
-        Merge an array of tables into a single table.
-
-        Row names will be lost, but new row names can be specified with the
-        `row_names` argument.
-
-        It is possible to limit the columns included in the new :class:`Table`
-        with `column_names` argument. For example, to only include columns from
-        a specific table, set `column_names` equal to `table.column_names`.
-
-        :param tables:
-            An sequence of :class:`Table` instances.
-        :param row_names:
-            See :class:`Table` for the usage of this parameter.
-        :param column_names:
-            A sequence of column names to include in the new :class:`Table`. If
-            not specified, all distinct column names from `tables` are included.
-        :returns:
-            A new :class:`Table`.
-        """
-        from agate.table.merge import merge
-
-        return merge(tables, row_names, column_names)
-
-    @allow_tableset_proxy
-    def homogenize(self, key, compare_values, default_row=None):
-        """
-        Fills missing rows in a dataset with default values.
-
-        Determines what rows are missing by comparing the values in the given
-        column_names with the expected compare_values.
-
-        Values not found in the table will be used to generate new rows with
-        the given default_row.
-
-        Default_row should be an array of values or an array-generating
-        function. If not specified, the new rows will have `None` in columns
-        not given in column_names.
-
-        If it is an array of values, the length should be row length minus
-        column_names count and the gap will be filled with the missing values.
-
-        If it is an array-generating function, the function should take an array
-        of missing values for each new row and output a full row including those
-        values.
-
-        :param key:
-            Either a column name or a sequence of such names.
-        :param compare_values:
-            Either an array of column values if key is a single column name or a
-            sequence of arrays of values if key is a sequence of names. It can
-            also be a generator that yields one of the two. A row is created for
-            each value or list of values not found in the rows of the table.
-        :param default_row:
-            An array of values or a function to generate new rows. The length of
-            the input array should be equal to row length minus column_names
-            count. The length of array generated by the function should be the
-            row length.
-        :returns:
-            A new :class:`Table`.
-        """
-        from agate.table.homogenize import homogenize
-
-        return homogenize(self, key, compare_values, default_row)
-
-    @allow_tableset_proxy
-    def pivot(self, key=None, columns=None, aggregation=None, computation=None, default_value=utils.default, key_name=None):
-        """
-        Pivot reorganizes the data in a table by grouping the data, aggregating
-        those groups, optionally applying a computation, and then organizing
-        the groups into new rows and columns.
-
-        For example:
-
-        +---------+---------+--------+
-        |  name   |  race   | gender |
-        +=========+=========+========+
-        |  Joe    |  white  | male   |
-        +---------+---------+--------+
-        |  Jane   |  black  | female |
-        +---------+---------+--------+
-        |  Josh   |  black  | male   |
-        +---------+---------+--------+
-        |  Jim    |  asian  | female |
-        +---------+---------+--------+
-
-        This table can be pivoted with :code:`key` equal to "race" and
-        :code:`columns` equal to "gender". The default aggregation is
-        :class:`.Count`. This would result in the following table.
-
-        +---------+---------+--------+
-        |  race   |  male   | female |
-        +=========+=========+========+
-        |  white  |  1      | 0      |
-        +---------+---------+--------+
-        |  black  |  1      | 1      |
-        +---------+---------+--------+
-        |  asian  |  0      | 1      |
-        +---------+---------+--------+
-
-        If one or more keys are specified then the resulting table will
-        automatically have `row_names` set to those keys.
-
-        See also the related method :meth:`Table.denormalize`.
-
-        :param key:
-            Either the name of a column from the this table to group by, a
-            sequence of such column names, a :class:`function` that takes a
-            row and returns a value to group by, or :code:`None`, in which case
-            there will be only a single row in the output table.
-        :param columns:
-            A column name whose unique values will become columns in the new
-            table, or :code:`None` in which case there will be a single value
-            column in the output table.
-        :param aggregation:
-            An instance of an :class:`.Aggregation` to perform on each group of
-            data in the pivot table. (Each cell is the result of an aggregation
-            of the grouped data.)
-
-            If not specified this defaults to :class:`.Count` with no arguments.
-        :param computation:
-            An optional :class:`.Computation` instance to be applied to the
-            aggregated sequence of values before they are transposed into the
-            pivot table.
-
-            Use the class name of the aggregation as your column name argument
-            when constructing your computation. (This is "Count" if using the
-            default value for :code:`aggregation`.)
-        :param default_value:
-            Value to be used for missing values in the pivot table. Defaults to
-            :code:`Decimal(0)`. If performing non-mathematical aggregations you
-            may wish to set this to :code:`None`.
-        :param key_name:
-            A name for the key column in the output table. This is most
-            useful when the provided key is a function. This argument is not
-            valid when :code:`key` is a sequence.
-        :returns:
-            A new :class:`Table`.
-        """
-        from agate.table.pivot import pivot
-
-        return pivot(self, key, columns, aggregation, computation, default_value, key_name)
-
-    def print_table(self, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=20, locale=None):
-        """
-        Print a well-formatted preview of this table to the console or any
-        other output.
-
-        :param max_rows:
-            The maximum number of rows to display before truncating the data.
-        :param max_columns:
-            The maximum number of columns to display before truncating the data.
-        :param output:
-            A file-like object to print to. Defaults to :code:`sys.stdout`.
-        :param max_column_width:
-            Truncate all columns to at most this width. The remainder will be
-            replaced with ellipsis.
-        :param locale:
-            Provide a locale you would like to be used to format the output.
-            By default it will use the system's setting.
-        """
-        from agate.table.print_table import print_table
-
-        print_table(self, max_rows, max_columns, output, max_column_width, locale)
-
-    def print_html(self, max_rows=None, max_columns=None, output=sys.stdout):
-        """
-        Print an HTML-formatted preview of this table to the console or any
-        other output.
-
-        :param max_rows:
-            The maximum number of rows to display before truncating the data.
-        :param max_columns:
-            The maximum number of columns to display before truncating the data.
-        :param output:
-            A file-like object to print to. Defaults to :code:`sys.stdout`.
-        """
-        from agate.table.print_html import print_html
-
-        print_html(self, max_rows, max_columns, output)
-
     def print_csv(self, **kwargs):
         """
         A shortcut for printing a CSV directly to the csonsole. Effectively the
@@ -1070,33 +841,6 @@ class Table(utils.Patchable):
         `kwargs` will be passed on to :meth:`Table.to_json`.
         """
         self.to_json(sys.stdout, **kwargs)
-
-    def print_bars(self, label_column_name='group', value_column_name='Count', domain=None, width=120, output=sys.stdout, printable=False):
-        """
-        Print a text-based bar chart of the columns names `label_column_name`
-        and `value_column_name`.
-
-        :param label_column_name:
-            The column containing the label values. Defaults to "group", which
-            is the default output of :meth:`Table.pivot` or :meth:`Table.bins`.
-        :param value_column_name:
-            The column containing the bar values. Defaults to "Count", which
-            is the default output of :meth:`Table.pivot` or :meth:`Table.bins`.
-        :param domain:
-            A 2-tuple containing the minimum and maximum values for the chart's
-            x-axis. The domain must be large enough to contain all values in
-            the column.
-        :param width:
-            The width, in characters, to use for the bar chart. Defaults to
-            `120`.
-        :param output:
-            A file-like object to print to. Defaults to :code:`sys.stdout`.
-        :param printable:
-            If true, only printable characters will be outputed.
-        """
-        from agate.table.print_bars import print_bars
-
-        print_bars(self, label_column_name, value_column_name, domain, width, output, printable)
 
     def print_structure(self, output=sys.stdout):
         """
@@ -1122,11 +866,25 @@ from agate.table.bins import bins
 from agate.table.compute import compute
 from agate.table.denormalize import denormalize
 from agate.table.group_by import group_by
+from agate.table.homogenize import homogenize
+from agate.table.join import join
+from agate.table.merge import merge
 from agate.table.normalize import normalize
+from agate.table.pivot import pivot
+from agate.table.print_bars import print_bars
+from agate.table.print_html import print_html
+from agate.table.print_table import print_table
 
 Table.aggregate = aggregate
 Table.bins = bins
 Table.compute = compute
 Table.denormalize = denormalize
 Table.group_by = group_by
+Table.homogenize = homogenize
+Table.join = join
+Table.merge = merge
 Table.normalize = normalize
+Table.pivot = pivot
+Table.print_bars = print_bars
+Table.print_html = print_html
+Table.print_table = print_table

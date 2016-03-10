@@ -1,23 +1,33 @@
 #!/usr/bin/env python
 
+import sys
+
 import six
 
 
-def print_html(table, max_rows, max_columns, output):
+def print_html(self, max_rows=None, max_columns=None, output=sys.stdout):
     """
-    See :meth:`.Table.print_html`.
+    Print an HTML-formatted preview of this self to the console or any
+    other output.
+
+    :param max_rows:
+        The maximum number of rows to display before truncating the data.
+    :param max_columns:
+        The maximum number of columns to display before truncating the data.
+    :param output:
+        A file-like object to print to. Defaults to :code:`sys.stdout`.
     """
     if max_rows is None:
-        max_rows = len(table.rows)
+        max_rows = len(self.rows)
 
     if max_columns is None:
-        max_columns = len(table.columns)
+        max_columns = len(self.columns)
 
     output.write('<table>')
     output.write('<thead>')
     output.write('<tr>')
 
-    for i, col in enumerate(table.column_names):
+    for i, col in enumerate(self.column_names):
         if i >= max_columns:
             break
 
@@ -29,7 +39,7 @@ def print_html(table, max_rows, max_columns, output):
     output.write('</thead>')
     output.write('<tbody>')
 
-    for i, row in enumerate(table.rows):
+    for i, row in enumerate(self.rows):
         if i >= max_rows:
             break
 

@@ -21,18 +21,37 @@ from agate.exceptions import DataTypeError
 from agate import utils
 
 
-def print_bars(table, label_column_name, value_column_name, domain=None, width=120, output=sys.stdout, printable=False):
+def print_bars(self, label_column_name='group', value_column_name='Count', domain=None, width=120, output=sys.stdout, printable=False):
     """
-    Print a bar chart representation of two columns.
+    Print a text-based bar chart of the columns names `label_column_name`
+    and `value_column_name`.
+
+    :param label_column_name:
+        The column containing the label values. Defaults to "group", which
+        is the default output of :meth:`Table.pivot` or :meth:`Table.bins`.
+    :param value_column_name:
+        The column containing the bar values. Defaults to "Count", which
+        is the default output of :meth:`Table.pivot` or :meth:`Table.bins`.
+    :param domain:
+        A 2-tuple containing the minimum and maximum values for the chart's
+        x-axis. The domain must be large enough to contain all values in
+        the column.
+    :param width:
+        The width, in characters, to use for the bar chart. Defaults to
+        `120`.
+    :param output:
+        A file-like object to print to. Defaults to :code:`sys.stdout`.
+    :param printable:
+        If true, only printable characters will be outputed.
     """
     y_label = label_column_name
-    label_column = table.columns[label_column_name]
+    label_column = self.columns[label_column_name]
 
     # if not isinstance(label_column.data_type, Text):
     #     raise ValueError('Only Text data is supported for bar chart labels.')
 
     x_label = value_column_name
-    value_column = table.columns[value_column_name]
+    value_column = self.columns[value_column_name]
 
     if not isinstance(value_column.data_type, Number):
         raise DataTypeError('Only Number data is supported for bar chart values.')
@@ -63,8 +82,8 @@ def print_bars(table, label_column_name, value_column_name, domain=None, width=1
 
     plot_width = width - (max_label_width + max_value_width + 2)
 
-    min_value = Min(value_column_name).run(table)
-    max_value = Max(value_column_name).run(table)
+    min_value = Min(value_column_name).run(self)
+    max_value = Max(value_column_name).run(self)
 
     # Calculate dimensions
     if domain:
