@@ -13,7 +13,6 @@ import sys
 
 from babel.numbers import format_decimal
 import six
-from six.moves import zip
 
 from agate.aggregations import Min, Max
 from agate.data_types import Number

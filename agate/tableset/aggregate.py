@@ -49,6 +49,7 @@ def _aggregate(self, aggregations=[]):
 
     return column_names, column_types, output, row_name_columns
 
+
 def aggregate(self, aggregations):
     """
     Aggregate data from the tables in this set by performing some

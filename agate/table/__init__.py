@@ -34,8 +34,6 @@ try:
 except ImportError:  # pragma: no cover
     from decimal import Decimal
 
-from babel.numbers import format_decimal
-
 import six
 from six.moves import range, zip  # pylint: disable=W0622
 

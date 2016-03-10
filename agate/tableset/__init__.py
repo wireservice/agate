@@ -45,7 +45,6 @@ except ImportError:  # pragma: no cover
 
 from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
-from agate.rows import Row
 from agate.table import Table
 from agate.table.print_structure import print_structure
 from agate.utils import Patchable

@@ -67,6 +67,7 @@ def memoize(func):
 
     return wrapper
 
+
 def allow_tableset_proxy(func):
     """
     Decorator to flag that a given :class:`.Table` method can be proxied as a
@@ -75,6 +76,7 @@ def allow_tableset_proxy(func):
     func.allow_tableset_proxy = True
 
     return func
+
 
 class Patchable(object):
     """

@@ -75,7 +75,7 @@ def denormalize(self, key=None, property_column='property', value_column='value'
         A new :class:`Table`.
     """
     from agate.table import Table
-    
+
     if key is None:
         key = []
     elif not utils.issequence(key):
