@@ -14,9 +14,66 @@ from agate.data_types import Number, TypeTester
 from agate.rows import Row
 from agate import utils
 
-def denormalize(table, key, property_column, value_column, default_value, column_types):
+
+@utils.allow_tableset_proxy
+def denormalize(self, key=None, property_column='property', value_column='value', default_value=utils.default, column_types=None):
     """
-    See :meth:`.Table.denormalize`.
+    Denormalize a dataset so that unique values in a column become their
+    own columns.
+
+    For example:
+
+    +---------+-----------+---------+
+    |  name   | property  | value   |
+    +=========+===========+=========+
+    |  Jane   | gender    | female  |
+    +---------+-----------+---------+
+    |  Jane   | race      | black   |
+    +---------+-----------+---------+
+    |  Jane   | age       | 24      |
+    +---------+-----------+---------+
+    |  ...    |  ...      |  ...    |
+    +---------+-----------+---------+
+
+    Can be denormalized so that each unique value in `field` becomes a
+    column with `value` used for its values.
+
+    +---------+----------+--------+-------+
+    |  name   | gender   | race   | age   |
+    +=========+==========+========+=======+
+    |  Jane   | female   | black  | 24    |
+    +---------+----------+--------+-------+
+    |  Jack   | male     | white  | 35    |
+    +---------+----------+--------+-------+
+    |  Joe    | male     | black  | 28    |
+    +---------+----------+--------+-------+
+
+    If one or more keys are specified then the resulting table will
+    automatically have `row_names` set to those keys.
+
+    This is the opposite of :meth:`Table.normalize`.
+
+    :param key:
+        A column name or a sequence of column names that should be
+        maintained as they are in the normalized table. Typically these
+        are the tables unique identifiers and any metadata about them. Or,
+        :code:`None` if there are no key columns.
+    :param field_column:
+        The column whose values should become column names in the new table.
+    :param property_column:
+        The column whose values should become the values of the property
+        columns in the new table.
+    :param default_value:
+        Value to be used for missing values in the pivot table. If not
+        specified :code:`Decimal(0)` will be used for aggregations that
+        return :class:`.Number` data and :code:`None` will be used for
+        all others.
+    :param column_types:
+        A sequence of column types with length equal to number of unique
+        values in field_column or an instance of :class:`.TypeTester`.
+        Defaults to a generic :class:`.TypeTester`.
+    :returns:
+        A new :class:`Table`.
     """
     if key is None:
         key = []
@@ -26,7 +83,7 @@ def denormalize(table, key, property_column, value_column, default_value, column
     field_names = []
     row_data = OrderedDict()
 
-    for row in table.rows:
+    for row in self.rows:
         row_key = tuple(row[k] for k in key)
 
         if row_key not in row_data:
@@ -41,7 +98,7 @@ def denormalize(table, key, property_column, value_column, default_value, column
         row_data[row_key][f] = v
 
     if default_value == utils.default:
-        if isinstance(table.columns[value_column].data_type, Number):
+        if isinstance(self.columns[value_column].data_type, Number):
             default_value = Decimal(0)
         else:
             default_value = None
@@ -67,7 +124,7 @@ def denormalize(table, key, property_column, value_column, default_value, column
 
         new_rows.append(Row(row, new_column_names))
 
-    key_column_types = [table.column_types[table.column_names.index(name)] for name in key]
+    key_column_types = [self.column_types[self.column_names.index(name)] for name in key]
 
     if column_types is None or isinstance(column_types, TypeTester):
         tester = TypeTester() if column_types is None else column_types

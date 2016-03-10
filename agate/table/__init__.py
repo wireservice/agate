@@ -45,20 +45,12 @@ from agate.mapped_sequence import MappedSequence
 from agate.rows import Row
 from agate import utils
 from agate.warns import warn_duplicate_column
+from agate.utils import allow_tableset_proxy
 
 if six.PY2:  # pragma: no cover
     from agate import csv_py2 as csv
 else:
     from agate import csv_py3 as csv
-
-
-def allow_tableset_proxy(func):
-    """
-    Decorator to flag that a given Table method can be proxied as a :class:`TableSet` method.
-    """
-    func.allow_tableset_proxy = True
-
-    return func
 
 
 @six.python_2_unicode_compatible
@@ -907,38 +899,6 @@ class Table(utils.Patchable):
 
         return group_by(self, key, key_name, key_type)
 
-    def aggregate(self, aggregations):
-        """
-        Aggregate data from the columns in this table by applying a sequence of
-        :class:`.Aggregation` instances.
-
-        :param aggregations:
-            A single :class:`.Aggregation` instance or sequence of them.
-        :returns:
-            If the input was a single :class:`Aggregation` then a single result
-            will be returned. If it was a sequence then a tuple of results will
-            be returned.
-        """
-        from agate.table.aggregate import aggregate
-
-        return aggregate(self, aggregations)
-
-    @allow_tableset_proxy
-    def compute(self, computations):
-        """
-        Compute new columns by applying one or more :class:`.Computation` to
-        each row.
-
-        :param computations:
-            A sequence of pairs of new column names and :class:`.Computation`
-            instances.
-        :returns:
-            A new :class:`Table`.
-        """
-        from agate.table.compute import compute
-
-        return compute(self, computations)
-
     @classmethod
     def merge(cls, tables, row_names=None, column_names=None):
         """
@@ -1084,155 +1044,6 @@ class Table(utils.Patchable):
 
         return pivot(self, key, columns, aggregation, computation, default_value, key_name)
 
-    @allow_tableset_proxy
-    def normalize(self, key, properties, property_column='property', value_column='value', column_types=None):
-        """
-        Normalize a sequence of columns into two columns for field and value.
-
-        For example:
-
-        +---------+----------+--------+-------+
-        |  name   | gender   | race   | age   |
-        +=========+==========+========+=======+
-        |  Jane   | female   | black  | 24    |
-        +---------+----------+--------+-------+
-        |  Jack   | male     | white  | 35    |
-        +---------+----------+--------+-------+
-        |  Joe    | male     | black  | 28    |
-        +---------+----------+--------+-------+
-
-        can be normalized on columns 'gender', 'race' and 'age':
-
-        +---------+-----------+---------+
-        |  name   | property  | value   |
-        +=========+===========+=========+
-        |  Jane   | gender    | female  |
-        +---------+-----------+---------+
-        |  Jane   | race      | black   |
-        +---------+-----------+---------+
-        |  Jane   | age       | 24      |
-        +---------+-----------+---------+
-        |  ...    |  ...      |  ...    |
-        +---------+-----------+---------+
-
-        This is the opposite of :meth:`Table.denormalize`.
-
-        :param key:
-            A column name or a sequence of column names that should be
-            maintained as they are in the normalized table. Typically these
-            are the tables unique identifiers and any metadata about them.
-        :param properties:
-            A column name or a sequence of column names that should be
-            converted to properties in the new table.
-        :param property_column:
-            The name to use for the column containing the property names.
-        :param value_column:
-            The name to use for the column containing the property values.
-        :param column_types:
-            A sequence of two column types for the property and value column in
-            that order or an instance of :class:`.TypeTester`. Defaults to a
-            generic :class:`.TypeTester`.
-        :returns:
-            A new :class:`Table`.
-        """
-        from agate.table.normalize import normalize
-
-        return normalize(self, key, properties, property_column, value_column, column_types)
-
-    @allow_tableset_proxy
-    def denormalize(self, key=None, property_column='property', value_column='value', default_value=utils.default, column_types=None):
-        """
-        Denormalize a dataset so that unique values in a column become their
-        own columns.
-
-        For example:
-
-        +---------+-----------+---------+
-        |  name   | property  | value   |
-        +=========+===========+=========+
-        |  Jane   | gender    | female  |
-        +---------+-----------+---------+
-        |  Jane   | race      | black   |
-        +---------+-----------+---------+
-        |  Jane   | age       | 24      |
-        +---------+-----------+---------+
-        |  ...    |  ...      |  ...    |
-        +---------+-----------+---------+
-
-        Can be denormalized so that each unique value in `field` becomes a
-        column with `value` used for its values.
-
-        +---------+----------+--------+-------+
-        |  name   | gender   | race   | age   |
-        +=========+==========+========+=======+
-        |  Jane   | female   | black  | 24    |
-        +---------+----------+--------+-------+
-        |  Jack   | male     | white  | 35    |
-        +---------+----------+--------+-------+
-        |  Joe    | male     | black  | 28    |
-        +---------+----------+--------+-------+
-
-        If one or more keys are specified then the resulting table will
-        automatically have `row_names` set to those keys.
-
-        This is the opposite of :meth:`Table.normalize`.
-
-        :param key:
-            A column name or a sequence of column names that should be
-            maintained as they are in the normalized table. Typically these
-            are the tables unique identifiers and any metadata about them. Or,
-            :code:`None` if there are no key columns.
-        :param field_column:
-            The column whose values should become column names in the new table.
-        :param property_column:
-            The column whose values should become the values of the property
-            columns in the new table.
-        :param default_value:
-            Value to be used for missing values in the pivot table. If not
-            specified :code:`Decimal(0)` will be used for aggregations that
-            return :class:`.Number` data and :code:`None` will be used for
-            all others.
-        :param column_types:
-            A sequence of column types with length equal to number of unique
-            values in field_column or an instance of :class:`.TypeTester`.
-            Defaults to a generic :class:`.TypeTester`.
-        :returns:
-            A new :class:`Table`.
-        """
-        from agate.table.denormalize import denormalize
-
-        return denormalize(self, key, property_column, value_column, default_value, column_types)
-
-    @allow_tableset_proxy
-    def bins(self, column_name, count=10, start=None, end=None):
-        """
-        Generates (approximately) evenly sized bins for the values in a column.
-        Bins may not be perfectly even if the spread of the data does not divide
-        evenly, but all values will always be included in some bin.
-
-        The resulting table will have two columns. The first will have
-        the same name as the specified column, but will be type :class:`.Text`.
-        The second will be named :code:`count` and will be of type
-        :class:`.Number`.
-
-        :param column_name:
-            The name of the column to bin. Must be of type :class:`.Number`
-        :param count:
-            The number of bins to create. If not specified then each value will
-            be counted as its own bin.
-        :param start:
-            The minimum value to start the bins at. If not specified the
-            minimum value in the column will be used.
-        :param end:
-            The maximum value to end the bins at. If not specified the maximum
-            value in the column will be used.
-        :returns:
-            A new :class:`Table`.
-        """
-        from agate.table.bins import bins
-
-        return bins(self, column_name, count, start, end)
-
     def print_table(self, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=20, locale=None):
         """
         Print a well-formatted preview of this table to the console or any
@@ -1334,3 +1145,15 @@ class Table(utils.Patchable):
         column_headers = ['column_names', 'column_types']
 
         print_structure(left_column, right_column, column_headers, output)
+
+from agate.table.aggregate import aggregate
+from agate.table.bins import bins
+from agate.table.compute import compute
+from agate.table.denormalize import denormalize
+from agate.table.normalize import normalize
+
+Table.aggregate = aggregate
+Table.bins = bins
+Table.compute = compute
+Table.denormalize = denormalize
+Table.normalize = normalize

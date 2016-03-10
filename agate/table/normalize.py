@@ -1,14 +1,63 @@
 #!/usr/bin/env python
 
-from agate.table import Table
 from agate.data_types import TypeTester
 from agate.rows import Row
 from agate import utils
 
-def normalize(table, key, properties, property_column='property', value_column='value', column_types=None):
+
+@utils.allow_tableset_proxy
+def normalize(self, key, properties, property_column='property', value_column='value', column_types=None):
     """
-    See :meth:`.Table.normalize`.
+    Normalize a sequence of columns into two columns for field and value.
+
+    For example:
+
+    +---------+----------+--------+-------+
+    |  name   | gender   | race   | age   |
+    +=========+==========+========+=======+
+    |  Jane   | female   | black  | 24    |
+    +---------+----------+--------+-------+
+    |  Jack   | male     | white  | 35    |
+    +---------+----------+--------+-------+
+    |  Joe    | male     | black  | 28    |
+    +---------+----------+--------+-------+
+
+    can be normalized on columns 'gender', 'race' and 'age':
+
+    +---------+-----------+---------+
+    |  name   | property  | value   |
+    +=========+===========+=========+
+    |  Jane   | gender    | female  |
+    +---------+-----------+---------+
+    |  Jane   | race      | black   |
+    +---------+-----------+---------+
+    |  Jane   | age       | 24      |
+    +---------+-----------+---------+
+    |  ...    |  ...      |  ...    |
+    +---------+-----------+---------+
+
+    This is the opposite of :meth:`Table.denormalize`.
+
+    :param key:
+        A column name or a sequence of column names that should be
+        maintained as they are in the normalized self. Typically these
+        are the tables unique identifiers and any metadata about them.
+    :param properties:
+        A column name or a sequence of column names that should be
+        converted to properties in the new self.
+    :param property_column:
+        The name to use for the column containing the property names.
+    :param value_column:
+        The name to use for the column containing the property values.
+    :param column_types:
+        A sequence of two column types for the property and value column in
+        that order or an instance of :class:`.TypeTester`. Defaults to a
+        generic :class:`.TypeTester`.
+    :returns:
+        A new :class:`Table`.
     """
+    from agate.table import Table
+
     new_rows = []
 
     if not utils.issequence(key):
@@ -21,7 +70,7 @@ def normalize(table, key, properties, property_column='property', value_column='
 
     row_names = []
 
-    for row in table.rows:
+    for row in self.rows:
         k = tuple(row[n] for n in key)
         left_row = list(k)
 
@@ -33,7 +82,7 @@ def normalize(table, key, properties, property_column='property', value_column='
         for f in properties:
             new_rows.append(Row(tuple(left_row + [f, row[f]]), new_column_names))
 
-    key_column_types = [table.column_types[table.column_names.index(name)] for name in key]
+    key_column_types = [self.column_types[self.column_names.index(name)] for name in key]
 
     if column_types is None or isinstance(column_types, TypeTester):
         tester = TypeTester() if column_types is None else column_types

@@ -11,9 +11,31 @@ from agate.aggregations import Min, Max
 from agate import utils
 
 
-def bins(self, column_name, count, start, end):
+@utils.allow_tableset_proxy
+def bins(self, column_name, count=10, start=None, end=None):
     """
-    See :meth:`.Table.bins`.
+    Generates (approximately) evenly sized bins for the values in a column.
+    Bins may not be perfectly even if the spread of the data does not divide
+    evenly, but all values will always be included in some bin.
+
+    The resulting table will have two columns. The first will have
+    the same name as the specified column, but will be type :class:`.Text`.
+    The second will be named :code:`count` and will be of type
+    :class:`.Number`.
+
+    :param column_name:
+        The name of the column to bin. Must be of type :class:`.Number`
+    :param count:
+        The number of bins to create. If not specified then each value will
+        be counted as its own bin.
+    :param start:
+        The minimum value to start the bins at. If not specified the
+        minimum value in the column will be used.
+    :param end:
+        The maximum value to end the bins at. If not specified the maximum
+        value in the column will be used.
+    :returns:
+        A new :class:`Table`.
     """
     # Infer bin start/end positions
     if start is None or end is None:
