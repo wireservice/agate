@@ -870,35 +870,6 @@ class Table(utils.Patchable):
 
         return join(self, right_table, left_key, right_key, inner, require_match, columns)
 
-    @allow_tableset_proxy
-    def group_by(self, key, key_name=None, key_type=None):
-        """
-        Create a new :class:`Table` for unique value and return them as a
-        :class:`.TableSet`. The :code:`key` can be either a column name
-        or a function that returns a value to group by.
-
-        Note that when group names will always be coerced to a string,
-        regardless of the format of the input column.
-
-        :param key:
-            Either the name of a column from the this table to group by, or a
-            :class:`function` that takes a row and returns a value to group by.
-        :param key_name:
-            A name that describes the grouped properties. Defaults to the
-            column name that was grouped on or "group" if grouping with a key
-            function. See :class:`.TableSet` for more.
-        :param key_type:
-            An instance of any subclass of :class:`.DataType`. If not provided
-            it will default to a :class`.Text`.
-        :returns:
-            A :class:`.TableSet` mapping where the keys are unique values from
-            the :code:`key` and the values are new :class:`Table` instances
-            containing the grouped rows.
-        """
-        from agate.table.group_by import group_by
-
-        return group_by(self, key, key_name, key_type)
-
     @classmethod
     def merge(cls, tables, row_names=None, column_names=None):
         """
@@ -1150,10 +1121,12 @@ from agate.table.aggregate import aggregate
 from agate.table.bins import bins
 from agate.table.compute import compute
 from agate.table.denormalize import denormalize
+from agate.table.group_by import group_by
 from agate.table.normalize import normalize
 
 Table.aggregate = aggregate
 Table.bins = bins
 Table.compute = compute
 Table.denormalize = denormalize
+Table.group_by = group_by
 Table.normalize = normalize
