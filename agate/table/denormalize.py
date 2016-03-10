@@ -9,7 +9,6 @@ except ImportError:  # pragma: no cover
 
 import six
 
-from agate.table import Table
 from agate.data_types import Number, TypeTester
 from agate.rows import Row
 from agate import utils
@@ -75,6 +74,8 @@ def denormalize(self, key=None, property_column='property', value_column='value'
     :returns:
         A new :class:`Table`.
     """
+    from agate.table import Table
+    
     if key is None:
         key = []
     elif not utils.issequence(key):

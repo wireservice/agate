@@ -4,7 +4,6 @@ from collections import OrderedDict
 
 from agate.exceptions import DataTypeError
 from agate.rows import Row
-from agate.table import Table
 
 
 @classmethod
@@ -29,6 +28,8 @@ def merge(cls, tables, row_names=None, column_names=None):
     :returns:
         A new :class:`Table`.
     """
+    from agate.table import Table
+
     new_columns = OrderedDict()
 
     for table in tables:
