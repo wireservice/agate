@@ -21,8 +21,7 @@ rows, row names are optional.)
 """
 
 import codecs
-from collections import OrderedDict, Sequence
-from copy import copy
+from collections import OrderedDict
 import io
 from itertools import chain
 import json
@@ -40,10 +39,8 @@ from babel.numbers import format_decimal
 import six
 from six.moves import range, zip  # pylint: disable=W0622
 
-from agate.aggregations import Count, Min, Max
 from agate.columns import Column
-from agate.data_types import TypeTester, DataType, Text, Number
-from agate.exceptions import DataTypeError
+from agate.data_types import TypeTester, DataType
 from agate.mapped_sequence import MappedSequence
 from agate.rows import Row
 from agate import utils
@@ -183,7 +180,7 @@ class Table(utils.Patchable):
                 for row in new_rows:
                     name = row_names(row)
                     computed_row_names.append(name)
-            elif isinstance(row_names, Sequence):
+            elif utils.issequence(row_names):
                 computed_row_names = row_names
             else:
                 raise ValueError('row_names must be a column name, function or sequence')
@@ -906,40 +903,9 @@ class Table(utils.Patchable):
             the :code:`key` and the values are new :class:`Table` instances
             containing the grouped rows.
         """
-        from agate.tableset import TableSet
+        from agate.table.group_by import group_by
 
-        key_is_row_function = hasattr(key, '__call__')
-
-        if key_is_row_function:
-            key_name = key_name or 'group'
-            key_type = key_type or Text()
-        else:
-            column = self._columns[key]
-
-            key_name = key_name or column.name
-            key_type = key_type or column.data_type
-
-        groups = OrderedDict()
-
-        for row in self._rows:
-            if key_is_row_function:
-                group_name = key(row)
-            else:
-                group_name = row[column.name]
-
-            group_name = key_type.cast(group_name)
-
-            if group_name not in groups:
-                groups[group_name] = []
-
-            groups[group_name].append(row)
-
-        output = OrderedDict()
-
-        for group, rows in groups.items():
-            output[group] = self._fork(rows)
-
-        return TableSet(output.values(), output.keys(), key_name=key_name, key_type=key_type)
+        return group_by(self, key, key_name, key_type)
 
     def aggregate(self, aggregations):
         """
@@ -953,20 +919,9 @@ class Table(utils.Patchable):
             will be returned. If it was a sequence then a tuple of results will
             be returned.
         """
-        if isinstance(aggregations, Sequence):
-            results = []
+        from agate.table.aggregate import aggregate
 
-            for agg in aggregations:
-                agg.validate(self)
-
-            for agg in aggregations:
-                results.append(agg.run(self))
-
-            return tuple(results)
-        else:
-            aggregations.validate(self)
-
-            return aggregations.run(self)
+        return aggregate(self, aggregations)
 
     @allow_tableset_proxy
     def compute(self, computations):
@@ -980,23 +935,9 @@ class Table(utils.Patchable):
         :returns:
             A new :class:`Table`.
         """
-        column_names = list(copy(self._column_names))
-        column_types = list(copy(self._column_types))
+        from agate.table.compute import compute
 
-        for new_column_name, computation in computations:
-            column_names.append(new_column_name)
-            column_types.append(computation.get_computed_data_type(self))
-
-            computation.validate(self)
-
-        new_columns = tuple(c.run(self) for n, c in computations)
-        new_rows = []
-
-        for i, row in enumerate(self._rows):
-            values = tuple(row) + tuple(c[i] for c in new_columns)
-            new_rows.append(Row(values, column_names))
-
-        return self._fork(new_rows, column_names, column_types)
+        return compute(self, computations)
 
     @classmethod
     def merge(cls, tables, row_names=None, column_names=None):
