@@ -1030,36 +1030,9 @@ class Table(utils.Patchable):
         :returns:
             A new :class:`Table`.
         """
-        rows = list(self._rows)
+        from agate.table.homogenize import homogenize
 
-        if not utils.issequence(key):
-            key = [key]
-
-        if len(key) == 1:
-            if any(not utils.issequence(compare_value) for compare_value in compare_values):
-                compare_values = [[compare_value] for compare_value in compare_values]
-
-        column_values = [self._columns.get(name) for name in key]
-        column_indexes = [self._column_names.index(name) for name in key]
-
-        column_values = zip(*column_values)
-        differences = list(set(map(tuple, compare_values)) - set(column_values))
-
-        for difference in differences:
-            if callable(default_row):
-                rows.append(Row(default_row(difference), self._column_names))
-            else:
-                if default_row is not None:
-                    new_row = default_row
-                else:
-                    new_row = [None] * (len(self._column_names) - len(key))
-
-                for i, d in zip(column_indexes, difference):
-                    new_row.insert(i, d)
-
-                rows.append(Row(new_row, self._column_names))
-
-        return self._fork(rows, self._column_names, self._column_types)
+        return homogenize(self, key, compare_values, default_row)
 
     @classmethod
     def merge(cls, tables, row_names=None, column_names=None):
@@ -1118,7 +1091,7 @@ class Table(utils.Patchable):
         return Table(rows, column_keys, column_types, row_names=row_names, _is_fork=True)
 
     @allow_tableset_proxy
-    def pivot(self, key=None, pivot=None, aggregation=None, computation=None, default_value=utils.default, key_name=None):
+    def pivot(self, key=None, columns=None, aggregation=None, computation=None, default_value=utils.default, key_name=None):
         """
         Pivot reorganizes the data in a table by grouping the data, aggregating
         those groups, optionally applying a computation, and then organizing
@@ -1139,7 +1112,7 @@ class Table(utils.Patchable):
         +---------+---------+--------+
 
         This table can be pivoted with :code:`key` equal to "race" and
-        :code:`pivot` equal to "gender". The default aggregation is
+        :code:`columns` equal to "gender". The default aggregation is
         :class:`.Count`. This would result in the following table.
 
         +---------+---------+--------+
@@ -1162,7 +1135,7 @@ class Table(utils.Patchable):
             sequence of such column names, a :class:`function` that takes a
             row and returns a value to group by, or :code:`None`, in which case
             there will be only a single row in the output table.
-        :param pivot:
+        :param columns:
             A column name whose unique values will become columns in the new
             table, or :code:`None` in which case there will be a single value
             column in the output table.
@@ -1191,60 +1164,9 @@ class Table(utils.Patchable):
         :returns:
             A new :class:`Table`.
         """
-        if key is None:
-            key = []
-        elif not utils.issequence(key):
-            key = [key]
-        elif key_name:
-            raise ValueError('key_name is not a valid argument when key is a sequence.')
+        from agate.table.pivot import pivot
 
-        if aggregation is None:
-            aggregation = Count()
-
-        groups = self
-
-        for k in key:
-            groups = groups.group_by(k, key_name=key_name)
-
-        aggregation_name = six.text_type(aggregation)
-        computation_name = six.text_type(computation) if computation else None
-
-        def apply_computation(table):
-            table = table.compute([
-                (computation_name, computation)
-            ])
-
-            table = table.exclude([aggregation_name])
-
-            return table
-
-        if pivot is not None:
-            groups = groups.group_by(pivot)
-
-            column_type = aggregation.get_aggregate_data_type(groups)
-
-            table = groups.aggregate([
-                (aggregation_name, aggregation)
-            ])
-
-            pivot_count = len(set(table.columns[pivot].values()))
-
-            if computation is not None:
-                column_types = computation.get_computed_data_type(table)
-                table = apply_computation(table)
-
-            column_types = [column_type] * pivot_count
-
-            table = table.denormalize(key, pivot, computation_name or aggregation_name, default_value=default_value, column_types=column_types)
-        else:
-            table = groups.aggregate([
-                (aggregation_name, aggregation)
-            ])
-
-            if computation:
-                table = apply_computation(table)
-
-        return table
+        return pivot(self, key, columns, aggregation, computation, default_value, key_name)
 
     @allow_tableset_proxy
     def normalize(self, key, properties, property_column='property', value_column='value', column_types=None):
@@ -1297,43 +1219,9 @@ class Table(utils.Patchable):
         :returns:
             A new :class:`Table`.
         """
-        new_rows = []
-
-        if not utils.issequence(key):
-            key = [key]
-
-        if not utils.issequence(properties):
-            properties = [properties]
-
-        new_column_names = key + [property_column, value_column]
-
-        row_names = []
-
-        for row in self.rows:
-            k = tuple(row[n] for n in key)
-            left_row = list(k)
-
-            if len(k) == 1:
-                row_names.append(k[0])
-            else:
-                row_names.append(k)
-
-            for f in properties:
-                new_rows.append(Row(tuple(left_row + [f, row[f]]), new_column_names))
-
-        key_column_types = [self.column_types[self.column_names.index(name)] for name in key]
-
-        if column_types is None or isinstance(column_types, TypeTester):
-            tester = TypeTester() if column_types is None else column_types
-            force_update = dict(zip(key, key_column_types))
-            force_update.update(tester._force)
-            tester._force = force_update
-
-            new_column_types = tester.run(new_rows, new_column_names)
-        else:
-            new_column_types = key_column_types + list(column_types)
-
-        return Table(new_rows, new_column_names, new_column_types, row_names=row_names)
+        from agate.table.normalize import normalize
+        
+        return normalize(self, key, properties, property_column, value_column, column_types)
 
     @allow_tableset_proxy
     def denormalize(self, key=None, property_column='property', value_column='value', default_value=utils.default, column_types=None):
@@ -1395,68 +1283,9 @@ class Table(utils.Patchable):
         :returns:
             A new :class:`Table`.
         """
-        if key is None:
-            key = []
-        elif not utils.issequence(key):
-            key = [key]
+        from agate.table.denormalize import denormalize
 
-        field_names = []
-        row_data = OrderedDict()
-
-        for row in self.rows:
-            row_key = tuple(row[k] for k in key)
-
-            if row_key not in row_data:
-                row_data[row_key] = OrderedDict()
-
-            f = six.text_type(row[property_column])
-            v = row[value_column]
-
-            if f not in field_names:
-                field_names.append(f)
-
-            row_data[row_key][f] = v
-
-        if default_value == utils.default:
-            if isinstance(self.columns[value_column].data_type, Number):
-                default_value = Decimal(0)
-            else:
-                default_value = None
-
-        new_column_names = key + field_names
-
-        new_rows = []
-        row_names = []
-
-        for k, v in row_data.items():
-            row = list(k)
-
-            if len(k) == 1:
-                row_names.append(k[0])
-            else:
-                row_names.append(k)
-
-            for f in field_names:
-                if f in v:
-                    row.append(v[f])
-                else:
-                    row.append(default_value)
-
-            new_rows.append(Row(row, new_column_names))
-
-        key_column_types = [self.column_types[self.column_names.index(name)] for name in key]
-
-        if column_types is None or isinstance(column_types, TypeTester):
-            tester = TypeTester() if column_types is None else column_types
-            force_update = dict(zip(key, key_column_types))
-            force_update.update(tester._force)
-            tester._force = force_update
-
-            new_column_types = tester.run(new_rows, new_column_names)
-        else:
-            new_column_types = key_column_types + list(column_types)
-
-        return Table(new_rows, new_column_names, new_column_types, row_names=row_names)
+        return denormalize(self, key, property_column, value_column, default_value, column_types)
 
     @allow_tableset_proxy
     def group_by(self, key, key_name=None, key_type=None):
