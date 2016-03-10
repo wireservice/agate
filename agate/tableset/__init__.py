@@ -358,74 +358,9 @@ class TableSet(MappedSequence, Patchable):
         :returns:
             A new :class:`Table`.
         """
-        if type(groups) is not list and groups is not None:
-            raise ValueError('Groups must be None or a list.')
+        from agate.tableset.merge import merge
 
-        if type(groups) is list and len(groups) != len(self):
-            raise ValueError('Groups length must be equal to TableSet length.')
-
-        column_names = list(self.column_names)
-        column_types = list(self.column_types)
-
-        column_names.insert(0, group_name if group_name else self.key_name)
-        column_types.insert(0, group_type if group_type else self.key_type)
-
-        rows = []
-
-        for index, (key, table) in enumerate(self.items()):
-            for row in table.rows:
-                if groups is None:
-                    rows.append(Row((key,) + tuple(row), column_names))
-                else:
-                    rows.append(Row((groups[index],) + tuple(row), column_names))
-
-        return Table(rows, column_names, column_types)
-
-    def _aggregate(self, aggregations=[]):
-        """
-        Recursive aggregation allowing for TableSet's to be nested inside
-        one another.
-
-        See :meth:`TableSet.aggregate` for the user-facing API.
-        """
-        output = []
-
-        # Process nested TableSet's
-        if isinstance(self._values[0], TableSet):
-            for key, tableset in self.items():
-                column_names, column_types, nested_output, row_name_columns = tableset._aggregate(aggregations)
-
-                for row in nested_output:
-                    row.insert(0, key)
-
-                    output.append(row)
-
-            column_names.insert(0, self._key_name)
-            column_types.insert(0, self._key_type)
-            row_name_columns.insert(0, self._key_name)
-        # Regular Tables
-        else:
-            column_names = [self._key_name]
-            column_types = [self._key_type]
-            row_name_columns = [self._key_name]
-
-            for new_column_name, aggregation in aggregations:
-                column_names.append(new_column_name)
-                column_types.append(aggregation.get_aggregate_data_type(self._sample_table))
-
-            for name, table in self.items():
-                for new_column_name, aggregation in aggregations:
-                    aggregation.validate(table)
-
-            for name, table in self.items():
-                new_row = [name]
-
-                for new_column_name, aggregation in aggregations:
-                    new_row.append(aggregation.run(table))
-
-                output.append(new_row)
-
-        return column_names, column_types, output, row_name_columns
+        return merge(self, groups, group_name, group_type)
 
     def aggregate(self, aggregations=[]):
         """
@@ -446,15 +381,9 @@ class TableSet(MappedSequence, Patchable):
         :returns:
             A new :class:`.Table`.
         """
-        column_names, column_types, output, row_name_columns = self._aggregate(aggregations)
+        from agate.tableset.aggregate import aggregate
 
-        if len(row_name_columns) == 1:
-            row_names = row_name_columns[0]
-        else:
-            def row_names(r):
-                return tuple(r[n] for n in row_name_columns)
-
-        return Table(output, column_names, column_types, row_names=row_names)
+        return aggregate(self, aggregations)
 
     def print_structure(self, max_rows=20, output=sys.stdout):
         """
