@@ -3,6 +3,9 @@ agate.tableset
 ===================
 
 .. automodule:: agate.tableset
-    :members:
-    :inherited-members:
-    :undoc-members:
+    :members: TableMethodProxy
+    
+    .. autosummary::
+        :toctree: summary
+
+        agate.tableset.TableSet

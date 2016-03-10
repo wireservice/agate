@@ -5,6 +5,7 @@
 .tox
 *.egg-info
 docs/_build
+summary
 dist
 .coverage
 build
