@@ -881,6 +881,123 @@ class Table(utils.Patchable):
 
         return join(self, right_table, left_key, right_key, inner, require_match, columns)
 
+    @allow_tableset_proxy
+    def group_by(self, key, key_name=None, key_type=None):
+        """
+        Create a new :class:`Table` for unique value and return them as a
+        :class:`.TableSet`. The :code:`key` can be either a column name
+        or a function that returns a value to group by.
+
+        Note that when group names will always be coerced to a string,
+        regardless of the format of the input column.
+
+        :param key:
+            Either the name of a column from the this table to group by, or a
+            :class:`function` that takes a row and returns a value to group by.
+        :param key_name:
+            A name that describes the grouped properties. Defaults to the
+            column name that was grouped on or "group" if grouping with a key
+            function. See :class:`.TableSet` for more.
+        :param key_type:
+            An instance of any subclass of :class:`.DataType`. If not provided
+            it will default to a :class`.Text`.
+        :returns:
+            A :class:`.TableSet` mapping where the keys are unique values from
+            the :code:`key` and the values are new :class:`Table` instances
+            containing the grouped rows.
+        """
+        from agate.tableset import TableSet
+
+        key_is_row_function = hasattr(key, '__call__')
+
+        if key_is_row_function:
+            key_name = key_name or 'group'
+            key_type = key_type or Text()
+        else:
+            column = self._columns[key]
+
+            key_name = key_name or column.name
+            key_type = key_type or column.data_type
+
+        groups = OrderedDict()
+
+        for row in self._rows:
+            if key_is_row_function:
+                group_name = key(row)
+            else:
+                group_name = row[column.name]
+
+            group_name = key_type.cast(group_name)
+
+            if group_name not in groups:
+                groups[group_name] = []
+
+            groups[group_name].append(row)
+
+        output = OrderedDict()
+
+        for group, rows in groups.items():
+            output[group] = self._fork(rows)
+
+        return TableSet(output.values(), output.keys(), key_name=key_name, key_type=key_type)
+
+    def aggregate(self, aggregations):
+        """
+        Aggregate data from the columns in this table by applying a sequence of
+        :class:`.Aggregation` instances.
+
+        :param aggregations:
+            A single :class:`.Aggregation` instance or sequence of them.
+        :returns:
+            If the input was a single :class:`Aggregation` then a single result
+            will be returned. If it was a sequence then a tuple of results will
+            be returned.
+        """
+        if isinstance(aggregations, Sequence):
+            results = []
+
+            for agg in aggregations:
+                agg.validate(self)
+
+            for agg in aggregations:
+                results.append(agg.run(self))
+
+            return tuple(results)
+        else:
+            aggregations.validate(self)
+
+            return aggregations.run(self)
+
+    @allow_tableset_proxy
+    def compute(self, computations):
+        """
+        Compute new columns by applying one or more :class:`.Computation` to
+        each row.
+
+        :param computations:
+            A sequence of pairs of new column names and :class:`.Computation`
+            instances.
+        :returns:
+            A new :class:`Table`.
+        """
+        column_names = list(copy(self._column_names))
+        column_types = list(copy(self._column_types))
+
+        for new_column_name, computation in computations:
+            column_names.append(new_column_name)
+            column_types.append(computation.get_computed_data_type(self))
+
+            computation.validate(self)
+
+        new_columns = tuple(c.run(self) for n, c in computations)
+        new_rows = []
+
+        for i, row in enumerate(self._rows):
+            values = tuple(row) + tuple(c[i] for c in new_columns)
+            new_rows.append(Row(values, column_names))
+
+        return self._fork(new_rows, column_names, column_types)
+
     @classmethod
     def merge(cls, tables, row_names=None, column_names=None):
         """
@@ -1144,123 +1261,6 @@ class Table(utils.Patchable):
         from agate.table.denormalize import denormalize
 
         return denormalize(self, key, property_column, value_column, default_value, column_types)
-
-    @allow_tableset_proxy
-    def group_by(self, key, key_name=None, key_type=None):
-        """
-        Create a new :class:`Table` for unique value and return them as a
-        :class:`.TableSet`. The :code:`key` can be either a column name
-        or a function that returns a value to group by.
-
-        Note that when group names will always be coerced to a string,
-        regardless of the format of the input column.
-
-        :param key:
-            Either the name of a column from the this table to group by, or a
-            :class:`function` that takes a row and returns a value to group by.
-        :param key_name:
-            A name that describes the grouped properties. Defaults to the
-            column name that was grouped on or "group" if grouping with a key
-            function. See :class:`.TableSet` for more.
-        :param key_type:
-            An instance of any subclass of :class:`.DataType`. If not provided
-            it will default to a :class`.Text`.
-        :returns:
-            A :class:`.TableSet` mapping where the keys are unique values from
-            the :code:`key` and the values are new :class:`Table` instances
-            containing the grouped rows.
-        """
-        from agate.tableset import TableSet
-
-        key_is_row_function = hasattr(key, '__call__')
-
-        if key_is_row_function:
-            key_name = key_name or 'group'
-            key_type = key_type or Text()
-        else:
-            column = self._columns[key]
-
-            key_name = key_name or column.name
-            key_type = key_type or column.data_type
-
-        groups = OrderedDict()
-
-        for row in self._rows:
-            if key_is_row_function:
-                group_name = key(row)
-            else:
-                group_name = row[column.name]
-
-            group_name = key_type.cast(group_name)
-
-            if group_name not in groups:
-                groups[group_name] = []
-
-            groups[group_name].append(row)
-
-        output = OrderedDict()
-
-        for group, rows in groups.items():
-            output[group] = self._fork(rows)
-
-        return TableSet(output.values(), output.keys(), key_name=key_name, key_type=key_type)
-
-    def aggregate(self, aggregations):
-        """
-        Aggregate data from the columns in this table by applying a sequence of
-        :class:`.Aggregation` instances.
-
-        :param aggregations:
-            A single :class:`.Aggregation` instance or sequence of them.
-        :returns:
-            If the input was a single :class:`Aggregation` then a single result
-            will be returned. If it was a sequence then a tuple of results will
-            be returned.
-        """
-        if isinstance(aggregations, Sequence):
-            results = []
-
-            for agg in aggregations:
-                agg.validate(self)
-
-            for agg in aggregations:
-                results.append(agg.run(self))
-
-            return tuple(results)
-        else:
-            aggregations.validate(self)
-
-            return aggregations.run(self)
-
-    @allow_tableset_proxy
-    def compute(self, computations):
-        """
-        Compute new columns by applying one or more :class:`.Computation` to
-        each row.
-
-        :param computations:
-            A sequence of pairs of new column names and :class:`.Computation`
-            instances.
-        :returns:
-            A new :class:`Table`.
-        """
-        column_names = list(copy(self._column_names))
-        column_types = list(copy(self._column_types))
-
-        for new_column_name, computation in computations:
-            column_names.append(new_column_name)
-            column_types.append(computation.get_computed_data_type(self))
-
-            computation.validate(self)
-
-        new_columns = tuple(c.run(self) for n, c in computations)
-        new_rows = []
-
-        for i, row in enumerate(self._rows):
-            values = tuple(row) + tuple(c[i] for c in new_columns)
-            new_rows.append(Row(values, column_names))
-
-        return self._fork(new_rows, column_names, column_types)
 
     @allow_tableset_proxy
     def bins(self, column_name, count=10, start=None, end=None):
