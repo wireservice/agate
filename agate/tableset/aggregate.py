@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 
 from agate.table import Table
-from agate.tableset import TableSet
 
 
-def _aggregate(tableset, aggregations):
+def _aggregate(self, aggregations=[]):
     """
     Recursive aggregation allowing for TableSet's to be nested inside
     one another.
     """
+    from agate.tableset import TableSet
+
     output = []
 
     # Process nested TableSet's
-    if isinstance(tableset._values[0], TableSet):
-        for key, nested_tableset in tableset.items():
+    if isinstance(self._values[0], TableSet):
+        for key, nested_tableset in self.items():
             column_names, column_types, nested_output, row_name_columns = _aggregate(nested_tableset, aggregations)
 
             for row in nested_output:
@@ -21,24 +22,24 @@ def _aggregate(tableset, aggregations):
 
                 output.append(row)
 
-        column_names.insert(0, tableset.key_name)
-        column_types.insert(0, tableset.key_type)
-        row_name_columns.insert(0, tableset.key_name)
+        column_names.insert(0, self.key_name)
+        column_types.insert(0, self.key_type)
+        row_name_columns.insert(0, self.key_name)
     # Regular Tables
     else:
-        column_names = [tableset.key_name]
-        column_types = [tableset.key_type]
-        row_name_columns = [tableset.key_name]
+        column_names = [self.key_name]
+        column_types = [self.key_type]
+        row_name_columns = [self.key_name]
 
         for new_column_name, aggregation in aggregations:
             column_names.append(new_column_name)
-            column_types.append(aggregation.get_aggregate_data_type(tableset._sample_table))
+            column_types.append(aggregation.get_aggregate_data_type(self._sample_table))
 
-        for name, table in tableset.items():
+        for name, table in self.items():
             for new_column_name, aggregation in aggregations:
                 aggregation.validate(table)
 
-        for name, table in tableset.items():
+        for name, table in self.items():
             new_row = [name]
 
             for new_column_name, aggregation in aggregations:
@@ -48,11 +49,26 @@ def _aggregate(tableset, aggregations):
 
     return column_names, column_types, output, row_name_columns
 
-def aggregate(tableset, aggregations):
+def aggregate(self, aggregations):
     """
-    See :meth:`.TableSet.aggregate`.
+    Aggregate data from the tables in this set by performing some
+    set of column operations on the groups and coalescing the results into
+    a new :class:`.Table`.
+
+    :code:`aggregations` must be a sequence of tuples, where each has two
+    parts: a :code:`new_column_name` and a :class:`.Aggregation` instance.
+
+    The resulting table will have the keys from this :class:`TableSet` (and
+    any nested TableSets) set as its :code:`row_names`. See
+    :meth:`.Table.__init__` for more details.
+
+    :param aggregations:
+        A list of tuples in the format
+        :code:`(new_column_name, aggregation)`.
+    :returns:
+        A new :class:`.Table`.
     """
-    column_names, column_types, output, row_name_columns = _aggregate(tableset, aggregations)
+    column_names, column_types, output, row_name_columns = _aggregate(self, aggregations)
 
     if len(row_name_columns) == 1:
         row_names = row_name_columns[0]

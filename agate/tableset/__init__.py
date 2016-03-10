@@ -336,55 +336,6 @@ class TableSet(MappedSequence, Patchable):
         """
         return self._column_names
 
-    def merge(self, groups=None, group_name=None, group_type=None):
-        """
-        Convert this TableSet into a single table. This is the inverse of
-        :meth:`.Table.group_by`.
-
-        Any `row_names` set on the merged tables will be lost in this
-        process.
-
-        :param groups:
-            A list of grouping factors to add to merged rows in a new column.
-            If specified, it should have exactly one element per :class:`Table`
-            in the :class:`TableSet`. If not specified or None, the grouping
-            factor will be the name of the :class:`Row`'s original Table.
-        :param group_name:
-            This will be the column name of the grouping factors. If None,
-            defaults to the :attr:`TableSet.key_name`.
-        :param group_type:
-            This will be the column type of the grouping factors. If None,
-            defaults to the :attr:`TableSet.key_type`.
-        :returns:
-            A new :class:`Table`.
-        """
-        from agate.tableset.merge import merge
-
-        return merge(self, groups, group_name, group_type)
-
-    def aggregate(self, aggregations=[]):
-        """
-        Aggregate data from the tables in this set by performing some
-        set of column operations on the groups and coalescing the results into
-        a new :class:`.Table`.
-
-        :code:`aggregations` must be a sequence of tuples, where each has two
-        parts: a :code:`new_column_name` and a :class:`.Aggregation` instance.
-
-        The resulting table will have the keys from this :class:`TableSet` (and
-        any nested TableSets) set as its :code:`row_names`. See
-        :meth:`.Table.__init__` for more details.
-
-        :param aggregations:
-            A list of tuples in the format
-            :code:`(new_column_name, aggregation)`.
-        :returns:
-            A new :class:`.Table`.
-        """
-        from agate.tableset.aggregate import aggregate
-
-        return aggregate(self, aggregations)
-
     def print_structure(self, max_rows=20, output=sys.stdout):
         """
         Print the keys and row counts of each table in the tableset.
@@ -404,3 +355,9 @@ class TableSet(MappedSequence, Patchable):
         column_headers = ['table_keys', 'row_count']
 
         print_structure(left_column, right_column, column_headers, output)
+
+from agate.tableset.aggregate import aggregate
+from agate.tableset.merge import merge
+
+TableSet.aggregate = aggregate
+TableSet.merge = merge

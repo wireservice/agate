@@ -41,7 +41,9 @@ setup(
     ],
     packages=[
         'agate',
-        'agate.data_types'
+        'agate.data_types',
+        'agate.table',
+        'agate.tableset'
     ],
     install_requires=install_requires
 )
