@@ -6,26 +6,9 @@ from agate.exceptions import DataTypeError
 from agate.rows import Row
 from agate.table import Table
 
-def merge(tables, row_names=None, column_names=None):
+def merge(tables, row_names, column_names):
     """
-    Merge an array of tables into a single table.
-
-    Row names will be lost, but new row names can be specified with the
-    `row_names` argument.
-
-    It is possible to limit the columns included in the new :class:`Table`
-    with `column_names` argument. For example, to only include columns from
-    a specific table, set `column_names` equal to `table.column_names`.
-
-    :param tables:
-        An sequence of :class:`Table` instances.
-    :param row_names:
-        See :class:`Table` for the usage of this parameter.
-    :param column_names:
-        A sequence of column names to include in the new :class:`Table`. If
-        not specified, all distinct column names from `tables` are included.
-    :returns:
-        A new :class:`Table`.
+    See :meth:`.Table.merge`.
     """
     new_columns = OrderedDict()
 
