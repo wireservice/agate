@@ -1,0 +1,121 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+
+try:
+    from cdecimal import Decimal
+except ImportError:  # pragma: no cover
+    from decimal import Decimal
+
+from agate import Table
+from agate.data_types import *
+from agate.testcase import AgateTestCase
+
+
+class TestBins(AgateTestCase):
+    def setUp(self):
+        self.number_type = Number()
+        self.column_names = ['number']
+        self.column_types = [self.number_type]
+
+    def test_bins(self):
+        rows = []
+
+        for i in range(0, 100):
+            rows.append([i]),
+
+        new_table = Table(rows, self.column_names, self.column_types).bins('number')
+
+        self.assertColumnNames(new_table, ['number', 'Count'])
+        self.assertColumnTypes(new_table, [Text, Number])
+
+        self.assertSequenceEqual(new_table.rows[0], ['[0 - 10)', 10])
+        self.assertSequenceEqual(new_table.rows[3], ['[30 - 40)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[90 - 100]', 10])
+
+        self.assertRowNames(new_table, [
+            '[0 - 10)',
+            '[10 - 20)',
+            '[20 - 30)',
+            '[30 - 40)',
+            '[40 - 50)',
+            '[50 - 60)',
+            '[60 - 70)',
+            '[70 - 80)',
+            '[80 - 90)',
+            '[90 - 100]',
+        ])
+
+    def test_bins_negative(self):
+        rows = []
+
+        for i in range(0, -100, -1):
+            rows.append([i])
+
+        new_table = Table(rows, self.column_names, self.column_types).bins('number', 10, -100, 0)
+
+        self.assertColumnNames(new_table, ['number', 'Count'])
+        self.assertColumnTypes(new_table, [Text, Number])
+
+        self.assertSequenceEqual(new_table.rows[0], ['[-100 - -90)', 9])
+        self.assertSequenceEqual(new_table.rows[3], ['[-70 - -60)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[-10 - 0]', 11])
+
+    def test_bins_mixed_signs(self):
+        rows = []
+
+        for i in range(0, -100, -1):
+            rows.append([i + 50])
+
+        new_table = Table(rows, self.column_names, self.column_types).bins('number')
+
+        self.assertColumnNames(new_table, ['number', 'Count'])
+        self.assertColumnTypes(new_table, [Text, Number])
+
+        self.assertSequenceEqual(new_table.rows[0], ['[-50 - -40)', 9])
+        self.assertSequenceEqual(new_table.rows[3], ['[-20 - -10)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[40 - 50]', 11])
+
+    def test_bins_small_numbers(self):
+        rows = []
+
+        for i in range(0, 100):
+            rows.append([Decimal(i) / Decimal('10')])
+
+        new_table = Table(rows, self.column_names, self.column_types).bins('number')
+
+        self.assertSequenceEqual(new_table.rows[0], ['[0 - 1)', 10])
+        self.assertSequenceEqual(new_table.rows[3], ['[3 - 4)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[9 - 10]', 10])
+
+    def test_bins_decimals(self):
+        rows = []
+
+        for i in range(0, 100):
+            rows.append([Decimal(i) / Decimal('100')])
+
+        new_table = Table(rows, self.column_names, self.column_types).bins('number')
+
+        self.assertColumnNames(new_table, ['number', 'Count'])
+        self.assertColumnTypes(new_table, [Text, Number])
+
+        self.assertSequenceEqual(new_table.rows[0], ['[0.0 - 0.1)', 10])
+        self.assertSequenceEqual(new_table.rows[3], ['[0.3 - 0.4)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[0.9 - 1.0]', 10])
+
+    def test_bins_nulls(self):
+        rows = []
+
+        for i in range(0, 100):
+            rows.append([Decimal(i) / Decimal('100')])
+
+        rows.append([None])
+
+        new_table = Table(rows, self.column_names, self.column_types).bins('number')
+
+        self.assertColumnNames(new_table, ['number', 'Count'])
+        self.assertColumnTypes(new_table, [Text, Number])
+
+        self.assertSequenceEqual(new_table.rows[0], ['[0.0 - 0.1)', 10])
+        self.assertSequenceEqual(new_table.rows[3], ['[0.3 - 0.4)', 10])
+        self.assertSequenceEqual(new_table.rows[9], ['[0.9 - 1.0]', 10])
+        self.assertSequenceEqual(new_table.rows[10], [None, 1])
