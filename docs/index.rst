@@ -4,20 +4,30 @@ agate |release|
 
 .. include:: ../README.rst
 
-Why agate?
-==========
+.. toctree::
+    :hidden:
+    :maxdepth: 2
 
-* A readable and user-friendly API.
-* A complete set of SQL-like operations.
-* Unicode support everywhere.
-* Decimal precision everywhere.
-* Exhaustive user documentation.
-* Pluggable `extensions <extensions>`_ that add SQL integration, Excel support, and more.
-* Designed with `iPython <http://ipython.org/>`_, `Jupyter <https://jupyter.org/>`_ and `atom/hydrogen <https://atom.io/packages/hydrogen>`_ in mind.
-* Pure Python. No C dependencies to compile.
-* Exhaustive test coverage.
-* MIT licensed and free for all purposes.
-* Zealously `zen <https://www.python.org/dev/peps/pep-0020/>`_.
+    about
+    install
+    tutorial
+    cookbook
+    extensions
+    api
+    contributing
+    release_process
+    license
+    changelog
+
+Show me docs
+============
+
+* `About <about.html>`_ - why you should use agate and principles behind its implementation
+* `Install <install.html>`_ - how to install for users and developers 
+* `Tutorial <tutorial.html>`_ - a step-by-step guide to start using agate
+* `Cookbook <cookbook.html>`_ - a list of use cases for new users, users coming from other tools and advanced users
+* `Extensions <extensions.html>`_ - how to make your own agate extensions and a list of existing extensions
+* `API <api.html>`_ - the technical documentation for every agate class and method in the source code
 
 Show me code
 ============
@@ -54,26 +64,6 @@ Show me code
                            0          250,000       500,000       750,000  1,000,000
 
 This example, complete with a detailed explanation, is available as a `Jupyter notebook <http://nbviewer.ipython.org/urls/gist.githubusercontent.com/onyxfish/36f459dab02545cbdce3/raw/534698388e5c404996a7b570a7228283344adbb1/example.py.ipynb>`_.
-
-Table of contents
-=================
-
-.. toctree::
-    :maxdepth: 2
-
-    install
-    tutorial
-    cookbook
-    extensions
-    api
-    contributing
-    release_process
-    changelog
-
-License
-=======
-
-.. include:: ../COPYING
 
 Indices and tables
 ==================

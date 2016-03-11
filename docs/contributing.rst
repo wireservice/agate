@@ -7,19 +7,6 @@ AUTHORS
 
 .. include:: ../AUTHORS.rst
 
-Principles
-==========
-
-agate is a intended to fill a very particular programming niche. It should not be allowed to become as complex as `numpy <http://www.numpy.org/>`_ or `pandas <http://pandas.pydata.org/>`_. Please bear in mind the following principles when contemplating an addition:
-
-* Humans have less time than computers. Optimize for humans.
-* Most datasets are small. Don't optimize for "big data".
-* Text is data. It must always be a first-class citizen.
-* Python gets it right. Make it work like Python does.
-* Humans lives are nasty, brutish and short. Make it easy.
-* Mutability leads to confusion. Processes that alter data must create new copies.
-* Extensions are the way. Don't add it to core unless everybody needs it.
-
 Process for contributing code
 =============================
 
