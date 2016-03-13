@@ -1,6 +1,8 @@
 1.3.1
 -----
 
+* Moved unit tests into modules to match new code organization.
+* Moved major :class:`.Table` and :class:`.TableSet` methods into their own modules.
 * Fixed bug when using non-unicode encodings with :meth:`.Table.from_csv`. (#560)
 * :meth:`.Table.homogenize` now accepts an array of values as compare values if key is a single column name. (#539)
 

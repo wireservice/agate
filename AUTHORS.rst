@@ -1,4 +1,4 @@
-agate is the product of a community. The following individuals have contributed code, documentation or expertise to agate:
+agate is made by a community. The following individuals have contributed code, documentation, or expertise to agate:
 
 * `Christopher Groskopf <https://github.com/onyxfish/>`_
 * `Jeff Larson <https://github.com/thejefflarson>`_

@@ -20,7 +20,7 @@ Why agate?
 Principles
 ==========
 
-agate is a intended to fill a very particular programming niche. It should not be allowed to become as complex as `numpy <http://www.numpy.org/>`_ or `pandas <http://pandas.pydata.org/>`_. Please bear in mind the following principles when contemplating an addition:
+agate is a intended to fill a very particular programming niche. It should not be allowed to become as complex as `numpy <http://www.numpy.org/>`_ or `pandas <http://pandas.pydata.org/>`_. Please bear in mind the following principles when considering a new feature:
 
 * Humans have less time than computers. Optimize for humans.
 * Most datasets are small. Don't optimize for "big data".

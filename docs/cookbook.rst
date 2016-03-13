@@ -20,11 +20,11 @@ Welcome to the agate cookbook, a source of how-to's and use cases.
     cookbook/excel
     cookbook/r
     cookbook/underscore
-    cookbook/rank
-    cookbook/locale
+    cookbook/columns
     cookbook/transform
+    cookbook/locale
+    cookbook/rank
     cookbook/charting
-    cookbook/misc
 
 Basics
 ======
@@ -45,14 +45,15 @@ Coming from other tools
 * `Excel <cookbook/excel.html>`_
 * `R <cookbook/r.html>`_
 * `Underscore.js <cookbook/underscore.html>`_
+* Pandas (coming soon!)
 
 Advanced techniques
 ===================
 
+* `Renaming and reordering columns <cookbook/columns.html>`_
 * `Transforming data (pivot/normalize/denormalize) <cookbook/transform.html>`_
-* `Charting data <cookbook/charting.html>`_
-* `Specifying locale <cookbook/locale.html>`_
-* `Rank a sequence of data <cookbook/rank.html>`_
-* `Miscellaneous <cookbook/misc.html>`_
+* `Setting your locale and working with foreign data <cookbook/locale.html>`_
+* `Ranking a sequence of data <cookbook/rank.html>`_
+* `Creating simple charts <cookbook/charting.html>`_
 
-If you believe a specific use case is missing from the above list, please `submit an issue <https://github.com/wireservice/agate/issues/new>`_ on the GitHub repository.
+Have a common use case that isn't covered? Please `submit an issue <https://github.com/wireservice/agate/issues/new>`_ on the GitHub repository.

@@ -22,12 +22,13 @@ agate |release|
 Show me docs
 ============
 
-* `About <about.html>`_ - why you should use agate and principles behind its implementation
-* `Install <install.html>`_ - how to install for users and developers 
+* `About <about.html>`_ - why you should use agate and the principles that guide its development
+* `Install <install.html>`_ - how to install for users and developers
 * `Tutorial <tutorial.html>`_ - a step-by-step guide to start using agate
-* `Cookbook <cookbook.html>`_ - a list of use cases for new users, users coming from other tools and advanced users
-* `Extensions <extensions.html>`_ - how to make your own agate extensions and a list of existing extensions
-* `API <api.html>`_ - the technical documentation for every agate class and method in the source code
+* `Cookbook <cookbook.html>`_ - sample code showing how to accomplish dozens of common tasks, including comparisons to SQL, R, etc.
+* `Extensions <extensions.html>`_ - a list of libraries that extend agate functionality and how to build your own
+* `API <api.html>`_ - technical documentation for every agate feature
+* `Changelog <changelog.html>`_ - a record of every change made to agate for each release
 
 Show me code
 ============
@@ -63,7 +64,18 @@ Show me code
                            +-------------+-------------+-------------+-------------+
                            0          250,000       500,000       750,000  1,000,000
 
-This example, complete with a detailed explanation, is available as a `Jupyter notebook <http://nbviewer.ipython.org/urls/gist.githubusercontent.com/onyxfish/36f459dab02545cbdce3/raw/534698388e5c404996a7b570a7228283344adbb1/example.py.ipynb>`_.
+This example, along with detailed comments, are available as a `Jupyter notebook <http://nbviewer.ipython.org/urls/gist.githubusercontent.com/onyxfish/36f459dab02545cbdce3/raw/534698388e5c404996a7b570a7228283344adbb1/example.py.ipynb>`_.
+
+Help me help you
+================
+
+* `Contributing <contributing.html>`_ - guidance for developers who want to contribute to agate
+* `License <license.html>`_ - a copy of the MIT open source license covering agate
+
+Brought to you by
+=================
+
+.. include:: ../AUTHORS.rst
 
 Indices and tables
 ==================

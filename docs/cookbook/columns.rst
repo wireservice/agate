@@ -1,6 +1,6 @@
-=============
-Miscellaneous
-=============
+===============================
+Renaming and reordering columns
+===============================
 
 Rename columns
 ===============
