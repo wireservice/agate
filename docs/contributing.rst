@@ -5,7 +5,9 @@ Contributors
 We want you
 ===========
 
-agate welcomes contributions from developers and non-developers of all skill levels. We will typically accept bug features, documentation updates, and new cookbook recipes with minimal fuss. If you want to work on a larger feature, we're happy to have those too and the maintainers will be happy to provide feedback on how you implement them.
+agate actively encourages contributions from people of all genders, races, ethnicities, ages, creeds, nationalities, persuasions, alignments, sizes, shapes, and journalistic affiliations. You are welcome here.
+
+We seek contributions from developers and non-developers of all skill levels. We will typically accept bug features, documentation updates, and new cookbook recipes with minimal fuss. If you want to work on a larger feature—great! The maintainers will be happy to provide feedback and code review on your implementation.
 
 Before making any changes or additions to agate, please be sure to read about the principles of agate in the `About <about.html>`_ section of the documentation.
 
