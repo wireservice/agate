@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 
 """
-This module contains the :class:`.Table` object, which is the central data
-structure in :code:`agate`. Tables are created by supplying row data, column
-names and subclasses of :class:`.DataType` to the constructor. Once
-instantiated, tables are **immutable**. This concept is central to agate. The
-data of the table may not be accessed or modified directly.
+The :class:`.Table` object is the most important class agate. Tables are
+created by supplying row data, column names and subclasses of :class:`.DataType`
+to the constructor. Once created, the data in a table **can not be changed**.
+This concept is central to agate.
 
-Various methods on the :class:`.Table` simulate "SQL-like" operations. For
-example, the :meth:`Table.select` method reduces the table to only the
-specified columns. The :meth:`.Table.where` method reduces the table to only
-those rows that pass a truth test. And the :meth:`.Table.order_by` method sorts
-the rows in the table. In all of these cases the output is new :class:`Table`
+Instead of modifying the data, various methods can be used to create new,
+derivative tables. For example, the :meth:`Table.select` method creates a new
+table with only the specified columns. The :meth:`.Table.where` method creates
+a new table with only those rows that pass a test. And :meth:`.Table.order_by`
+creates a sorted table. In all of these cases the output is new :class:`Table`
 and the existing table remains unmodified.
 
 Tables are not themselves iterable, but the columns of the table can be
