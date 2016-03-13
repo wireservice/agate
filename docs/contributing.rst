@@ -1,9 +1,6 @@
 ============
-Contributors
+Contributing
 ============
-
-We want you
-===========
 
 agate actively encourages contributions from people of all genders, races, ethnicities, ages, creeds, nationalities, persuasions, alignments, sizes, shapes, and journalistic affiliations. You are welcome here.
 
@@ -11,8 +8,8 @@ We seek contributions from developers and non-developers of all skill levels. We
 
 Before making any changes or additions to agate, please be sure to read about the principles of agate in the `About <about.html>`_ section of the documentation.
 
-Contributing documentation
-==========================
+Process for documentation
+=========================
 
 Not a developer? That's fine! As long as you can use `git` (there are many tutorials) then you can contribute to agate. Please follow this process:
 
@@ -25,8 +22,8 @@ Not a developer? That's fine! As long as you can use `git` (there are many tutor
 #. Wait for it to either be merged by a maintainer or to receive feedback about what needs to be revised.
 #. Rejoice!
 
-Contributing code
-=================
+Process for code
+================
 
 Hacker? We'd love to have you hack with us. Please follow this process to make your contribution:
 
