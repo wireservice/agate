@@ -22,8 +22,8 @@ Properties
     agate.Table.rows
     agate.Table.row_names
 
-Creating tables
----------------
+Creating
+--------
 
 .. autosummary::
     :nosignatures:
@@ -32,8 +32,8 @@ Creating tables
     agate.Table.from_json
     agate.Table.from_object
 
-Saving tables
--------------
+Saving
+------
 
 .. autosummary::
     :nosignatures:
@@ -80,8 +80,8 @@ Advanced processing
     agate.Table.rename
     agate.Table.bins
 
-Previewing data
----------------
+Previewing
+----------
 
 .. autosummary::
     :nosignatures:
