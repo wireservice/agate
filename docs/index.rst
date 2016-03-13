@@ -66,14 +66,14 @@ Show me code
 
 This example, along with detailed comments, are available as a `Jupyter notebook <http://nbviewer.ipython.org/urls/gist.githubusercontent.com/onyxfish/36f459dab02545cbdce3/raw/534698388e5c404996a7b570a7228283344adbb1/example.py.ipynb>`_.
 
-Help me help you
-================
+Join us
+=======
 
 * `Contributing <contributing.html>`_ - guidance for developers who want to contribute to agate
 * `License <license.html>`_ - a copy of the MIT open source license covering agate
 
-Brought to you by
-=================
+Who we are
+==========
 
 .. include:: ../AUTHORS.rst
 
