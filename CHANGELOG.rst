@@ -1,6 +1,8 @@
 1.3.1
 -----
 
+* :class:`.Column` and :class:`.Row` are now importable from `agate`.
+* Completely reorgnized the API documentation.
 * Moved unit tests into modules to match new code organization.
 * Moved major :class:`.Table` and :class:`.TableSet` methods into their own modules.
 * Fixed bug when using non-unicode encodings with :meth:`.Table.from_csv`. (#560)

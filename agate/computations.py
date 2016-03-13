@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 
 """
-This module contains the :class:`Computation` class and its subclasses.
-Computations allow for row-wise calculation of new data for :class:`.Table`.
-For instance, the :class:`PercentChange` subclass takes two column names as
+Computations create a new value for each :class:`.Row` in a :class:`.Table`.
+When used with :meth:`.Table.compute` these new values become a new column.
+For instance, the :class:`.PercentChange` computation takes two column names as
 arguments and computes the percentage change between them for each row.
 
-Computations are applied to tables using the :meth:`.Table.compute` method.
-For efficiencies sake, this method accepts a sequence of operations, which are
-applied simultaneously.
-
-If the basic computations supplied in this module are not suitable to your needs
-the :class:`Formula` subclass can be used to apply an arbitrary function to the
-data in each row. If this is still not suitable, :class:`Computation` can be
-subclassed to fully customize it's behavior.
+There are a variety of basic computations, such as :class:`.Change` and
+:class:`.Percent`. If none of these meet your needs you can use the
+:class:`Formula` computation to apply an arbitrary function to the row.
+If this still isn't flexible enough, it's simple to create a custom computation
+class by inheriting from :class:`Computation`.
 """
 
 from decimal import Decimal

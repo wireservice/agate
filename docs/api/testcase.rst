@@ -1,7 +1,5 @@
-================
-agate.testcase
-================
+==============
+Unit Test Case
+==============
 
-.. automodule:: agate.testcase
-    :members:
-    :undoc-members:
+.. autoclass:: agate.AgateTestCase

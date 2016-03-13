@@ -1,8 +1,7 @@
-================
-agate.table
-================
+=====
+Table
+=====
 
-.. automodule:: agate.table
+.. autoclass:: agate.Table
     :members:
     :inherited-members:
-    :undoc-members:

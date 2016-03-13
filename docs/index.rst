@@ -70,6 +70,7 @@ Join us
 =======
 
 * `Contributing <contributing.html>`_ - guidance for developers who want to contribute to agate
+* `Release process <release_process.html>`_ - the process for maintainers to publish new releases
 * `License <license.html>`_ - a copy of the MIT open source license covering agate
 
 Who we are

@@ -1,37 +1,38 @@
-=======================
-agate.data_types
-=======================
+==========
+Data types
+==========
 
 .. automodule:: agate.data_types
-    :members:
-    :undoc-members:
+    :no-members:
 
-.. automodule:: agate.data_types.base
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. autosummary::
+    :nosignatures:
 
-.. automodule:: agate.data_types.boolean
-    :members:
-    :undoc-members:
-    :show-inheritance:
+    agate.DataType
+    agate.TypeTester
 
-.. automodule:: agate.data_types.date
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Supported types
+---------------
 
-.. automodule:: agate.data_types.date_time
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. autosummary::
+    :nosignatures:
 
-.. automodule:: agate.data_types.number
-    :members:
-    :undoc-members:
-    :show-inheritance:
+    agate.Text
+    agate.Number
+    agate.Boolean
+    agate.Date
+    agate.DateTime
 
-.. automodule:: agate.data_types.text
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Detailed list
+-------------
+
+.. autodata:: agate.DEFAULT_NULL_VALUES
+.. autodata:: agate.DEFAULT_TRUE_VALUES
+.. autodata:: agate.DEFAULT_FALSE_VALUES
+.. autoclass:: agate.DataType
+.. autoclass:: agate.TypeTester
+.. autoclass:: agate.Text
+.. autoclass:: agate.Number
+.. autoclass:: agate.Boolean
+.. autoclass:: agate.Date
+.. autoclass:: agate.DateTime

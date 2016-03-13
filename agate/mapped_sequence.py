@@ -21,6 +21,8 @@ class MappedSequence(Sequence):
     that the keys are optional and iteration over it returns the values instead
     of keys.
 
+    This is the base class for both :class:`.Column` and :class:`.Row`.
+
     :param values:
         A sequence of :class:`Row` instances.
     :param keys:
@@ -73,9 +75,7 @@ class MappedSequence(Sequence):
         """
         Set values by index, which we want to fail loudly.
         """
-        raise TypeError("Agate data structures are read-only by design. \
-Consider creating a new column based on this structure's contents. Learn how here: \
-http://agate.readthedocs.org/en/latest/tutorial.html#computing-new-columns")
+        raise TypeError('Rows and columns can not be modified directly. You probably need to compute a new column.')
 
     def __iter__(self):
         """
@@ -139,7 +139,8 @@ http://agate.readthedocs.org/en/latest/tutorial.html#computing-new-columns")
     @memoize
     def dict(self):
         """
-        Retrieve the contents of this column as an :class:`collections.OrderedDict`.
+        Retrieve the contents of this sequence as an
+        :class:`collections.OrderedDict`.
         """
         if self.keys() is None:
             raise KeyError

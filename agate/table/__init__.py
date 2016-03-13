@@ -1,21 +1,21 @@
 #!/usr/bin/env python
 
 """
-This module contains the :class:`Table` object, which is the central data
+This module contains the :class:`.Table` object, which is the central data
 structure in :code:`agate`. Tables are created by supplying row data, column
 names and subclasses of :class:`.DataType` to the constructor. Once
 instantiated, tables are **immutable**. This concept is central to agate. The
 data of the table may not be accessed or modified directly.
 
-Various methods on the :class:`Table` simulate "SQL-like" operations. For
+Various methods on the :class:`.Table` simulate "SQL-like" operations. For
 example, the :meth:`Table.select` method reduces the table to only the
-specified columns. The :meth:`Table.where` method reduces the table to only
-those rows that pass a truth test. And the :meth:`Table.order_by` method sorts
+specified columns. The :meth:`.Table.where` method reduces the table to only
+those rows that pass a truth test. And the :meth:`.Table.order_by` method sorts
 the rows in the table. In all of these cases the output is new :class:`Table`
 and the existing table remains unmodified.
 
 Tables are not themselves iterable, but the columns of the table can be
-accessed via :attr:`Table.columns` and the rows via :attr:`Table.rows`. Both
+accessed via :attr:`.Table.columns` and the rows via :attr:`.Table.rows`. Both
 sequences can be accessed either by numeric index or by name. (In the case of
 rows, row names are optional.)
 """
@@ -59,11 +59,11 @@ class Table(utils.Patchable):
     of data that may (and usually do) contain mixed types.
 
     The sequence of :class:`.Column` instances are retrieved via the
-    :attr:`Table.columns` property. They may be accessed by either numeric
+    :attr:`.Table.columns` property. They may be accessed by either numeric
     index or by unique column name.
 
     The sequence of :class:`.Row` instances are retrieved via the
-    :attr:`Table.rows` property. They maybe be accessed by either numeric index
+    :attr:`.Table.rows` property. They maybe be accessed by either numeric index
     or, if specified, unique row names.
 
     :param rows:

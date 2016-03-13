@@ -8,8 +8,13 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 # Extensions
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx']
-autodoc_member_order = 'bysource'
+extensions = [
+    'sphinx.ext.autosummary',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.intersphinx'
+]
+# autodoc_member_order = 'bysource'
+autodoc_default_flags = ['members', 'show-inheritance']
 
 intersphinx_mapping = {
     'python': ('http://docs.python.org/3.5', None)

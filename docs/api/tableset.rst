@@ -1,8 +1,6 @@
-===================
-agate.tableset
-===================
+========
+TableSet
+========
 
-.. automodule:: agate.tableset
-    :members:
+.. autoclass:: agate.TableSet
     :inherited-members:
-    :undoc-members:

@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 
 """
-This module contains the :class:`Aggregation` class and its various subclasses.
-Each of these classes processes a column's data and returns some value(s). For
-instance, :class:`Mean`, when applied to a column containing :class:`.Number`
+Aggregations create a new value by summarizing a :class:`.Column`. For
+example, :class:`Mean`, when applied to a column containing :class:`.Number`
 data, returns a single :class:`decimal.Decimal` value which is the average of
 all values in that column.
 
-Aggregations are applied to single columns using the :meth:`.Table.aggregate`
-method. There result is a single value if a single aggregation was applied, or
+Aggregations can be applied to single columns using the :meth:`.Table.aggregate`
+method. The result is a single value if a one aggregation was applied, or
 a tuple of values if a sequence of aggregations was applied.
 
-Aggregations are applied to instances of :class:`.TableSet` using the
-:meth:`.Tableset.aggregate` method. The result will be a new :class:`.Table`
+Aggregations can be applied to instances of :class:`.TableSet` using the
+:meth:`.Tableset.aggregate` method. The result is a new :class:`.Table`
 with a column for each aggregation and a row for each table in the set.
 """
 
@@ -207,7 +206,7 @@ class Count(Aggregation):
 
 class Min(Aggregation):
     """
-    Compute the minimum value in a column. May be applied to columns containing
+    Calculate the minimum value in a column. May be applied to columns containing
     :class:`.DateTime` or :class:`.Number` data.
     """
     def __init__(self, column_name):
@@ -237,7 +236,7 @@ class Min(Aggregation):
 
 class Max(Aggregation):
     """
-    Compute the maximum value in a column. May be applied to columns containing
+    Calculate the maximum value in a column. May be applied to columns containing
     :class:`.DateTime` or :class:`.Number` data.
     """
     def __init__(self, column_name):
@@ -267,7 +266,7 @@ class Max(Aggregation):
 
 class MaxPrecision(Aggregation):
     """
-    Compute the most decimal places present for any value in this column.
+    Calculate the most decimal places present for any value in this column.
     """
     def __init__(self, column_name):
         self._column_name = column_name
@@ -289,7 +288,7 @@ class MaxPrecision(Aggregation):
 
 class Sum(Aggregation):
     """
-    Compute the sum of a column containing :class:`.Number` data.
+    Calculate the sum of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name
@@ -311,7 +310,7 @@ class Sum(Aggregation):
 
 class Mean(Aggregation):
     """
-    Compute the mean value of a column containing :class:`.Number` data.
+    Calculate the mean value of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name
@@ -341,7 +340,7 @@ class Mean(Aggregation):
 
 class Median(Aggregation):
     """
-    Compute the median value of a column containing :class:`.Number` data.
+    Calculate the median value of a column containing :class:`.Number` data.
 
     This is the 50th percentile. See :class:`Percentiles` for implementation
     details.
@@ -372,7 +371,7 @@ class Median(Aggregation):
 
 class Mode(Aggregation):
     """
-    Compute the mode value of a column containing :class:`.Number` data.
+    Calculate the mode value of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name
@@ -405,7 +404,7 @@ class Mode(Aggregation):
 
 class IQR(Aggregation):
     """
-    Compute the interquartile range of a column containing
+    Calculate the interquartile range of a column containing
     :class:`.Number` data.
     """
     def __init__(self, column_name):
@@ -434,7 +433,7 @@ class IQR(Aggregation):
 
 class Variance(Aggregation):
     """
-    Compute the sample variance of a column containing
+    Calculate the sample variance of a column containing
     :class:`.Number` data.
     """
     def __init__(self, column_name):
@@ -466,7 +465,7 @@ class Variance(Aggregation):
 
 class PopulationVariance(Variance):
     """
-    Compute the population variance of a column containing
+    Calculate the population variance of a column containing
     :class:`.Number` data.
     """
     def __init__(self, column_name):
@@ -498,7 +497,7 @@ class PopulationVariance(Variance):
 
 class StDev(Aggregation):
     """
-    Compute the sample standard of deviation of a column containing
+    Calculate the sample standard of deviation of a column containing
     :class:`.Number` data.
     """
     def __init__(self, column_name):
@@ -525,7 +524,7 @@ class StDev(Aggregation):
 
 class PopulationStDev(StDev):
     """
-    Compute the population standard of deviation of a column containing
+    Calculate the population standard of deviation of a column containing
     :class:`.Number` data.
     """
     def __init__(self, column_name):
@@ -552,7 +551,7 @@ class PopulationStDev(StDev):
 
 class MAD(Aggregation):
     """
-    Compute the `median absolute deviation <http://en.wikipedia.org/wiki/Median_absolute_deviation>`_
+    Calculate the `median absolute deviation <http://en.wikipedia.org/wiki/Median_absolute_deviation>`_
     of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):

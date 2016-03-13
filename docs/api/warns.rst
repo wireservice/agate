@@ -1,8 +1,9 @@
-=======================
-agate.warns
-=======================
+========
+Warnings
+========
 
-.. automodule:: agate.warns
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. autoclass:: agate.NullCalculationWarning
+.. autoclass:: agate.DuplicateColumnWarning
+
+.. autofunction:: agate.warn_null_calculation
+.. autofunction:: agate.warn_duplicate_column
