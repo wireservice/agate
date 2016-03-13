@@ -16,6 +16,7 @@ Why agate?
 * Exhaustive test coverage.
 * MIT licensed and free for all purposes.
 * Zealously `zen <https://www.python.org/dev/peps/pep-0020/>`_.
+* Made with love.
 
 Principles
 ==========
