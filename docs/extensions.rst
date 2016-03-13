@@ -2,12 +2,12 @@
 Extensions
 ==========
 
-agate's core featureset is designed rely on as few dependencies as possible. However, in the real world you're often going to want to interface agate with SQL, numpy or other data processing tools.
+The core agate library is designed rely on as few dependencies as possible. However, in the real world you're often going to want to interface with more specialized tools, or with other formats, such as SQL or Excel.
 
-How extensions work
-===================
+Using extensions
+================
 
-In order to support these use-cases, but not make things excessively complicated, agate support's a simple extensibility pattern based on `monkey patching <https://en.wikipedia.org/wiki/Monkey_patch>`_. Libraries can be created that patch new methods onto :class:`.Table` and :class:`.TableSet`. For example, `agate-sql <http://agate-sql.rtfd.org/>`_ adds the ability to read and write tables from a SQL database:
+agate support's plugin-style extensions based on `monkey patching <https://en.wikipedia.org/wiki/Monkey_patch>`_. Libraries can be created that patch new methods onto :class:`.Table` and :class:`.TableSet`. For example, `agate-sql <http://agate-sql.rtfd.org/>`_ adds the ability to read and write tables from a SQL database:
 
 .. code-block:: python
 
@@ -23,7 +23,7 @@ In order to support these use-cases, but not make things excessively complicated
 List of extensions
 ==================
 
-Here is a list of actively supported agate extensions:
+Here is a list of agate extensions that are known to be actively maintained:
 
 * `agate-sql <http://agate-sql.rtfd.org/>`_: Read and write tables in SQL databases
 * `agate-stats <http://agate-stats.rtfd.org/>`_: Additional statistical methods
