@@ -3,16 +3,13 @@
 import six
 
 from agate.aggregations import *
-from agate.columns import Column
 from agate.data_types import *
 from agate.computations import *
 from agate.exceptions import *
 from agate.mapped_sequence import MappedSequence  # noqa
-from agate.rows import Row
 from agate.table import Table  # noqa
 from agate.tableset import TableSet  # noqa
 from agate.testcase import AgateTestCase  # noqa
-from agate.utils import allow_tableset_proxy, Patchable, NullOrder, Quantiles
 from agate.warns import NullCalculationWarning, DuplicateColumnWarning, warn_null_calculation, warn_duplicate_column  # noqa
 
 if six.PY2:  # pragma: no cover

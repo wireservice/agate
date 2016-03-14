@@ -15,26 +15,26 @@ Aggregations can be applied to instances of :class:`.TableSet` using the
 with a column for each aggregation and a row for each table in the set.
 """
 
-from agate.aggregations.base import Aggregation
+from agate.aggregations.base import *
 
-from agate.aggregations.all import All
-from agate.aggregations.any import Any
-from agate.aggregations.count import Count
-from agate.aggregations.deciles import Deciles
-from agate.aggregations.has_nulls import HasNulls
-from agate.aggregations.iqr import IQR
-from agate.aggregations.mad import MAD
-from agate.aggregations.max_length import MaxLength
-from agate.aggregations.max_precision import MaxPrecision
-from agate.aggregations.max import Max
-from agate.aggregations.mean import Mean
-from agate.aggregations.median import Median
-from agate.aggregations.min import Min
-from agate.aggregations.mode import Mode
-from agate.aggregations.percentiles import Percentiles
-from agate.aggregations.quartiles import Quartiles
-from agate.aggregations.quintiles import Quintiles
-from agate.aggregations.stdev import StDev, PopulationStDev
-from agate.aggregations.sum import Sum
-from agate.aggregations.summary import Summary
-from agate.aggregations.variance import Variance, PopulationVariance
+from agate.aggregations.all import *
+from agate.aggregations.any import *
+from agate.aggregations.count import *
+from agate.aggregations.deciles import *
+from agate.aggregations.has_nulls import *
+from agate.aggregations.iqr import *
+from agate.aggregations.mad import *
+from agate.aggregations.max_length import *
+from agate.aggregations.max_precision import *
+from agate.aggregations.max import *
+from agate.aggregations.mean import *
+from agate.aggregations.median import *
+from agate.aggregations.min import *
+from agate.aggregations.mode import *
+from agate.aggregations.percentiles import *
+from agate.aggregations.quartiles import *
+from agate.aggregations.quintiles import *
+from agate.aggregations.stdev import *
+from agate.aggregations.sum import *
+from agate.aggregations.summary import *
+from agate.aggregations.variance import *

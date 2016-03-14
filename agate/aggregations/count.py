@@ -4,6 +4,7 @@ from agate.aggregations.base import Aggregation
 from agate.data_types import Number
 from agate.utils import default
 
+
 class Count(Aggregation):
     """
     Count values. If no arguments are specified, this is simply a count of the
