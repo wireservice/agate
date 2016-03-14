@@ -16,7 +16,9 @@ class by inheriting from :class:`Computation`.
 from decimal import Decimal
 import six
 
-from agate.aggregations import HasNulls, Percentiles, Sum
+from agate.aggregations.has_nulls import HasNulls
+from agate.aggregations.percentiles import Percentiles
+from agate.aggregations.sum import Sum
 from agate.data_types import Date, DateTime, Number, TimeDelta
 from agate.exceptions import DataTypeError
 from agate.warns import warn_null_calculation

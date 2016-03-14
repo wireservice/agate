@@ -10,6 +10,7 @@ except ImportError:  # pragma: no cover
 from agate import Table, TableSet
 from agate.aggregations import *
 from agate.data_types import *
+from agate.exceptions import DataTypeError
 from agate.testcase import AgateTestCase
 
 

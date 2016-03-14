@@ -46,8 +46,8 @@ Statistical aggregations
     agate.Quintiles
     agate.Deciles
 
-Text
-----
+Text aggregations
+-----------------
 
 .. autosummary::
     :nosignatures:
