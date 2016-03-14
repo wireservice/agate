@@ -1,6 +1,7 @@
 1.3.1
 -----
 
+* Moved every :class:`.Aggregation` and :class:`.Computation` into their own modules. (#565)
 * :class:`.Column` and :class:`.Row` are now importable from `agate`.
 * Completely reorgnized the API documentation.
 * Moved unit tests into modules to match new code organization.
