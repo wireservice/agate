@@ -81,7 +81,7 @@ The output table will be the same format as the previous example, except the val
 Identify outliers
 =================
 
-The `agate-stats <http://agate-stats.readthedocs.org/>`_ extension adds methods for finding outliers.
+The `agate-stats <http://agate-stats.rtfd.org/>`_ extension adds methods for finding outliers.
 
 .. code-block:: python
 

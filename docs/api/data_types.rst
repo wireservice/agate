@@ -9,7 +9,6 @@ Data types
     :nosignatures:
 
     agate.DataType
-    agate.TypeTester
 
 Supported types
 ---------------
@@ -30,7 +29,6 @@ Detailed list
 .. autodata:: agate.DEFAULT_TRUE_VALUES
 .. autodata:: agate.DEFAULT_FALSE_VALUES
 .. autoclass:: agate.DataType
-.. autoclass:: agate.TypeTester
 .. autoclass:: agate.Text
 .. autoclass:: agate.Number
 .. autoclass:: agate.Boolean

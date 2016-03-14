@@ -9,6 +9,7 @@ API
     api/tableset
     api/columns_and_rows
     api/data_types
+    api/type_tester
     api/aggregations
     api/computations
     api/csv

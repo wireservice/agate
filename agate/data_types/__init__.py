@@ -10,7 +10,7 @@ control how types are guessed.
 """
 
 from agate.data_types.base import DEFAULT_NULL_VALUES, DataType  # noqa
-from agate.data_types.boolean import Boolean  # noqa
+from agate.data_types.boolean import Boolean, DEFAULT_TRUE_VALUES, DEFAULT_FALSE_VALUES  # noqa
 from agate.data_types.date import Date  # noqa
 from agate.data_types.date_time import DateTime  # noqa
 from agate.data_types.number import Number  # noqa
