@@ -9,7 +9,8 @@ except ImportError:  # pragma: no cover
 
 import six
 
-from agate.data_types import Number, TypeTester
+from agate.data_types import Number
+from agate.type_tester import TypeTester
 from agate.rows import Row
 from agate import utils
 

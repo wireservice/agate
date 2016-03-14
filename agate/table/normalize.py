@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from agate.data_types import TypeTester
+from agate.type_tester import TypeTester
 from agate.rows import Row
 from agate import utils
 

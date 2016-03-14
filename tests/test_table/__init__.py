@@ -19,6 +19,7 @@ from agate import Table
 from agate.data_types import *
 from agate.computations import Formula
 from agate.testcase import AgateTestCase
+from agate.type_tester import TypeTester
 from agate.warns import DuplicateColumnWarning
 
 

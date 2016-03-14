@@ -15,6 +15,7 @@ import pytz
 
 from agate.columns import *
 from agate.data_types import *
+from agate.type_tester import TypeTester
 from agate.exceptions import CastError
 
 
