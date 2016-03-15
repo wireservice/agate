@@ -267,6 +267,10 @@ You'll notice we provide a :keyword:`lambda` function to the :meth:`.Table.where
 
 A crucial thing to understand about these table methods is that they return **new tables**. In our example above ``exonerations`` was a :class:`.Table` instance and we applied :meth:`.Table.where`, so ``with_age`` is a new, different :class:`Table`. The tables themselves can't be changed. You can create new tables with these methods, but you can't modify them in-place. (If this seems weird, just trust me. There are lots of good computer science-y reasons to do it this way.)
 
+.. note::
+
+    In Python, you can use :code:`print(globals().keys())` to view all global variables available. These include the names of the tables you make over the course of analyzing data with agate.
+
 We can verify this did what we expected by counting the rows in the original table and rows in the new table:
 
 .. code-block:: python
