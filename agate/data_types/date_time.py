@@ -12,7 +12,7 @@ from agate.exceptions import CastError
 
 class DateTime(DataType):
     """
-    Data type representing dates and times.
+    Data representing dates with times.
 
     :param datetime_format:
         A formatting string for :meth:`datetime.datetime.strptime` to use

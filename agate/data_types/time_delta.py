@@ -11,7 +11,7 @@ from agate.exceptions import CastError
 
 class TimeDelta(DataType):
     """
-    Data type representing the interval between two times.
+    Data representing the interval between two dates and/or times.
     """
     def cast(self, d):
         """

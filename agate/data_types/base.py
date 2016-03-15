@@ -10,10 +10,10 @@ DEFAULT_NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
 
 class DataType(object):  # pragma: no cover
     """
-    Base class for data types.
+    Specifies how values should be parsed when creating a :class:`.Table`.
 
     :param null_values: A sequence of values which should be cast to
-        :code:`None` when encountered with this type.
+        :code:`None` when encountered by this data type.
     """
     def __init__(self, null_values=DEFAULT_NULL_VALUES):
         self.null_values = null_values

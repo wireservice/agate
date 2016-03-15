@@ -25,9 +25,6 @@ Supported types
 Detailed list
 -------------
 
-.. autodata:: agate.DEFAULT_NULL_VALUES
-.. autodata:: agate.DEFAULT_TRUE_VALUES
-.. autodata:: agate.DEFAULT_FALSE_VALUES
 .. autoclass:: agate.DataType
 .. autoclass:: agate.Text
 .. autoclass:: agate.Number

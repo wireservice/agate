@@ -19,17 +19,15 @@ DEFAULT_FALSE_VALUES = ('no', 'n', 'false', 'f', '0')
 
 class Boolean(DataType):
     """
-    Data type representing boolean values.
+    Data representing true and false.
 
     Note that by default numerical `1` and `0` are considered valid boolean
-    values, but no other numbers are.
+    values, but other numbers are not.
 
     :param true_values: A sequence of values which should be cast to
-        :code:`True` when encountered with this type. Defaults to
-        :data:`.DEFAULT_TRUE_VALUES`.
+        :code:`True` when encountered with this type.
     :param false_values: A sequence of values which should be cast to
-        :code:`False` when encountered with this type. Defaults to
-        :data:`.DEFAULT_FALSE_VALUES`.
+        :code:`False` when encountered with this type.
     """
     def __init__(self, true_values=DEFAULT_TRUE_VALUES, false_values=DEFAULT_FALSE_VALUES, null_values=DEFAULT_NULL_VALUES):
         super(Boolean, self).__init__(null_values=null_values)

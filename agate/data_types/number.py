@@ -18,7 +18,7 @@ CURRENCY_SYMBOLS = [u'؋', u'$', u'ƒ', u'៛', u'¥', u'₡', u'₱', u'£', u'
 
 class Number(DataType):
     """
-    Data type representing numbers.
+    Data representing numbers.
 
     :param locale:
         A locale specification such as :code:`en_US` or :code:`de_DE` to use

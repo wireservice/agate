@@ -7,31 +7,32 @@ This module contains various exceptions raised by agate.
 
 class DataTypeError(TypeError):  # pragma: no cover
     """
-    Exception raised if a process, such as an :class:`.Aggregation`, is
-    attempted with an invalid data type.
+    A calculation was attempted with an invalid :class:`.DataType`.
     """
     pass
 
 
 class UnsupportedAggregationError(TypeError):  # pragma: no cover
     """
-    Exception raised if an aggregation is attempted which is not supported. For
-    example if a :class:`.Percentiles` is used on a :class:`.TableSet`.
+    An :class:`.Aggregation` was attempted which is not supported.
+
+    For example, if a :class:`.Percentiles` is applied to a :class:`.TableSet`.
     """
     pass
 
 
 class CastError(Exception):  # pragma: no cover
     """
-    Exception raised when a column value can not be cast to the correct type.
+    A column value can not be cast to the correct type.
     """
     pass
 
 
 class FieldSizeLimitError(Exception):  # pragma: no cover
     """
-    Exception raised when a field in the CSV file exceeds the default max
-    or one provided by the user.
+    A field in a CSV file exceeds the maximum length.
+
+    This length may be the default or one set by the user.
     """
     def __init__(self, limit):
         super(FieldSizeLimitError, self).__init__(

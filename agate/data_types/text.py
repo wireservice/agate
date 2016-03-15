@@ -7,7 +7,7 @@ from agate.data_types.base import DataType
 
 class Text(DataType):
     """
-    Data type representing text.
+    Data representing text.
 
     :param cast_nulls:
         If :code:`True`, values in :data:`.DEFAULT_NULL_VALUES` will be
