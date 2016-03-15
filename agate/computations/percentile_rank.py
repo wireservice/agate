@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 
-from agate.computations.rank import *
-
 from agate.aggregations.percentiles import Percentiles
+from agate.computations.rank import Rank
+from agate.data_types import Number
 from agate.exceptions import DataTypeError
 
 
 class PercentileRank(Rank):
     """
-    Assign each value in a column to the percentile into which it falls.
+    Calculate the percentile into which each value falls.
 
     See :class:`.Percentiles` for implementation details.
+
+    :param column_name:
+        The name of a column containing the :class:`.Number` values.
     """
     def validate(self, table):
         column = table.columns[self._column_name]

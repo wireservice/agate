@@ -8,7 +8,10 @@ from agate.utils import max_precision
 
 class MaxPrecision(Aggregation):
     """
-    Calculate the most decimal places present for any value in this column.
+    Find the most decimal places present for any value in this column.
+
+    :param column_name:
+        The name of the column to be searched.
     """
     def __init__(self, column_name):
         self._column_name = column_name

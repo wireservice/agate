@@ -6,14 +6,14 @@ import six
 @six.python_2_unicode_compatible
 class Computation(object):  # pragma: no cover
     """
-    An operation that takes a table and produces a new column by performing
-    some computation on each row. Computations are invoked with
-    :class:`.TableSet.compute`.
+    Computations produce a new column by performing a calculation on each row.
 
-    When implementing a custom subclass, ensure that the values returned by
-    :meth:`run` are of the type specified by :meth:`get_computed_data_type`.
-    This can be ensured by using the :meth:`.DataType.cast` method. See
-    :class:`Formula` for an example.
+    Computations are applied with :class:`.TableSet.compute`.
+
+    When implementing a custom computation, ensure that the values returned by
+    :meth:`.Computation.run` are of the type specified by
+    :meth:`.Computation.get_computed_data_type`. This can be ensured by using
+    the :meth:`.DataType.cast` method. See :class:`.Formula` for an example.
     """
     def __str__(self):
         """

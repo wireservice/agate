@@ -7,7 +7,10 @@ from agate.exceptions import DataTypeError
 
 class MaxLength(Aggregation):
     """
-    Calculates the longest string in a column containing :class:`.Text` data.
+    Find the length of the longest string in a column.
+
+    :param column_name:
+        The name of a column containing :class:`.Text` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name

@@ -6,9 +6,12 @@ from agate.data_types import Boolean
 
 class All(Aggregation):
     """
-    Returns :code:`True` if all values in a column pass a truth test. The truth
-    test may be omitted when testing :class:`.Boolean` data.
+    Check if all values in a column pass a test.
 
+    The test may be omitted when checking :class:`.Boolean` data.
+
+    :param column_name:
+        The name of the column to check.
     :param test:
         A function that takes a value and returns `True` or `False`.
     """

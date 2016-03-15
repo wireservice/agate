@@ -11,8 +11,9 @@ from agate.warns import warn_null_calculation
 
 class Quintiles(Aggregation):
     """
-    The quintiles of a column based on the 20th, 40th, 60th and 80th
-    percentiles.
+    Calculate the quintiles of a column based on its percentiles.
+
+    Quintiles will be equivalent to the 20th, 40th, 60th and 80th percentiles.
 
     "Zeroth" (min value) and "Fifth" (max value) quintiles are included for
     reference and intuitive indexing.
@@ -20,6 +21,9 @@ class Quintiles(Aggregation):
     See :class:`Percentiles` for implementation details.
 
     This aggregation can not be applied to a :class:`.TableSet`.
+
+    :param column_name:
+        The name of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name

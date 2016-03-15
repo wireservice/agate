@@ -12,7 +12,10 @@ from agate.warns import warn_null_calculation
 class MAD(Aggregation):
     """
     Calculate the `median absolute deviation <http://en.wikipedia.org/wiki/Median_absolute_deviation>`_
-    of a column containing :class:`.Number` data.
+    of a column.
+
+    :param column_name:
+        The name of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name

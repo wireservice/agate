@@ -1,20 +1,19 @@
 #!/usr/bin/env python
 
-from agate.computations.base import Computation
-
-import six
-
 from decimal import Decimal
 
-from agate.data_types import Number
+import six
 
 if six.PY3:
     from functools import cmp_to_key
 
+from agate.computations.base import Computation
+from agate.data_types import Number
+
 
 class Rank(Computation):
     """
-    Computes rank order of the values in a column.
+    Calculate rank order of the values in a column.
 
     Uses the "competition" ranking method: if there are four values and the
     middle two are tied, then the output will be `[1, 2, 2, 4]`.

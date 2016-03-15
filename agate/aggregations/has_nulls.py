@@ -6,7 +6,10 @@ from agate.data_types import Boolean
 
 class HasNulls(Aggregation):
     """
-    Returns :code:`True` if the column contains null values.
+    Check if the column contains null values.
+
+    :param column_name
+        The name of the column to check.
     """
     def __init__(self, column_name):
         self._column_name = column_name

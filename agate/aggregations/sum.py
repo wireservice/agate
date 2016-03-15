@@ -7,7 +7,10 @@ from agate.exceptions import DataTypeError
 
 class Sum(Aggregation):
     """
-    Calculate the sum of a column containing :class:`.Number` data.
+    Calculate the sum of a column.
+
+    :param column_name:
+        The name of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name

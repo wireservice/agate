@@ -12,8 +12,7 @@ from agate.warns import warn_null_calculation
 
 class Percentiles(Aggregation):
     """
-    Divides a :class:`.Number` column into 100 equal-size groups using the
-    "CDF" method.
+    Divide a column into 100 equal-size groups using the "CDF" method.
 
     See `this explanation <http://www.amstat.org/publications/jse/v14n3/langford.html>`_
     of the various methods for computing percentiles.
@@ -25,6 +24,9 @@ class Percentiles(Aggregation):
     `pycalcstats <https://code.google.com/p/pycalcstats/>`_.
 
     This aggregation can not be applied to a :class:`.TableSet`.
+
+    :param column_name:
+        The name of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name

@@ -8,14 +8,15 @@ from agate.exceptions import UnsupportedAggregationError
 @six.python_2_unicode_compatible
 class Aggregation(object):  # pragma: no cover
     """
-    An operation that takes a table and produces a single value summarizing
-    one of it's columns. Aggregations are invoked with
-    :class:`.TableSet.aggregate`.
+    Aggregations create a new value by summarizing a :class:`.Column`.
 
-    When implementing a custom subclass, ensure that the values returned by
-    :meth:`run` are of the type specified by :meth:`get_aggregate_data_type`.
-    This can be ensured by using the :meth:`.DataType.cast` method. See
-    :class:`Formula` for an example.
+    Aggregations are applied with :meth:`.Table.aggregate` and
+    :meth:`.TableSet.aggregate`.
+
+    When creating a custom aggregation, ensure that the values returned by
+    :meth:`.Aggregation.run` are of the type specified by
+    :meth:`.Aggregation.get_aggregate_data_type`. This can be ensured by using
+    the :meth:`.DataType.cast` method. See :class:`.Summary` for an example.
     """
     def __str__(self):
         """

@@ -7,8 +7,13 @@ from agate.exceptions import DataTypeError
 
 class Min(Aggregation):
     """
-    Calculate the minimum value in a column. May be applied to columns containing
-    :class:`.DateTime` or :class:`.Number` data.
+    Find the minimum value in a column.
+
+    This aggregation can be applied to columns containing :class:`.Date`,
+    :class:`.DateTime`, or :class:`.Number` data.
+
+    :param column_name:
+        The name of the column to be searched.
     """
     def __init__(self, column_name):
         self._column_name = column_name

@@ -5,7 +5,7 @@ from agate.computations.base import Computation
 
 class Formula(Computation):
     """
-    A simple drop-in computation that can apply any function to rows.
+    Apply an arbitrary function to each row.
 
     :param data_type:
         The data type this formula will return.
@@ -13,8 +13,8 @@ class Formula(Computation):
         The function to be applied to each row. Must return a valid value for
         the specified data type.
     :param cast:
-        If ``True``, each return value will be cast to the specified
-        ``data_type`` to ensure it is valid. Only specify false if you are
+        If :code:`True`, each return value will be cast to the specified
+        :code:`data_type` to ensure it is valid. Only disable this if you are
         certain your formula always returns the correct type.
     """
     def __init__(self, data_type, func, cast=True):

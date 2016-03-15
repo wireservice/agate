@@ -11,7 +11,9 @@ from agate.warns import warn_null_calculation
 
 class Deciles(Aggregation):
     """
-    The deciles of a column based on the 10th, 20th ... 90th percentiles.
+    Calculate the deciles of a column based on its percentiles.
+
+    Deciles will be equivalent to the 10th, 20th ... 90th percentiles.
 
     "Zeroth" (min value) and "Tenth" (max value) deciles are included for
     reference and intuitive indexing.
@@ -19,6 +21,9 @@ class Deciles(Aggregation):
     See :class:`Percentiles` for implementation details.
 
     This aggregation can not be applied to a :class:`.TableSet`.
+
+    :param column_name:
+        The name of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name

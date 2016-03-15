@@ -8,7 +8,12 @@ from agate.exceptions import DataTypeError
 
 class PercentChange(Computation):
     """
-    Computes percent change between two columns.
+    Calculate the percent difference between two columns.
+
+    :param before_column_name:
+        The name of a column containing the "before" :class:`.Number` values.
+    :param after_column_name:
+        The name of a column containing the "after" :class:`.Number` values.
     """
     def __init__(self, before_column_name, after_column_name):
         self._before_column_name = before_column_name

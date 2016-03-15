@@ -10,10 +10,13 @@ from agate.warns import warn_null_calculation
 
 class Median(Aggregation):
     """
-    Calculate the median value of a column containing :class:`.Number` data.
+    Calculate the median of a column.
 
-    This is the 50th percentile. See :class:`Percentiles` for implementation
-    details.
+    Median is equivalent to the 50th percentile. See :class:`Percentiles`
+    for implementation details.
+
+    :param column_name:
+        The name of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name

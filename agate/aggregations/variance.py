@@ -10,8 +10,12 @@ from agate.warns import warn_null_calculation
 
 class Variance(Aggregation):
     """
-    Calculate the sample variance of a column containing
-    :class:`.Number` data.
+    Calculate the sample variance of a column.
+
+    For the population variance see :class:`.PopulationVariance`.
+
+    :param column_name:
+        The name of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name
@@ -42,8 +46,12 @@ class Variance(Aggregation):
 
 class PopulationVariance(Variance):
     """
-    Calculate the population variance of a column containing
-    :class:`.Number` data.
+    Calculate the population variance of a column.
+
+    For the sample variance see :class:`.Variance`.
+
+    :param column_name:
+        The name of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name

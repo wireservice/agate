@@ -10,8 +10,12 @@ from agate.warns import warn_null_calculation
 
 class StDev(Aggregation):
     """
-    Calculate the sample standard of deviation of a column containing
-    :class:`.Number` data.
+    Calculate the sample standard of deviation of a column.
+
+    For the population standard of deviation see :class:`.PopulationStDev`.
+
+    :param column_name:
+        The name of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name
@@ -37,8 +41,12 @@ class StDev(Aggregation):
 
 class PopulationStDev(StDev):
     """
-    Calculate the population standard of deviation of a column containing
-    :class:`.Number` data.
+    Calculate the population standard of deviation of a column.
+
+    For the sample standard of deviation see :class:`.StDev`.
+
+    :param column_name:
+        The name of a column containing :class:`.Number` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name

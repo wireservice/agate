@@ -7,14 +7,16 @@ from agate.utils import default
 
 class Count(Aggregation):
     """
-    Count values. If no arguments are specified, this is simply a count of the
-    number of rows in the table. If only :code:`column_name` is specified, this
-    will count the number of non-null values in that column. If both
-    :code:`column_name` and :code:`value` are specified, then it will count
-    occurrences of a specific value in the specified column will be counted.
+    Count occurences of a value or values.
+
+    This aggregation can be used in three ways:
+
+    1. If no arguments are specified, then it will count the number of rows in the table.
+    2. If only :code:`column_name` is specified, then it will count the number of non-null values in that column.
+    3. If both :code:`column_name` and :code:`value` are specified, then it will count occurrences of a specific value.
 
     :param column_name:
-        A column to count values in.
+        The column containing the values to be counted.
     :param value:
         Any value to be counted, including :code:`None`.
     """
