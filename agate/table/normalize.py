@@ -8,7 +8,7 @@ from agate import utils
 @utils.allow_tableset_proxy
 def normalize(self, key, properties, property_column='property', value_column='value', column_types=None):
     """
-    Normalize a sequence of columns into two columns for field and value.
+    Create a new table with columns converted into rows values.
 
     For example:
 
@@ -36,7 +36,7 @@ def normalize(self, key, properties, property_column='property', value_column='v
     |  ...    |  ...      |  ...    |
     +---------+-----------+---------+
 
-    This is the opposite of :meth:`Table.denormalize`.
+    This is the opposite of :meth:`.Table.denormalize`.
 
     :param key:
         A column name or a sequence of column names that should be
@@ -54,7 +54,7 @@ def normalize(self, key, properties, property_column='property', value_column='v
         that order or an instance of :class:`.TypeTester`. Defaults to a
         generic :class:`.TypeTester`.
     :returns:
-        A new :class:`Table`.
+        A new :class:`.Table`.
     """
     from agate.table import Table
 

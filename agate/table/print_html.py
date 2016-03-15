@@ -7,8 +7,7 @@ import six
 
 def print_html(self, max_rows=None, max_columns=None, output=sys.stdout):
     """
-    Print an HTML-formatted preview of this self to the console or any
-    other output.
+    Print an HTML version of this table.
 
     :param max_rows:
         The maximum number of rows to display before truncating the data.

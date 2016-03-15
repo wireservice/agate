@@ -22,22 +22,21 @@ from agate import utils
 
 def print_bars(self, label_column_name='group', value_column_name='Count', domain=None, width=120, output=sys.stdout, printable=False):
     """
-    Print a text-based bar chart of the columns names `label_column_name`
-    and `value_column_name`.
+    Print a text-based bar chart based on this table.
 
     :param label_column_name:
-        The column containing the label values. Defaults to "group", which
-        is the default output of :meth:`Table.pivot` or :meth:`Table.bins`.
+        The column containing the label values. Defaults to :code:`group`, which
+        is the default output of :meth:`.Table.pivot` or :meth:`.Table.bins`.
     :param value_column_name:
-        The column containing the bar values. Defaults to "Count", which
-        is the default output of :meth:`Table.pivot` or :meth:`Table.bins`.
+        The column containing the bar values. Defaults to :code:`Count`, which
+        is the default output of :meth:`.Table.pivot` or :meth:`.Table.bins`.
     :param domain:
         A 2-tuple containing the minimum and maximum values for the chart's
         x-axis. The domain must be large enough to contain all values in
         the column.
     :param width:
         The width, in characters, to use for the bar chart. Defaults to
-        `120`.
+        :code:`120`.
     :param output:
         A file-like object to print to. Defaults to :code:`sys.stdout`.
     :param printable:

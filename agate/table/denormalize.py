@@ -18,8 +18,7 @@ from agate import utils
 @utils.allow_tableset_proxy
 def denormalize(self, key=None, property_column='property', value_column='value', default_value=utils.default, column_types=None):
     """
-    Denormalize a dataset so that unique values in a column become their
-    own columns.
+    Create a new table with row values converted into columns.
 
     For example:
 
@@ -49,9 +48,9 @@ def denormalize(self, key=None, property_column='property', value_column='value'
     +---------+----------+--------+-------+
 
     If one or more keys are specified then the resulting table will
-    automatically have `row_names` set to those keys.
+    automatically have :code:`row_names` set to those keys.
 
-    This is the opposite of :meth:`Table.normalize`.
+    This is the opposite of :meth:`.Table.normalize`.
 
     :param key:
         A column name or a sequence of column names that should be
@@ -73,7 +72,7 @@ def denormalize(self, key=None, property_column='property', value_column='value'
         values in field_column or an instance of :class:`.TypeTester`.
         Defaults to a generic :class:`.TypeTester`.
     :returns:
-        A new :class:`Table`.
+        A new :class:`.Table`.
     """
     from agate.table import Table
 

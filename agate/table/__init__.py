@@ -7,10 +7,10 @@ to the constructor. Once created, the data in a table **can not be changed**.
 This concept is central to agate.
 
 Instead of modifying the data, various methods can be used to create new,
-derivative tables. For example, the :meth:`Table.select` method creates a new
+derivative tables. For example, the :meth:`.Table.select` method creates a new
 table with only the specified columns. The :meth:`.Table.where` method creates
 a new table with only those rows that pass a test. And :meth:`.Table.order_by`
-creates a sorted table. In all of these cases the output is new :class:`Table`
+creates a sorted table. In all of these cases the output is new :class:`.Table`
 and the existing table remains unmodified.
 
 Tables are not themselves iterable, but the columns of the table can be
@@ -192,7 +192,7 @@ class Table(utils.Patchable):
 
     def __str__(self):
         """
-        Print the table's structure via :meth:`Table.print_structure`.
+        Print the table's structure using :meth:`.Table.print_structure`.
         """
         structure = six.StringIO()
 
@@ -203,57 +203,48 @@ class Table(utils.Patchable):
     @property
     def column_types(self):
         """
-        Get an ordered sequence of this table's column types.
-
-        :returns:
-            A tuple of :class:`.DataType` instances.
+        An tuple :class:`.DataType` instances.
         """
         return self._column_types
 
     @property
     def column_names(self):
         """
-        Get an ordered sequence of this table's column names.
-
-        :returns:
-            A tuple of strings.
+        An tuple of strings.
         """
         return self._column_names
 
     @property
     def row_names(self):
         """
-        Get an ordered sequence of this table's row names.
+        An tuple of strings, if this table has row names.
 
-        :returns:
-            A tuple of strings if this table has row names. Otherwise, `None`.
+        If this table does not have row names, then :code:`None`.
         """
         return self._row_names
 
     @property
     def columns(self):
         """
-        Get this table's columns.
-
-        :returns:
-            :class:`.MappedSequence`
+        A :class:`.MappedSequence` with column names for keys and
+        :class:`.Column` instances for values.
         """
         return self._columns
 
     @property
     def rows(self):
         """
-        Get this table's rows.
-
-        :returns:
-            :class:`.MappedSequence`
+        A :class:`.MappedSeqeuence` with row names for keys (if specified) and
+        :class:`.Row` instances for values.
         """
         return self._rows
 
     def _fork(self, rows, column_names=None, column_types=None, row_names=None):
         """
-        Create a new table using the metadata from this one. Used internally by
-        functions like :meth:`order_by`.
+        Create a new table using the metadata from this one.
+
+        This method is used internally by functions like
+        :meth:`.Table.order_by`.
 
         :param rows:
             Row data for the forked table.
@@ -280,7 +271,7 @@ class Table(utils.Patchable):
 
     def rename(self, column_names=None, row_names=None):
         """
-        Creates a copy of this table with different column or row names.
+        Create a copy of this table with different column names or row names.
 
         :param column_names:
             New column names for the renamed table. May be either an array or
@@ -308,19 +299,21 @@ class Table(utils.Patchable):
     @classmethod
     def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, sniff_limit=0, encoding='utf-8', **kwargs):
         """
-        Create a new table for a CSV. This method uses agate's builtin
-        CSV reader, which supports unicode on both Python 2 and Python 3.
+        Create a new table from a CSV.
 
-        `kwargs` will be passed through to the CSV reader.
+        This method uses agate's builtin CSV reader, which supplies encoding
+        support for both Python 2 and Python 3.
+
+        :code:`kwargs` will be passed through to the CSV reader.
 
         :param path:
             Filepath or file-like object from which to read CSV data.
         :param column_names:
-            See :meth:`Table.__init__`.
+            See :meth:`.Table.__init__`.
         :param column_types:
-            See :meth:`Table.__init__`.
+            See :meth:`.Table.__init__`.
         :param row_names:
-            See :meth:`Table.__init__`.
+            See :meth:`.Table.__init__`.
         :param header:
             If `True`, the first row of the CSV is assumed to contains headers
             and will be skipped. If `header` and `column_names` are both
@@ -400,26 +393,27 @@ class Table(utils.Patchable):
     @classmethod
     def from_json(cls, path, row_names=None, key=None, newline=False, column_types=None, **kwargs):
         """
-        Create a new table from a JSON file. Once the JSON is deseralized, the
-        resulting Python object is passed to :meth:`Table.from_object`. See the
-        documentation of that method for additional details.
+        Create a new table from a JSON file.
+
+        Once the JSON has been deseralized, the resulting Python object is
+        passed to :meth:`.Table.from_object`.
 
         If the file contains a top-level dictionary you may specify what
-        property contains the row list using the `key` parameter.
+        property contains the row list using the :code:`key` parameter.
 
-        `kwargs` will be passed through to :meth:`json.load`.
+        :code:`kwargs` will be passed through to :meth:`json.load`.
 
         :param path:
             Filepath or file-like object from which to read JSON data.
         :param row_names:
-            See :meth:`Table.__init__`.
+            See the :meth:`.Table.__init__`.
         :param key:
             The key of the top-level dictionary that contains a list of row
             arrays.
         :param newline:
             If `True` then the file will be parsed as "newline-delimited JSON".
         :param column_types:
-            See :meth:`Table.__init__`.
+            See :meth:`.Table.__init__`.
         """
         if key is not None and newline:
             raise ValueError('key and newline may not be specified together.')
@@ -452,10 +446,10 @@ class Table(utils.Patchable):
     @classmethod
     def from_object(cls, obj, row_names=None, column_types=None):
         """
-        Create a new table from a Python object with a structure that mirrors
-        a deserialized JSON object. Its contents should be an array
-        containing a dictionary for each "row". Nested objects or lists will
-        also be parsed. For example, this object:
+        Create a new table from a Python object.
+
+        The object should be a list containing a dictionary for each "row".
+        Nested objects or lists will also be parsed. For example, this object:
 
         .. code-block:: python
 
@@ -483,16 +477,17 @@ class Table(utils.Patchable):
                 'three': 'd'
             }
 
-        Column names and types will be inferred from the data. Not all rows are
-        required to have the same keys. Missing elements will be filled in with
-        null.
+        Column names and types will be inferred from the data.
+
+        Not all rows are required to have the same keys. Missing elements will
+        be filled in with null values.
 
         :param obj:
             Filepath or file-like object from which to read JSON data.
         :param row_names:
-            See :meth:`Table.__init__`.
+            See :meth:`.Table.__init__`.
         :param column_types:
-            See :meth:`Table.__init__`.
+            See :meth:`.Table.__init__`.
         """
         column_names = []
         row_objects = []
@@ -522,7 +517,7 @@ class Table(utils.Patchable):
         """
         Write this table to a JSON file or file-like object.
 
-        `kwargs` will be passed through to the JSON encoder.
+        :code:`kwargs` will be passed through to the JSON encoder.
 
         :param path:
             File path or file-like object to write to.
@@ -616,13 +611,13 @@ class Table(utils.Patchable):
     @allow_tableset_proxy
     def select(self, key):
         """
-        Create a new table with the same rows as this one, but only those
-        columns in the ``key``.
+        Create a new table with only the specified columns.
 
         :param key:
-            Either the name of a column to include or a sequence of such names.
+            Either the name of a single column to include or a sequence of such
+            names.
         :returns:
-            A new :class:`Table`.
+            A new :class:`.Table`.
         """
         if not utils.issequence(key):
             key = [key]
@@ -638,13 +633,13 @@ class Table(utils.Patchable):
     @allow_tableset_proxy
     def exclude(self, key):
         """
-        Create a new table with the same rows as this one, but only columns
-        not in the ``key``.
+        Create a new table without the specified columns.
 
         :param key:
-            Either the name of a column to exclude or a sequence of such names.
+            Either the name of a single column to exclude or a sequence of such
+            names.
         :returns:
-            A new :class:`Table`.
+            A new :class:`.Table`.
         """
         if not utils.issequence(key):
             key = [key]
@@ -656,7 +651,7 @@ class Table(utils.Patchable):
     @allow_tableset_proxy
     def where(self, test):
         """
-        Create a new table with the rows from this table that pass a truth test.
+        Create a new table with only those rows that pass a test.
 
         :param test:
             A function that takes a :class:`.Row` and returns :code:`True` if
@@ -664,7 +659,7 @@ class Table(utils.Patchable):
         :type test:
             :class:`function`
         :returns:
-            A new :class:`Table`.
+            A new :class:`.Table`.
         """
         rows = []
 
@@ -685,7 +680,7 @@ class Table(utils.Patchable):
     @allow_tableset_proxy
     def find(self, test):
         """
-        Find the first row that passes a truth test.
+        Find the first row that passes test.
 
         :param test:
             A function that takes a :class:`.Row` and returns :code:`True` if
@@ -704,17 +699,16 @@ class Table(utils.Patchable):
     @allow_tableset_proxy
     def order_by(self, key, reverse=False):
         """
-        Sort this table by the :code:`key`. This can be either a
-        column_name or callable that returns a value to sort by.
+        Create a new table that is sorted.
 
         :param key:
-            Either the name of a column to sort by, a sequence of such names,
-            or a :class:`function` that takes a row and returns a value to sort
-            by.
+            Either the name of a single column to sort by, a sequence of such
+            names, or a :class:`function` that takes a row and returns a value
+            to sort by.
         :param reverse:
             If `True` then sort in reverse (typically, descending) order.
         :returns:
-            A new :class:`Table`.
+            A new :class:`.Table`.
         """
         if len(self._rows) == 0:
             return self._fork(self._rows)
@@ -751,9 +745,9 @@ class Table(utils.Patchable):
     @allow_tableset_proxy
     def limit(self, start_or_stop=None, stop=None, step=None):
         """
-        Filter data to a subset of all rows.
+        Create a new table with fewer rows.
 
-        See also: Python's :func:`slice`.
+        See also: Python's builtin :func:`slice`.
 
         :param start_or_stop:
             If the only argument, then how many rows to include, otherwise,
@@ -764,7 +758,7 @@ class Table(utils.Patchable):
             The size of the jump between rows to include. (`step=2` will return
             every other row.)
         :returns:
-            A new :class:`Table`.
+            A new :class:`.Table`.
         """
         if stop or step:
             s = slice(start_or_stop, stop, step)
@@ -782,15 +776,15 @@ class Table(utils.Patchable):
     @allow_tableset_proxy
     def distinct(self, key=None):
         """
-        Filter data to only rows that are unique.
+        Create a new table with only unique rows.
 
         :param key:
-            Either the name of a column to use to identify unique rows, a
+            Either the name of a single column to use to identify unique rows, a
             sequence of such column names, a :class:`function` that takes a
             row and returns a value to identify unique rows, or `None`, in
             which case the entire row will be checked for uniqueness.
         :returns:
-            A new :class:`Table`.
+            A new :class:`.Table`.
         """
         key_is_row_function = hasattr(key, '__call__')
         key_is_sequence = utils.issequence(key)
@@ -824,32 +818,31 @@ class Table(utils.Patchable):
 
     def print_csv(self, **kwargs):
         """
-        A shortcut for printing a CSV directly to the csonsole. Effectively the
-        same as passing :meth:`sys.stdout` to :meth:`Table.to_csv`.
+        Print this table as a CSV.
 
-        `kwargs` will be passed on to :meth:`Table.to_csv`.
+        This is the same as passing :code:`sys.stdout` to :meth:`.Table.to_csv`.
+
+        :code:`kwargs` will be passed on to :meth:`.Table.to_csv`.
         """
         self.to_csv(sys.stdout, **kwargs)
 
     def print_json(self, **kwargs):
         """
-        A shortcut for printing JSON directly to the console. Effectively the
-        same as passing :meth:`sys.stdout` to :meth:`Table.to_json`.
+        Print this table as JSON.
 
-        `kwargs` will be passed on to :meth:`Table.to_json`.
+        This is the same as passing :code:`sys.stdout` to
+        :meth:`.Table.to_json`.
+
+        :code:`kwargs` will be passed on to :meth:`.Table.to_json`.
         """
         self.to_json(sys.stdout, **kwargs)
 
     def print_structure(self, output=sys.stdout):
         """
-        Print the column names and their respective types
+        Print this table's column names and types.
 
-        :param table:
-            A :class:`Table` instance.
         :param output:
-            The output used to print the structure of the :class:`Table`.
-        :returns:
-            None
+            The output to print to.
         """
         from agate.table.print_structure import print_structure
 

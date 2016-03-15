@@ -1,5 +1,5 @@
 ================
-Columns and Rows
+Columns and rows
 ================
 
 .. autosummary::

@@ -5,8 +5,7 @@ from agate import utils
 
 def aggregate(self, aggregations):
     """
-    Aggregate data from the columns in this self by applying a sequence of
-    :class:`.Aggregation` instances.
+    Apply one or more :class:`.Aggregation` instances to this table.
 
     :param aggregations:
         A single :class:`.Aggregation` instance or sequence of them.

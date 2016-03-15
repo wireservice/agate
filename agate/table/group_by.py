@@ -10,12 +10,10 @@ from agate import utils
 @utils.allow_tableset_proxy
 def group_by(self, key, key_name=None, key_type=None):
     """
-    Create a new :class:`Table` for unique value and return them as a
-    :class:`.TableSet`. The :code:`key` can be either a column name
-    or a function that returns a value to group by.
+    Create a :class:`.TableSet` with a table for each unique key.
 
-    Note that when group names will always be coerced to a string,
-    regardless of the format of the input column.
+    Note that group names will always be coerced to a string, regardless of the
+    format of the input column.
 
     :param key:
         Either the name of a column from the this table to group by, or a
@@ -29,7 +27,7 @@ def group_by(self, key, key_name=None, key_type=None):
         it will default to a :class`.Text`.
     :returns:
         A :class:`.TableSet` mapping where the keys are unique values from
-        the :code:`key` and the values are new :class:`Table` instances
+        the :code:`key` and the values are new :class:`.Table` instances
         containing the grouped rows.
     """
     key_is_row_function = hasattr(key, '__call__')

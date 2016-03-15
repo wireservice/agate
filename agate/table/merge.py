@@ -9,24 +9,25 @@ from agate.rows import Row
 @classmethod
 def merge(cls, tables, row_names=None, column_names=None):
     """
-    Merge an array of tables into a single table.
+    Create a new table from a sequence of similar tables.
 
-    Row names will be lost, but new row names can be specified with the
-    `row_names` argument.
+    This method will not carry over row names from the merged tables, but new
+    row names can be specified with the :code:`row_names` argument.
 
-    It is possible to limit the columns included in the new :class:`Table`
-    with `column_names` argument. For example, to only include columns from
-    a specific table, set `column_names` equal to `table.column_names`.
+    It is possible to limit the columns included in the new :class:`.Table`
+    with :code:`column_names` argument. For example, to only include columns
+    from a specific table, set :code:`column_names` equal to
+    :code:`table.column_names`.
 
     :param tables:
-        An sequence of :class:`Table` instances.
+        An sequence of :class:`.Table` instances.
     :param row_names:
-        See :class:`Table` for the usage of this parameter.
+        See :class:`.Table` for the usage of this parameter.
     :param column_names:
-        A sequence of column names to include in the new :class:`Table`. If
+        A sequence of column names to include in the new :class:`.Table`. If
         not specified, all distinct column names from `tables` are included.
     :returns:
-        A new :class:`Table`.
+        A new :class:`.Table`.
     """
     from agate.table import Table
 

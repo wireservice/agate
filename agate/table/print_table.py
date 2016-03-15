@@ -11,8 +11,7 @@ from agate import utils
 
 def print_table(self, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=20, locale=None):
     """
-    Print a well-formatted preview of this self to the console or any
-    other output.
+    Print a text-based view of the data in this table..
 
     :param max_rows:
         The maximum number of rows to display before truncating the data.

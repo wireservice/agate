@@ -9,9 +9,11 @@ from agate import utils
 @utils.allow_tableset_proxy
 def pivot(self, key=None, pivot=None, aggregation=None, computation=None, default_value=utils.default, key_name=None):
     """
-    Pivot reorganizes the data in a table by grouping the data, aggregating
-    those groups, optionally applying a computation, and then organizing
-    the groups into new rows and columns.
+    Create a new table by grouping the data, aggregating those groups,
+    applying a computation, and then organizing the groups into new rows and
+    columns.
+
+    This is sometimes called a "crosstab".
 
     For example:
 
@@ -42,9 +44,9 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
     +---------+---------+--------+
 
     If one or more keys are specified then the resulting table will
-    automatically have `row_names` set to those keys.
+    automatically have :code:`row_names` set to those keys.
 
-    See also the related method :meth:`Table.denormalize`.
+    See also the related method :meth:`.Table.denormalize`.
 
     :param key:
         Either the name of a column from the this table to group by, a
@@ -78,7 +80,7 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
         useful when the provided key is a function. This argument is not
         valid when :code:`key` is a sequence.
     :returns:
-        A new :class:`Table`.
+        A new :class:`.Table`.
     """
     if key is None:
         key = []

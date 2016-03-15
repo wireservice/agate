@@ -1,6 +1,6 @@
-===========
-Type tester
-===========
+==============
+Type inference
+==============
 
 .. automodule:: agate.type_tester
     :no-members:

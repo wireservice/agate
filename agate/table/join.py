@@ -7,13 +7,15 @@ from agate import utils
 @utils.allow_tableset_proxy
 def join(self, right_table, left_key, right_key=None, inner=False, require_match=False, columns=None):
     """
-    Performs the equivalent of SQL's "left outer join", combining columns
-    from this table and from :code:`right_table` anywhere that the
+    Create a new table by joining two table's on common values.
+
+    This method performs the equivalent of SQL's "left outer join", combining
+    columns from this table and from :code:`right_table` anywhere that the
     :code:`left_key` and :code:`right_key` are equivalent.
 
     Where there is no match for :code:`left_key` the left columns will
     be included with the right columns set to :code:`None` unless
-    the :code:`inner` argument is specified. (See arguments for more.)
+    the :code:`inner` argument is specified.
 
     If :code:`left_key` and :code:`right_key` are column names, only
     the left columns will be included in the output table.
@@ -44,7 +46,7 @@ def join(self, right_table, left_key, right_key=None, inner=False, require_match
         the final output table. Defaults to all columns not in
         :code:`right_key`.
     :returns:
-        A new :class:`Table`.
+        A new :class:`.Table`.
     """
     if right_key is None:
         right_key = left_key

@@ -12,7 +12,30 @@ from agate.data_types.time_delta import TimeDelta
 
 class TypeTester(object):
     """
-    Infer data types for the columns in a given set of data.
+    Control how data types are inferred for columns in a given set of data.
+
+    This class is used by passing it to the :code:`column_types` argument of
+    the :class:`.Table` constructor, or the same argument for any other method
+    that create a :class:`.Table`
+
+    Type inference can be a slow process. To limit the number of rows of data to
+    be tested, pass the :code:`limit` argument. Note that may cause errors if
+    your data contains different types of values after the specified number of
+    rows.
+
+    By default, data types will be tested against each column in this order:
+
+    1. :class:`.Boolean`
+    2. :class:`.Number`
+    3. :class:`.TimeDelta`
+    #. :class:`.Date`
+    #. :class:`.DateTime`
+    #. :class:`.Text`
+
+    Individual types may be specified using the :code:`force` argument. The type
+    order by be changed, or entire types disabled, by using the :code:`types`
+    argument. Beware that changing the order of the types may cause unexpected
+    behavior.
 
     :param force:
         A dictionary where each key is a column name and each value is a

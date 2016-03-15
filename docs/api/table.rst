@@ -47,13 +47,13 @@ Basic processing
 .. autosummary::
     :nosignatures:
 
-    agate.Table.select
+    agate.Table.distinct
     agate.Table.exclude
-    agate.Table.where
     agate.Table.find
     agate.Table.limit
     agate.Table.order_by
-    agate.Table.distinct
+    agate.Table.select
+    agate.Table.where
 
 Calculating new data
 --------------------
@@ -61,8 +61,8 @@ Calculating new data
 .. autosummary::
     :nosignatures:
 
-    agate.Table.compute
     agate.Table.aggregate
+    agate.Table.compute
 
 Advanced processing
 -------------------
@@ -70,15 +70,15 @@ Advanced processing
 .. autosummary::
     :nosignatures:
 
+    agate.Table.bins
+    agate.Table.denormalize
+    agate.Table.group_by
+    agate.Table.homogenize
     agate.Table.join
     agate.Table.merge
-    agate.Table.group_by
-    agate.Table.denormalize
     agate.Table.normalize
     agate.Table.pivot
-    agate.Table.homogenize
     agate.Table.rename
-    agate.Table.bins
 
 Previewing
 ----------
@@ -86,12 +86,12 @@ Previewing
 .. autosummary::
     :nosignatures:
 
+    agate.Table.print_bars
+    agate.Table.print_csv
+    agate.Table.print_html
+    agate.Table.print_json
     agate.Table.print_structure
     agate.Table.print_table
-    agate.Table.print_bars
-    agate.Table.print_html
-    agate.Table.print_csv
-    agate.Table.print_json
 
 Detailed list
 -------------

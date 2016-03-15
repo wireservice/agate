@@ -9,14 +9,14 @@ from agate import utils
 @utils.allow_tableset_proxy
 def compute(self, computations):
     """
-    Compute new columns by applying one or more :class:`.Computation` to
-    each row.
+    Create a new table by applying one or more :class:`.Computation` instances
+    to each row.
 
     :param computations:
         A sequence of pairs of new column names and :class:`.Computation`
         instances.
     :returns:
-        A new :class:`Table`.
+        A new :class:`.Table`.
     """
     column_names = list(copy(self.column_names))
     column_types = list(copy(self.column_types))
