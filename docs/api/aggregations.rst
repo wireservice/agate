@@ -9,6 +9,7 @@ Aggregations
     :nosignatures:
 
     agate.Aggregation
+    agate.Summary
 
 Basic aggregations
 ------------------
@@ -16,11 +17,10 @@ Basic aggregations
 .. autosummary::
     :nosignatures:
 
-    agate.Summary
-    agate.HasNulls
-    agate.Any
     agate.All
+    agate.Any
     agate.Count
+    agate.HasNulls
     agate.Min
     agate.Max
     agate.MaxPrecision
@@ -31,20 +31,20 @@ Statistical aggregations
 .. autosummary::
     :nosignatures:
 
-    agate.Sum
+    agate.Deciles
+    agate.IQR
+    agate.MAD
     agate.Mean
     agate.Median
     agate.Mode
-    agate.IQR
-    agate.Variance
-    agate.PopulationVariance
-    agate.StDev
-    agate.PopulationStDev
-    agate.MAD
     agate.Percentiles
+    agate.PopulationStDev
+    agate.PopulationVariance
     agate.Quartiles
     agate.Quintiles
-    agate.Deciles
+    agate.StDev
+    agate.Sum
+    agate.Variance
 
 Text aggregations
 -----------------
@@ -58,26 +58,26 @@ Detailed list
 -------------
 
 .. autoclass:: agate.Aggregation
-.. autoclass:: agate.Summary
-.. autoclass:: agate.HasNulls
-.. autoclass:: agate.Any
 .. autoclass:: agate.All
+.. autoclass:: agate.Any
 .. autoclass:: agate.Count
+.. autoclass:: agate.Deciles
+.. autoclass:: agate.HasNulls
+.. autoclass:: agate.IQR
+.. autoclass:: agate.MAD
 .. autoclass:: agate.Min
 .. autoclass:: agate.Max
+.. autoclass:: agate.MaxLength
 .. autoclass:: agate.MaxPrecision
-.. autoclass:: agate.Sum
 .. autoclass:: agate.Mean
 .. autoclass:: agate.Median
 .. autoclass:: agate.Mode
-.. autoclass:: agate.IQR
-.. autoclass:: agate.Variance
-.. autoclass:: agate.PopulationVariance
-.. autoclass:: agate.StDev
-.. autoclass:: agate.PopulationStDev
-.. autoclass:: agate.MAD
 .. autoclass:: agate.Percentiles
+.. autoclass:: agate.PopulationStDev
+.. autoclass:: agate.PopulationVariance
 .. autoclass:: agate.Quartiles
 .. autoclass:: agate.Quintiles
-.. autoclass:: agate.Deciles
-.. autoclass:: agate.MaxLength
+.. autoclass:: agate.StDev
+.. autoclass:: agate.Sum
+.. autoclass:: agate.Summary
+.. autoclass:: agate.Variance

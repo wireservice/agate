@@ -52,3 +52,5 @@ print('Standard deviation of total_cost: %.2f' % stdev)
 robots = table.where(lambda r: 'ROBOT' in (r['item_name'] or [])).aggregate(agate.Sum('quantity'))
 
 print('Number of robots purchased: %i' % robots)
+
+print(globals().keys())

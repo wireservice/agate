@@ -7,6 +7,7 @@ import proof
 def load_data(data):
     data['exonerations'] = agate.Table.from_csv('examples/realdata/exonerations-20150828.csv')
 
+    print(data['exonerations'])
 
 def confessions(data):
     num_false_confessions = data['exonerations'].aggregate(agate.Count('false_confession', True))

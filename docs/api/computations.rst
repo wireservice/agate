@@ -9,13 +9,6 @@ Computations
     :nosignatures:
 
     agate.Computation
-
-Basic computations
-------------------
-
-.. autosummary::
-    :nosignatures:
-
     agate.Formula
 
 Mathematical computations
@@ -27,16 +20,16 @@ Mathematical computations
     agate.Change
     agate.Percent
     agate.PercentChange
-    agate.Rank
     agate.PercentileRank
+    agate.Rank
 
 Detailed list
 -------------
 
+.. autoclass:: agate.Change
 .. autoclass:: agate.Computation
 .. autoclass:: agate.Formula
-.. autoclass:: agate.Change
 .. autoclass:: agate.Percent
 .. autoclass:: agate.PercentChange
-.. autoclass:: agate.Rank
 .. autoclass:: agate.PercentileRank
+.. autoclass:: agate.Rank
