@@ -1,19 +1,7 @@
 #!/usr/bin/env python
 
 """
-The classes and functions in this module serve as a replacement for Python 2's
-core :mod:`csv` module on Python 2. These versions add support for non-ascii
-encodings as well as several other minor features.
-
-If you are using Python 2, these classes and functions will automatically be
-made available as part of the ``agate`` import. This means you can access them
-by::
-
-    from agate import DictReader
-
-Or, if you want to use them as a drop-in replacement for :mod:`csv`::
-
-    import agate as csv
+This module contains the Python 2 replacement for :mod:`csv`.
 """
 
 import codecs
@@ -80,6 +68,10 @@ class UnicodeReader(object):
 
     def __iter__(self):
         return self
+
+    @property
+    def dialect(self):
+        return self.reader.dialect
 
     @property
     def line_num(self):
@@ -245,7 +237,7 @@ class DictWriter(UnicodeDictWriter):
             self.writerow(row)
 
 
-class Sniffer():
+class Sniffer(object):
     """
     A functinonal wrapper of ``csv.Sniffer()``.
     """
@@ -264,15 +256,15 @@ class Sniffer():
 
 def reader(*args, **kwargs):
     """
-    A drop-in replacement for Python's :func:`csv.reader` that leverages
-    :class:`.Reader`.
+    A replacement for Python's :func:`csv.reader` that uses
+    :class:`.csv_py2.Reader`.
     """
     return Reader(*args, **kwargs)
 
 
 def writer(*args, **kwargs):
     """
-    A drop-in replacement for Python's :func:`csv.writer` that leverages
-    :class:`.Writer`.
+    A replacement for Python's :func:`csv.writer` that uses
+    :class:`.csv_py2.Writer`.
     """
     return Writer(*args, **kwargs)

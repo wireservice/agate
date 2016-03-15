@@ -1,18 +1,7 @@
 #!/usr/bin/env python
 
 """
-The classes and functions in this module serve as a replacement for Python 3's
-core :mod:`csv` module on Python 3. These versions add several minor features.
-
-If you are using Python 3, these classes and functions will automatically be
-made available as part of the ``agate`` import. This means you can access them
-by::
-
-    from agate import DictReader
-
-Or, if you want to use them as a drop-in replacement for :mod:`csv`::
-
-    import agate as csv
+This module contains the Python 3 replacement for :mod:`csv`.
 """
 
 import csv
@@ -29,13 +18,13 @@ class Reader(six.Iterator):
     A wrapper around Python 3's builtin :func:`csv.reader`.
     """
     def __init__(self, f, field_size_limit=None, line_numbers=False, header=True, **kwargs):
-        self.reader = csv.reader(f, **kwargs)
-
         self.line_numbers = line_numbers
         self.header = header
 
         if field_size_limit:
             csv.field_size_limit(field_size_limit)
+
+        self.reader = csv.reader(f, **kwargs)
 
     def __iter__(self):
         return self
@@ -151,7 +140,7 @@ class DictWriter(csv.DictWriter):
             self.writerow(row)
 
 
-class Sniffer():
+class Sniffer(object):
     """
     A functinonal wrapper of ``csv.Sniffer()``.
     """
@@ -170,15 +159,15 @@ class Sniffer():
 
 def reader(*args, **kwargs):
     """
-    A drop-in replacement for Python's :func:`csv.reader` that leverages
-    :class:`.Reader`.
+    A replacement for Python's :func:`csv.reader` that uses
+    :class:`.csv_py3.Reader`.
     """
     return Reader(*args, **kwargs)
 
 
 def writer(*args, **kwargs):
     """
-    A drop-in replacement for Python's :func:`csv.writer` that leverages
-    :class:`.Writer`.
+    A replacement for Python's :func:`csv.writer` that uses
+    :class:`.csv_py3.Writer`.
     """
     return Writer(*args, **kwargs)

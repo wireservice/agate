@@ -242,6 +242,16 @@ class TestReader(unittest.TestCase):
         for a, b in zip(sample_rows, rows):
             self.assertEqual(a, b)
 
+    def test_properties(self):
+        with open('examples/test.csv') as f:
+            reader = csv_py2.Reader(f, encoding='utf-8')
+
+            self.assertEqual(reader.dialect.delimiter, ',')
+            self.assertEqual(reader.line_num, 0)
+
+            next(reader)
+
+            self.assertEqual(reader.line_num, 1)
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestWriter(unittest.TestCase):
