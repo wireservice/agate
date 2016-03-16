@@ -11,24 +11,24 @@ agate includes a full set of standard descriptive statistics that can be applied
 
 .. code-block:: python
 
-    table.aggregate(Sum('salary'))
-    table.aggregate(Min('salary'))
-    table.aggregate(Max('salary'))
-    table.aggregate(Mean('salary'))
-    table.aggregate(Median('salary'))
-    table.aggregate(Mode('salary'))
-    table.aggregate(Variance('salary'))
-    table.aggregate(StDev('salary'))
-    table.aggregate(MAD('salary'))
+    table.aggregate(agate.Sum('salary'))
+    table.aggregate(agate.Min('salary'))
+    table.aggregate(agate.Max('salary'))
+    table.aggregate(agate.Mean('salary'))
+    table.aggregate(agate.Median('salary'))
+    table.aggregate(agate.Mode('salary'))
+    table.aggregate(agate.Variance('salary'))
+    table.aggregate(agate.StDev('salary'))
+    table.aggregate(agate.MAD('salary'))
 
 Or, get several at once:
 
 .. code-block:: python
 
     table.aggregate([
-        Min('salary'),
-        Mean('salary'),
-        Max('salary')
+        agate.Min('salary'),
+        agate.Mean('salary'),
+        agate.Max('salary')
     ])
 
 Aggregate statistics
@@ -71,10 +71,10 @@ Distribution by percent
 .. code-block:: python
 
     # Percents of a single column's values
-    table.pivot('doctor', computation=Percent('Count'))
+    table.pivot('doctor', computation=agate.Percent('Count'))
 
     # Percents of all combinations of more than one column's values
-    table.pivot(['doctor', 'hospital'], computation=Percent('Count'))
+    table.pivot(['doctor', 'hospital'], computation=agate.Percent('Count'))
 
 The output table will be the same format as the previous example, except the value column will be named :code:`Percent`.
 
