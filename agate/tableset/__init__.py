@@ -139,8 +139,10 @@ class TableSet(MappedSequence, Patchable):
 
         # Proxy table methods
         if name in Table.__dict__:
-            if Table.__dict__[name].allow_tableset_proxy:
+            if hasattr(Table.__dict__[name], 'allow_tableset_proxy'):
                 return TableMethodProxy(self, name)
+            else:
+                raise AttributeError('Table method "%s" cannot be used as a TableSet method.' % name)
 
         raise AttributeError
 

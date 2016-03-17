@@ -253,6 +253,7 @@ class TestReader(unittest.TestCase):
 
             self.assertEqual(reader.line_num, 1)
 
+
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestWriter(unittest.TestCase):
     def test_utf8(self):

@@ -9,6 +9,7 @@ def load_data(data):
 
     print(data['exonerations'])
 
+
 def confessions(data):
     num_false_confessions = data['exonerations'].aggregate(agate.Count('false_confession', True))
 

@@ -12,7 +12,7 @@ from agate.rows import Row  # noqa
 from agate.table import Table  # noqa
 from agate.tableset import TableSet  # noqa
 from agate.testcase import AgateTestCase  # noqa
-from agate.type_tester import TypeTester # noqa
+from agate.type_tester import TypeTester  # noqa
 from agate.utils import *
 from agate.warns import NullCalculationWarning, DuplicateColumnWarning, warn_null_calculation, warn_duplicate_column  # noqa
 

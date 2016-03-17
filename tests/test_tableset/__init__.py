@@ -307,3 +307,11 @@ class TestTableSet(AgateTestCase):
 
         with self.assertRaises(AttributeError):
             tableset.foo()
+
+    def test_proxy_table_invalid(self):
+        tableset = TableSet(self.tables.values(), self.tables.keys())
+
+        with self.assertRaises(AttributeError) as cm:
+            tableset.print_table()
+
+        self.assertEquals(str(cm.exception), 'Table method "print_table" cannot be used as a TableSet method.')
