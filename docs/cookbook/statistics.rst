@@ -47,6 +47,11 @@ You can also generate aggregate statistics for subsets of data (sometimes referr
 
 The resulting table will have four columns: ``doctor``, ``patient_count``, ``age_mean`` and ``age_median``.
 
+You can roll up by multiple columns by chaining agate's :meth:`.Table.group_by` method.
+
+.. code-block:: python
+
+    doctors_by_state = patients.group_by("state").group_by('doctor')
 
 Distribution by count (frequency)
 =================================
