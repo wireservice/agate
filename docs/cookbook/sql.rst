@@ -115,6 +115,12 @@ agate's :meth:`.Table.group_by` works slightly different than SQLs. It does not 
 
     doctors = patients.group_by('doctor')
 
+You can group by two or more columns by chaining the command.
+
+.. code-block:: python
+
+    doctors_by_state = patients.group_by('state').group_by('doctor')
+
 Chain commands together
 =======================
 
