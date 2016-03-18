@@ -76,7 +76,8 @@ class Table(utils.Patchable):
     :param column_types:
         A sequence of instances of :class:`.DataType` or an instance of
         :class:`.TypeTester` or `None` in which case a generic TypeTester will
-        be used.
+        be used. Alternatively, an `OrderedDict` with column names as keys and
+        instances of :class:`.DataType` as values.
     :param row_names:
         Specifies unique names for each row. This parameter is
         optional. If specified it may be 1) the name of a single column that
