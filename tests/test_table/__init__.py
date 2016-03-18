@@ -14,6 +14,7 @@ import os
 import sys
 
 import six
+from collections import OrderedDict
 
 from agate import Table
 from agate.data_types import *
@@ -71,6 +72,15 @@ class TestBasic(AgateTestCase):
             (2, '3', 'b'),
             (None, '2', u'👍')
         ])
+
+    def test_create_table_column_types_ordered_dict(self):
+        colTypes = zip(self.column_names, self.column_types)
+        table = Table(self.rows, column_types=OrderedDict(colTypes))
+
+        self.assertColumnNames(table, ['one','two','three'])
+        self.assertColumnTypes(table, [Number, Number, Text])
+        self.assertRows(table, self.rows)
+
 
     def test_create_table_column_names(self):
         table = Table(self.rows, self.column_names)
