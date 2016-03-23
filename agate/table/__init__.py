@@ -132,12 +132,10 @@ class Table(utils.Patchable):
         if column_types is None:
             column_types = TypeTester()
 
-        elif isinstance(column_types, OrderedDict):
+        elif isinstance(column_types, dict):
             for v in six.itervalues(column_types):
                 if not isinstance(v, DataType):
                     raise ValueError('Column types must be instances of DataType.')
-
-            self._column_names = tuple(six.iterkeys(column_types))
             column_types = TypeTester(force=column_types)
 
         elif not isinstance(column_types, TypeTester):

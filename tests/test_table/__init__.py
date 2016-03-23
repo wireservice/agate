@@ -73,14 +73,21 @@ class TestBasic(AgateTestCase):
             (None, '2', u'👍')
         ])
 
-    def test_create_table_column_types_ordered_dict(self):
-        colTypes = zip(self.column_names, self.column_types)
-        table = Table(self.rows, column_types=OrderedDict(colTypes))
+    def test_create_table_column_types_dict(self):
+        colTypes = dict(zip(self.column_names, self.column_types))
+        table = Table(self.rows, column_names=self.column_names, column_types=colTypes)
 
         self.assertColumnNames(table, ['one','two','three'])
         self.assertColumnTypes(table, [Number, Number, Text])
         self.assertRows(table, self.rows)
 
+    def test_create_table_partial_column_types_dict(self):
+        colTypes = dict(zip(self.column_names[:2], self.column_types[:2]))
+        table = Table(self.rows, column_names=self.column_names, column_types=colTypes)
+
+        self.assertColumnNames(table, ['one', 'two', 'three'])
+        self.assertColumnTypes(table, [Number, Number, Text])
+        self.assertRows(table, self.rows)
 
     def test_create_table_column_names(self):
         table = Table(self.rows, self.column_names)
