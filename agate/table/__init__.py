@@ -305,7 +305,7 @@ class Table(utils.Patchable):
             return self._fork(self.rows, column_names, self._column_types, row_names=row_names)
 
     @classmethod
-    def from_csv(cls, path, column_names=None, column_types=None, row_names=None, header=True, sniff_limit=0, encoding='utf-8', **kwargs):
+    def from_csv(cls, path, column_names=None, column_types=None, row_names=None, skip_lines=0, header=True, sniff_limit=0, encoding='utf-8', **kwargs):
         """
         Create a new table from a CSV.
 
@@ -322,6 +322,10 @@ class Table(utils.Patchable):
             See :meth:`.Table.__init__`.
         :param row_names:
             See :meth:`.Table.__init__`.
+        :param skip_lines:
+            Either a single number indicating the number of lines to skip from
+            the top of the file or a sequence of line indexes to skip where the
+            first line is index 0.
         :param header:
             If `True`, the first row of the CSV is assumed to contains headers
             and will be skipped. If `header` and `column_names` are both
@@ -336,10 +340,18 @@ class Table(utils.Patchable):
             encoding specified.
         """
         if hasattr(path, 'read'):
-            contents = path.read()
+            lines = path.readlines()
         else:
             with io.open(path, encoding=encoding) as f:
-                contents = f.read()
+                lines = f.readlines()
+
+        if utils.issequence(skip_lines):
+            lines = [line for i, line in enumerate(lines) if i not in skip_lines]
+            contents = ''.join(lines)
+        elif isinstance(skip_lines, int):
+            contents = ''.join(lines[skip_lines:])
+        else:
+            raise ValueError('skip_lines argument must be an int or sequence')
 
         if sniff_limit is None:
             kwargs['dialect'] = csv.Sniffer().sniff(contents)

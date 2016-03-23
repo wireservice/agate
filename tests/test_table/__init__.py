@@ -743,6 +743,24 @@ class TestCSV(AgateTestCase):
 
         self.assertRows(table2, table1.rows)
 
+    def test_from_csv_skip_lines(self):
+        table1 = Table(self.rows[1:], column_types=self.column_types)
+        table2 = Table.from_csv('examples/test.csv', header=False, skip_lines=2)
+
+        self.assertColumnNames(table2, table1.column_names)
+        self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
+
+        self.assertRows(table2, table1.rows)
+
+    def test_from_csv_skip_lines_sequence(self):
+        table1 = Table([self.rows[1]], column_names=self.column_names, column_types=self.column_types)
+        table2 = Table.from_csv('examples/test.csv', skip_lines=(1, 3))
+
+        self.assertColumnNames(table2, table1.column_names)
+        self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
+
+        self.assertRows(table2, table1.rows)
+
     def test_to_csv(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
