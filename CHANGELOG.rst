@@ -1,6 +1,7 @@
 1.3.1
 -----
 
+* Added Eli Murray to AUTHORS.
 * :meth:`.Table.__init__` now accepts a dict to specify partial column types. (#580)
 * :meth:`.Table.from_csv` now accepts a ``skip_lines`` argument. (#581)
 * Moved every :class:`.Aggregation` and :class:`.Computation` into their own modules. (#565)

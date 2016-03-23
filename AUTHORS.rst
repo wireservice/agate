@@ -16,3 +16,4 @@ agate is made by a community. The following individuals have contributed code, d
 * `Taurus Olson <https://github.com/TaurusOlson>`_
 * `Ben Welsh <https://github.com/palewire>`_
 * `Kevin Schaul <https://github.com/kevinschaul>`_
+* `Eli Murray <https://github.com/ejmurra>`_
