@@ -14,7 +14,6 @@ import os
 import sys
 
 import six
-from collections import OrderedDict
 
 from agate import Table
 from agate.data_types import *
@@ -74,16 +73,16 @@ class TestBasic(AgateTestCase):
         ])
 
     def test_create_table_column_types_dict(self):
-        colTypes = dict(zip(self.column_names, self.column_types))
-        table = Table(self.rows, column_names=self.column_names, column_types=colTypes)
+        column_types = dict(zip(self.column_names, self.column_types))
+        table = Table(self.rows, column_names=self.column_names, column_types=column_types)
 
-        self.assertColumnNames(table, ['one','two','three'])
+        self.assertColumnNames(table, ['one', 'two', 'three'])
         self.assertColumnTypes(table, [Number, Number, Text])
         self.assertRows(table, self.rows)
 
     def test_create_table_partial_column_types_dict(self):
-        colTypes = dict(zip(self.column_names[:2], self.column_types[:2]))
-        table = Table(self.rows, column_names=self.column_names, column_types=colTypes)
+        column_types = dict(zip(self.column_names[:2], self.column_types[:2]))
+        table = Table(self.rows, column_names=self.column_names, column_types=column_types)
 
         self.assertColumnNames(table, ['one', 'two', 'three'])
         self.assertColumnTypes(table, [Number, Number, Text])
