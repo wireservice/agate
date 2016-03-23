@@ -10,3 +10,4 @@ dist
 build
 .proof
 .ipynb_checkpoints
+.idea
