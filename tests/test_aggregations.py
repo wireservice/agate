@@ -591,6 +591,7 @@ class TestTextAggregation(unittest.TestCase):
         table = Table(rows, ['test'], [Text()])
         MaxLength('test').validate(table)
         self.assertEqual(MaxLength('test').run(table), 6)
+        self.assertIsInstance(MaxLength('test').run(table), Decimal)
 
     def test_max_length_invalid(self):
         rows = [

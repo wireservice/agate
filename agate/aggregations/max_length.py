@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from decimal import Decimal
+
 from agate.aggregations.base import Aggregation
 from agate.data_types import Number, Text
 from agate.exceptions import DataTypeError
@@ -31,4 +33,4 @@ class MaxLength(Aggregation):
         """
         column = table.columns[self._column_name]
 
-        return max([len(d) for d in column.values_without_nulls()])
+        return Decimal(max([len(d) for d in column.values_without_nulls()]))
