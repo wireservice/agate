@@ -370,16 +370,16 @@ Now let's use :meth:`.Table.print_table` to help us pretty the results in a way 
     |------------+------------+-----+-----------+-------+---------+---------+------|
     |  last_name | first_name | age | race      | state | tags    | crime   | ...  |
     |------------+------------+-----+-----------+-------+---------+---------+------|
-    |  Murray    | Lacresha   | 11  | Black     | TX    | CV, F   | Murder  | ...  |
-    |  Adams     | Johnathan  | 12  | Caucasian | GA    | CV, P   | Murder  | ...  |
-    |  Harris    | Anthony    | 12  | Black     | OH    | CV      | Murder  | ...  |
-    |  Edmonds   | Tyler      | 13  | Caucasian | MS    |         | Murder  | ...  |
-    |  Handley   | Zachary    | 13  | Caucasian | PA    | A, CV   | Arson   | ...  |
-    |  Jimenez   | Thaddeus   | 13  | Hispanic  | IL    |         | Murder  | ...  |
-    |  Pacek     | Jerry      | 13  | Caucasian | PA    |         | Murder  | ...  |
-    |  Barr      | Jonathan   | 14  | Black     | IL    | CDC, CV | Murder  | ...  |
-    |  Brim      | Dominique  | 14  | Black     | MI    | F       | Assault | ...  |
-    |  Brown     | Timothy    | 14  | Black     | FL    |         | Murder  | ...  |
+    |  Murray    | Lacresha   |  11 | Black     | TX    | CV, F   | Murder  | ...  |
+    |  Adams     | Johnathan  |  12 | Caucasian | GA    | CV, P   | Murder  | ...  |
+    |  Harris    | Anthony    |  12 | Black     | OH    | CV      | Murder  | ...  |
+    |  Edmonds   | Tyler      |  13 | Caucasian | MS    |         | Murder  | ...  |
+    |  Handley   | Zachary    |  13 | Caucasian | PA    | A, CV   | Arson   | ...  |
+    |  Jimenez   | Thaddeus   |  13 | Hispanic  | IL    |         | Murder  | ...  |
+    |  Pacek     | Jerry      |  13 | Caucasian | PA    |         | Murder  | ...  |
+    |  Barr      | Jonathan   |  14 | Black     | IL    | CDC, CV | Murder  | ...  |
+    |  Brim      | Dominique  |  14 | Black     | MI    | F       | Assault | ...  |
+    |  Brown     | Timothy    |  14 | Black     | FL    |         | Murder  | ...  |
     |------------+------------+-----+-----------+-------+---------+---------+------|
 
 If you find it impossible to believe that an eleven year-old was convicted of murder, I encourage you to read the Registry's `description of the case <http://www.law.umich.edu/special/exoneration/Pages/casedetail.aspx?caseid=3499>`_.
@@ -450,12 +450,12 @@ Now we need to aggregate the total for each state. This works in a very similar 
     |--------+--------|
     |  state | count  |
     |--------+--------|
-    |  TX    | 212    |
-    |  NY    | 202    |
-    |  CA    | 154    |
-    |  IL    | 153    |
-    |  MI    | 60     |
-    |  ...   | ...    |
+    |  TX    |   212  |
+    |  NY    |   202  |
+    |  CA    |   154  |
+    |  IL    |   153  |
+    |  MI    |    60  |
+    |  ...   |   ...  |
     |--------+--------|
 
 You'll notice we pass a sequence of tuples to :meth:`.TableSet.aggregate`. Each one includes two elements. The first is the new column name being created. The second is an instance of some :class:`.Aggregation`. Unsurpringly, in this case the results appear to be roughly proportional to population.
@@ -486,12 +486,12 @@ This is a much more complicated question that's going to pull together a lot of 
     |--------+-------+-------------------------|
     |  state | count | median_years_in_prison  |
     |--------+-------+-------------------------|
-    |  DC    | 15    | 27                      |
-    |  NE    | 9     | 20                      |
-    |  ID    | 2     | 19                      |
-    |  VT    | 1     | 18                      |
-    |  LA    | 45    | 16                      |
-    |  ...   | ...   | ...                     |
+    |  DC    |    15 |                     27  |
+    |  NE    |     9 |                     20  |
+    |  ID    |     2 |                     19  |
+    |  VT    |     1 |                     18  |
+    |  LA    |    45 |                     16  |
+    |  ...   |   ... |                    ...  |
     |--------+-------+-------------------------|
 
 DC? Nebraska? What accounts for these states having the longest times in prison before exoneration? I have no idea! Given that the group sizes are small, it would probably be wise to look for outliers.
@@ -542,17 +542,17 @@ I'm not going to explain every stage of this analysis as most of it repeats patt
     |------------------+-----------+-------+-------------------------|
     |  race            | age_group | count | median_years_in_prison  |
     |------------------+-----------+-------+-------------------------|
-    |  Native American | 20s       | 2     | 21.5                    |
-    |                  | 20s       | 1     | 19                      |
-    |  Native American | 10s       | 2     | 15                      |
-    |  Native American | 30s       | 2     | 14.5                    |
-    |  Black           | 10s       | 188   | 14                      |
-    |  Black           | 20s       | 358   | 13                      |
-    |  Asian           | 20s       | 4     | 12                      |
-    |  Black           | 30s       | 156   | 10                      |
-    |  Caucasian       | 10s       | 76    | 8                       |
-    |  Caucasian       | 20s       | 255   | 8                       |
-    |  ...             | ...       | ...   | ...                     |
+    |  Native American | 20s       |     2 |                   21.5  |
+    |                  | 20s       |     1 |                   19.0  |
+    |  Native American | 10s       |     2 |                   15.0  |
+    |  Native American | 30s       |     2 |                   14.5  |
+    |  Black           | 10s       |   188 |                   14.0  |
+    |  Black           | 20s       |   358 |                   13.0  |
+    |  Asian           | 20s       |     4 |                   12.0  |
+    |  Black           | 30s       |   156 |                   10.0  |
+    |  Caucasian       | 10s       |    76 |                    8.0  |
+    |  Caucasian       | 20s       |   255 |                    8.0  |
+    |  ...             | ...       |   ... |                    ...  |
     |------------------+-----------+-------+-------------------------|
 
 That's it--you made it through the tutorial! Now it's your turn!

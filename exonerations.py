@@ -42,9 +42,17 @@ def youth(data):
 
 
 def states(data):
-    state_totals = data['with_years_in_prison'].group_by('state')
+    by_state = data['with_years_in_prison'].group_by('state')
+    state_totals = by_state.aggregate([
+        ('count', agate.Count())
+    ])
 
-    medians = state_totals.aggregate([
+    sorted_totals = state_totals.order_by('count', reverse=True)
+
+    sorted_totals.print_table(max_rows=5)
+
+    medians = by_state.aggregate([
+        ('count', agate.Count()),
         ('median_years_in_prison', agate.Median('years_in_prison'))
     ])
 
