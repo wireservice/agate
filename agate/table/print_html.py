@@ -2,59 +2,150 @@
 
 import sys
 
+from babel.numbers import format_decimal
 import six
 
+from agate.data_types import Number, Text
+from agate import utils
 
-def print_html(self, max_rows=20, max_columns=6, output=sys.stdout):
+
+def print_html(self, max_rows=20, max_columns=6, output=utils.default, max_column_width=20, locale=None):
     """
     Print an HTML version of this table.
 
+    If running in a Jupyter notebook this method will display a properly
+    formatted HTML table. On any other platform it will output an HTML
+    representation of the table as a string. The Jupyter table behavior can be
+    overridden by explicitly setting :code:`output` to :code:`sys.stdout`.
+
     :param max_rows:
-        The maximum number of rows to display before truncating the data. By
-        default all rows will be printed.
+        The maximum number of rows to display before truncating the data. This
+        defaults to :code:`20` to prevent accidental printing of the entire
+        table. Pass :code:`None` to disable the limit.
     :param max_columns:
-        The maximum number of columns to display before truncating the data. By
-        default all columns will be printed.
+        The maximum number of columns to display before truncating the data.
+        This defaults to :code:`6` to prevent wrapping in most cases. Pass
+        :code:`None` to disable the limit.
     :param output:
-        A file-like object to print to. Defaults to :code:`sys.stdout`.
+        A file-like object to print to. Defaults to :code:`sys.stdout`, unless
+        running in Jupyter. (See above.)
+    :param max_column_width:
+        Truncate all columns to at most this width. The remainder will be
+        replaced with ellipsis.
+    :param locale:
+        Provide a locale you would like to be used to format the output.
+        By default it will use the system's setting.
     """
+    display_html = utils.use_ipython_display() and output is utils.default
+
+    if output is utils.default:
+        if display_html:
+            output = six.StringIO()
+        else:
+            output = sys.stdout
+
     if max_rows is None:
         max_rows = len(self.rows)
 
     if max_columns is None:
         max_columns = len(self.columns)
 
-    output.write('<table>')
-    output.write('<thead>')
-    output.write('<tr>')
+    rows_truncated = max_rows < len(self.rows)
+    columns_truncated = max_columns < len(self.column_names)
 
-    for i, col in enumerate(self.column_names):
+    column_names = list(self.column_names[:max_columns])
+
+    if columns_truncated:
+        column_names.append(utils.ELLIPSIS)
+
+    number_formatters = []
+    formatted_data = []
+
+    # Determine correct number of decimal places for each Number column
+    for i, c in enumerate(self.columns):
         if i >= max_columns:
             break
 
-        output.write('<th>')
-        output.write(col)
-        output.write('</th>')
+        if isinstance(c.data_type, Number):
+            max_places = utils.max_precision(c[:max_rows])
+            number_formatters.append(utils.make_number_formatter(max_places))
+        else:
+            number_formatters.append(None)
 
-    output.write('</tr>')
-    output.write('</thead>')
-    output.write('<tbody>')
-
+    # Format data
     for i, row in enumerate(self.rows):
         if i >= max_rows:
             break
 
-        output.write('<tr>')
+        formatted_row = []
 
-        for i, col in enumerate(row):
-            if i >= max_columns:
+        for j, v in enumerate(row):
+            if j >= max_columns:
+                v = utils.ELLIPSIS
+            elif v is None:
+                v = ''
+            elif number_formatters[j] is not None:
+                v = format_decimal(
+                    v,
+                    format=number_formatters[j],
+                    locale=locale or utils.LC_NUMERIC
+                )
+            else:
+                v = six.text_type(v)
+
+            if max_column_width is not None and len(v) > max_column_width:
+                v = '%s...' % v[:max_column_width - 3]
+
+            formatted_row.append(v)
+
+            if j >= max_columns:
                 break
 
-            output.write('<td>')
-            output.write(six.text_type(col))
-            output.write('</td>')
+        formatted_data.append(formatted_row)
 
-        output.write('</tr>')
+    def write(line):
+        output.write(line + '\n')
 
-    output.write('</tbody>')
-    output.write('</table>')
+    def write_row(formatted_row):
+        """
+        Helper function that formats individual rows.
+        """
+        write('<tr>')
+
+        for j, d in enumerate(formatted_row):
+            # Text is left-justified, all other values are right-justified
+            if isinstance(self.column_types[j], Text):
+                write('<td style="text-align: left;">%s</td>' % d)
+            else:
+                write('<td style="text-align: right;">%s</td>' % d)
+
+        write('</tr>')
+
+    # Header
+    write('<table>')
+    write('<thead>')
+    write('<tr>')
+
+    for i, col in enumerate(column_names):
+        write('<th>%s</th>' % col)
+
+    write('</tr>')
+    write('</thead>')
+    write('<tbody>')
+
+    # Rows
+    for formatted_row in formatted_data:
+        write_row(formatted_row)
+
+    # Row indicating data was truncated
+    if rows_truncated:
+        write_row([utils.ELLIPSIS for n in column_names])
+
+    # Footer
+    write('</tbody>')
+    write('</table>')
+
+    if display_html:
+        from IPython.display import HTML
+
+        return HTML(output.getvalue())

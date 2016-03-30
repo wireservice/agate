@@ -306,3 +306,18 @@ def issequence(obj):
     :class:`.Sequence` that is not also a string.
     """
     return isinstance(obj, Sequence) and not isinstance(obj, six.string_types)
+
+
+def use_ipython_display():
+    """
+    Returns :code:`True` if operating in an IPython environment that supports
+    rendering HTML and other media formats inline.
+    """
+    try:
+        # IPython.config.loader.Config
+        config = get_ipython().config
+
+        if config['IPKernelApp']:
+            return True
+    except:
+        return False

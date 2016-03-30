@@ -1,7 +1,8 @@
 1.3.2
 -----
 
-
+* In Jupyter notebook :meth:`.Table.print_table` and :meth:`.Table.print_html` will now display a properly formatted HTML table. (#416)
+* Arguments to :meth:`.Table.print_html` now mirror :meth:`.Table.print_table`.
 
 1.3.1 - March 30, 2016
 ----------------------
