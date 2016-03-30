@@ -9,14 +9,18 @@ from agate.data_types import Number, Text
 from agate import utils
 
 
-def print_table(self, max_rows=None, max_columns=None, output=sys.stdout, max_column_width=20, locale=None):
+def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_width=20, locale=None):
     """
     Print a text-based view of the data in this table..
 
     :param max_rows:
-        The maximum number of rows to display before truncating the data.
+        The maximum number of rows to display before truncating the data. This
+        defaults to :code:`20` to prevent accidental printing of the entire
+        table. Pass :code:`None` to disable the limit.
     :param max_columns:
         The maximum number of columns to display before truncating the data.
+        This defaults to :code:`6` to prevent wrapping in most cases. Pass
+        :code:`None` to disable the limit.
     :param output:
         A file-like object to print to. Defaults to :code:`sys.stdout`.
     :param max_column_width:
