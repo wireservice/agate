@@ -9,7 +9,7 @@ This is the release process for agate:
 3. Ensure any new modules have been added to setup.py's ``packages`` list.
 #. Ensure any new public interfaces have been added to the documentation.
 #. Make sure the example script still works: ``python example.py``.
-#. Ensure ``CHANGELOG.rst`` is up to date.
+#. Ensure ``CHANGELOG.rst`` is up to date. Add the release date and summary.
 #. Create a release tag: ``git tag -a x.y.z -m "x.y.z release."``
 #. Push tags upstream: ``git push --tags``
 #. If this is a major release, merge ``master`` into ``stable``: ``git checkout stable; git merge master; git push``

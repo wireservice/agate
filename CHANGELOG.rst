@@ -1,5 +1,9 @@
-1.3.1
------
+1.3.1 - March 30, 2016
+----------------------
+
+The major feature of this release is new API documentation. Several minor features and bug fixes are also included. There are no major breaking changes in this release.
+
+Internally, the agate codebase has been reorganized to be more modular, but this should be invisible to most users.
 
 * The :class:`.MaxLength` aggregation now returns a `Decimal` object. (#574)
 * Fixed an edge case where datetimes were parsed as dates. (#568)
