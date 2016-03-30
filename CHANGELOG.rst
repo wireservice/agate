@@ -1,6 +1,7 @@
 1.3.1
 -----
 
+* Fixed an edge case where datetimes were parsed as dates. (#568)
 * Fixed column alignment in tutorial tables. (#572)
 * :meth:`.Table.print_table` now defaults to printing ``20`` rows and ``6`` columns. (#589)
 * Added Eli Murray to AUTHORS.

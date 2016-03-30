@@ -33,12 +33,12 @@ class Date(DataType):
         del odict['parser']
         return odict
 
-    def __setstate__(self, dict):
+    def __setstate__(self, data):
         """
         Restore state from the unpickled state values. Set _parser to an instance
         of the parsedatetime Calendar class.
         """
-        self.__dict__.update(dict)
+        self.__dict__.update(data)
         self.parser = parsedatetime.Calendar(version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def cast(self, d):
@@ -79,11 +79,11 @@ class Date(DataType):
         try:
             dt = isodate.parse_date(d)
 
-            try:
-                dt = isodate.parse_datetime(d)
-            except:
-                return dt
-        except:
+            if ctx.hasTime:
+                raise ValueError('isodate.parse_date discarded a time component')
+
+            return dt
+        except (isodate.ISO8601Error, ValueError):
             pass
 
         raise CastError('Can not parse value "%s" as date.' % d)

@@ -35,6 +35,7 @@ class TestText(unittest.TestCase):
         self.assertEqual(self.type.test('3/1/1994'), True)
         self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), True)
         self.assertEqual(self.type.test('3/1/1994 12:30 PM'), True)
+        self.assertEqual(self.type.test('2015-01-01 02:34'), True)
         self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), True)
         self.assertEqual(self.type.test('4:10'), True)
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), True)
@@ -77,6 +78,7 @@ class TestBoolean(unittest.TestCase):
         self.assertEqual(self.type.test('3/1/1994'), False)
         self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), False)
         self.assertEqual(self.type.test('3/1/1994 12:30 PM'), False)
+        self.assertEqual(self.type.test('2015-01-01 02:34'), False)
         self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), False)
         self.assertEqual(self.type.test('4:10'), False)
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
@@ -118,6 +120,7 @@ class TestNumber(unittest.TestCase):
         self.assertEqual(self.type.test('3/1/1994'), False)
         self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), False)
         self.assertEqual(self.type.test('3/1/1994 12:30 PM'), False)
+        self.assertEqual(self.type.test('2015-01-01 02:34'), False)
         self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), False)
         self.assertEqual(self.type.test('4:10'), False)
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
@@ -172,6 +175,7 @@ class TestDate(unittest.TestCase):
         self.assertEqual(self.type.test('3/1/1994'), True)
         self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), True)
         self.assertEqual(self.type.test('3/1/1994 12:30 PM'), False)
+        self.assertEqual(self.type.test('2015-01-01 02:34'), False)
         self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), False)
         self.assertEqual(self.type.test('4:10'), False)
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
@@ -242,6 +246,7 @@ class TestDateTime(unittest.TestCase):
         self.assertEqual(self.type.test('3/1/1994'), True)
         self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), True)
         self.assertEqual(self.type.test('3/1/1994 12:30 PM'), True)
+        self.assertEqual(self.type.test('2015-01-01 02:34'), True)
         self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), True)
         self.assertEqual(self.type.test('4:10'), False)
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
@@ -263,14 +268,15 @@ class TestDateTime(unittest.TestCase):
         ))
 
     def test_cast_parser(self):
-        values = ('3/1/1994 12:30 PM', '2/17/2011 06:30', None, 'January 5th, 1984 22:37', 'n/a')
+        values = ('3/1/1994 12:30 PM', '2/17/2011 06:30', None, 'January 5th, 1984 22:37', 'n/a', '2015-01-01 02:34')
         casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.datetime(1994, 3, 1, 12, 30, 0),
             datetime.datetime(2011, 2, 17, 6, 30, 0),
             None,
             datetime.datetime(1984, 1, 5, 22, 37, 0),
-            None
+            None,
+            datetime.datetime(2015, 1, 1, 2, 34, 0)
         ))
 
     def test_cast_parser_timezone(self):
@@ -328,6 +334,7 @@ class TestTimeDelta(unittest.TestCase):
         self.assertEqual(self.type.test('3/1/1994'), False)
         self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), False)
         self.assertEqual(self.type.test('3/1/1994 12:30 PM'), False)
+        self.assertEqual(self.type.test('2015-01-01 02:34'), False)
         self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), False)
         self.assertEqual(self.type.test('4:10'), True)
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), True)
