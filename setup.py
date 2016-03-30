@@ -41,6 +41,8 @@ setup(
     ],
     packages=[
         'agate',
+        'agate.aggregations',
+        'agate.computations',
         'agate.data_types',
         'agate.table',
         'agate.tableset'
