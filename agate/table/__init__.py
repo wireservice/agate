@@ -340,11 +340,11 @@ class Table(utils.Patchable):
     @allow_tableset_proxy
     def where(self, test):
         """
-        Create a new table with only those rows that pass a test.
+        Create a new :class:`.Table` with only those rows that pass a test.
 
         :param test:
             A function that takes a :class:`.Row` and returns :code:`True` if
-            it should be included.
+            it should be included in the new :class:`.Table`.
         :type test:
             :class:`function`
         :returns:

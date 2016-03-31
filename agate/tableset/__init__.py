@@ -211,6 +211,7 @@ class TableSet(MappedSequence, Patchable):
 from agate.tableset.aggregate import aggregate
 from agate.tableset.from_csv import from_csv
 from agate.tableset.from_json import from_json
+from agate.tableset.having import having
 from agate.tableset.merge import merge
 from agate.tableset.to_csv import to_csv
 from agate.tableset.to_json import to_json
@@ -218,6 +219,7 @@ from agate.tableset.to_json import to_json
 TableSet.aggregate = aggregate
 TableSet.from_csv = from_csv
 TableSet.from_json = from_json
+TableSet.having = having
 TableSet.merge = merge
 TableSet.to_csv = to_csv
 TableSet.to_json = to_json

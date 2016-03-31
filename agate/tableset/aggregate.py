@@ -64,8 +64,8 @@ def aggregate(self, aggregations):
     :meth:`.Table.__init__` for more details.
 
     :param aggregations:
-        A list of tuples in the format
-        :code:`(new_column_name, aggregation)`.
+        A list of tuples in the format :code:`(new_column_name, aggregation)`,
+        where each :code:`aggregation` is an instance of :class:`.Aggregation`.
     :returns:
         A new :class:`.Table`.
     """
