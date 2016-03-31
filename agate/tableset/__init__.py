@@ -198,37 +198,13 @@ class TableSet(MappedSequence, Patchable):
 
         return TableSet(tables, keys, key_name, key_type, _is_fork=True)
 
-    def print_structure(self, max_rows=20, output=sys.stdout):
-        """
-        Print the keys and row counts of each table in the tableset.
-
-        :param max_rows:
-            The maximum number of rows to display before truncating the data.
-            Defaults to 20.
-        :param output:
-            The output used to print the structure of the :class:`Table`.
-        :returns:
-            None
-        """
-        max_length = min(len(self.items()), max_rows)
-
-        name_column = self.keys()[0:max_length]
-        type_column = [str(len(table.rows)) for key, table in self.items()[0:max_length]]
-        rows = zip(name_column, type_column)
-        column_names = ['table', 'rows']
-        text = Text()
-        column_types = [text, text]
-
-        table = Table(rows, column_names, column_types)
-
-        return table.print_table(output=output, max_column_width=None)
-
 
 from agate.tableset.aggregate import aggregate
 from agate.tableset.from_csv import from_csv
 from agate.tableset.from_json import from_json
 from agate.tableset.having import having
 from agate.tableset.merge import merge
+from agate.tableset.print_structure import print_structure
 from agate.tableset.to_csv import to_csv
 from agate.tableset.to_json import to_json
 
@@ -237,5 +213,6 @@ TableSet.from_csv = from_csv
 TableSet.from_json = from_json
 TableSet.having = having
 TableSet.merge = merge
+TableSet.print_structure = print_structure
 TableSet.to_csv = to_csv
 TableSet.to_json = to_json
