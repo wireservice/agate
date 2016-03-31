@@ -23,7 +23,6 @@ import codecs
 from collections import OrderedDict
 import io
 from itertools import chain
-import json
 import sys
 import os.path
 import warnings
@@ -44,11 +43,6 @@ from agate.type_tester import TypeTester
 from agate import utils
 from agate.warns import warn_duplicate_column
 from agate.utils import allow_tableset_proxy
-
-if six.PY2:  # pragma: no cover
-    from agate import csv_py2 as csv
-else:
-    from agate import csv_py3 as csv
 
 
 @six.python_2_unicode_compatible
@@ -304,330 +298,6 @@ class Table(utils.Patchable):
         else:
             return self._fork(self.rows, column_names, self._column_types, row_names=row_names)
 
-    @classmethod
-    def from_csv(cls, path, column_names=None, column_types=None, row_names=None, skip_lines=0, header=True, sniff_limit=0, encoding='utf-8', **kwargs):
-        """
-        Create a new table from a CSV.
-
-        This method uses agate's builtin CSV reader, which supplies encoding
-        support for both Python 2 and Python 3.
-
-        :code:`kwargs` will be passed through to the CSV reader.
-
-        :param path:
-            Filepath or file-like object from which to read CSV data.
-        :param column_names:
-            See :meth:`.Table.__init__`.
-        :param column_types:
-            See :meth:`.Table.__init__`.
-        :param row_names:
-            See :meth:`.Table.__init__`.
-        :param skip_lines:
-            Either a single number indicating the number of lines to skip from
-            the top of the file or a sequence of line indexes to skip where the
-            first line is index 0.
-        :param header:
-            If `True`, the first row of the CSV is assumed to contains headers
-            and will be skipped. If `header` and `column_names` are both
-            specified then a row will be skipped, but `column_names` will be
-            used.
-        :param sniff_limit:
-            Limit CSV dialect sniffing to the specified number of bytes. Set to
-            None to sniff the entire file. Defaults to 0 or no sniffing.
-        :param encoding:
-            Character encoding of the CSV file. Note: if passing in a file
-            handle it is assumed you have already opened it with the correct
-            encoding specified.
-        """
-        if hasattr(path, 'read'):
-            lines = path.readlines()
-        else:
-            with io.open(path, encoding=encoding) as f:
-                lines = f.readlines()
-
-        if utils.issequence(skip_lines):
-            lines = [line for i, line in enumerate(lines) if i not in skip_lines]
-            contents = ''.join(lines)
-        elif isinstance(skip_lines, int):
-            contents = ''.join(lines[skip_lines:])
-        else:
-            raise ValueError('skip_lines argument must be an int or sequence')
-
-        if sniff_limit is None:
-            kwargs['dialect'] = csv.Sniffer().sniff(contents)
-        elif sniff_limit > 0:
-            kwargs['dialect'] = csv.Sniffer().sniff(contents[:sniff_limit])
-
-        if six.PY2:
-            contents = contents.encode('utf-8')
-
-        rows = list(csv.reader(six.StringIO(contents), header=header, **kwargs))
-
-        if header:
-            if column_names is None:
-                column_names = rows.pop(0)
-            else:
-                rows.pop(0)
-
-        return Table(rows, column_names, column_types, row_names=row_names)
-
-    def to_csv(self, path, **kwargs):
-        """
-        Write this table to a CSV. This method uses agate's builtin CSV writer,
-        which supports unicode on both Python 2 and Python 3.
-
-        `kwargs` will be passed through to the CSV writer.
-
-        :param path:
-            Filepath or file-like object to write to.
-        """
-        if 'lineterminator' not in kwargs:
-            kwargs['lineterminator'] = '\n'
-
-        close = True
-        f = None
-
-        try:
-            if hasattr(path, 'write'):
-                f = path
-                close = False
-            else:
-                dirpath = os.path.dirname(path)
-
-                if dirpath and not os.path.exists(dirpath):
-                    os.makedirs(dirpath)
-
-                f = open(path, 'w')
-
-            writer = csv.writer(f, **kwargs)
-            writer.writerow(self._column_names)
-
-            csv_funcs = [c.csvify for c in self._column_types]
-
-            for row in self._rows:
-                writer.writerow(tuple(csv_funcs[i](d) for i, d in enumerate(row)))
-        finally:
-            if close and f is not None:
-                f.close()
-
-    @classmethod
-    def from_json(cls, path, row_names=None, key=None, newline=False, column_types=None, **kwargs):
-        """
-        Create a new table from a JSON file.
-
-        Once the JSON has been deseralized, the resulting Python object is
-        passed to :meth:`.Table.from_object`.
-
-        If the file contains a top-level dictionary you may specify what
-        property contains the row list using the :code:`key` parameter.
-
-        :code:`kwargs` will be passed through to :meth:`json.load`.
-
-        :param path:
-            Filepath or file-like object from which to read JSON data.
-        :param row_names:
-            See the :meth:`.Table.__init__`.
-        :param key:
-            The key of the top-level dictionary that contains a list of row
-            arrays.
-        :param newline:
-            If `True` then the file will be parsed as "newline-delimited JSON".
-        :param column_types:
-            See :meth:`.Table.__init__`.
-        """
-        if key is not None and newline:
-            raise ValueError('key and newline may not be specified together.')
-
-        if newline:
-            js = []
-
-            if hasattr(path, 'read'):
-                for line in path:
-                    js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
-            else:
-                with open(path, 'r') as f:
-                    for line in f:
-                        js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
-        else:
-            if hasattr(path, 'read'):
-                js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
-            else:
-                with open(path, 'r') as f:
-                    js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
-
-        if isinstance(js, dict):
-            if not key:
-                raise TypeError('When converting a JSON document with a top-level dictionary element, a key must be specified.')
-
-            js = js[key]
-
-        return Table.from_object(js, row_names=row_names, column_types=column_types)
-
-    @classmethod
-    def from_object(cls, obj, row_names=None, column_types=None):
-        """
-        Create a new table from a Python object.
-
-        The object should be a list containing a dictionary for each "row".
-        Nested objects or lists will also be parsed. For example, this object:
-
-        .. code-block:: python
-
-            {
-                'one': {
-                    'a': 1,
-                    'b': 2,
-                    'c': 3
-                },
-                'two': [4, 5, 6],
-                'three': 'd'
-            }
-
-        Would generate these columns and values:
-
-        .. code-block:: python
-
-            {
-                'one/a': 1,
-                'one/b': 2,
-                'one/c': 3,
-                'two.0': 4,
-                'two.1': 5,
-                'two.2': 6,
-                'three': 'd'
-            }
-
-        Column names and types will be inferred from the data.
-
-        Not all rows are required to have the same keys. Missing elements will
-        be filled in with null values.
-
-        :param obj:
-            Filepath or file-like object from which to read JSON data.
-        :param row_names:
-            See :meth:`.Table.__init__`.
-        :param column_types:
-            See :meth:`.Table.__init__`.
-        """
-        column_names = []
-        row_objects = []
-
-        for sub in obj:
-            parsed = utils.parse_object(sub)
-
-            for key in parsed.keys():
-                if key not in column_names:
-                    column_names.append(key)
-
-            row_objects.append(parsed)
-
-        rows = []
-
-        for sub in row_objects:
-            r = []
-
-            for name in column_names:
-                r.append(sub.get(name, None))
-
-            rows.append(r)
-
-        return Table(rows, column_names, row_names=row_names, column_types=column_types)
-
-    def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
-        """
-        Write this table to a JSON file or file-like object.
-
-        :code:`kwargs` will be passed through to the JSON encoder.
-
-        :param path:
-            File path or file-like object to write to.
-        :param key:
-            If specified, JSON will be output as an hash instead of a list. May
-            be either the name of a column from the this table containing
-            unique values or a :class:`function` that takes a row and returns
-            a unique value.
-        :param newline:
-            If `True`, output will be in the form of "newline-delimited JSON".
-        :param indent:
-            If specified, the number of spaces to indent the JSON for
-            formatting.
-        """
-        if key is not None and newline:
-            raise ValueError('key and newline may not be specified together.')
-
-        if newline and indent is not None:
-            raise ValueError('newline and indent may not be specified together.')
-
-        key_is_row_function = hasattr(key, '__call__')
-
-        json_kwargs = {
-            'ensure_ascii': False,
-            'indent': indent
-        }
-
-        if six.PY2:
-            json_kwargs['encoding'] = 'utf-8'
-
-        # Pass remaining kwargs through to JSON encoder
-        json_kwargs.update(kwargs)
-
-        json_funcs = [c.jsonify for c in self._column_types]
-
-        close = True
-        f = None
-
-        try:
-            if hasattr(path, 'write'):
-                f = path
-                close = False
-            else:
-                if os.path.dirname(path) and not os.path.exists(os.path.dirname(path)):
-                    os.makedirs(os.path.dirname(path))
-                f = open(path, 'w')
-
-            if six.PY2:
-                f = codecs.getwriter('utf-8')(f)
-
-            def dump_json(data):
-                json.dump(data, f, **json_kwargs)
-
-                if newline:
-                    f.write('\n')
-
-            # Keyed
-            if key is not None:
-                output = OrderedDict()
-
-                for row in self._rows:
-                    if key_is_row_function:
-                        k = key(row)
-                    else:
-                        k = row[key]
-
-                    if k in output:
-                        raise ValueError('Value %s is not unique in the key column.' % six.text_type(k))
-
-                    values = tuple(json_funcs[i](d) for i, d in enumerate(row))
-                    output[k] = OrderedDict(zip(row.keys(), values))
-                dump_json(output)
-            # Newline-delimited
-            elif newline:
-                for row in self._rows:
-                    values = tuple(json_funcs[i](d) for i, d in enumerate(row))
-                    dump_json(OrderedDict(zip(row.keys(), values)))
-            # Normal
-            else:
-                output = []
-
-                for row in self._rows:
-                    values = tuple(json_funcs[i](d) for i, d in enumerate(row))
-                    output.append(OrderedDict(zip(row.keys(), values)))
-
-                dump_json(output)
-        finally:
-            if close and f is not None:
-                f.close()
-
     @allow_tableset_proxy
     def select(self, key):
         """
@@ -856,12 +526,15 @@ class Table(utils.Patchable):
         :code:`kwargs` will be passed on to :meth:`.Table.to_json`.
         """
         self.to_json(sys.stdout, **kwargs)
-        
+
 
 from agate.table.aggregate import aggregate
 from agate.table.bins import bins
 from agate.table.compute import compute
 from agate.table.denormalize import denormalize
+from agate.table.from_csv import from_csv
+from agate.table.from_json import from_json
+from agate.table.from_object import from_object
 from agate.table.group_by import group_by
 from agate.table.homogenize import homogenize
 from agate.table.join import join
@@ -872,11 +545,16 @@ from agate.table.print_bars import print_bars
 from agate.table.print_html import print_html
 from agate.table.print_structure import print_structure
 from agate.table.print_table import print_table
+from agate.table.to_csv import to_csv
+from agate.table.to_json import to_json
 
 Table.aggregate = aggregate
 Table.bins = bins
 Table.compute = compute
 Table.denormalize = denormalize
+Table.from_csv = from_csv
+Table.from_json = from_json
+Table.from_object = from_object
 Table.group_by = group_by
 Table.homogenize = homogenize
 Table.join = join
@@ -887,3 +565,5 @@ Table.print_bars = print_bars
 Table.print_html = print_html
 Table.print_structure = print_structure
 Table.print_table = print_table
+Table.to_csv = to_csv
+Table.to_json = to_json
