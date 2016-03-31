@@ -45,15 +45,18 @@ By default, loading a table from a CSV will use agate's builtin :class:`.TypeTes
 Override type inference
 =======================
 
-In some cases agate's :class:`.TypeTester` may guess incorrectly. To override the type for a column construct a TypeTester manually and use the ``force`` argument:
+In some cases agate's :class:`.TypeTester` may guess incorrectly. To override the type for some columns and use TypeTester for the rest, pass a dictionary to the ``column_types`` argument.
 
 .. code-block:: python
 
-    tester = agate.TypeTester(force={
-        'column_name': agate.Text()
-    })
+    specified_types = {
+        'column_name_one': agate.Text(),
+        'column_name_two': agate.Number()
+    }
 
-    table = agate.Table.from_csv('filename.csv', column_types=tester)
+    table = agate.Table.from_csv('filename.csv', column_types=specified_types)
+
+This will use a generic TypeTester and override your specified columns with ``TypeTester.force``.
 
 Limit type inference
 ====================
