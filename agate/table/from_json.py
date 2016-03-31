@@ -30,7 +30,7 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
     :param column_types:
         See :meth:`.Table.__init__`.
     """
-    from agate import Table
+    from agate.table  import Table
 
     if key is not None and newline:
         raise ValueError('key and newline may not be specified together.')

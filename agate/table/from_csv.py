@@ -43,7 +43,7 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         encoding specified.
     """
     from agate import csv
-    from agate import Table
+    from agate.table import Table
 
     if hasattr(path, 'read'):
         lines = path.readlines()

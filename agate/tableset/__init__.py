@@ -162,160 +162,6 @@ class TableSet(MappedSequence, Patchable):
         """
         return self._key_type
 
-    @classmethod
-    def from_csv(cls, dir_path, column_names=None, column_types=None, row_names=None, header=True, **kwargs):
-        """
-        Create a new :class:`TableSet` from a directory of CSVs.
-
-        See :meth:`.Table.from_csv` for additional details.
-
-        :param dir_path:
-            Path to a directory full of CSV files. All CSV files in this
-            directory will be loaded.
-        :param column_names:
-            See :meth:`Table.__init__`.
-        :param column_types:
-            See :meth:`Table.__init__`.
-        :param row_names:
-            See :meth:`Table.__init__`.
-        :param header:
-            See :meth:`Table.from_csv`.
-        """
-        if not os.path.isdir(dir_path):
-            raise IOError('Specified path doesn\'t exist or isn\'t a directory.')
-
-        tables = OrderedDict()
-
-        for path in glob(os.path.join(dir_path, '*.csv')):
-            name = os.path.split(path)[1].strip('.csv')
-
-            tables[name] = Table.from_csv(path, column_names, column_types, row_names=row_names, header=header, **kwargs)
-
-        return TableSet(tables.values(), tables.keys())
-
-    def to_csv(self, dir_path, **kwargs):
-        """
-        Write each table in this set to a separate CSV in a given
-        directory.
-
-        See :meth:`.Table.to_csv` for additional details.
-
-        :param dir_path:
-            Path to the directory to write the CSV files to.
-        """
-        if not os.path.exists(dir_path):
-            os.makedirs(dir_path)
-
-        for name, table in self.items():
-            path = os.path.join(dir_path, '%s.csv' % name)
-
-            table.to_csv(path, **kwargs)
-
-    @classmethod
-    def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwargs):
-        """
-        Create a new :class:`TableSet` from a directory of JSON files or a
-        single JSON object with key value (Table key and list of row objects)
-        pairs for each :class:`Table`.
-
-        See :meth:`.Table.from_json` for additional details.
-
-        :param path:
-            Path to a directory containing JSON files or filepath/file-like
-            object of nested JSON file.
-        :param keys:
-            A list of keys of the top-level dictionaries for each file. If
-            specified, length must be equal to number of JSON files in path.
-        :param column_types:
-            See :meth:`Table.__init__`.
-        """
-        if isinstance(path, six.string_types) and not os.path.isdir(path) and not os.path.isfile(path):
-            raise IOError('Specified path doesn\'t exist.')
-
-        tables = OrderedDict()
-
-        if isinstance(path, six.string_types) and os.path.isdir(path):
-            filepaths = glob(os.path.join(path, '*.json'))
-
-            if keys is not None and len(keys) != len(filepaths):
-                raise ValueError('If specified, keys must have length equal to number of JSON files')
-
-            for i, filepath in enumerate(filepaths):
-                name = os.path.split(filepath)[1].strip('.json')
-
-                if keys is not None:
-                    tables[name] = Table.from_json(filepath, keys[i], column_types=column_types, **kwargs)
-                else:
-                    tables[name] = Table.from_json(filepath, column_types=column_types, **kwargs)
-
-        else:
-            if hasattr(path, 'read'):
-                js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
-            else:
-                with open(path, 'r') as f:
-                    js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
-
-            for key, value in js.items():
-                tables[key] = Table.from_object(value, column_types=column_types, **kwargs)
-
-        return TableSet(tables.values(), tables.keys())
-
-    def to_json(self, path, nested=False, indent=None, **kwargs):
-        """
-        Write :class:`TableSet` to either a set of JSON files for each table or
-        a single nested JSON file.
-
-        See :meth:`.Table.to_json` for additional details.
-
-        :param path:
-            Path to the directory to write the JSON file(s) to. If nested is
-            `True`, this should be a file path or file-like object to write to.
-        :param nested:
-            If `True`, the output will be a single nested JSON file with each
-            Table's key paired with a list of row objects. Otherwise, the output
-            will be a set of files for each table. Defaults to `False`.
-        :param indent:
-            See :meth:`Table.to_json`.
-        """
-        if not nested:
-            if not os.path.exists(path):
-                os.makedirs(path)
-
-            for name, table in self.items():
-                filepath = os.path.join(path, '%s.json' % name)
-
-                table.to_json(filepath, indent=indent, **kwargs)
-        else:
-            close = True
-            tableset_dict = OrderedDict()
-
-            for name, table in self.items():
-                output = StringIO()
-                table.to_json(output, **kwargs)
-                tableset_dict[name] = json.loads(output.getvalue(), object_pairs_hook=OrderedDict)
-
-            if hasattr(path, 'write'):
-                f = path
-                close = False
-            else:
-                dirpath = os.path.dirname(path)
-
-                if dirpath and not os.path.exists(dirpath):
-                    os.makedirs(dirpath)
-
-                f = open(path, 'w')
-
-            json_kwargs = {'ensure_ascii': False, 'indent': indent}
-
-            if six.PY2:
-                json_kwargs['encoding'] = 'utf-8'
-
-            json_kwargs.update(kwargs)
-            json.dump(tableset_dict, f, json_kwargs)
-
-            if close and f is not None:
-                f.close()
-
     @property
     def column_types(self):
         """
@@ -360,10 +206,18 @@ class TableSet(MappedSequence, Patchable):
         table = Table(rows, column_names, column_types)
 
         return table.print_table(output=output, max_column_width=None)
-        
+
 
 from agate.tableset.aggregate import aggregate
+from agate.tableset.from_csv import from_csv
+from agate.tableset.from_json import from_json
 from agate.tableset.merge import merge
+from agate.tableset.to_csv import to_csv
+from agate.tableset.to_json import to_json
 
 TableSet.aggregate = aggregate
+TableSet.from_csv = from_csv
+TableSet.from_json = from_json
 TableSet.merge = merge
+TableSet.to_csv = to_csv
+TableSet.to_json = to_json
