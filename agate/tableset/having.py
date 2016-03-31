@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-from collections import OrderedDict
-
 
 def having(self, aggregations, test):
     """
@@ -25,15 +23,12 @@ def having(self, aggregations, test):
         A new :class:`.TableSet`.
     """
     from agate.tableset import TableSet
-    
+
     new_tables = []
     new_keys = []
 
     for key, table in self.items():
-        props = OrderedDict()
-
-        for name, aggregation in aggregations:
-            props[name] = table.aggregate(aggregation)
+        props = table.aggregate(aggregations)
 
         if test(props):
             new_tables.append(table)

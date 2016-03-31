@@ -3,7 +3,7 @@
 
 from agate import Table
 from agate.aggregations import Count, Sum
-from agate.data_types import *
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 
@@ -30,10 +30,13 @@ class TestAggregate(AgateTestCase):
         self.assertEqual(self.table.aggregate(Sum('two')), 9)
 
     def test_multiple(self):
-        self.assertSequenceEqual(
+        self.assertEqual(
             self.table.aggregate([
-                Count(),
-                Sum('two')
+                ('count', Count()),
+                ('sum', Sum('two'))
             ]),
-            [3, 9]
+            {
+                'count': 3,
+                'sum': 9
+            }
         )

@@ -1,6 +1,7 @@
 1.3.2
 -----
 
+* :meth:`.Table.aggregate` interface has been revised to be more similar to :meth:`.TableSet.aggregate`.
 * :meth:`.TableSet.having` is now implemented. (#587)
 * There is now a better error when a forced column name does not exist. (#591)
 * Arguments to :meth:`.Table.print_html` now mirror :meth:`.Table.print_table`.
