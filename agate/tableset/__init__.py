@@ -95,8 +95,11 @@ class TableSet(MappedSequence, Patchable):
     :param key_type:
         An instance some subclass of :class:`.DataType`. If not provided it
         will default to a :class`.Text`.
+    :param _is_fork:
+        Used internally to skip certain validation steps when data
+        is propagated from an existing tablset.
     """
-    def __init__(self, tables, keys, key_name='group', key_type=None):
+    def __init__(self, tables, keys, key_name='group', key_type=None, _is_fork=False):
         tables = tuple(tables)
         keys = tuple(keys)
 
@@ -110,12 +113,13 @@ class TableSet(MappedSequence, Patchable):
         self._column_types = self._sample_table.column_types
         self._column_names = self._sample_table.column_names
 
-        for table in tables:
-            if any(not isinstance(a, type(b)) for a, b in zip_longest(table.column_types, self.column_types)):
-                raise ValueError('Not all tables have the same column types!')
+        if not _is_fork:
+            for table in tables:
+                if any(not isinstance(a, type(b)) for a, b in zip_longest(table.column_types, self.column_types)):
+                    raise ValueError('Not all tables have the same column types!')
 
-            if table.column_names != self.column_names:
-                raise ValueError('Not all tables have the same column names!')
+                if table.column_names != self.column_names:
+                    raise ValueError('Not all tables have the same column names!')
 
         MappedSequence.__init__(self, tables, keys)
 
@@ -181,6 +185,18 @@ class TableSet(MappedSequence, Patchable):
             A :class:`tuple` of strings.
         """
         return self._column_names
+
+    def _fork(self, tables, keys, key_name=None, key_type=None):
+        """
+        Create a new :class:`.TableSet` using the metadata from this one.
+
+        This method is used internally by functions like
+        :meth:`.TableSet.having`.
+        """
+        key_name = key_name or self._key_name
+        key_type = key_type or self._key_type
+
+        return TableSet(tables, keys, key_name, key_type, _is_fork=True)
 
     def print_structure(self, max_rows=20, output=sys.stdout):
         """

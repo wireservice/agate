@@ -1,6 +1,7 @@
-1.3.2
+1.4.0
 -----
 
+* :class:`.TableSet` now has a :meth:`.TableSet._fork` method used internally for deriving new tables.
 * Added an example of SQL's :code:`HAVING` to the cookbook.
 * :meth:`.Table.aggregate` interface has been revised to be more similar to :meth:`.TableSet.aggregate`.
 * :meth:`.TableSet.having` is now implemented. (#587)

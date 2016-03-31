@@ -34,4 +34,4 @@ def having(self, aggregations, test):
             new_tables.append(table)
             new_keys.append(key)
 
-    return TableSet(new_tables, new_keys, self._key_name, self._key_type)
+    return self._fork(new_tables, new_keys)
