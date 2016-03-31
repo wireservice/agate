@@ -48,8 +48,13 @@ class Number(DataType):
         elif t is float:
             return Decimal(repr(d))
         elif isinstance(d, six.string_types):
+            sign = Decimal(1)
             d = d.strip()
             d = d.strip('%')
+
+            if len(d) > 0 and d[0] == '-':
+                d = d[1:]
+                sign = Decimal(-1)
 
             for symbol in CURRENCY_SYMBOLS:
                 d = d.strip(symbol)
@@ -60,7 +65,7 @@ class Number(DataType):
             raise CastError('Can not parse value "%s" as Decimal.' % d)
 
         try:
-            return parse_decimal(d, self.locale)
+            return parse_decimal(d, self.locale) * sign
         except:
             pass
 

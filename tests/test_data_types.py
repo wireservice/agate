@@ -137,9 +137,9 @@ class TestNumber(unittest.TestCase):
         self.assertEqual(self.type.cast(long('141414')), Decimal('141414'))
 
     def test_currency_cast(self):
-        values = ('$2.70', '$0.70', u'€14', u'75¢')
+        values = ('$2.70', '-$0.70', u'€14', u'50¢', u'-75¢', u'-$1,287')
         casted = tuple(self.type.cast(v) for v in values)
-        self.assertSequenceEqual(casted, (Decimal('2.7'), Decimal('0.7'), Decimal('14'), Decimal('75')))
+        self.assertSequenceEqual(casted, (Decimal('2.7'), Decimal('-0.7'), Decimal('14'), Decimal('50'), Decimal('-75'), Decimal('-1287')))
 
     def test_cast_locale(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a', '2,7', '200.000.000')

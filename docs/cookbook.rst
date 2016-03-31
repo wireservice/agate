@@ -10,6 +10,7 @@ Welcome to the agate cookbook, a source of how-to's and use cases.
 
     cookbook/create
     cookbook/save
+    cookbook/remove
     cookbook/filter
     cookbook/sort
     cookbook/search
@@ -31,6 +32,7 @@ Basics
 
 * `Creating tables from various data types <cookbook/create.html>`_
 * `Saving data to various data types <cookbook/save.html>`_
+* `Removing columns from a table <cookbook/remove.html>`_
 * `Filtering rows of data <cookbook/filter.html>`_
 * `Sorting rows of data <cookbook/sort.html>`_
 * `Searching through a table <cookbook/search.html>`_
