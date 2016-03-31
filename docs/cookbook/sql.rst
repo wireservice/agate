@@ -121,6 +121,30 @@ You can group by two or more columns by chaining the command.
 
     doctors_by_state = patients.group_by('state').group_by('doctor')
 
+HAVING
+======
+
+agate's :meth:`.TableSet.having` works very similar to SQL's keyword of the same name.
+
+.. code-block:: python
+
+    doctors = patients.group_by('doctor')
+    popular_doctors = doctors.having([
+        ('patient_count', Count())
+    ], lambda t: t['patient_count'] > 100)
+
+This filters to only those doctors whose table includes at least 100 results. Can add as many aggregations as you want to the list and each will be available, by name in the test function you pass.
+
+For example, here we filter to popular doctors with more an average review of at least three stars:
+
+.. code-block:: python
+
+    doctors = patients.group_by('doctor')
+    popular_doctors = doctors.having([
+        ('patient_count', Count()),
+        ('average_stars', Average('stars'))
+    ], lambda t: t['patient_count'] > 100 and t['average_stars'] >= 3)
+
 Chain commands together
 =======================
 
