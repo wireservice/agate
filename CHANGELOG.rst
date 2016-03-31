@@ -1,6 +1,7 @@
 1.3.2
 -----
 
+* There is now a better error when a forced column name does not exist. (#591)
 * Arguments to :meth:`.Table.print_html` now mirror :meth:`.Table.print_table`.
 
 1.3.1 - March 30, 2016

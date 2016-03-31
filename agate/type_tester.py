@@ -80,8 +80,13 @@ class TypeTester(object):
         """
         num_columns = len(column_names)
         hypotheses = [set(self._possible_types) for i in range(num_columns)]
+        force_indices = []
 
-        force_indices = [column_names.index(name) for name in self._force.keys()]
+        for name in self._force.keys():
+            try:
+                force_indices.append(column_names.index(name))
+            except ValueError:
+                raise ValueError('"%s" does not match the name of any column in this table.' % name)
 
         if self._limit:
             sample_rows = rows[:self._limit]
