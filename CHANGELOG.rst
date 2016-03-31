@@ -1,6 +1,8 @@
 1.4.0
 -----
 
+* :meth:`.Table.from_fixed` now creates an agate table from a fixed-width file. (#358)
+* :mod:`.fixed` now implements a general-purpose fixed-width file reader. (#358)
 * :class:`.TableSet` now has a :meth:`.TableSet._fork` method used internally for deriving new tables.
 * Added an example of SQL's :code:`HAVING` to the cookbook.
 * :meth:`.Table.aggregate` interface has been revised to be more similar to :meth:`.TableSet.aggregate`.

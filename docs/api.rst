@@ -13,6 +13,7 @@ API
     api/aggregations
     api/computations
     api/csv
+    api/fixed
     api/misc
     api/exceptions
     api/warns
