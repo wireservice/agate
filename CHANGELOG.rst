@@ -1,6 +1,7 @@
 1.4.0
 -----
 
+* :class:`TypeTester` now correctly parses negative currency values as Number. (#595)
 * Cookbook: removing a column (`select` and `exclude`). (#592)
 * Cookbook: overriding specific column types. (#591)
 * :class:`.TableSet` now has a :meth:`.TableSet._fork` method used internally for deriving new tables.
