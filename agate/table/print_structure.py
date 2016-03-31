@@ -1,59 +1,26 @@
 #!/usr/bin/env python
 
-from agate import utils
+import sys
+
+from agate.data_types import Text
 
 
-def print_structure(left_column, right_column, column_headers, output):
+def print_structure(self, output=sys.stdout):
     """
-    See :meth:`.Table.print_structure` and :meth:`.TableSet.print_structure`.
+    Print this table's column names and types as a plain-text table.
+
+    :param output:
+        The output to print to.
     """
-    def write(line):
-        output.write(line + '\n')
+    from agate.table import Table
 
-    def _print_row(formatted_row):
-        """
-        Helper function that formats individual rows.
+    name_column = [n for n in self.column_names]
+    type_column = [t.__class__.__name__ for t in self.column_types]
+    rows = zip(name_column, type_column)
+    column_names = ['column', 'data_type']
+    text = Text()
+    column_types = [text, text]
 
-        :param formatted_row:
-            A list of strings representing the cells of a row.
-        :returns:
-            A string representing the final row of the table.
-        """
-        line = utils.VERTICAL_LINE.join(formatted_row)
+    table = Table(rows, column_names, column_types)
 
-        return '%s %s %s' % (utils.VERTICAL_LINE, line, utils.VERTICAL_LINE)
-
-    def _max_width(values, column_name):
-        """
-        Return the width necessary to contain the longest column value.
-
-        :param values:
-            The values in a column.
-        :param name:
-            The name of the column.
-        :returns:
-            The length of the longest string in the column.
-        """
-        return max(max(len(value) for value in values), len(column_name))
-
-    left_column_width = _max_width(left_column, column_headers[0])
-    right_column_width = _max_width(right_column, column_headers[1])
-
-    header = [
-        (' ' + column_headers[0] + ' ').ljust(left_column_width + 2),
-        (' ' + column_headers[1] + ' ').ljust(right_column_width + 2)
-    ]
-
-    divider = '|--%s--|' % '-+-'.join('-' * w for w in (left_column_width, right_column_width))
-
-    write(divider)
-    write(_print_row(header))
-    write(divider)
-
-    formatted_left_column = (' %s ' % n.ljust(left_column_width) for n in left_column)
-    formatted_right_column = (' %s ' % t.ljust(right_column_width) for t in right_column)
-
-    for formatted_row in zip(formatted_left_column, formatted_right_column):
-        write(_print_row(formatted_row))
-
-    write(divider)
+    return table.print_table(output=output, max_column_width=None)

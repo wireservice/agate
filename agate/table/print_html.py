@@ -9,14 +9,9 @@ from agate.data_types import Number, Text
 from agate import utils
 
 
-def print_html(self, max_rows=20, max_columns=6, output=utils.default, max_column_width=20, locale=None):
+def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_width=20, locale=None):
     """
     Print an HTML version of this table.
-
-    If running in a Jupyter notebook this method will display a properly
-    formatted HTML table. On any other platform it will output an HTML
-    representation of the table as a string. The Jupyter table behavior can be
-    overridden by explicitly setting :code:`output` to :code:`sys.stdout`.
 
     :param max_rows:
         The maximum number of rows to display before truncating the data. This
@@ -36,14 +31,6 @@ def print_html(self, max_rows=20, max_columns=6, output=utils.default, max_colum
         Provide a locale you would like to be used to format the output.
         By default it will use the system's setting.
     """
-    display_html = utils.use_ipython_display() and output is utils.default
-
-    if output is utils.default:
-        if display_html:
-            output = six.StringIO()
-        else:
-            output = sys.stdout
-
     if max_rows is None:
         max_rows = len(self.rows)
 
@@ -144,8 +131,3 @@ def print_html(self, max_rows=20, max_columns=6, output=utils.default, max_colum
     # Footer
     write('</tbody>')
     write('</table>')
-
-    if display_html:
-        from IPython.display import HTML
-
-        return HTML(output.getvalue())

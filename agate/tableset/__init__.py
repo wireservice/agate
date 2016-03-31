@@ -350,11 +350,17 @@ class TableSet(MappedSequence, Patchable):
         """
         max_length = min(len(self.items()), max_rows)
 
-        left_column = self.keys()[0:max_length]
-        right_column = [str(len(table.rows)) for key, table in self.items()[0:max_length]]
-        column_headers = ['table_keys', 'row_count']
+        name_column = self.keys()[0:max_length]
+        type_column = [str(len(table.rows)) for key, table in self.items()[0:max_length]]
+        rows = zip(name_column, type_column)
+        column_names = ['table', 'rows']
+        text = Text()
+        column_types = [text, text]
 
-        print_structure(left_column, right_column, column_headers, output)
+        table = Table(rows, column_names, column_types)
+
+        return table.print_table(output=output, max_column_width=None)
+        
 
 from agate.tableset.aggregate import aggregate
 from agate.tableset.merge import merge

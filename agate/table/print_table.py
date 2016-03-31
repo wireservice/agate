@@ -9,15 +9,9 @@ from agate.data_types import Number, Text
 from agate import utils
 
 
-def print_table(self, max_rows=20, max_columns=6, output=utils.default, max_column_width=20, locale=None):
+def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_width=20, locale=None):
     """
     Print a text-based view of the data in this table.
-
-    If running in a Jupyter notebook this method will automatically defer to
-    :meth:`.Table.print_html` in order to display a formatted HTML table. On
-    any other platform it will output a plain-text representation of the table
-    as a string. The Jupyter table behavior can be overridden by explicitly
-    setting :code:`output` to :code:`sys.stdout`.
 
     :param max_rows:
         The maximum number of rows to display before truncating the data. This
@@ -28,8 +22,7 @@ def print_table(self, max_rows=20, max_columns=6, output=utils.default, max_colu
         This defaults to :code:`6` to prevent wrapping in most cases. Pass
         :code:`None` to disable the limit.
     :param output:
-        A file-like object to print to. Defaults to :code:`sys.stdout`, unless
-        running in Jupyter. (See above.)
+        A file-like object to print to.
     :param max_column_width:
         Truncate all columns to at most this width. The remainder will be
         replaced with ellipsis.
@@ -37,14 +30,6 @@ def print_table(self, max_rows=20, max_columns=6, output=utils.default, max_colu
         Provide a locale you would like to be used to format the output.
         By default it will use the system's setting.
     """
-    display_html = utils.use_ipython_display() and output is utils.default
-
-    if output is utils.default:
-        if display_html:
-            return self.print_html(max_rows, max_columns)
-        else:
-            output = sys.stdout
-
     if max_rows is None:
         max_rows = len(self.rows)
 

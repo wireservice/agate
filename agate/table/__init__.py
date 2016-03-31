@@ -856,21 +856,7 @@ class Table(utils.Patchable):
         :code:`kwargs` will be passed on to :meth:`.Table.to_json`.
         """
         self.to_json(sys.stdout, **kwargs)
-
-    def print_structure(self, output=sys.stdout):
-        """
-        Print this table's column names and types.
-
-        :param output:
-            The output to print to.
-        """
-        from agate.table.print_structure import print_structure
-
-        left_column = [n for n in self.column_names]
-        right_column = [t.__class__.__name__ for t in self.column_types]
-        column_headers = ['column_names', 'column_types']
-
-        print_structure(left_column, right_column, column_headers, output)
+        
 
 from agate.table.aggregate import aggregate
 from agate.table.bins import bins
@@ -884,6 +870,7 @@ from agate.table.normalize import normalize
 from agate.table.pivot import pivot
 from agate.table.print_bars import print_bars
 from agate.table.print_html import print_html
+from agate.table.print_structure import print_structure
 from agate.table.print_table import print_table
 
 Table.aggregate = aggregate
@@ -898,4 +885,5 @@ Table.normalize = normalize
 Table.pivot = pivot
 Table.print_bars = print_bars
 Table.print_html = print_html
+Table.print_structure = print_structure
 Table.print_table = print_table
