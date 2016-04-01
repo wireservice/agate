@@ -59,7 +59,7 @@ def compute(self, computations, replace=False):
                     values.append(row[j])
         # Faster version if not using replace
         else:
-            values = tuple(row) + tuple(c[i] for c in new_columns.values())
+            values = row.values() + tuple(c[i] for c in new_columns.values())
 
         new_rows.append(Row(values, column_names))
 
