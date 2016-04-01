@@ -24,7 +24,6 @@ def compute(self, computations, replace=False):
     """
     column_names = list(copy(self.column_names))
     column_types = list(copy(self.column_types))
-    new_columns = OrderedDict()
 
     for new_column_name, computation in computations:
         new_column_type = computation.get_computed_data_type(self)
@@ -41,19 +40,26 @@ def compute(self, computations, replace=False):
 
         computation.validate(self)
 
+    new_columns = OrderedDict()
+
     for new_column_name, computation in computations:
         new_columns[new_column_name] = computation.run(self)
 
     new_rows = []
 
     for i, row in enumerate(self.rows):
-        values = []
+        # Slow version if using replace
+        if replace:
+            values = []
 
-        for j, column_name in enumerate(column_names):
-            if column_name in new_columns:
-                values.append(new_columns[column_name][i])
-            else:
-                values.append(row[j])
+            for j, column_name in enumerate(column_names):
+                if column_name in new_columns:
+                    values.append(new_columns[column_name][i])
+                else:
+                    values.append(row[j])
+        # Faster version if not using replace
+        else:
+            values = tuple(row) + tuple(c[i] for c in new_columns.values())
 
         new_rows.append(Row(values, column_names))
 
