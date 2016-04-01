@@ -65,3 +65,40 @@ class TestCompute(AgateTestCase):
         ])
 
         self.assertRowNames(new_table, [3, 5, 4, 6])
+
+    def test_compute_replace(self):
+        new_table = self.table.compute([
+            ('two', Formula(self.number_type, lambda r: r['two'] + r['three']))
+        ], replace=True)
+
+        self.assertIsNot(new_table, self.table)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four'])
+        self.assertColumnTypes(new_table, [Text, Number, Number, Number])
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 5, 3, 4))
+        self.assertSequenceEqual(new_table.columns['two'], (5, 8, 6, 9))
+
+    def test_compute_replace_change_type(self):
+        new_table = self.table.compute([
+            ('two', Formula(self.text_type, lambda r: 'a'))
+        ], replace=True)
+
+        self.assertIsNot(new_table, self.table)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four'])
+        self.assertColumnTypes(new_table, [Text, Text, Number, Number])
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 'a', 3, 4))
+        self.assertSequenceEqual(new_table.columns['two'], ('a', 'a', 'a', 'a'))
+
+    def test_compute_replace_partial(self):
+        new_table = self.table.compute([
+            ('two', Formula(self.number_type, lambda r: r['two'] + r['three'])),
+            ('test', Formula(self.number_type, lambda r: 1))
+        ], replace=True)
+
+        self.assertIsNot(new_table, self.table)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'test'])
+        self.assertColumnTypes(new_table, [Text, Number, Number, Number, Number])
+
+        self.assertSequenceEqual(new_table.rows[0], ('a', 5, 3, 4, 1))
+        self.assertSequenceEqual(new_table.columns['two'], (5, 8, 6, 9))
