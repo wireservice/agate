@@ -6,6 +6,7 @@ try:
 except ImportError:  # pragma: no cover
     from decimal import Decimal
 
+from babel.core import Locale
 from babel.numbers import parse_decimal
 import six
 
@@ -27,7 +28,7 @@ class Number(DataType):
     def __init__(self, locale='en_US', **kwargs):
         super(Number, self).__init__(**kwargs)
 
-        self.locale = locale
+        self.locale = Locale.parse(locale)
 
     def cast(self, d):
         """
