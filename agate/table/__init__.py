@@ -60,8 +60,8 @@ class Table(utils.Patchable):
     :attr:`.Table.rows` property. They maybe be accessed by either numeric index
     or, if specified, unique row names.
 
-    :param rows:
-        The data as a sequence of any sequences: tuples, lists, etc. If
+    :param data:
+        The row data as a sequence of any sequences: tuples, lists, etc. If
         any row has fewer values than the number of columns, it will be filled
         out with nulls. No row may have more values than the number of columns.
     :param column_names:
@@ -85,8 +85,8 @@ class Table(utils.Patchable):
         is propagated from an existing table. When :code:`True`, rows are
         assumed to be :class:`.Row` instances, rather than raw data.
     """
-    def __init__(self, rows, column_names=None, column_types=None, row_names=None, _is_fork=False):
-        if isinstance(rows, six.string_types):
+    def __init__(self, data, column_names=None, column_types=None, row_names=None, _is_fork=False):
+        if isinstance(data, six.string_types):
             raise ValueError('When created directly, the first argument to Table must be a sequence of rows. Did you want agate.Table.from_csv?')
 
         # Validate column names
@@ -114,8 +114,8 @@ class Table(utils.Patchable):
                 final_column_names.append(final_column_name)
 
             self._column_names = tuple(final_column_names)
-        elif rows:
-            self._column_names = tuple(utils.letter_name(i) for i in range(len(rows[0])))
+        elif data:
+            self._column_names = tuple(utils.letter_name(i) for i in range(len(data[0])))
             warnings.warn('Column names not specified. "%s" will be used as names.' % str(self._column_names), RuntimeWarning, stacklevel=2)
         else:
             self._column_names = []
@@ -137,28 +137,12 @@ class Table(utils.Patchable):
                     raise ValueError('Column types must be instances of DataType.')
 
         if isinstance(column_types, TypeTester):
-            self._column_types = column_types.run(rows, self._column_names)
+            self._column_types = column_types.run(data, self._column_names)
         else:
             self._column_types = tuple(column_types)
 
         if len_column_names != len(self._column_types):
             raise ValueError('column_names and column_types must be the same length.')
-
-        if not _is_fork:
-            new_rows = []
-            cast_funcs = [c.cast for c in self._column_types]
-
-            for i, row in enumerate(rows):
-                len_row = len(row)
-
-                if len_row > len_column_names:
-                    raise ValueError('Row %i has %i values, but Table only has %i columns.' % (i, len_row, len_column_names))
-                elif len(row) < len_column_names:
-                    row = chain(row, [None] * (len(self.column_names) - len_row))
-
-                new_rows.append(Row(tuple(cast_funcs[i](d) for i, d in enumerate(row)), self._column_names))
-        else:
-            new_rows = rows
 
         if row_names:
             computed_row_names = []
@@ -180,16 +164,36 @@ class Table(utils.Patchable):
         else:
             self._row_names = None
 
+        if not _is_fork:
+            new_cols = []
+            cast_funcs = [c.cast for c in self._column_types]
+
+            for i, cast_func in enumerate(cast_funcs):
+                values = tuple(cast_func(row[i]) for row in data)
+                c = Column(values, self._column_types[i], self._column_names)
+                new_cols.append(c)
+
+            # for i, row in enumerate(rows):
+            #     len_row = len(row)
+            #
+            #     if len_row > len_column_names:
+            #         raise ValueError('Row %i has %i values, but Table only has %i columns.' % (i, len_row, len_column_names))
+            #     elif len(row) < len_column_names:
+            #         row = chain(row, [None] * (len(self.column_names) - len_row))
+            #
+            #     new_rows.append(Row(tuple(cast_funcs[i](d) for i, d in enumerate(row)), self._column_names))
+        else:
+            new_cols = data
+
+        self._columns = MappedSequence(new_cols, self._row_names)
+
+        # Build rows
+        new_rows = []
+
+        for i in range(len(data)):
+            new_rows.append(Row(i, self._columns, self._column_names))
+
         self._rows = MappedSequence(new_rows, self._row_names)
-
-        # Build columns
-        new_columns = []
-
-        for i, (name, data_type) in enumerate(zip(self._column_names, self._column_types)):
-            column = Column(i, name, data_type, self._rows, row_names=self._row_names)
-            new_columns.append(column)
-
-        self._columns = MappedSequence(new_columns, self._column_names)
 
     def __str__(self):
         """
@@ -240,15 +244,16 @@ class Table(utils.Patchable):
         """
         return self._rows
 
-    def _fork(self, rows, column_names=None, column_types=None, row_names=None):
+    def _fork(self, columns=None, column_names=None, column_types=None, row_names=None):
         """
         Create a new table using the metadata from this one.
 
         This method is used internally by functions like
         :meth:`.Table.order_by`.
 
-        :param rows:
-            Row data for the forked table.
+        :param columns:
+            Column data for the forked table. If not specified, fork will use
+            this tables' columns.
         :param column_names:
             Column names for the forked table. If not specified, fork will use
             this table's column names.
@@ -259,6 +264,9 @@ class Table(utils.Patchable):
             Row names for the forked table. If not specified, fork will use
             this table's row names.
         """
+        if columns is None:
+            columns = self._columns
+
         if column_names is None:
             column_names = self._column_names
 
@@ -268,7 +276,7 @@ class Table(utils.Patchable):
         if row_names is None:
             row_names = self._row_names
 
-        return Table(rows, column_names, column_types, row_names=row_names, _is_fork=True)
+        return Table(columns, column_names, column_types, row_names=row_names, _is_fork=True)
 
     def rename(self, column_names=None, row_names=None):
         """
@@ -400,36 +408,44 @@ class Table(utils.Patchable):
             A new :class:`.Table`.
         """
         if len(self._rows) == 0:
-            return self._fork(self._rows)
-        else:
-            key_is_row_function = hasattr(key, '__call__')
-            key_is_sequence = utils.issequence(key)
+            return self._fork()
 
-            def sort_key(data):
-                row = data[1]
+        key_is_row_function = hasattr(key, '__call__')
+        key_is_sequence = utils.issequence(key)
 
-                if key_is_row_function:
-                    k = key(row)
-                elif key_is_sequence:
-                    k = tuple(row[n] for n in key)
-                else:
-                    k = row[key]
+        def sort_key(data):
+            row = data[1]
 
-                if k is None:
-                    return utils.NullOrder()
-
-                return k
-
-            results = sorted(enumerate(self._rows), key=sort_key, reverse=reverse)
-
-            indices, rows = zip(*results)
-
-            if self._row_names is not None:
-                row_names = [self._row_names[i] for i in indices]
+            if key_is_row_function:
+                k = key(row)
+            elif key_is_sequence:
+                k = tuple(row[n] for n in key)
             else:
-                row_names = None
+                k = row[key]
 
-            return self._fork(rows, row_names=row_names)
+            if k is None:
+                return utils.NullOrder()
+
+            return k
+
+        results = sorted(enumerate(self._rows), key=sort_key, reverse=reverse)
+
+        indices, rows = zip(*results)
+
+        if self._row_names is not None:
+            row_names = [self._row_names[i] for i in indices]
+        else:
+            row_names = None
+
+        new_columns = []
+
+        for i in range(len(self.columns)):
+            c = Column([row[i] for row in rows], self._column_types[i], row_names)
+            new_columns.append(c)
+
+        print(new_columns)
+
+        return self._fork(new_columns, row_names=row_names)
 
     @allow_tableset_proxy
     def limit(self, start_or_stop=None, stop=None, step=None):

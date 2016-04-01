@@ -28,44 +28,14 @@ def null_handler(k):
 
 class Column(MappedSequence):
     """
-    Proxy access to column data. Instances of :class:`Column` should
-    not be constructed directly. They are created by :class:`.Table`
-    instances and are unique to them.
-
-    Columns are implemented as subclass of :class:`.MappedSequence`. They
-    deviate from the underlying implementation in that loading of their data
-    is deferred until it is needed.
-
-    :param name:
-        The name of this column.
-    :param data_type:
-        An instance of :class:`.DataType`.
-    :param rows:
-        A :class:`.MappedSequence` that contains the :class:`.Row` instances
-        containing the data for this column.
-    :param row_names:
-        An optional list of row names (keys) for this column.
+    A column of data. Values within a column can be accessed by row index or
+    row name, if specified. Columns are immutable and may be shared between
+    :class:`.Table` instances.
     """
-    def __init__(self, index, name, data_type, rows, row_names=None):
-        self._index = index
-        self._name = name
+    def __init__(self, values, data_type, row_names=None):
         self._data_type = data_type
-        self._rows = rows
-        self._row_names = row_names
 
-    @property
-    def index(self):
-        """
-        This column's index.
-        """
-        return self._index
-
-    @property
-    def name(self):
-        """
-        This column's name.
-        """
-        return self._name
+        super(Column, self).__init__(values, row_names)
 
     @property
     def data_type(self):
@@ -74,39 +44,26 @@ class Column(MappedSequence):
         """
         return self._data_type
 
-    def keys(self):
-        """
-        The row names for this column, if any.
-        """
-        return self._row_names
-
-    @memoize
-    def values(self):
-        """
-        Get the values in this column, as a tuple.
-        """
-        return tuple(row[self._index] for row in self._rows)
-
     @memoize
     def values_distinct(self):
         """
         Get the distinct values in this column, as a tuple.
         """
-        return tuple(set(self.values()))
+        return tuple(set(self._values))
 
     @memoize
     def values_without_nulls(self):
         """
         Get the values in this column with any null values removed.
         """
-        return tuple(d for d in self.values() if d is not None)
+        return tuple(d for d in self._values if d is not None)
 
     @memoize
     def values_sorted(self):
         """
         Get the values in this column sorted.
         """
-        return sorted(self.values(), key=null_handler)
+        return sorted(self._values, key=null_handler)
 
     @memoize
     def values_without_nulls_sorted(self):

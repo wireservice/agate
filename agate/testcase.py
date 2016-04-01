@@ -19,10 +19,6 @@ class AgateTestCase(unittest.TestCase):
         self.assertIsInstance(table, agate.Table)
 
         self.assertSequenceEqual(table.column_names, names)
-        self.assertSequenceEqual(
-            [c.name for c in table.columns],
-            names
-        )
 
         for row in table.rows:
             self.assertSequenceEqual(

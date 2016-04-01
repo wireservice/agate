@@ -40,6 +40,9 @@ class TestBasic(AgateTestCase):
     def test_create_table(self):
         table = Table(self.rows)
 
+        print(table.rows)
+        print(table.columns)
+
         self.assertColumnNames(table, ['a', 'b', 'c'])
         self.assertColumnTypes(table, [Number, Number, Text])
         self.assertRows(table, self.rows)
