@@ -10,6 +10,9 @@ from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
 
+ZERO_DT = datetime.datetime.combine(datetime.date.min, datetime.time.min)
+
+
 class Date(DataType):
     """
     Data representing dates alone.
@@ -69,9 +72,7 @@ class Date(DataType):
 
             return dt.date()
 
-        zero = datetime.datetime.combine(datetime.date.min, datetime.time.min)
-
-        value, ctx = self.parser.parseDT(d, sourceTime=zero)
+        value, ctx = self.parser.parseDT(d, sourceTime=ZERO_DT)
 
         if ctx.hasDate and not ctx.hasTime:
             return value.date()
