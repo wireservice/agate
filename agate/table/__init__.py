@@ -156,7 +156,7 @@ class Table(utils.Patchable):
                 elif len(row) < len_column_names:
                     row = chain(row, [None] * (len(self.column_names) - len_row))
 
-                new_rows.append(Row(tuple(cast_funcs[i](d) for i, d in enumerate(row)), self._column_names))
+                new_rows.append(Row((cast_funcs[i](d) for i, d in enumerate(row)), self._column_names))
         else:
             new_rows = rows
 
