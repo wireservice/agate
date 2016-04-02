@@ -37,8 +37,16 @@ class Computation(object):  # pragma: no cover
         """
         pass
 
-    def run(self, table):
+    def prepare(self, table):
         """
-        When invoked with a table, returns a sequence of new column values.
+        Pre-compute any steps that require the entire table. This is an
+        optimization to allow :meth:`.Computation.run` to operate on individual
+        rows.
+        """
+        pass
+
+    def run(self, row):
+        """
+        When invoked with a :class:`.Row`, returns a new column value.
         """
         raise NotImplementedError()

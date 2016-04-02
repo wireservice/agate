@@ -21,16 +21,8 @@ class PercentileRank(Rank):
         if not isinstance(column.data_type, Number):
             raise DataTypeError('PercentileRank column must contain Number data.')
 
-    def run(self, table):
-        """
-        :returns:
-            :class:`int`
-        """
-        percentiles = Percentiles(self._column_name).run(table)
+    def prepare(self, table):
+        self._percentiles = Percentiles(self._column_name).run(table)
 
-        new_column = []
-
-        for row in table.rows:
-            new_column.append(percentiles.locate(row[self._column_name]))
-
-        return new_column
+    def run(self, row):
+        return self._percentiles.locate(row[self._column_name])

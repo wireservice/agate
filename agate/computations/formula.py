@@ -25,15 +25,10 @@ class Formula(Computation):
     def get_computed_data_type(self, table):
         return self._data_type
 
-    def run(self, table):
-        new_column = []
+    def run(self, row):
+        v = self._func(row)
 
-        for row in table.rows:
-            v = self._func(row)
+        if self._cast:
+            v = self._data_type.cast(v)
 
-            if self._cast:
-                v = self._data_type.cast(v)
-
-            new_column.append(v)
-
-        return new_column
+        return v

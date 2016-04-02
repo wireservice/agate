@@ -55,16 +55,11 @@ class Change(Computation):
 
         raise DataTypeError('Change before and after columns must both contain data that is one of: Number, Date, DateTime or TimeDelta.')
 
-    def run(self, table):
-        new_column = []
+    def run(self, row):
+        before = row[self._before_column_name]
+        after = row[self._after_column_name]
 
-        for row in table.rows:
-            before = row[self._before_column_name]
-            after = row[self._after_column_name]
+        if before and after:
+            return after - before
 
-            if before and after:
-                new_column.append(after - before)
-            else:
-                new_column.append(None)
-
-        return new_column
+        return None

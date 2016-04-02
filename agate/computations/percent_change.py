@@ -32,14 +32,9 @@ class PercentChange(Computation):
         if not isinstance(after_column.data_type, Number):
             raise DataTypeError('PercentChange after column must contain Number data.')
 
-    def run(self, table):
+    def run(self, row):
         """
         :returns:
             :class:`decimal.Decimal`
         """
-        new_column = []
-
-        for row in table.rows:
-            new_column.append((row[self._after_column_name] - row[self._before_column_name]) / row[self._before_column_name] * 100)
-
-        return new_column
+        return (row[self._after_column_name] - row[self._before_column_name]) / row[self._before_column_name] * 100

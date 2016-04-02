@@ -7,6 +7,7 @@ from agate.rows import Row
 from agate import utils
 
 
+# @profile
 @utils.allow_tableset_proxy
 def compute(self, computations, replace=False):
     """
@@ -22,10 +23,12 @@ def compute(self, computations, replace=False):
     :returns:
         A new :class:`.Table`.
     """
-    column_names = list(copy(self.column_names))
-    column_types = list(copy(self.column_types))
+    column_names = list(self.column_names)
+    column_types = list(self.column_types)
+    new_column_names = []
 
     for new_column_name, computation in computations:
+        new_column_names.append(new_column_name)
         new_column_type = computation.get_computed_data_type(self)
 
         if new_column_name in column_names:
@@ -40,26 +43,27 @@ def compute(self, computations, replace=False):
 
         computation.validate(self)
 
-    new_columns = OrderedDict()
-
     for new_column_name, computation in computations:
-        new_columns[new_column_name] = computation.run(self)
+        computation.prepare(self)
 
     new_rows = []
 
     for i, row in enumerate(self.rows):
+        new_values = tuple(c.run(row) for n, c in computations)
+
         # Slow version if using replace
         if replace:
             values = []
 
             for j, column_name in enumerate(column_names):
-                if column_name in new_columns:
-                    values.append(new_columns[column_name][i])
+                if column_name in new_column_names:
+                    k = new_column_names.index(column_name)
+                    values.append(new_values[k])
                 else:
                     values.append(row[j])
         # Faster version if not using replace
         else:
-            values = row.values() + tuple(c[i] for c in new_columns.values())
+            values = row.values() + new_values
 
         new_rows.append(Row(values, column_names))
 

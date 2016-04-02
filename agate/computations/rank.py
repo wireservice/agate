@@ -36,11 +36,7 @@ class Rank(Computation):
     def get_computed_data_type(self, table):
         return Number()
 
-    def run(self, table):
-        """
-        :returns:
-            :class:`int`
-        """
+    def prepare(self, table):
         column = table.columns[self._column_name]
 
         if self._comparer:
@@ -54,20 +50,16 @@ class Rank(Computation):
         if self._reverse:
             data_sorted.reverse()
 
-        ranks = {}
+        self._ranks = {}
         rank = 0
 
         for c in data_sorted:
             rank += 1
 
-            if c in ranks:
+            if c in self._ranks:
                 continue
 
-            ranks[c] = Decimal(rank)
+            self._ranks[c] = Decimal(rank)
 
-        new_column = []
-
-        for row in table.rows:
-            new_column.append(ranks[row[self._column_name]])
-
-        return new_column
+    def run(self, row):
+        return self._ranks[row[self._column_name]]
