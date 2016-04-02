@@ -225,6 +225,10 @@ class TestBasic(AgateTestCase):
         self.assertSequenceEqual(table.rows[Decimal('2')], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[None], (None, 2, u'👍'))
 
+    def test_row_names_int(self):
+        with self.assertRaises(ValueError):
+            table = Table(self.rows, self.column_names, self.column_types, row_names=['a', 'b', 3])  # noqa
+
     def test_row_names_func(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names=lambda r: (r['one'], r['three']))
 
