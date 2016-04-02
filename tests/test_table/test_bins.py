@@ -87,6 +87,18 @@ class TestBins(AgateTestCase):
         self.assertSequenceEqual(new_table.rows[3], ['[3 - 4)', 10])
         self.assertSequenceEqual(new_table.rows[9], ['[9 - 10]', 10])
 
+    def test_bins_values_outside_start_end(self):
+        rows = []
+
+        for i in range(0, 100):
+            rows.append([Decimal(i) / Decimal('10')])
+
+        table_one = Table(rows, self.column_names, self.column_types).bins('number', start=1, end=11)
+        table_two = Table(rows, self.column_names, self.column_types).bins('number', start=-1, end=9)
+
+        self.assertSequenceEqual(table_one.rows[0], ['[0 - 2)', 20])
+        self.assertSequenceEqual(table_two.rows[8], ['[8 - 10]', 20])
+
     def test_bins_decimals(self):
         rows = []
 

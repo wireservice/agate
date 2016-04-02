@@ -37,17 +37,13 @@ def bins(self, column_name, count=10, start=None, end=None):
     :returns:
         A new :class:`Table`.
     """
+    minimum, maximum = utils.round_limits(
+        Min(column_name).run(self),
+        Max(column_name).run(self)
+    )
     # Infer bin start/end positions
-    if start is None or end is None:
-        calculated_start, calculated_end = utils.round_limits(
-            Min(column_name).run(self),
-            Max(column_name).run(self)
-        )
-        start = calculated_start if not start else Decimal(start)
-        end = calculated_end if not end else Decimal(end)
-    else:
-        start = Decimal(start)
-        end = Decimal(end)
+    start = minimum if not start else Decimal(start)
+    end = maximum if not end else Decimal(end)
 
     # Calculate bin size
     spread = abs(end - start)
@@ -80,7 +76,13 @@ def bins(self, column_name, count=10, start=None, end=None):
 
     for i in range(1, len(breaks)):
         last_exclusive = (i == len(breaks) - 1)
-        name = name_bin(breaks[i - 1], breaks[i], last_exclusive=last_exclusive)
+        
+        if i == 1 and minimum < start:
+            name = name_bin(minimum, breaks[i], last_exclusive=last_exclusive)
+        elif i == len(breaks) - 1 and maximum > end:
+            name = name_bin(breaks[i - 1], maximum, last_exclusive=last_exclusive)
+        else:
+            name = name_bin(breaks[i - 1], breaks[i], last_exclusive=last_exclusive)
 
         bin_names.append(name)
 
