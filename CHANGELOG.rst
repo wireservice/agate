@@ -1,6 +1,8 @@
 1.4.0
 -----
 
+* :meth:`.Table.bins` now includes values outside ``start`` or ``end`` in computed ``column_names``. (#596) 
+* Fixed bug in :meth:`.Table.bins` where ``start`` or ``end`` arguments were ignored when specified alone. (#599)
 * :meth:`.Table.compute` now accepts a :code:`replace` argument that allows columns to be overwritten. (#597)
 * :meth:`.Table.from_fixed` now creates an agate table from a fixed-width file. (#358)
 * :mod:`.fixed` now implements a general-purpose fixed-width file reader. (#358)
