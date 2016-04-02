@@ -22,8 +22,6 @@ def having(self, aggregations, test):
     :returns:
         A new :class:`.TableSet`.
     """
-    from agate.tableset import TableSet
-
     new_tables = []
     new_keys = []
 

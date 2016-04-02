@@ -24,28 +24,12 @@ and end up with data grouped across multiple dimensions.
 dimensions.
 """
 
-from collections import OrderedDict
-from glob import glob
-import os
-import json
 import six
 from six.moves import zip_longest
-import sys
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
 
 from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
 from agate.table import Table
-from agate.table.print_structure import print_structure
 from agate.utils import Patchable
 
 

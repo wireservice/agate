@@ -27,7 +27,7 @@ def from_csv(cls, dir_path, column_names=None, column_types=None, row_names=None
         See :meth:`Table.from_csv`.
     """
     from agate.tableset import TableSet
-    
+
     if not os.path.isdir(dir_path):
         raise IOError('Specified path doesn\'t exist or isn\'t a directory.')
 

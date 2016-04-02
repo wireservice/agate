@@ -8,7 +8,6 @@ except ImportError:
 
 from agate.data_types import *
 from agate.type_tester import TypeTester
-from agate.exceptions import CastError
 
 
 class TestTypeTester(unittest.TestCase):

@@ -19,18 +19,9 @@ sequences can be accessed either by numeric index or by name. (In the case of
 rows, row names are optional.)
 """
 
-import codecs
-from collections import OrderedDict
-import io
 from itertools import chain
 import sys
-import os.path
 import warnings
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
 
 import six
 from six.moves import range, zip  # pylint: disable=W0622

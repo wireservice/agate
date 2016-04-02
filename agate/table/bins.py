@@ -76,7 +76,7 @@ def bins(self, column_name, count=10, start=None, end=None):
 
     for i in range(1, len(breaks)):
         last_exclusive = (i == len(breaks) - 1)
-        
+
         if i == 1 and minimum < start:
             name = name_bin(minimum, breaks[i], last_exclusive=last_exclusive)
         elif i == len(breaks) - 1 and maximum > end:

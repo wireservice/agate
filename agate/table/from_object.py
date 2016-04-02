@@ -49,7 +49,7 @@ def from_object(cls, obj, row_names=None, column_types=None):
     :param column_types:
         See :meth:`.Table.__init__`.
     """
-    from agate.table  import Table
+    from agate.table import Table
 
     column_names = []
     row_objects = []

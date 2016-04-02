@@ -30,7 +30,7 @@ def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwar
         See :meth:`Table.__init__`.
     """
     from agate.tableset import TableSet
-    
+
     if isinstance(path, six.string_types) and not os.path.isdir(path) and not os.path.isfile(path):
         raise IOError('Specified path doesn\'t exist.')
 

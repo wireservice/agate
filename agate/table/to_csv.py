@@ -14,7 +14,7 @@ def to_csv(self, path, **kwargs):
         Filepath or file-like object to write to.
     """
     from agate import csv
-    
+
     if 'lineterminator' not in kwargs:
         kwargs['lineterminator'] = '\n'
 
