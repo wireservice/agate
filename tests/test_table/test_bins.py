@@ -51,7 +51,7 @@ class TestBins(AgateTestCase):
         for i in range(0, -100, -1):
             rows.append([i])
 
-        new_table = Table(rows, self.column_names, self.column_types).bins('number', 10, -100, 0)
+        new_table = Table(rows, self.column_names, self.column_types).bins('number', 10, start=-100)
 
         self.assertColumnNames(new_table, ['number', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])

@@ -39,10 +39,12 @@ def bins(self, column_name, count=10, start=None, end=None):
     """
     # Infer bin start/end positions
     if start is None or end is None:
-        start, end = utils.round_limits(
+        calculated_start, calculated_end = utils.round_limits(
             Min(column_name).run(self),
             Max(column_name).run(self)
         )
+        start = calculated_start if not start else Decimal(start)
+        end = calculated_end if not end else Decimal(end)
     else:
         start = Decimal(start)
         end = Decimal(end)
