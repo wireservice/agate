@@ -14,7 +14,6 @@ import six
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
-#: A list of currency symbols sourced from `Xe <http://www.xe.com/symbols.php>`_.
 CURRENCY_SYMBOLS = list(localedata.load('root')['currency_symbols'].values())
 CURRENCY_SYMBOLS.append(u'¢')
 
