@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from agate.rows import Row
-from agate.threads import threadify
+from agate.fast import parallelize
 from agate import utils
 
 
@@ -41,7 +41,7 @@ def compute(self, computations, replace=False):
     for new_column_name, computation in computations:
         computation.prepare(self)
 
-    new_rows = threadify(_compute, self.rows, computations, column_names, replace)
+    new_rows = parallelize(_compute, self.rows, computations, column_names, replace)
 
     return self._fork(new_rows, column_names, column_types)
 

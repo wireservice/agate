@@ -38,8 +38,8 @@ from six.moves import range, zip  # pylint: disable=W0622
 
 from agate.columns import Column
 from agate.data_types import DataType
+from agate.fast import parallelize
 from agate.mapped_sequence import MappedSequence
-from agate.threads import threadify
 from agate.rows import Row
 from agate.type_tester import TypeTester
 from agate import utils
@@ -165,7 +165,7 @@ class Table(utils.Patchable):
         if not _is_fork:
             cast_funcs = [c.cast for c in self._column_types]
 
-            new_rows = threadify(_cast, rows, cast_funcs, self._column_names)
+            new_rows = parallelize(_cast, rows, cast_funcs, self._column_names)
         else:
             new_rows = rows
 
