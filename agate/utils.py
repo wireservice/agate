@@ -8,7 +8,6 @@ agate.
 
 from collections import OrderedDict, Sequence
 from functools import wraps
-import multiprocessing
 import string
 
 try:
@@ -46,12 +45,6 @@ ELLIPSIS = u'...'
 
 #: Default locale for number formatting
 LC_NUMERIC = default_locale('LC_NUMERIC') or 'en_US'
-
-#: Default number of threads to use for parallel processes
-DEFAULT_THREADS = multiprocessing.cpu_count()
-
-#: Default size number of rows to process in a single chunk
-DEFAULT_CHUNK = 5000
 
 #: Sentinal for use when `None` is an valid argument value
 default = object()

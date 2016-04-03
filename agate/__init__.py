@@ -6,6 +6,7 @@ from agate.aggregations import *
 from agate.data_types import *
 from agate.columns import Column  # noqa
 from agate.computations import *
+from agate.configure import get_option, set_option
 from agate.exceptions import *
 from agate.mapped_sequence import MappedSequence  # noqa
 from agate.rows import Row  # noqa

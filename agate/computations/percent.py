@@ -44,9 +44,9 @@ class Percent(Computation):
         the user.
         """
         if self._total is None:
-            total = table.aggregate(Sum(self._column_name))
+            self._total = table.aggregate(Sum(self._column_name))
 
-            if total <= 0:
+            if self._total <= 0:
                 raise DataTypeError('The sum of column values must be a positive number')
 
     def run(self, row):

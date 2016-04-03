@@ -2,6 +2,8 @@
 
 import sys
 
+from six.moves import zip   # pylint: disable=W0622
+
 from agate.data_types import Text
 from agate.table import Table
 
@@ -21,8 +23,8 @@ def print_structure(self, max_rows=20, output=sys.stdout):
     max_length = min(len(self.items()), max_rows)
 
     name_column = self.keys()[0:max_length]
-    type_column = [str(len(table.rows)) for key, table in self.items()[0:max_length]]
-    rows = zip(name_column, type_column)
+    type_column = [str(len(table.rows)) for table in self.values()[0:max_length]]
+    rows = tuple(zip(name_column, type_column))
     column_names = ['table', 'rows']
     text = Text()
     column_types = [text, text]

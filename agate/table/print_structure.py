@@ -2,6 +2,8 @@
 
 import sys
 
+from six.moves import zip   # pylint: disable=W0622
+
 from agate.data_types import Text
 
 
@@ -16,7 +18,7 @@ def print_structure(self, output=sys.stdout):
 
     name_column = [n for n in self.column_names]
     type_column = [t.__class__.__name__ for t in self.column_types]
-    rows = zip(name_column, type_column)
+    rows = tuple(zip(name_column, type_column))
     column_names = ['column', 'data_type']
     text = Text()
     column_types = [text, text]

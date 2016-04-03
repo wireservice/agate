@@ -39,6 +39,7 @@ from six.moves import range, zip  # pylint: disable=W0622
 from agate.columns import Column
 from agate.data_types import DataType
 from agate.mapped_sequence import MappedSequence
+from agate.threads import threadify
 from agate.rows import Row
 from agate.type_tester import TypeTester
 from agate import utils
@@ -102,7 +103,7 @@ class Table(utils.Patchable):
         is propagated from an existing table. When :code:`True`, rows are
         assumed to be :class:`.Row` instances, rather than raw data.
     """
-    def __init__(self, rows, column_names=None, column_types=None, row_names=None, _is_fork=False, threads=utils.DEFAULT_THREADS, chunk_size=utils.DEFAULT_CHUNK):
+    def __init__(self, rows, column_names=None, column_types=None, row_names=None, _is_fork=False):
         if isinstance(rows, six.string_types):
             raise ValueError('When created directly, the first argument to Table must be a sequence of rows. Did you want agate.Table.from_csv?')
 
@@ -164,34 +165,7 @@ class Table(utils.Patchable):
         if not _is_fork:
             cast_funcs = [c.cast for c in self._column_types]
 
-            new_rows = []
-            chunks = []
-
-            if threads:
-                for i in range((len(rows) // chunk_size) + 1):
-                    chunks.append(rows[i * chunk_size:(i + 1) * chunk_size])
-
-            if not threads or len(chunks) == 1:
-                new_rows = _cast(rows, cast_funcs, self._column_names)
-            else:
-                with futures.ThreadPoolExecutor(max_workers=threads) as pool:
-                    threads = []
-
-                    for chunk in chunks:
-                        threads.append(pool.submit(_cast, chunk, cast_funcs, self._column_names))
-
-                    for future in futures.as_completed(threads):
-                        new_rows.extend(future.result())
-
-            # for i, row in enumerate(rows):
-            #     len_row = len(row)
-            #
-            #     if len_row > len_column_names:
-            #         raise ValueError('Row %i has %i values, but Table only has %i columns.' % (i, len_row, len_column_names))
-            #     elif len(row) < len_column_names:
-            #         row = chain(row, [None] * (len(self.column_names) - len_row))
-            #
-            #     new_rows.append(Row((cast_funcs[i](d) for i, d in enumerate(row)), self._column_names))
+            new_rows = threadify(_cast, rows, cast_funcs, self._column_names)
         else:
             new_rows = rows
 
