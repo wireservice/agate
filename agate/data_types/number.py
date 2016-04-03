@@ -6,6 +6,7 @@ try:
 except ImportError:  # pragma: no cover
     from decimal import Decimal
 
+from babel import localedata
 from babel.core import Locale
 from babel.numbers import parse_decimal
 import six
@@ -14,8 +15,8 @@ from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
 #: A list of currency symbols sourced from `Xe <http://www.xe.com/symbols.php>`_.
-CURRENCY_SYMBOLS = [u'؋', u'$', u'ƒ', u'៛', u'¥', u'₡', u'₱', u'£', u'€', u'¢', u'﷼', u'₪', u'₩', u'₭', u'₮', u'₦', u'฿', u'₤', u'₫']
-
+CURRENCY_SYMBOLS = list(localedata.load('root')['currency_symbols'].values())
+CURRENCY_SYMBOLS.append(u'¢')
 
 class Number(DataType):
     """
@@ -58,7 +59,10 @@ class Number(DataType):
                 sign = Decimal(-1)
 
             for symbol in CURRENCY_SYMBOLS:
-                d = d.strip(symbol)
+                if d[:len(symbol)] == symbol:
+                    d = d[len(symbol):]
+                if d[(len(d) - len(symbol)):] == symbol:
+                    d = d[:(len(d) - len(symbol))]
 
             if d.lower() in self.null_values:
                 return None
