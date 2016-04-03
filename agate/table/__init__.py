@@ -47,22 +47,6 @@ from agate.utils import allow_tableset_proxy
 from agate.warns import warn_duplicate_column
 
 
-def _cast(rows, cast_funcs, column_names):
-    len_column_names = len(column_names)
-    new_rows = []
-
-    for i, row in enumerate(rows):
-        len_row = len(row)
-
-        if len_row > len_column_names:
-            raise ValueError('Row %i has %i values, but Table only has %i columns.' % (i, len_row, len_column_names))
-        elif len(row) < len_column_names:
-            row = chain(row, [None] * (len(column_names) - len_row))
-
-        new_rows.append(Row((cast_funcs[i](d) for i, d in enumerate(row)), column_names))
-
-    return new_rows
-
 @six.python_2_unicode_compatible
 class Table(utils.Patchable):
     """
@@ -307,28 +291,6 @@ class Table(utils.Patchable):
             return self._fork(self.rows, column_names, self._column_types, row_names=row_names)
 
     @allow_tableset_proxy
-    def select(self, key):
-        """
-        Create a new table with only the specified columns.
-
-        :param key:
-            Either the name of a single column to include or a sequence of such
-            names.
-        :returns:
-            A new :class:`.Table`.
-        """
-        if not utils.issequence(key):
-            key = [key]
-
-        column_types = [self.columns[name].data_type for name in key]
-        new_rows = []
-
-        for row in self._rows:
-            new_rows.append(Row(tuple(row[n] for n in key), key))
-
-        return self._fork(new_rows, key, column_types)
-
-    @allow_tableset_proxy
     def exclude(self, key):
         """
         Create a new table without the specified columns.
@@ -536,6 +498,27 @@ class Table(utils.Patchable):
         self.to_json(sys.stdout, **kwargs)
 
 
+def _cast(rows, cast_funcs, column_names):
+    """
+    Parallelizable implementation of the casting portion of
+    :meth:`.Table.__init__`.
+    """
+    len_column_names = len(column_names)
+    new_rows = []
+
+    for i, row in enumerate(rows):
+        len_row = len(row)
+
+        if len_row > len_column_names:
+            raise ValueError('Row %i has %i values, but Table only has %i columns.' % (i, len_row, len_column_names))
+        elif len(row) < len_column_names:
+            row = chain(row, [None] * (len(column_names) - len_row))
+
+        new_rows.append(Row((cast_funcs[i](d) for i, d in enumerate(row)), column_names))
+
+    return new_rows
+
+
 from agate.table.aggregate import aggregate
 from agate.table.bins import bins
 from agate.table.compute import compute
@@ -554,6 +537,7 @@ from agate.table.print_bars import print_bars
 from agate.table.print_html import print_html
 from agate.table.print_structure import print_structure
 from agate.table.print_table import print_table
+from agate.table.select import select
 from agate.table.to_csv import to_csv
 from agate.table.to_json import to_json
 
@@ -575,5 +559,6 @@ Table.print_bars = print_bars
 Table.print_html = print_html
 Table.print_structure = print_structure
 Table.print_table = print_table
+Table.select = select
 Table.to_csv = to_csv
 Table.to_json = to_json
