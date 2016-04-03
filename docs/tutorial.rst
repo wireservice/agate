@@ -340,6 +340,17 @@ For efficiency's sake, agate allows you to perform several computations at once 
         ('years_in_prison', agate.Change('convicted', 'exonerated'))
     ])
 
+You can also compute new columns to clean up your raw data. In the initial data, the ``state`` column has some values with a 'F-' prefix on the state abbreviation. Cases with that prefix are federal cases as opposed to state prosecutions. To make the data easier to use, we can create a new ``federal`` column to tag federal cases and clean up the original state column:
+
+.. code-block:: python
+
+    clean_state_data = exonerations.compute([
+        ('federal', agate.Formula(agate.Boolean(), lambda row: row['state'].startswith('F-'))),
+        ('state', agate.Formula(agate.Text(), lambda row: row['state'][2:] if row['state'].startswith('F-') else row['state']))
+    ], replace=True)
+
+We add the ``replace`` argument to our ``compute`` method to replace the state column in place.
+
 If :class:`.Formula` is not flexible enough (for instance, if you needed to compute a new value based on the distribution of data in a column) you can always implement your own subclass of :class:`.Computation`. See the API documentation for :mod:`.computations` to see all of the supported ways to compute new data.
 
 Sorting and slicing
