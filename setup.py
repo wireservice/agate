@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from setuptools import setup
+import sys
 
 install_requires = [
     'six>=1.6.1',
@@ -9,6 +10,9 @@ install_requires = [
     'Babel>=2.0',
     'isodate>=0.5.4'
 ]
+
+if sys.version_info < (3, 2):
+    install_requires.append('futures>=3.0.5')
 
 setup(
     name='agate',
