@@ -6,14 +6,16 @@ This module contains the global configuration for agate. Users should use
 configuration.
 """
 
+from concurrent import futures
+
 
 options = {
-    #: Whether or not to use multithreading to speed up CPU-intensive tasks
-    'use_threads': True,
-    #: How many threads to use, if enabled
-    'thread_count': 4,
-    #: The minimum number of data points to split into a thread
-    'min_thread_size': 5000
+    #: Executor to use for parallelizing tasks, or :code:`None` to disable
+    'parallel_executor': futures.ThreadPoolExecutor,
+    #: How many threads/proceses to use, if enabled
+    'parallel_workers': 4,
+    #: The minimum number of data points to split into a thread/process
+    'parallel_min_size': 5000
 }
 
 
