@@ -1,6 +1,8 @@
 1.4.0
 -----
 
+* Tutorial: clean up state data under computing columns (#570)
+* :meth:`.Table.__init__` now explicitly checks that ``row_names`` are not ints. (#322)
 * Cookbook: CPI deflation, agate-lookup. (#559)
 * :meth:`.Table.bins` now includes values outside ``start`` or ``end`` in computed ``column_names``. (#596) 
 * Fixed bug in :meth:`.Table.bins` where ``start`` or ``end`` arguments were ignored when specified alone. (#599)
