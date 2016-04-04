@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
+from agate.parallel import parallelize
 from agate.rows import Row
-from agate.fast import parallelize
 from agate import utils
 
 

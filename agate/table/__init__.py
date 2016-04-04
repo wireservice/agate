@@ -38,8 +38,8 @@ from six.moves import range, zip  # pylint: disable=W0622
 
 from agate.columns import Column
 from agate.data_types import DataType
-from agate.fast import parallelize
 from agate.mapped_sequence import MappedSequence
+from agate.parallel import parallelize
 from agate.rows import Row
 from agate.type_tester import TypeTester
 from agate import utils
