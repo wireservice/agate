@@ -65,7 +65,7 @@ To filter a dataset to the top 10% percent of values we first compute the percen
 
 .. code-block:: python
 
-    percentiles = table.aggregate(agate.Percentiles('salary'])
+    percentiles = table.aggregate(agate.Percentiles('salary'))
     top_ten_percent = table.where(lambda r: r['salary'] >= percentiles[90])
 
 Random sample
