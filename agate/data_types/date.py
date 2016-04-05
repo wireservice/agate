@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import datetime
+from datetime import date, datetime, time
 
 import isodate
 import parsedatetime
@@ -10,7 +10,7 @@ from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
 
-ZERO_DT = datetime.datetime.combine(datetime.date.min, datetime.time.min)
+ZERO_DT = datetime.combine(date.min, time.min)
 
 
 class Date(DataType):
@@ -54,7 +54,7 @@ class Date(DataType):
         :returns:
             :class:`datetime.date` or :code:`None`.
         """
-        if type(d) is datetime.date or d is None:
+        if type(d) is date or d is None:
             return d
         elif isinstance(d, six.string_types):
             d = d.strip()
@@ -66,7 +66,7 @@ class Date(DataType):
 
         if self.date_format:
             try:
-                dt = datetime.datetime.strptime(d, self.date_format)
+                dt = datetime.strptime(d, self.date_format)
             except:
                 raise CastError('Value "%s" does not match date format.' % d)
 
