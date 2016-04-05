@@ -140,6 +140,15 @@ class TestNumber(unittest.TestCase):
         casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (Decimal('2.7'), Decimal('-0.7'), Decimal('14'), Decimal('50'), Decimal('-75'), Decimal('-1287')))
 
+    def test_currencies(self):
+        #: A list of currency symbols sourced from `Xe <http://www.xe.com/symbols.php>`_.
+        CURRENCY_SYMBOLS = [u'؋', u'$', u'ƒ', u'៛', u'¥', u'₡', u'₱', u'£', u'€', 
+        u'¢', u'﷼', u'₪', u'₩', u'₭', u'₮', u'₦', u'฿', u'₤', u'₫']
+
+        values = [symbol + '1' for symbol in CURRENCY_SYMBOLS]
+        casted = tuple(self.type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, [Decimal(1)] * len(CURRENCY_SYMBOLS))
+
     def test_cast_locale(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a', '2,7', '200.000.000')
         casted = tuple(Number(locale='de_DE').cast(v) for v in values)
