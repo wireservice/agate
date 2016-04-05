@@ -1,10 +1,12 @@
 1.4.0
 -----
 
+* :meth:`.Number.cast` is now three times as fast.
+* :class:`.Number` now accepts :code:`group_symbol`, :code:`decimal_symbol` and :code:`currency_symbols` arguments. (#224)
 * Tutorial: clean up state data under computing columns (#570)
 * :meth:`.Table.__init__` now explicitly checks that ``row_names`` are not ints. (#322)
 * Cookbook: CPI deflation, agate-lookup. (#559)
-* :meth:`.Table.bins` now includes values outside ``start`` or ``end`` in computed ``column_names``. (#596) 
+* :meth:`.Table.bins` now includes values outside ``start`` or ``end`` in computed ``column_names``. (#596)
 * Fixed bug in :meth:`.Table.bins` where ``start`` or ``end`` arguments were ignored when specified alone. (#599)
 * :meth:`.Table.compute` now accepts a :code:`replace` argument that allows columns to be overwritten. (#597)
 * :meth:`.Table.from_fixed` now creates an agate table from a fixed-width file. (#358)
