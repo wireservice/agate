@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 from agate import utils
 
@@ -25,7 +26,7 @@ def limit(self, start_or_stop=None, stop=None, step=None):
         s = slice(start_or_stop, stop, step)
     else:
         s = slice(start_or_stop)
-        
+
     rows = self._rows[s]
 
     if self._row_names is not None:

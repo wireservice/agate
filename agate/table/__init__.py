@@ -145,7 +145,7 @@ class Table(utils.Patchable):
                 if len_row > len_column_names:
                     raise ValueError('Row %i has %i values, but Table only has %i columns.' % (i, len_row, len_column_names))
                 elif len(row) < len_column_names:
-                    row = chain(row, [None] * (len(self.column_names) - len_row))
+                    row = chain(row, [None] * (len(self._column_names) - len_row))
 
                 new_rows.append(Row((cast_funcs[i](d) for i, d in enumerate(row)), self._column_names))
         else:

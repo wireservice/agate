@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 from agate.rows import Row
 from agate import utils
@@ -18,7 +19,7 @@ def select(self, key):
     if not utils.issequence(key):
         key = [key]
 
-    column_types = [self.columns[name].data_type for name in key]
+    column_types = [self._columns[name].data_type for name in key]
     new_rows = []
 
     for row in self._rows:

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 
 def rename(self, column_names=None, row_names=None):
@@ -17,15 +18,15 @@ def rename(self, column_names=None, row_names=None):
     from agate.table import Table
 
     if isinstance(column_names, dict):
-        column_names = [column_names[name] if name in column_names else name for name in self.column_names]
+        column_names = [column_names[name] if name in column_names else name for name in self._column_names]
 
     if isinstance(row_names, dict):
-        row_names = [row_names[name] if name in row_names else name for name in self.row_names]
+        row_names = [row_names[name] if name in row_names else name for name in self._row_names]
 
-    if column_names is not None and column_names != self.column_names:
+    if column_names is not None and column_names != self._column_names:
         if row_names is None:
             row_names = self._row_names
 
-        return Table(self.rows, column_names, self.column_types, row_names=row_names, _is_fork=False)
+        return Table(self._rows, column_names, self._column_types, row_names=row_names, _is_fork=False)
     else:
-        return self._fork(self.rows, column_names, self._column_types, row_names=row_names)
+        return self._fork(self._rows, column_names, self._column_types, row_names=row_names)

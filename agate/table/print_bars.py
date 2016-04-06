@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
+# pylint: disable=W0212
 
 from collections import OrderedDict
 
@@ -43,13 +44,13 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
         If true, only printable characters will be outputed.
     """
     y_label = label_column_name
-    label_column = self.columns[label_column_name]
+    label_column = self._columns[label_column_name]
 
     # if not isinstance(label_column.data_type, Text):
     #     raise ValueError('Only Text data is supported for bar chart labels.')
 
     x_label = value_column_name
-    value_column = self.columns[value_column_name]
+    value_column = self._columns[value_column_name]
 
     if not isinstance(value_column.data_type, Number):
         raise DataTypeError('Only Number data is supported for bar chart values.')

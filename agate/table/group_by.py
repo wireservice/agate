@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 from collections import OrderedDict
 
@@ -36,14 +37,14 @@ def group_by(self, key, key_name=None, key_type=None):
         key_name = key_name or 'group'
         key_type = key_type or Text()
     else:
-        column = self.columns[key]
+        column = self._columns[key]
 
         key_name = key_name or column.name
         key_type = key_type or column.data_type
 
     groups = OrderedDict()
 
-    for row in self.rows:
+    for row in self._rows:
         if key_is_row_function:
             group_name = key(row)
         else:

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 from agate.type_tester import TypeTester
 from agate.rows import Row
@@ -70,7 +71,7 @@ def normalize(self, key, properties, property_column='property', value_column='v
 
     row_names = []
 
-    for row in self.rows:
+    for row in self._rows:
         k = tuple(row[n] for n in key)
         left_row = list(k)
 
@@ -82,7 +83,7 @@ def normalize(self, key, properties, property_column='property', value_column='v
         for f in properties:
             new_rows.append(Row(tuple(left_row + [f, row[f]]), new_column_names))
 
-    key_column_types = [self.column_types[self.column_names.index(name)] for name in key]
+    key_column_types = [self._column_types[self._column_names.index(name)] for name in key]
 
     if column_types is None or isinstance(column_types, TypeTester):
         tester = TypeTester() if column_types is None else column_types
