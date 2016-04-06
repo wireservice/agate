@@ -33,7 +33,6 @@ from agate.rows import Row
 from agate.type_tester import TypeTester
 from agate import utils
 from agate.warns import warn_duplicate_column
-from agate.utils import allow_tableset_proxy
 
 
 @six.python_2_unicode_compatible

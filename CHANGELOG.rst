@@ -1,6 +1,8 @@
 1.4.0
 -----
 
+* Reduced memory usage and improved performance of :meth:`.Table.from_csv`.
+* :meth:`.Table.from_csv` no longer accepts a sequence of row ids for :code:`skip_lines`.
 * :meth:`.Number.cast` is now three times as fast.
 * :class:`.Number` now accepts :code:`group_symbol`, :code:`decimal_symbol` and :code:`currency_symbols` arguments. (#224)
 * Tutorial: clean up state data under computing columns (#570)
