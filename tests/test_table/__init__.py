@@ -328,7 +328,7 @@ class TestBasic(AgateTestCase):
     def test_select_does_not_exist(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        with self.assertRaises(KeyError):
+        with self.assertRaises(ValueError):
             table.select(('four',))
 
     def test_exclude(self):

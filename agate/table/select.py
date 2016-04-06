@@ -19,10 +19,11 @@ def select(self, key):
     if not utils.issequence(key):
         key = [key]
 
-    column_types = [self._columns[name].data_type for name in key]
+    indexes = tuple(self._column_names.index(k) for k in key)
+    column_types = tuple(self._column_types[i] for i in indexes)
     new_rows = []
 
     for row in self._rows:
-        new_rows.append(Row(tuple(row[n] for n in key), key))
+        new_rows.append(Row(tuple(row[i] for i in indexes), key))
 
     return self._fork(new_rows, key, column_types)

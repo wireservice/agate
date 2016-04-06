@@ -179,8 +179,12 @@ class Table(utils.Patchable):
         # Build columns
         new_columns = []
 
-        for i, (name, data_type) in enumerate(zip(self._column_names, self._column_types)):
+        for i in range(len_column_names):
+            name = self._column_names[i]
+            data_type = self._column_types[i]
+
             column = Column(i, name, data_type, self._rows, row_names=self._row_names)
+
             new_columns.append(column)
 
         self._columns = MappedSequence(new_columns, self._column_names)

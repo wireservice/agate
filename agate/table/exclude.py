@@ -18,6 +18,6 @@ def exclude(self, key):
     if not utils.issequence(key):
         key = [key]
 
-    selected_column_names = [n for n in self._column_names if n not in key]
+    selected_column_names = tuple(n for n in self._column_names if n not in key)
 
     return self.select(selected_column_names)

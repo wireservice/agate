@@ -28,7 +28,7 @@ def where(self, test):
         if test(row):
             rows.append(row)
 
-            if self._row_names is not None:
+            if row_names is not None:
                 row_names.append(self._row_names[i])
 
     return self._fork(rows, row_names=row_names)
