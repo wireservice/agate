@@ -20,4 +20,3 @@ class Row(MappedSequence):
     They are being maintained in this fashion in order to support future
     features.
     """
-    pass

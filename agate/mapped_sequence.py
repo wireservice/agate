@@ -24,17 +24,17 @@ class MappedSequence(Sequence):
     This is the base class for both :class:`.Column` and :class:`.Row`.
 
     :param values:
-        A sequence of :class:`Row` instances.
+        A sequence of values.
     :param keys:
-        See :meth:`.Table.__init__`.
+        A sequence of keys.
     """
     __slots__ = ['_values', '_keys']
 
     def __init__(self, values, keys=None):
-        self._values = tuple(values)
+        self._values = values
 
         if keys is not None:
-            self._keys = tuple(keys)
+            self._keys = keys
         else:
             self._keys = None
 

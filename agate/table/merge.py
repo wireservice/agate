@@ -46,8 +46,8 @@ def merge(cls, tables, row_names=None, column_names=None):
                 else:
                     new_columns[column_name] = column_type
 
-    column_keys = new_columns.keys()
-    column_types = new_columns.values()
+    column_keys = tuple(new_columns.keys())
+    column_types = tuple(new_columns.values())
 
     rows = []
 
