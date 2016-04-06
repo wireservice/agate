@@ -264,241 +264,6 @@ class Table(utils.Patchable):
 
         return Table(rows, column_names, column_types, row_names=row_names, _is_fork=True)
 
-    def rename(self, column_names=None, row_names=None):
-        """
-        Create a copy of this table with different column names or row names.
-
-        :param column_names:
-            New column names for the renamed table. May be either an array or
-            a dictionary mapping existing column names to new names. If not
-            specified, will use this table's existing column names.
-        :param row_names:
-            New row names for the renamed table. May be either an array or
-            a dictionary mapping existing row names to new names. If not
-            specified, will use this table's existing row names.
-        """
-        if isinstance(column_names, dict):
-            column_names = [column_names[name] if name in column_names else name for name in self.column_names]
-
-        if isinstance(row_names, dict):
-            row_names = [row_names[name] if name in row_names else name for name in self.row_names]
-
-        if column_names is not None and column_names != self.column_names:
-            if row_names is None:
-                row_names = self._row_names
-
-            return Table(self.rows, column_names, self.column_types, row_names=row_names, _is_fork=False)
-        else:
-            return self._fork(self.rows, column_names, self._column_types, row_names=row_names)
-
-    @allow_tableset_proxy
-    def select(self, key):
-        """
-        Create a new table with only the specified columns.
-
-        :param key:
-            Either the name of a single column to include or a sequence of such
-            names.
-        :returns:
-            A new :class:`.Table`.
-        """
-        if not utils.issequence(key):
-            key = [key]
-
-        column_types = [self.columns[name].data_type for name in key]
-        new_rows = []
-
-        for row in self._rows:
-            new_rows.append(Row(tuple(row[n] for n in key), key))
-
-        return self._fork(new_rows, key, column_types)
-
-    @allow_tableset_proxy
-    def exclude(self, key):
-        """
-        Create a new table without the specified columns.
-
-        :param key:
-            Either the name of a single column to exclude or a sequence of such
-            names.
-        :returns:
-            A new :class:`.Table`.
-        """
-        if not utils.issequence(key):
-            key = [key]
-
-        selected_column_names = [n for n in self._column_names if n not in key]
-
-        return self.select(selected_column_names)
-
-    @allow_tableset_proxy
-    def where(self, test):
-        """
-        Create a new :class:`.Table` with only those rows that pass a test.
-
-        :param test:
-            A function that takes a :class:`.Row` and returns :code:`True` if
-            it should be included in the new :class:`.Table`.
-        :type test:
-            :class:`function`
-        :returns:
-            A new :class:`.Table`.
-        """
-        rows = []
-
-        if self._row_names is not None:
-            row_names = []
-        else:
-            row_names = None
-
-        for i, row in enumerate(self._rows):
-            if test(row):
-                rows.append(row)
-
-                if self._row_names is not None:
-                    row_names.append(self._row_names[i])
-
-        return self._fork(rows, row_names=row_names)
-
-    @allow_tableset_proxy
-    def find(self, test):
-        """
-        Find the first row that passes test.
-
-        :param test:
-            A function that takes a :class:`.Row` and returns :code:`True` if
-            it matches.
-        :type test:
-            :class:`function`
-        :returns:
-            A single :class:`.Row` if found, or `None`.
-        """
-        for row in self._rows:
-            if test(row):
-                return row
-
-        return None
-
-    @allow_tableset_proxy
-    def order_by(self, key, reverse=False):
-        """
-        Create a new table that is sorted.
-
-        :param key:
-            Either the name of a single column to sort by, a sequence of such
-            names, or a :class:`function` that takes a row and returns a value
-            to sort by.
-        :param reverse:
-            If `True` then sort in reverse (typically, descending) order.
-        :returns:
-            A new :class:`.Table`.
-        """
-        if len(self._rows) == 0:
-            return self._fork(self._rows)
-        else:
-            key_is_row_function = hasattr(key, '__call__')
-            key_is_sequence = utils.issequence(key)
-
-            def sort_key(data):
-                row = data[1]
-
-                if key_is_row_function:
-                    k = key(row)
-                elif key_is_sequence:
-                    k = tuple(row[n] for n in key)
-                else:
-                    k = row[key]
-
-                if k is None:
-                    return utils.NullOrder()
-
-                return k
-
-            results = sorted(enumerate(self._rows), key=sort_key, reverse=reverse)
-
-            indices, rows = zip(*results)
-
-            if self._row_names is not None:
-                row_names = [self._row_names[i] for i in indices]
-            else:
-                row_names = None
-
-            return self._fork(rows, row_names=row_names)
-
-    @allow_tableset_proxy
-    def limit(self, start_or_stop=None, stop=None, step=None):
-        """
-        Create a new table with fewer rows.
-
-        See also: Python's builtin :func:`slice`.
-
-        :param start_or_stop:
-            If the only argument, then how many rows to include, otherwise,
-            the index of the first row to include.
-        :param stop:
-            The index of the last row to include.
-        :param step:
-            The size of the jump between rows to include. (`step=2` will return
-            every other row.)
-        :returns:
-            A new :class:`.Table`.
-        """
-        if stop or step:
-            s = slice(start_or_stop, stop, step)
-        else:
-            s = slice(start_or_stop)
-        rows = self._rows[s]
-
-        if self._row_names is not None:
-            row_names = self._row_names[s]
-        else:
-            row_names = None
-
-        return self._fork(rows, row_names=row_names)
-
-    @allow_tableset_proxy
-    def distinct(self, key=None):
-        """
-        Create a new table with only unique rows.
-
-        :param key:
-            Either the name of a single column to use to identify unique rows, a
-            sequence of such column names, a :class:`function` that takes a
-            row and returns a value to identify unique rows, or `None`, in
-            which case the entire row will be checked for uniqueness.
-        :returns:
-            A new :class:`.Table`.
-        """
-        key_is_row_function = hasattr(key, '__call__')
-        key_is_sequence = utils.issequence(key)
-
-        uniques = []
-        rows = []
-
-        if self._row_names is not None:
-            row_names = []
-        else:
-            row_names = None
-
-        for i, row in enumerate(self._rows):
-            if key_is_row_function:
-                k = key(row)
-            elif key_is_sequence:
-                k = (row[j] for j in key)
-            elif key is None:
-                k = tuple(row)
-            else:
-                k = row[key]
-
-            if k not in uniques:
-                uniques.append(k)
-                rows.append(row)
-
-                if self._row_names is not None:
-                    row_names.append(self._row_names[i])
-
-        return self._fork(rows, row_names=row_names)
-
     def print_csv(self, **kwargs):
         """
         Print this table as a CSV.
@@ -525,6 +290,9 @@ from agate.table.aggregate import aggregate
 from agate.table.bins import bins
 from agate.table.compute import compute
 from agate.table.denormalize import denormalize
+from agate.table.distinct import distinct
+from agate.table.exclude import exclude
+from agate.table.find import find
 from agate.table.from_csv import from_csv
 from agate.table.from_fixed import from_fixed
 from agate.table.from_json import from_json
@@ -532,20 +300,28 @@ from agate.table.from_object import from_object
 from agate.table.group_by import group_by
 from agate.table.homogenize import homogenize
 from agate.table.join import join
+from agate.table.limit import limit
 from agate.table.merge import merge
 from agate.table.normalize import normalize
+from agate.table.order_by import order_by
 from agate.table.pivot import pivot
 from agate.table.print_bars import print_bars
 from agate.table.print_html import print_html
 from agate.table.print_structure import print_structure
 from agate.table.print_table import print_table
+from agate.table.rename import rename
+from agate.table.select import select
 from agate.table.to_csv import to_csv
 from agate.table.to_json import to_json
+from agate.table.where import where
 
 Table.aggregate = aggregate
 Table.bins = bins
 Table.compute = compute
 Table.denormalize = denormalize
+Table.distinct = distinct
+Table.exclude = exclude
+Table.find = find
 Table.from_csv = from_csv
 Table.from_fixed = from_fixed
 Table.from_json = from_json
@@ -553,12 +329,17 @@ Table.from_object = from_object
 Table.group_by = group_by
 Table.homogenize = homogenize
 Table.join = join
+Table.limit = limit
 Table.merge = merge
 Table.normalize = normalize
+Table.order_by = order_by
 Table.pivot = pivot
 Table.print_bars = print_bars
 Table.print_html = print_html
 Table.print_structure = print_structure
 Table.print_table = print_table
+Table.rename = rename
+Table.select = select
 Table.to_csv = to_csv
 Table.to_json = to_json
+Table.where = where
