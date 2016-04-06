@@ -43,7 +43,6 @@ class Number(DataType):
         self.group_symbol = group_symbol or self.locale.number_symbols.get('group', ',')
         self.decimal_symbol = decimal_symbol or self.locale.number_symbols.get('decimal', '.')
 
-    @profile
     def cast(self, d):
         """
         Cast a single value to a :class:`decimal.Decimal`.
