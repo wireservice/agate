@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 from agate.table import Table
 
@@ -22,14 +23,14 @@ def _aggregate(self, aggregations=[]):
 
                 output.append(row)
 
-        column_names.insert(0, self.key_name)
-        column_types.insert(0, self.key_type)
-        row_name_columns.insert(0, self.key_name)
+        column_names.insert(0, self._key_name)
+        column_types.insert(0, self._key_type)
+        row_name_columns.insert(0, self._key_name)
     # Regular Tables
     else:
-        column_names = [self.key_name]
-        column_types = [self.key_type]
-        row_name_columns = [self.key_name]
+        column_names = [self._key_name]
+        column_types = [self._key_type]
+        row_name_columns = [self._key_name]
 
         for new_column_name, aggregation in aggregations:
             column_names.append(new_column_name)
