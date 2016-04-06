@@ -51,7 +51,7 @@ class TestColumn(unittest.TestCase):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
         column = table.columns['one']
 
-        self.assertSequenceEqual(column._row_names, ['a', 'b', 'c'])
+        self.assertSequenceEqual(column._keys, ['a', 'b', 'c'])
         self.assertEqual(column['b'], 2)
 
     def test_keys(self):

@@ -28,6 +28,8 @@ class MappedSequence(Sequence):
     :param keys:
         See :meth:`.Table.__init__`.
     """
+    __slots__ = ['_values', '_keys']
+
     def __init__(self, values, keys=None):
         self._values = tuple(values)
 
@@ -35,6 +37,26 @@ class MappedSequence(Sequence):
             self._keys = tuple(keys)
         else:
             self._keys = None
+
+    def __getstate__(self):
+        """
+        Return state values to be pickled.
+
+        This is necessary on Python2.7 when using :code:`__slots__`.
+        """
+        return {
+            '_values': self._values,
+            '_keys': self._keys
+        }
+
+    def __setstate__(self, data):
+        """
+        Restore pickled state.
+
+        This is necessary on Python2.7 when using :code:`__slots__`.
+        """
+        self._values = data['_values']
+        self._keys = data['_keys']
 
     def __unicode__(self):
         """

@@ -46,12 +46,40 @@ class Column(MappedSequence):
     :param row_names:
         An optional list of row names (keys) for this column.
     """
+    __slots__ = ['_index', '_name', '_data_type', '_rows', '_row_names']
+
     def __init__(self, index, name, data_type, rows, row_names=None):
         self._index = index
         self._name = name
         self._data_type = data_type
         self._rows = rows
-        self._row_names = row_names
+        self._keys = row_names
+
+    def __getstate__(self):
+        """
+        Return state values to be pickled.
+
+        This is necessary on Python2.7 when using :code:`__slots__`.
+        """
+        return {
+            '_index': self._index,
+            '_name': self._name,
+            '_data_type': self._data_type,
+            '_rows': self._rows,
+            '_keys': self._keys
+        }
+
+    def __setstate__(self, data):
+        """
+        Restore pickled state.
+
+        This is necessary on Python2.7 when using :code:`__slots__`.
+        """
+        self._index = data['_index']
+        self._name = data['_name']
+        self._data_type = data['_data_type']
+        self._rows = data['_rows']
+        self._keys = data['_keys']
 
     @property
     def index(self):
@@ -73,12 +101,6 @@ class Column(MappedSequence):
         This column's data type.
         """
         return self._data_type
-
-    def keys(self):
-        """
-        The row names for this column, if any.
-        """
-        return self._row_names
 
     @memoize
     def values(self):
