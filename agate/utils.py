@@ -9,6 +9,7 @@ agate.
 from collections import OrderedDict, Sequence
 from functools import wraps
 import string
+import warnings
 
 try:
     from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING, getcontext
@@ -97,6 +98,9 @@ class Patchable(object):
         :param patch_cls:
             The class to be patched on.
         """
+
+        warnings.warn('Monkey patching of extensions has been deprecated. It will be removed in a future version. Please upgrade your extensions.', DeprecationWarning)
+
         if patch_cls in cls.__bases__:
             return
 

@@ -10,6 +10,8 @@ try:
 except ImportError:
     import unittest
 
+import warnings
+
 from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
 from agate.table import Table
@@ -52,6 +54,13 @@ class TestMonkeyPatching(unittest.TestCase):
         self.assertEqual(before_table.test(5), 5)
         self.assertEqual(after_table.test(5), 5)
         self.assertEqual(Table.testcls(5), 5)
+
+    def test_monkeypatch_deprecated(self):
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
+
+            with self.assertRaises(DeprecationWarning):
+                Table.monkeypatch(TryPatch)
 
     def test_monkeypatch_shadow(self):
         before_table = Table([['blah'], ], ['foo'], [Text()])
