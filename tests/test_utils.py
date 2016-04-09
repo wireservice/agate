@@ -10,6 +10,7 @@ try:
 except ImportError:
     import unittest
 
+import sys
 import warnings
 
 from agate.data_types import Text
@@ -36,6 +37,11 @@ class TryPatchShadow(object):
 
 
 class TestMonkeyPatching(unittest.TestCase):
+    def setUp(self):
+        # Workaround for https://bugs.python.org/issue4180
+        if sys.version_info[0] == 2 or sys.version_info[:2] == (3, 3):
+            warnings.simplefilter('always')
+
     def test_monkeypatch(self):
         before_table = Table([], ['foo'], [Text()])
 

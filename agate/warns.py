@@ -16,7 +16,7 @@ def warn_null_calculation(operation, column):
     warnings.warn('Column "%s" contains nulls. These will be excluded from %s calculation.' % (
         column.name,
         operation.__class__.__name__
-    ), NullCalculationWarning)
+    ), NullCalculationWarning, stacklevel=2)
 
 
 class DuplicateColumnWarning(RuntimeWarning):  # pragma: no cover
@@ -31,4 +31,4 @@ def warn_duplicate_column(column_name, column_rename):
     warnings.warn('Column name "%s" already exists in Table. Column will be renamed to "%s".' % (
         column_name,
         column_rename
-    ), DuplicateColumnWarning)
+    ), DuplicateColumnWarning, stacklevel=2)

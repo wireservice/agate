@@ -98,7 +98,6 @@ class Patchable(object):
         :param patch_cls:
             The class to be patched on.
         """
-
         warnings.warn('Monkey patching of extensions has been deprecated. It will be removed in a future version. Please upgrade your extensions.', DeprecationWarning)
 
         if patch_cls in cls.__bases__:
