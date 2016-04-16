@@ -18,7 +18,7 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
 
     For example:
 
-    +---------+---------+-- ------+
+    +---------+---------+--------+
     |  name   |  race   | gender |
     +=========+=========+========+
     |  Joe    |  white  | male   |
