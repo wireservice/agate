@@ -30,7 +30,7 @@ def order_by(self, key, reverse=False):
             if key_is_row_function:
                 k = key(row)
             elif key_is_sequence:
-                k = tuple(row[n] for n in key)
+                k = tuple(utils.NullOrder() if row[n] is None else row[n] for n in key)
             else:
                 k = row[key]
 
