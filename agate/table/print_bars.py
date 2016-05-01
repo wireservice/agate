@@ -63,18 +63,15 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
     value_formatter = utils.make_number_formatter(decimal_places)
 
     formatted_labels = []
-
-    for label in label_column:
-        formatted_labels.append(six.text_type(label))
-
     formatted_values = []
-
-    for value in value_column:
-        formatted_values.append(format_decimal(
-            value,
-            format=value_formatter,
-            locale=utils.LC_NUMERIC
-        ))
+    for index, value in enumerate(value_column):
+        if value is not None:
+            formatted_labels.append(six.text_type(label_column[index]))
+            formatted_values.append(format_decimal(
+                value,
+                format=value_formatter,
+                locale=utils.LC_NUMERIC
+            ))
 
     max_label_width = max(max([len(l) for l in formatted_labels]), len(y_label))
     max_value_width = max(max([len(v) for v in formatted_values]), len(x_label))
@@ -181,8 +178,9 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
         zero_mark = utils.ZERO_MARK
 
     # Bars
+    values_without_nulls = value_column.values_without_nulls()
     for i, label in enumerate(formatted_labels):
-        value = value_column[i]
+        value = values_without_nulls[i]
 
         if value == 0:
             bar_width = 0
