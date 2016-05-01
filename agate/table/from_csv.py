@@ -4,8 +4,6 @@ import io
 
 import six
 
-from agate import utils
-
 
 @classmethod
 def from_csv(cls, path, column_names=None, column_types=None, row_names=None, skip_lines=0, header=True, sniff_limit=0, encoding='utf-8', **kwargs):
@@ -18,7 +16,8 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
     :code:`kwargs` will be passed through to the CSV reader.
 
     :param path:
-        Filepath or file-like object from which to read CSV data.
+        Filepath or file-like object from which to read CSV data. If a file-like
+        object is specified, it must be seekable.
     :param column_names:
         See :meth:`.Table.__init__`.
     :param column_types:
@@ -26,17 +25,14 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
     :param row_names:
         See :meth:`.Table.__init__`.
     :param skip_lines:
-        Either a single number indicating the number of lines to skip from
-        the top of the file or a sequence of line indexes to skip where the
-        first line is index 0.
+        The number of lines to skip from the top of the file.
     :param header:
-        If `True`, the first row of the CSV is assumed to contains headers
-        and will be skipped. If `header` and `column_names` are both
-        specified then a row will be skipped, but `column_names` will be
-        used.
+        If :code:`True`, the first row of the CSV is assumed to contain column
+        names. If :code:`header` and :code:`column_names` are both specified
+        then a row will be skipped, but :code:`column_names` will be used.
     :param sniff_limit:
         Limit CSV dialect sniffing to the specified number of bytes. Set to
-        None to sniff the entire file. Defaults to 0 or no sniffing.
+        None to sniff the entire file. Defaults to 0 (no sniffing).
     :param encoding:
         Character encoding of the CSV file. Note: if passing in a file
         handle it is assumed you have already opened it with the correct
@@ -45,34 +41,44 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
     from agate import csv
     from agate.table import Table
 
-    if hasattr(path, 'read'):
-        lines = path.readlines()
-    else:
-        with io.open(path, encoding=encoding) as f:
-            lines = f.readlines()
+    close = False
 
-    if utils.issequence(skip_lines):
-        lines = [line for i, line in enumerate(lines) if i not in skip_lines]
-        contents = ''.join(lines)
-    elif isinstance(skip_lines, int):
-        contents = ''.join(lines[skip_lines:])
+    if hasattr(path, 'read'):
+        f = path
     else:
-        raise ValueError('skip_lines argument must be an int or sequence')
+        f = io.open(path, encoding=encoding)
+        close = True
+
+    if isinstance(skip_lines, int):
+        while skip_lines > 0:
+            f.readline()
+            skip_lines -= 1
+    else:
+        raise ValueError('skip_lines argument must be an int')
+
+    start = f.tell()
 
     if sniff_limit is None:
-        kwargs['dialect'] = csv.Sniffer().sniff(contents)
+        kwargs['dialect'] = csv.Sniffer().sniff(f.read())
     elif sniff_limit > 0:
-        kwargs['dialect'] = csv.Sniffer().sniff(contents[:sniff_limit])
+        kwargs['dialect'] = csv.Sniffer().sniff(f.read(sniff_limit))
+
+    f.seek(start)
 
     if six.PY2:
-        contents = contents.encode('utf-8')
+        f = six.StringIO(f.read().encode('utf-8'))
 
-    rows = list(csv.reader(six.StringIO(contents), header=header, **kwargs))
+    reader = csv.reader(f, header=header, **kwargs)
 
     if header:
         if column_names is None:
-            column_names = rows.pop(0)
+            column_names = next(reader)
         else:
-            rows.pop(0)
+            next(reader)
+
+    rows = tuple(reader)
+
+    if close:
+        f.close()
 
     return Table(rows, column_names, column_types, row_names=row_names)

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 from collections import OrderedDict
 from copy import copy
@@ -22,8 +23,8 @@ def compute(self, computations, replace=False):
     :returns:
         A new :class:`.Table`.
     """
-    column_names = list(copy(self.column_names))
-    column_types = list(copy(self.column_types))
+    column_names = list(copy(self._column_names))
+    column_types = list(copy(self._column_types))
 
     for new_column_name, computation in computations:
         new_column_type = computation.get_computed_data_type(self)
@@ -47,7 +48,7 @@ def compute(self, computations, replace=False):
 
     new_rows = []
 
-    for i, row in enumerate(self.rows):
+    for i, row in enumerate(self._rows):
         # Slow version if using replace
         if replace:
             values = []

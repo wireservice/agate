@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 import six
 
@@ -17,7 +18,7 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
 
     For example:
 
-    +---------+---------+-- ------+
+    +---------+---------+--------+
     |  name   |  race   | gender |
     +=========+=========+========+
     |  Joe    |  white  | male   |

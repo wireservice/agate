@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 try:
     from cdecimal import Decimal

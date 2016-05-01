@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 
 def having(self, aggregations, test):

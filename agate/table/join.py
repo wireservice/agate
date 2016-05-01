@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 from agate.rows import Row
 from agate import utils
@@ -59,37 +60,37 @@ def join(self, right_table, left_key, right_key=None, inner=False, require_match
 
     # Left key is a function
     if left_key_is_func:
-        left_data = [left_key(row) for row in self.rows]
+        left_data = [left_key(row) for row in self._rows]
     # Left key is a sequence
     elif left_key_is_sequence:
-        left_columns = [self.columns[key] for key in left_key]
+        left_columns = [self._columns[key] for key in left_key]
         left_data = zip(*[column.values() for column in left_columns])
     # Left key is a column name/index
     else:
-        left_data = self.columns[left_key].values()
+        left_data = self._columns[left_key].values()
 
     right_key_is_func = hasattr(right_key, '__call__')
     right_key_is_sequence = utils.issequence(right_key)
 
     # Right key is a function
     if right_key_is_func:
-        right_data = [right_key(row) for row in right_table.rows]
+        right_data = [right_key(row) for row in right_table._rows]
     # Right key is a sequence
     elif right_key_is_sequence:
-        right_columns = [right_table.columns[key] for key in right_key]
+        right_columns = [right_table._columns[key] for key in right_key]
         right_data = zip(*[column.values() for column in right_columns])
-        right_key_indices = [right_table.columns._keys.index(key) for key in right_key]
+        right_key_indices = [right_table._columns._keys.index(key) for key in right_key]
     # Right key is a column name/index
     else:
-        right_column = right_table.columns[right_key]
+        right_column = right_table._columns[right_key]
         right_data = right_column.values()
-        right_key_indices = [right_table.columns._keys.index(right_key)]
+        right_key_indices = [right_table._columns._keys.index(right_key)]
 
     # Build names and type lists
-    column_names = list(self.column_names)
-    column_types = list(self.column_types)
+    column_names = list(self._column_names)
+    column_types = list(self._column_types)
 
-    for i, column in enumerate(right_table.columns):
+    for i, column in enumerate(right_table._columns):
         name = column.name
 
         if columns is None and i in right_key_indices:
@@ -106,7 +107,7 @@ def join(self, right_table, left_key, right_key=None, inner=False, require_match
         column_types.append(column.data_type)
 
     if columns is not None:
-        right_table = right_table.select([n for n in right_table.column_names if n in columns])
+        right_table = right_table.select([n for n in right_table._column_names if n in columns])
 
     right_hash = {}
 
@@ -114,12 +115,12 @@ def join(self, right_table, left_key, right_key=None, inner=False, require_match
         if value not in right_hash:
             right_hash[value] = []
 
-        right_hash[value].append(right_table.rows[i])
+        right_hash[value].append(right_table._rows[i])
 
     # Collect new rows
     rows = []
 
-    if self.row_names is not None:
+    if self._row_names is not None:
         row_names = []
     else:
         row_names = None
@@ -134,7 +135,7 @@ def join(self, right_table, left_key, right_key=None, inner=False, require_match
         # Rows with matches
         if matching_rows:
             for right_row in matching_rows:
-                new_row = list(self.rows[left_index])
+                new_row = list(self._rows[left_index])
 
                 for k, v in enumerate(right_row):
                     if columns is None and k in right_key_indices:
@@ -144,13 +145,13 @@ def join(self, right_table, left_key, right_key=None, inner=False, require_match
 
                 rows.append(Row(new_row, column_names))
 
-                if self.row_names is not None:
-                    row_names.append(self.row_names[left_index])
+                if self._row_names is not None:
+                    row_names.append(self._row_names[left_index])
         # Rows without matches
         elif not inner:
-            new_row = list(self.rows[left_index])
+            new_row = list(self._rows[left_index])
 
-            for k, v in enumerate(right_table.column_names):
+            for k, v in enumerate(right_table._column_names):
                 if columns is None and k in right_key_indices:
                     continue
 
@@ -158,7 +159,7 @@ def join(self, right_table, left_key, right_key=None, inner=False, require_match
 
             rows.append(Row(new_row, column_names))
 
-            if self.row_names is not None:
-                row_names.append(self.row_names[left_index])
+            if self._row_names is not None:
+                row_names.append(self._row_names[left_index])
 
     return self._fork(rows, column_names, column_types, row_names=row_names)

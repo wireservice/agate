@@ -99,10 +99,10 @@ class TableSet(MappedSequence, Patchable):
 
         if not _is_fork:
             for table in tables:
-                if any(not isinstance(a, type(b)) for a, b in zip_longest(table.column_types, self.column_types)):
+                if any(not isinstance(a, type(b)) for a, b in zip_longest(table.column_types, self._column_types)):
                     raise ValueError('Not all tables have the same column types!')
 
-                if table.column_names != self.column_names:
+                if table.column_names != self._column_names:
                     raise ValueError('Not all tables have the same column names!')
 
         MappedSequence.__init__(self, tables, keys)
@@ -177,8 +177,11 @@ class TableSet(MappedSequence, Patchable):
         This method is used internally by functions like
         :meth:`.TableSet.having`.
         """
-        key_name = key_name or self._key_name
-        key_type = key_type or self._key_type
+        if key_name is None:
+            key_name = self._key_name
+
+        if key_type is None:
+            key_type = self._key_type
 
         return TableSet(tables, keys, key_name, key_type, _is_fork=True)
 

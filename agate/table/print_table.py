@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 import sys
 
@@ -31,13 +32,13 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
         By default it will use the system's setting.
     """
     if max_rows is None:
-        max_rows = len(self.rows)
+        max_rows = len(self._rows)
 
     if max_columns is None:
-        max_columns = len(self.columns)
+        max_columns = len(self._columns)
 
-    rows_truncated = max_rows < len(self.rows)
-    columns_truncated = max_columns < len(self.column_names)
+    rows_truncated = max_rows < len(self._rows)
+    columns_truncated = max_columns < len(self._column_names)
 
     column_names = []
     for column_name in self.column_names[:max_columns]:
@@ -54,7 +55,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
     formatted_data = []
 
     # Determine correct number of decimal places for each Number column
-    for i, c in enumerate(self.columns):
+    for i, c in enumerate(self._columns):
         if i >= max_columns:
             break
 
@@ -65,7 +66,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
             number_formatters.append(None)
 
     # Format data and display column widths
-    for i, row in enumerate(self.rows):
+    for i, row in enumerate(self._rows):
         if i >= max_rows:
             break
 
@@ -109,7 +110,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
 
         for j, d in enumerate(formatted_row):
             # Text is left-justified, all other values are right-justified
-            if isinstance(self.column_types[j], Text):
+            if isinstance(self._column_types[j], Text):
                 row_output.append(' %s ' % d.ljust(widths[j]))
             else:
                 row_output.append(' %s ' % d.rjust(widths[j]))

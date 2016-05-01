@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 from agate.rows import Row
 from agate import utils
@@ -44,7 +45,7 @@ def homogenize(self, key, compare_values, default_row=None):
     :returns:
         A new :class:`.Table`.
     """
-    rows = list(self.rows)
+    rows = list(self._rows)
 
     if not utils.issequence(key):
         key = [key]
@@ -53,24 +54,24 @@ def homogenize(self, key, compare_values, default_row=None):
         if any(not utils.issequence(compare_value) for compare_value in compare_values):
             compare_values = [[compare_value] for compare_value in compare_values]
 
-    column_values = [self.columns.get(name) for name in key]
-    column_indexes = [self.column_names.index(name) for name in key]
+    column_values = [self._columns.get(name) for name in key]
+    column_indexes = [self._column_names.index(name) for name in key]
 
     column_values = zip(*column_values)
     differences = list(set(map(tuple, compare_values)) - set(column_values))
 
     for difference in differences:
         if callable(default_row):
-            rows.append(Row(default_row(difference), self.column_names))
+            rows.append(Row(default_row(difference), self._column_names))
         else:
             if default_row is not None:
                 new_row = default_row
             else:
-                new_row = [None] * (len(self.column_names) - len(key))
+                new_row = [None] * (len(self._column_names) - len(key))
 
             for i, d in zip(column_indexes, difference):
                 new_row.insert(i, d)
 
-            rows.append(Row(new_row, self.column_names))
+            rows.append(Row(new_row, self._column_names))
 
-    return self._fork(rows, self.column_names, self.column_types)
+    return self._fork(rows)

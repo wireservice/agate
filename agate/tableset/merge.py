@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=W0212
 
 from agate.rows import Row
 from agate.tableset import Table
@@ -32,16 +33,16 @@ def merge(self, groups=None, group_name=None, group_type=None):
     if type(groups) is list and len(groups) != len(self):
         raise ValueError('Groups length must be equal to TableSet length.')
 
-    column_names = list(self.column_names)
-    column_types = list(self.column_types)
+    column_names = list(self._column_names)
+    column_types = list(self._column_types)
 
-    column_names.insert(0, group_name if group_name else self.key_name)
-    column_types.insert(0, group_type if group_type else self.key_type)
+    column_names.insert(0, group_name if group_name else self._key_name)
+    column_types.insert(0, group_type if group_type else self._key_type)
 
     rows = []
 
-    for index, (key, self) in enumerate(self.items()):
-        for row in self.rows:
+    for index, (key, table) in enumerate(self.items()):
+        for row in table._rows:
             if groups is None:
                 rows.append(Row((key,) + tuple(row), column_names))
             else:
