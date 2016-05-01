@@ -21,6 +21,7 @@ Welcome to the agate cookbook, a source of how-to's and use cases.
     cookbook/excel
     cookbook/r
     cookbook/underscore
+    cookbook/homogenize
     cookbook/columns
     cookbook/transform
     cookbook/locale
@@ -53,6 +54,7 @@ Coming from other tools
 Advanced techniques
 ===================
 
+* `Filling missing rows in a dataset <cookbook/homogenize.html>`_
 * `Renaming and reordering columns <cookbook/columns.html>`_
 * `Transforming data (pivot/normalize/denormalize) <cookbook/transform.html>`_
 * `Setting your locale and working with foreign data <cookbook/locale.html>`_
