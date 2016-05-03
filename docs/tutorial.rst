@@ -64,7 +64,7 @@ With no other arguments specified, agate will automatically create an instance o
         'false_evidence': agate.Boolean()
     })
 
-    exonerations = agate.Table.from_csv('exonerations-20150828.csv', column_types=tester)`
+    exonerations = agate.Table.from_csv('exonerations-20150828.csv', column_types=tester)
 
 If you already know the types of your data you may wish to skip the TypeTester entirely. You may pass sequences of column names and column types to :meth:`.Table.from_csv` as the ``column_names`` and ``column_types`` arguments, respectively.
 
@@ -74,7 +74,7 @@ For larger datasets the :class:`.TypeTester` can be slow to evaluate the data. I
 
     tester = agate.TypeTester(limit=100)
 
-    exonerations = agate.Table.from_csv('exonerations-20150828.csv', tester)
+    exonerations = agate.Table.from_csv('exonerations-20150828.csv', column_types=tester)
 
 The dataset we are using in this tutorial is simple enough that we can rely on the built-in TypeTester to guess quickly and accurately.
 
