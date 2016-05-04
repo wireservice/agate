@@ -99,6 +99,7 @@ class TestPrintBars(AgateTestCase):
 
         self.assertEqual(output.getvalue(), "three   two\n"
                                             "a     2,000 |:::::::\n"
+                                            "None      - |       \n"
                                             "c         1 |       \n"
                                             "            +------+\n"
                                             "            0  2,000\n")

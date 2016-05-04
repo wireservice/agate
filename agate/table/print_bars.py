@@ -63,10 +63,15 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
     value_formatter = utils.make_number_formatter(decimal_places)
 
     formatted_labels = []
+
+    for label in label_column:
+        formatted_labels.append(six.text_type(label))
+
     formatted_values = []
-    for index, value in enumerate(value_column):
-        if value is not None:
-            formatted_labels.append(six.text_type(label_column[index]))
+    for value in value_column:
+        if value is None:
+            formatted_values.append("-")
+        else:
             formatted_values.append(format_decimal(
                 value,
                 format=value_formatter,
@@ -178,11 +183,9 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
         zero_mark = utils.ZERO_MARK
 
     # Bars
-    values_without_nulls = value_column.values_without_nulls()
     for i, label in enumerate(formatted_labels):
-        value = values_without_nulls[i]
-
-        if value == 0:
+        value = value_column[i]
+        if value == 0 or value is None:
             bar_width = 0
         elif value > 0:
             bar_width = project(value) - plot_negative_width
@@ -194,7 +197,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
 
         bar = bar_mark * bar_width
 
-        if value >= 0:
+        if value is not None and value >= 0:
             gap = (u' ' * plot_negative_width)
 
             # All positive
@@ -206,7 +209,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
             bar = u' ' * (plot_negative_width - bar_width) + bar
 
             # All negative or mixed signs
-            if x_max > value:
+            if value is None or x_max > value:
                 bar = bar + zero_mark
 
         bar = bar.ljust(plot_width)
