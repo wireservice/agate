@@ -507,6 +507,18 @@ class TestBasic(AgateTestCase):
             rows[1]
         ])
 
+        new_table = table.order_by(('two', 'three'))
+
+        self.assertIsNot(new_table, table)
+        self.assertColumnNames(new_table, self.column_names)
+        self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertRows(new_table, [
+            rows[2],
+            rows[0],
+            rows[1],
+            rows[3]
+        ])
+
     def test_order_by_with_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
         new_table = table.order_by('two')
