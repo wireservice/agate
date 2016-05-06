@@ -232,3 +232,8 @@ class TestJoin(AgateTestCase):
             (2, 3, 'b', 2, 'b'),
             (None, 2, 'c', None, 'c')
         ])
+
+    def test_join_rows_are_tuples(self):
+        new_table = self.left.join(self.right, 'one', 'four', columns=['four', 'six'])
+
+        self.assertIsInstance(new_table.rows[0].values(), tuple)

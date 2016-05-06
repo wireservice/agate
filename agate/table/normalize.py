@@ -81,7 +81,7 @@ def normalize(self, key, properties, property_column='property', value_column='v
             row_names.append(k)
 
         for f in properties:
-            new_rows.append(Row(tuple(left_row + [f, row[f]]), new_column_names))
+            new_rows.append(Row((left_row + [f, row[f]]), new_column_names))
 
     key_column_types = [self._column_types[self._column_names.index(name)] for name in key]
 

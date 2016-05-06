@@ -94,7 +94,7 @@ class Table(utils.Patchable):
 
                 final_column_name = new_column_name
                 duplicates = 0
-                
+
                 while final_column_name in final_column_names:
                     final_column_name = new_column_name + '_' + str(duplicates + 2)
                     duplicates += 1
@@ -147,7 +147,7 @@ class Table(utils.Patchable):
                 elif len(row) < len_column_names:
                     row = chain(row, [None] * (len_column_names - len_row))
 
-                new_rows.append(Row(tuple(cast_funcs[i](d) for i, d in enumerate(row)), self._column_names))
+                new_rows.append(Row((cast_funcs[i](d) for i, d in enumerate(row)), self._column_names))
         else:
             new_rows = rows
 

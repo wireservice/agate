@@ -24,6 +24,6 @@ def select(self, key):
     new_rows = []
 
     for row in self._rows:
-        new_rows.append(Row(tuple(row[i] for i in indexes), key))
+        new_rows.append(Row((row[i] for i in indexes), key))
 
     return self._fork(new_rows, key, column_types)

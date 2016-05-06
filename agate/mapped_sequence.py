@@ -16,10 +16,10 @@ from agate.utils import memoize
 
 class MappedSequence(Sequence):
     """
-    A generic container for data that can be accessed either by numeric index
-    or by key. This is similar to an :class:`collections.OrderedDict` except
-    that the keys are optional and iteration over it returns the values instead
-    of keys.
+    A generic container for immutable data that can be accessed either by
+    numeric index or by key. This is similar to an
+    :class:`collections.OrderedDict` except that the keys are optional and
+    iteration over it returns the values instead of keys.
 
     This is the base class for both :class:`.Column` and :class:`.Row`.
 
@@ -31,7 +31,7 @@ class MappedSequence(Sequence):
     __slots__ = ['_values', '_keys']
 
     def __init__(self, values, keys=None):
-        self._values = values
+        self._values = tuple(values)
 
         if keys is not None:
             self._keys = keys
