@@ -80,13 +80,15 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
         formatted_labels.append(six.text_type(label))
 
     formatted_values = []
-
     for value in value_column:
-        formatted_values.append(format_decimal(
-            value,
-            format=value_formatter,
-            locale=locale
-        ))
+        if value is None:
+            formatted_values.append('-')
+        else:
+            formatted_values.append(format_decimal(
+                value,
+                format=value_formatter,
+                locale=locale
+            ))
 
     max_label_width = max(max([len(l) for l in formatted_labels]), len(y_label))
     max_value_width = max(max([len(v) for v in formatted_values]), len(x_label))
@@ -188,8 +190,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
     # Bars
     for i, label in enumerate(formatted_labels):
         value = value_column[i]
-
-        if value == 0:
+        if value == 0 or value is None:
             bar_width = 0
         elif value > 0:
             bar_width = project(value) - plot_negative_width
@@ -201,7 +202,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
 
         bar = bar_mark * bar_width
 
-        if value >= 0:
+        if value is not None and value >= 0:
             gap = (u' ' * plot_negative_width)
 
             # All positive
@@ -213,7 +214,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
             bar = u' ' * (plot_negative_width - bar_width) + bar
 
             # All negative or mixed signs
-            if x_max > value:
+            if value is None or x_max > value:
                 bar = bar + zero_mark
 
         bar = bar.ljust(plot_width)

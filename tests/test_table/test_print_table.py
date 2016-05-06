@@ -64,12 +64,14 @@ class TestPrintTable(AgateTestCase):
             ('0', 1, 'nope')
         )
 
-        table = Table(rows, self.column_names, self.column_types)
+        column_names = ['one', 'two', 'also, this is long']
+        table = Table(rows, column_names, self.column_types)
 
         output = six.StringIO()
         table.print_table(output=output, max_column_width=7)
         lines = output.getvalue().split('\n')
 
+        self.assertIn(' also... ', lines[1])
         self.assertIn(' this... ', lines[3])
         self.assertIn(' nope ', lines[5])
 

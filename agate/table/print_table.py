@@ -45,7 +45,12 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
     rows_truncated = max_rows < len(self._rows)
     columns_truncated = max_columns < len(self._column_names)
 
-    column_names = list(self._column_names[:max_columns])
+    column_names = []
+    for column_name in self.column_names[:max_columns]:
+        if max_column_width is not None and len(column_name) > max_column_width:
+            column_names.append('%s...' % column_name[:max_column_width - 3])
+        else:
+            column_names.append(column_name)
 
     if columns_truncated:
         column_names.append(ellipsis)

@@ -1,6 +1,9 @@
 1.4.0
 -----
 
+* Fixed bug in :meth:`.Table.print_bars` when ``value_column`` contains ``None`` (#608)
+* :meth:`.Table.print_table` now restricts header on max_column_width. (#605)
+* Cookbook: filling gaps in a dataset with Table.homogenize. (#538)
 * Reduced memory usage and improved performance of :meth:`.Table.from_csv`.
 * :meth:`.Table.from_csv` no longer accepts a sequence of row ids for :code:`skip_lines`.
 * :meth:`.Number.cast` is now three times as fast.

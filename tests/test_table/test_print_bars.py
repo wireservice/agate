@@ -89,3 +89,17 @@ class TestPrintBars(AgateTestCase):
 
         with self.assertRaises(DataTypeError):
             table.print_bars('one', 'three')
+
+    def test_print_bars_with_nulls(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = six.StringIO()
+        table.print_bars('three', 'two', width=20, printable=True,
+                         output=output)
+
+        self.assertEqual(output.getvalue(), "three   two\n"
+                                            "a     2,000 |:::::::\n"
+                                            "None      - |       \n"
+                                            "c         1 |       \n"
+                                            "            +------+\n"
+                                            "            0  2,000\n")
