@@ -6,6 +6,7 @@ import sys
 from babel.numbers import format_decimal
 import six
 
+from agate import config
 from agate.data_types import Number, Text
 from agate import utils
 
@@ -38,13 +39,16 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
     if max_columns is None:
         max_columns = len(self._columns)
 
+    ellipsis = config.get_option('ellipsis_chars')
+    locale = locale or config.get_option('default_locale')
+
     rows_truncated = max_rows < len(self._rows)
     columns_truncated = max_columns < len(self._column_names)
 
     column_names = list(self._column_names[:max_columns])
 
     if columns_truncated:
-        column_names.append(utils.ELLIPSIS)
+        column_names.append(ellipsis)
 
     number_formatters = []
     formatted_data = []
@@ -69,14 +73,14 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
 
         for j, v in enumerate(row):
             if j >= max_columns:
-                v = utils.ELLIPSIS
+                v = ellipsis
             elif v is None:
                 v = ''
             elif number_formatters[j] is not None:
                 v = format_decimal(
                     v,
                     format=number_formatters[j],
-                    locale=locale or utils.LC_NUMERIC
+                    locale=locale
                 )
             else:
                 v = six.text_type(v)
@@ -127,7 +131,7 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
 
     # Row indicating data was truncated
     if rows_truncated:
-        write_row([utils.ELLIPSIS for n in column_names])
+        write_row([ellipsis for n in column_names])
 
     # Footer
     write('</tbody>')

@@ -16,6 +16,7 @@ from babel.numbers import format_decimal
 import six
 
 from agate.aggregations import Min, Max
+from agate import config
 from agate.data_types import Number
 from agate.exceptions import DataTypeError
 from agate import utils
@@ -43,6 +44,17 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
     :param printable:
         If true, only printable characters will be outputed.
     """
+    tick_mark = config.get_option('tick_char')
+    horizontal_line = config.get_option('horizontal_line_char')
+    locale = config.get_option('default_locale')
+
+    if printable:
+        bar_mark = config.get_option('printable_bar_char')
+        zero_mark = config.get_option('printable_zero_line_char')
+    else:
+        bar_mark = config.get_option('bar_char')
+        zero_mark = config.get_option('zero_line_char')
+
     y_label = label_column_name
     label_column = self._columns[label_column_name]
 
@@ -73,7 +85,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
         formatted_values.append(format_decimal(
             value,
             format=value_formatter,
-            locale=utils.LC_NUMERIC
+            locale=locale
         ))
 
     max_label_width = max(max([len(l) for l in formatted_labels]), len(y_label))
@@ -163,7 +175,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
         ticks_formatted[k] = format_decimal(
             v,
             format=tick_formatter,
-            locale=utils.LC_NUMERIC
+            locale=locale
         )
 
     def write(line):
@@ -172,13 +184,6 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
     # Chart top
     top_line = u'%s %s' % (y_label.ljust(max_label_width), x_label.rjust(max_value_width))
     write(top_line)
-
-    if printable:
-        bar_mark = utils.PRINTABLE_BAR_MARK
-        zero_mark = utils.PRINTABLE_ZERO_MARK
-    else:
-        bar_mark = utils.BAR_MARK
-        zero_mark = utils.ZERO_MARK
 
     # Bars
     for i, label in enumerate(formatted_labels):
@@ -216,7 +221,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
         write('%s %s %s' % (label_text, value_text, bar))
 
     # Axis & ticks
-    axis = utils.HORIZONTAL_LINE * plot_width
+    axis = horizontal_line * plot_width
     tick_text = u' ' * width
 
     for i, (tick, label) in enumerate(ticks_formatted.items()):
@@ -237,7 +242,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
                 continue
 
         tick_text = tick_text[:pos] + label + tick_text[pos + len(label):]
-        axis = axis[:tick] + utils.TICK_MARK + axis[tick + 1:]
+        axis = axis[:tick] + tick_mark + axis[tick + 1:]
 
     write(axis.rjust(width))
     write(tick_text)

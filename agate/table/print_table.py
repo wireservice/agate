@@ -6,6 +6,7 @@ import sys
 from babel.numbers import format_decimal
 import six
 
+from agate import config
 from agate.data_types import Number, Text
 from agate import utils
 
@@ -37,13 +38,17 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
     if max_columns is None:
         max_columns = len(self._columns)
 
+    ellipsis = config.get_option('ellipsis_chars')
+    vertical_line = config.get_option('vertical_line_char')
+    locale = locale or config.get_option('default_locale')
+
     rows_truncated = max_rows < len(self._rows)
     columns_truncated = max_columns < len(self._column_names)
 
     column_names = list(self._column_names[:max_columns])
 
     if columns_truncated:
-        column_names.append(utils.ELLIPSIS)
+        column_names.append(ellipsis)
 
     widths = [len(n) for n in column_names]
     number_formatters = []
@@ -69,14 +74,14 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
 
         for j, v in enumerate(row):
             if j >= max_columns:
-                v = utils.ELLIPSIS
+                v = ellipsis
             elif v is None:
                 v = ''
             elif number_formatters[j] is not None:
                 v = format_decimal(
                     v,
                     format=number_formatters[j],
-                    locale=locale or utils.LC_NUMERIC
+                    locale=locale
                 )
             else:
                 v = six.text_type(v)
@@ -110,9 +115,9 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
             else:
                 row_output.append(' %s ' % d.rjust(widths[j]))
 
-        line = utils.VERTICAL_LINE.join(row_output)
+        line = vertical_line.join(row_output)
 
-        write('%s %s %s' % (utils.VERTICAL_LINE, line, utils.VERTICAL_LINE))
+        write('%s %s %s' % (vertical_line, line, vertical_line))
 
     # Dashes span each width with '+' character at intersection of
     # horizontal and vertical dividers.
@@ -131,7 +136,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
 
     # Row indicating data was truncated
     if rows_truncated:
-        write_row([utils.ELLIPSIS for n in column_names])
+        write_row([ellipsis for n in column_names])
 
     # Final divider
     write(divider)

@@ -16,36 +16,8 @@ try:
 except ImportError:  # pragma: no cover
     from decimal import Decimal, ROUND_FLOOR, ROUND_CEILING, getcontext
 
-from babel.core import default_locale
 import six
 
-
-#: Character to render for horizontal lines
-HORIZONTAL_LINE = u'-'
-
-#: Character to render for vertical lines
-VERTICAL_LINE = u'|'
-
-#: Character to render for bar chart units
-BAR_MARK = u'░'
-
-#: Printable character to render for bar chart units
-PRINTABLE_BAR_MARK = u':'
-
-#: Character to render for zero line units
-ZERO_MARK = u'▓'
-
-#: Printable character to render for zero line units
-PRINTABLE_ZERO_MARK = u'|'
-
-#: Character to render for axis ticks
-TICK_MARK = u'+'
-
-#: Characters to render for ellipsis
-ELLIPSIS = u'...'
-
-#: Default locale for number formatting
-LC_NUMERIC = default_locale('LC_NUMERIC') or 'en_US'
 
 #: Sentinal for use when `None` is an valid argument value
 default = object()

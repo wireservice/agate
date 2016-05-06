@@ -94,6 +94,7 @@ class Table(utils.Patchable):
 
                 final_column_name = new_column_name
                 duplicates = 0
+                
                 while final_column_name in final_column_names:
                     final_column_name = new_column_name + '_' + str(duplicates + 2)
                     duplicates += 1
