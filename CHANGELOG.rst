@@ -1,7 +1,8 @@
 1.4.0
 -----
 
-* Fix null sorting in :math:`.Table.order_by` when ordering by multiple columns. (#607)
+* :meth:`.Table.__init__` now prints row and column on ``CastError``. (#593) 
+* Fix null sorting in :meth:`.Table.order_by` when ordering by multiple columns. (#607)
 * Implemented configuration system.
 * Fixed bug in :meth:`.Table.print_bars` when ``value_column`` contains ``None`` (#608)
 * :meth:`.Table.print_table` now restricts header on max_column_width. (#605)

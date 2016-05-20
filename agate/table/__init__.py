@@ -24,7 +24,7 @@ import sys
 import warnings
 
 import six
-from six.moves import range, zip  # pylint: disable=W0622
+from six.moves import range  # pylint: disable=W0622
 
 from agate.columns import Column
 from agate.data_types import DataType

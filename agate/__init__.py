@@ -6,9 +6,9 @@ from agate.aggregations import *
 from agate.data_types import *
 from agate.columns import Column  # noqa
 from agate.computations import *
-from agate.config import get_option, set_option, set_options
+from agate.config import get_option, set_option, set_options  # noqa
 from agate.exceptions import *
-import agate.fixed as fixed
+import agate.fixed as fixed  # noqa
 from agate.mapped_sequence import MappedSequence  # noqa
 from agate.rows import Row  # noqa
 from agate.table import Table  # noqa
