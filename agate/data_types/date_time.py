@@ -54,7 +54,7 @@ class DateTime(DataType):
         """
         Cast a single value to a :class:`datetime.datetime`.
 
-        :param date_format:
+        :param datetime_format:
             An optional :func:`datetime.strptime` format string for parsing
             datetimes in this column.
         :returns:

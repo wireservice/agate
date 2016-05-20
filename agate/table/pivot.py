@@ -54,7 +54,7 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
         sequence of such column names, a :class:`function` that takes a
         row and returns a value to group by, or :code:`None`, in which case
         there will be only a single row in the output table.
-    :param columns:
+    :param pivot:
         A column name whose unique values will become columns in the new
         table, or :code:`None` in which case there will be a single value
         column in the output table.
