@@ -65,7 +65,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
             break
 
         if isinstance(c.data_type, Number):
-            max_places = utils.max_precision(c[:max_rows])
+            max_places = utils.max_precision(c[:max_rows], max_width=max_column_width)
             number_formatters.append(utils.make_number_formatter(max_places))
         else:
             number_formatters.append(None)
@@ -78,6 +78,10 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
         formatted_row = []
 
         for j, v in enumerate(row):
+            value_truncated = False
+            if max_column_width is not None and len(str(v)) > max_column_width:
+                value_truncated = True
+
             if j >= max_columns:
                 v = ellipsis
             elif v is None:
@@ -88,11 +92,12 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
                     format=number_formatters[j],
                     locale=locale
                 )
+                if value_truncated:
+                    v = '%s...' % v[:-3]
             else:
                 v = six.text_type(v)
-
-            if max_column_width is not None and len(v) > max_column_width:
-                v = '%s...' % v[:max_column_width - 3]
+                if value_truncated:
+                    v = '%s...' % v[:max_column_width - 3]
 
             if len(v) > widths[j]:
                 widths[j] = len(v)
