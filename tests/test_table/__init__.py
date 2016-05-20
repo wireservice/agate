@@ -108,6 +108,14 @@ class TestBasic(AgateTestCase):
         with self.assertRaises(ValueError):
             Table(self.rows, column_names, self.column_types)
 
+    def test_create_table_cast_error(self):
+        column_types = [self.number_type, self.number_type, self.number_type]
+
+        with self.assertRaises(CastError) as e:
+            table = Table(self.rows, self.column_names, column_types)  # noqa
+
+        self.assertIn('Error at row 0 column three.', str(e.exception))
+
     def test_create_table_null_column_names(self):
         column_names = ['one', None, 'three']
 
