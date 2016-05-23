@@ -10,3 +10,4 @@ Babel>=2.0
 parsedatetime>=2.1
 pytz>=2015.4
 isodate>=0.5.4
+awesome-slugify>=1.6.5

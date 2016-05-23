@@ -7,7 +7,8 @@ install_requires = [
     'pytimeparse>=1.1.5',
     'parsedatetime>=2.1',
     'Babel>=2.0',
-    'isodate>=0.5.4'
+    'isodate>=0.5.4',
+    'awesome-slugify>=1.6.5'
 ]
 
 setup(

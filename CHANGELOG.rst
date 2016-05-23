@@ -1,6 +1,8 @@
 1.4.0
 -----
 
+* Added ``slugify_names`` argument to :meth:`Table.rename`. (#466)
+* Added :meth:`utils.slugify` to standardize a sequence of strings. (#466)
 * :meth:`Table.print_table` now ensures decimal points line up if numbers have different precision. (#553)
 * :meth:`.Table.__init__` now prints row and column on ``CastError``. (#593) 
 * Fix null sorting in :meth:`.Table.order_by` when ordering by multiple columns. (#607)

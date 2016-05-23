@@ -1212,3 +1212,13 @@ class TestData(AgateTestCase):
         table2 = table.rename(column_names=new_column_names)
 
         self.assertColumnNames(table2, new_column_names)
+
+    def test_rename_slugify(self):
+        strings = ['Test kož', 'test 2', 'test 2']
+
+        table = Table(self.rows, strings, self.column_types)
+        table2 = table.rename(table.column_names, slugify_names=True)
+        table3 = table.rename(table.column_names, slugify_names=True, separator='.')
+
+        self.assertColumnNames(table2, ['test-koz', 'test-2', 'test-2-2'])
+        self.assertColumnNames(table3, ['test.koz', 'test.2', 'test.2.2'])
