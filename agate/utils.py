@@ -301,8 +301,8 @@ def slugify(values, ensure_unique=False, **kwargs):
     slug_args.update(kwargs)
 
     if ensure_unique:
-        slugify = UniqueSlugify(**slug_args)
+        custom_slugify = UniqueSlugify(**slug_args)
     else:
-        slugify = Slugify(**slug_args)
+        custom_slugify = Slugify(**slug_args)
 
-    return tuple(slugify(value) for value in values)
+    return tuple(custom_slugify(value) for value in values)
