@@ -325,6 +325,26 @@ class TestTableComputation(unittest.TestCase):
                 ('test', PercentileRank('one'))
             ])
 
+    def test_slugify(self):
+        rows = (
+            ('hello world', 2),
+            ('Ab*c #e', 2),
+            ('He11O W0rld', 3)
+        )
+        expected = ['hello-world', 'ab-c-e', 'he11o-w0rld']
+
+        table = Table(rows, ['one', 'two'], [self.text_type, self.number_type]).compute([
+            ('slugs', Slugify('one', ensure_unique=True))
+        ])
+
+        self.assertSequenceEqual(table.columns['slugs'], expected)
+
+    def test_slugify_contains_null_error(self):
+        with self.assertRaises(ValueError):
+            self.table.compute([
+                ('slugs', Slugify('one', ensure_unique=True))
+            ])
+
 
 class TestDateAndTimeComputations(unittest.TestCase):
     def test_change_dates(self):

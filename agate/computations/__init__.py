@@ -21,3 +21,4 @@ from agate.computations.percent import Percent  # noqa
 from agate.computations.percent_change import PercentChange  # noqa
 from agate.computations.rank import Rank  # noqa
 from agate.computations.percentile_rank import PercentileRank  # noqa
+from agate.computations.slugify import Slugify  # noqa
