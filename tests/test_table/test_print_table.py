@@ -59,10 +59,9 @@ class TestPrintTable(AgateTestCase):
 
     def test_print_table_max_column_width(self):
         rows = (
-            ('1.7', 12.345678, 'this is long'),
+            ('1.7', 2, 'this is long'),
             ('11.18', None, None),
-            ('0', 8.7654321, 'nope'),
-            ('0', 5.7, 'nope')
+            ('0', 1, 'nope')
         )
 
         column_names = ['one', 'two', 'also, this is long']
@@ -73,12 +72,8 @@ class TestPrintTable(AgateTestCase):
         lines = output.getvalue().split('\n')
 
         self.assertIn(' also... ', lines[1])
-        self.assertIn(' 12.34... ', lines[3])
         self.assertIn(' this... ', lines[3])
-        self.assertIn(' 8.76... ', lines[5])
         self.assertIn(' nope ', lines[5])
-
-        self.assertEqual(lines[3][10:].find('.'), lines[5][10:].find('.'), lines[7][10:].find('.'))
 
     def test_print_table_locale(self):
         """

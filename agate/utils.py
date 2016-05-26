@@ -155,15 +155,13 @@ def median(data_sorted):
     return (a + b) / 2
 
 
-def max_precision(values, max_width=None):
+def max_precision(values):
     """
     Given a series of values (such as a :class:`.Column`) returns the most
     significant decimal places present in any value.
 
     :param values:
         The values to analyze.
-    :param max_width:
-        Limit total digits to a max width during calculation of max decimal places.
     """
     max_whole_places = 1
     max_decimal_places = 0
@@ -188,9 +186,6 @@ def max_precision(values, max_width=None):
     # available context precision. This ensures that can't happen. See #412
     if max_whole_places + max_decimal_places > precision:  # pragma: no cover
         max_decimal_places = precision - max_whole_places
-
-    if max_width is not None and max_whole_places + max_decimal_places > max_width:
-        max_decimal_places = max_width - max_whole_places
 
     return max_decimal_places
 
