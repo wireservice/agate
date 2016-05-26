@@ -8,7 +8,7 @@ class HasNulls(Aggregation):
     """
     Check if the column contains null values.
 
-    :param column_name
+    :param column_name:
         The name of the column to check.
     """
     def __init__(self, column_name):

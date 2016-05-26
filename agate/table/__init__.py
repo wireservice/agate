@@ -24,7 +24,7 @@ import sys
 import warnings
 
 import six
-from six.moves import range, zip  # pylint: disable=W0622
+from six.moves import range  # pylint: disable=W0622
 
 from agate.columns import Column
 from agate.data_types import DataType
@@ -32,6 +32,7 @@ from agate.mapped_sequence import MappedSequence
 from agate.rows import Row
 from agate.type_tester import TypeTester
 from agate import utils
+from agate.exceptions import CastError
 from agate.warns import warn_duplicate_column
 
 
@@ -147,7 +148,14 @@ class Table(utils.Patchable):
                 elif len(row) < len_column_names:
                     row = chain(row, [None] * (len_column_names - len_row))
 
-                new_rows.append(Row((cast_funcs[i](d) for i, d in enumerate(row)), self._column_names))
+                row_values = []
+                for j, d in enumerate(row):
+                    try:
+                        row_values.append(cast_funcs[j](d))
+                    except CastError as e:
+                        raise CastError(str(e) + ' Error at row %s column %s.' % (i, self._column_names[j]))
+
+                new_rows.append(Row(row_values, self._column_names))
         else:
             new_rows = rows
 

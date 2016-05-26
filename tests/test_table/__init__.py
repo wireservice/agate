@@ -108,6 +108,14 @@ class TestBasic(AgateTestCase):
         with self.assertRaises(ValueError):
             Table(self.rows, column_names, self.column_types)
 
+    def test_create_table_cast_error(self):
+        column_types = [self.number_type, self.number_type, self.number_type]
+
+        with self.assertRaises(CastError) as e:
+            table = Table(self.rows, self.column_names, column_types)  # noqa
+
+        self.assertIn('Error at row 0 column three.', str(e.exception))
+
     def test_create_table_null_column_names(self):
         column_names = ['one', None, 'three']
 
@@ -1204,3 +1212,13 @@ class TestData(AgateTestCase):
         table2 = table.rename(column_names=new_column_names)
 
         self.assertColumnNames(table2, new_column_names)
+
+    def test_rename_slugify(self):
+        strings = ['Test kož', 'test 2', 'test 2']
+
+        table = Table(self.rows, strings, self.column_types)
+        table2 = table.rename(table.column_names, slugify_names=True)
+        table3 = table.rename(table.column_names, slugify_names=True, separator='.')
+
+        self.assertColumnNames(table2, ['test-koz', 'test-2', 'test-2-2'])
+        self.assertColumnNames(table3, ['test.koz', 'test.2', 'test.2.2'])

@@ -18,6 +18,7 @@ DEFAULT_CURRENCY_SYMBOLS = [u'؋', u'$', u'ƒ', u'៛', u'¥', u'₡', u'₱', u
 POSITIVE = Decimal('1')
 NEGATIVE = Decimal('-1')
 
+
 class Number(DataType):
     """
     Data representing numbers.

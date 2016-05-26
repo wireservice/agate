@@ -10,6 +10,7 @@ from collections import OrderedDict, Sequence
 from functools import wraps
 import string
 import warnings
+from slugify import Slugify, UniqueSlugify
 
 try:
     from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING, getcontext
@@ -154,13 +155,15 @@ def median(data_sorted):
     return (a + b) / 2
 
 
-def max_precision(values):
+def max_precision(values, max_width=None):
     """
     Given a series of values (such as a :class:`.Column`) returns the most
     significant decimal places present in any value.
 
     :param values:
         The values to analyze.
+    :param max_width:
+        Limit total digits to a max width during calculation of max decimal places.
     """
     max_whole_places = 1
     max_decimal_places = 0
@@ -185,6 +188,9 @@ def max_precision(values):
     # available context precision. This ensures that can't happen. See #412
     if max_whole_places + max_decimal_places > precision:  # pragma: no cover
         max_decimal_places = precision - max_whole_places
+
+    if max_width is not None and max_whole_places + max_decimal_places > max_width:
+        max_decimal_places = max_width - max_whole_places
 
     return max_decimal_places
 
@@ -281,3 +287,22 @@ def issequence(obj):
     :class:`.Sequence` that is not also a string.
     """
     return isinstance(obj, Sequence) and not isinstance(obj, six.string_types)
+
+
+def slugify(values, ensure_unique=False, **kwargs):
+    """
+    Given a sequence of strings, returns a standardized version of the sequence.
+    If ``ensure_unique`` is True, any duplicate strings will be appended with
+    a unique identifier. Any kwargs will be passed to the Slugify or UniqueSlugify
+    class constructor (https://github.com/dimka665/awesome-slugify).
+    """
+    # Default to all lowercase
+    slug_args = {'to_lower': True}
+    slug_args.update(kwargs)
+
+    if ensure_unique:
+        custom_slugify = UniqueSlugify(**slug_args)
+    else:
+        custom_slugify = Slugify(**slug_args)
+
+    return tuple(custom_slugify(value) for value in values)
