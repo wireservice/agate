@@ -8,8 +8,12 @@ def rename(self, column_names=None, row_names=None, slug_columns=False, slug_row
     """
     Create a copy of this table with different column names or row names.
 
-    :code:`kwargs` will be passed through to the Slugify class.
-    (https://github.com/dimka665/awesome-slugify)
+    By enabling :code:`slug_columns` or :code:`slug_rows` and not specifying
+    new names you may slugify the table's existing names.
+
+    :code:`kwargs` will be passed through to
+    `awesome-slugify's <https://github.com/dimka665/awesome-slugify>`_
+    :code:`UniqueSlugify` class.
 
     :param column_names:
         New column names for the renamed table. May be either an array or
@@ -19,9 +23,12 @@ def rename(self, column_names=None, row_names=None, slug_columns=False, slug_row
         New row names for the renamed table. May be either an array or
         a dictionary mapping existing row names to new names. If not
         specified, will use this table's existing row names.
-    :param slugify_names:
-        If True, given column and row names will be converted to slugs and
-        duplicate names will be given unique identifiers.
+    :param slug_columns:
+        If True, column names will be converted to slugs and duplicate names
+        will have unique identifiers appended.
+    :param slug_rows:
+        If True, row names will be converted to slugs and dupicate names will
+        have unique identifiers appended.
     """
     from agate.table import Table
 
@@ -46,8 +53,6 @@ def rename(self, column_names=None, row_names=None, slug_columns=False, slug_row
     if column_names is not None and column_names != self._column_names:
         if row_names is None:
             row_names = self._row_names
-
-        print (column_names)
 
         return Table(self._rows, column_names, self._column_types, row_names=row_names, _is_fork=False)
     else:
