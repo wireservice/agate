@@ -16,8 +16,6 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
 
     This is sometimes called a "crosstab".
 
-    For example:
-
     +---------+---------+--------+
     |  name   |  race   | gender |
     +=========+=========+========+
