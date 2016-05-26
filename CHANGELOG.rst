@@ -1,7 +1,20 @@
-1.4.0
------
+1.4.0 - May 26, 2016
+--------------------
 
-* Added :class:`.Slugify` computation (#466)
+This release adds several new features, fixes numerous small bug-fixes, and improves performance for common use cases. There are some minor breaking changes, but few user are likely to encounter them. The most important changes in this release are:
+
+1. There is now a :meth:`.TableSet.having` method, which behaves similarly to SQL's ``HAVING`` keyword.
+
+2. :meth:`.Table.from_csv` is much faster. In particular, the type inference routines for parsing numbers have been optimized.
+
+3. The :meth:`.Table.compute` method now accepts a ``replace`` keyword which allows new columns to replace existing columns "in place."" (As with all agate operations, a new table is still created.)
+
+4. There is now a :class:`.Slug` computation which can be used to compute a column of slugs. The :meth:`.Table.rename` method has also added new options for slugifying column and row names.
+
+The complete list of changes is as follows:
+
+* Added a deprecation warning for ``patch`` methods. New extensions should not use it. (#594)
+* Added :class:`.Slug` computation (#466)
 * Added ``slug_columns`` and ``slug_rows`` arguments to :meth:`Table.rename`. (#466)
 * Added :meth:`utils.slugify` to standardize a sequence of strings. (#466)
 * :meth:`.Table.__init__` now prints row and column on ``CastError``. (#593)
@@ -393,7 +406,7 @@ This version of agate introduces three major changes.
 * Table now takes (column_name, column_type) pairs. (#180)
 * Renamed the library to agate. (#179)
 * Results of common column operations are now cached using a common memoize decorator. (#162)
-* Deprecated support for Python version 3.2.
+* ated support for Python version 3.2.
 * Added support for Python wheel packaging. (#127)
 * Add PercentileRank computation and usage example to cookbook. (#152)
 * Add indexed change example to cookbook. (#151)
