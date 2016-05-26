@@ -1213,12 +1213,46 @@ class TestData(AgateTestCase):
 
         self.assertColumnNames(table2, new_column_names)
 
-    def test_rename_slugify(self):
+    def test_rename_slugify_columns(self):
         strings = ['Test kož', 'test 2', 'test 2']
 
-        table = Table(self.rows, strings, self.column_types)
-        table2 = table.rename(table.column_names, slugify_names=True)
-        table3 = table.rename(table.column_names, slugify_names=True, separator='.')
+        table = Table(self.rows, self.column_names, self.column_types)
+        table2 = table.rename(strings, slug_columns=True)
+        table3 = table.rename(strings, slug_columns=True, separator='.')
 
+        self.assertColumnNames(table, ['one', 'two', 'three'])
+        self.assertColumnNames(table2, ['test-koz', 'test-2', 'test-2-1'])
+        self.assertColumnNames(table3, ['test.koz', 'test.2', 'test.2.1'])
+
+    def test_rename_slugify_rows(self):
+        strings = ['Test kož', 'test 2', 'test 2']
+
+        table = Table(self.rows, self.column_names, self.column_types)
+        table2 = table.rename(row_names=strings, slug_rows=True)
+        table3 = table.rename(row_names=strings, slug_rows=True, separator='.')
+
+        self.assertIs(table.row_names, None)
+        self.assertRowNames(table2, ['test-koz', 'test-2', 'test-2-1'])
+        self.assertRowNames(table3, ['test.koz', 'test.2', 'test.2.1'])
+
+    def test_rename_slugify_columns_in_place(self):
+        column_names = ['Test kož', 'test 2', 'test 2']
+
+        table = Table(self.rows, column_names, self.column_types)
+        table2 = table.rename(slug_columns=True)
+        table3 = table.rename(slug_columns=True, separator='.')
+
+        self.assertColumnNames(table, ['Test kož', 'test 2', 'test 2_2'])
         self.assertColumnNames(table2, ['test-koz', 'test-2', 'test-2-2'])
         self.assertColumnNames(table3, ['test.koz', 'test.2', 'test.2.2'])
+
+    def test_rename_slugify_rows_in_place(self):
+        strings = ['Test kož', 'test 2', 'test 2']
+
+        table = Table(self.rows, self.column_names, self.column_types, row_names=strings)
+        table2 = table.rename(slug_rows=True)
+        table3 = table.rename(slug_rows=True, separator='.')
+
+        self.assertRowNames(table, ['Test kož', 'test 2', 'test 2'])
+        self.assertRowNames(table2, ['test-koz', 'test-2', 'test-2-1'])
+        self.assertRowNames(table3, ['test.koz', 'test.2', 'test.2.1'])

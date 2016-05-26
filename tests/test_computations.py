@@ -325,7 +325,7 @@ class TestTableComputation(unittest.TestCase):
                 ('test', PercentileRank('one'))
             ])
 
-    def test_slugify(self):
+    def test_slug(self):
         rows = (
             ('hello world', 2),
             ('Ab*c #e', 2),
@@ -334,15 +334,15 @@ class TestTableComputation(unittest.TestCase):
         expected = ['hello-world', 'ab-c-e', 'he11o-w0rld']
 
         table = Table(rows, ['one', 'two'], [self.text_type, self.number_type]).compute([
-            ('slugs', Slugify('one', ensure_unique=True))
+            ('slugs', Slug('one', ensure_unique=True))
         ])
 
         self.assertSequenceEqual(table.columns['slugs'], expected)
 
-    def test_slugify_contains_null_error(self):
+    def test_slug_contains_null_error(self):
         with self.assertRaises(ValueError):
             self.table.compute([
-                ('slugs', Slugify('one', ensure_unique=True))
+                ('slugs', Slug('one', ensure_unique=True))
             ])
 
 

@@ -33,3 +33,4 @@ Detailed list
 .. autoclass:: agate.PercentChange
 .. autoclass:: agate.PercentileRank
 .. autoclass:: agate.Rank
+.. autoclass:: agate.Slug
