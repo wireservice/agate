@@ -1,7 +1,7 @@
 1.4.1
 -----
 
-
+* :class:`.Table` can now be iterated, yielding :class:`Row` instances. (Previously it was necessarily to iterate :code:`table.rows`.)
 
 1.4.0 - May 26, 2016
 --------------------

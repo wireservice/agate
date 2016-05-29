@@ -290,6 +290,12 @@ class TestBasic(AgateTestCase):
         self.assertColumnTypes(table, [Number, Number, Text])
         self.assertRows(table, self.rows)
 
+    def test_iter(self):
+        table = Table(self.rows)
+
+        for i, row in enumerate(table):
+            self.assertEqual(row, self.rows[i])
+
     def test_get_column_types(self):
         table = Table(self.rows, self.column_names, self.column_types)
 

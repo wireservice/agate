@@ -74,6 +74,12 @@ class TestTableSet(AgateTestCase):
         with self.assertRaises(ValueError):
             tableset = TableSet(tables.values(), tables.keys())  # noqa
 
+    def test_iter(self):
+        tableset = TableSet(self.tables.values(), self.tables.keys())
+
+        for i, table in enumerate(tableset):
+            self.assertEqual(table, list(self.tables.values())[i])
+
     def test_from_csv(self):
         tableset1 = TableSet(self.tables.values(), self.tables.keys())
         tableset2 = TableSet.from_csv('examples/tableset', self.column_names)

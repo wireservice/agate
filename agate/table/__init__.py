@@ -208,6 +208,13 @@ class Table(utils.Patchable):
 
         return structure.getvalue()
 
+    def __iter__(self):
+        """
+        Iterating over a table is equivalent to iterating over
+        :code:`table.rows`.
+        """
+        return iter(self._rows)
+
     @property
     def column_types(self):
         """
