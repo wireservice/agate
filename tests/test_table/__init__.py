@@ -293,8 +293,15 @@ class TestBasic(AgateTestCase):
     def test_iter(self):
         table = Table(self.rows)
 
-        for i, row in enumerate(table):
-            self.assertEqual(row, self.rows[i])
+        for row, table_row, row_row in zip(self.rows, table, table.rows):
+            self.assertEqual(row, table_row, row_row)
+
+    def test_indexing(self):
+        table = Table(self.rows)
+
+        self.assertEqual(table[1], self.rows[1])
+        self.assertEqual(table[-1], self.rows[-1])
+        self.assertEqual(table[1:2], self.rows[1:2])
 
     def test_get_column_types(self):
         table = Table(self.rows, self.column_names, self.column_types)
