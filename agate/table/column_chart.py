@@ -6,9 +6,9 @@ import leather
 from agate import utils
 
 
-def bar_chart(self, label=0, value=1, path=None, width=None, height=None):
+def column_chart(self, label=0, value=1, path=None, width=None, height=None):
     """
-    Render a bar chart using `leather`.
+    Render a column chart using `leather`.
 
     :param label:
         The name or index of a column to plot as the labels of the chart.
@@ -26,8 +26,8 @@ def bar_chart(self, label=0, value=1, path=None, width=None, height=None):
         The height of the output SVG.
     """
     chart = leather.Chart()
-    chart.add_x_axis(name=value)
-    chart.add_y_axis(name=label)
-    chart.add_bars(self, x=value, y=label)
+    chart.add_x_axis(name=label)
+    chart.add_y_axis(name=value)
+    chart.add_columns(self, x=label, y=value)
 
     return chart.to_svg(path=path, width=width, height=height)

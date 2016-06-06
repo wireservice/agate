@@ -11,3 +11,6 @@ parsedatetime>=2.1
 pytz>=2015.4
 isodate>=0.5.4
 awesome-slugify>=1.6.5
+git+git@github.com:onyxfish/leather.git#egg=leather
+lxml>=3.6.0
+cssselect>=0.9.1

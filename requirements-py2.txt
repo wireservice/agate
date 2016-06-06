@@ -13,3 +13,5 @@ pytz>=2015.4
 mock>=1.3.0
 isodate>=0.5.4
 awesome-slugify>=1.6.5
+lxml>=3.6.0
+cssselect>=0.9.1

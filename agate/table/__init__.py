@@ -314,10 +314,10 @@ class Table(utils.Patchable):
 from agate.table.aggregate import aggregate
 from agate.table.bar_chart import bar_chart
 from agate.table.bins import bins
+from agate.table.column_chart import column_chart
 from agate.table.compute import compute
 from agate.table.denormalize import denormalize
 from agate.table.distinct import distinct
-from agate.table.dot_chart import dot_chart
 from agate.table.exclude import exclude
 from agate.table.find import find
 from agate.table.from_csv import from_csv
@@ -338,6 +338,7 @@ from agate.table.print_html import print_html
 from agate.table.print_structure import print_structure
 from agate.table.print_table import print_table
 from agate.table.rename import rename
+from agate.table.scatterplot import scatterplot
 from agate.table.select import select
 from agate.table.to_csv import to_csv
 from agate.table.to_json import to_json
@@ -346,10 +347,10 @@ from agate.table.where import where
 Table.aggregate = aggregate
 Table.bar_chart = bar_chart
 Table.bins = bins
+Table.column_chart = column_chart
 Table.compute = compute
 Table.denormalize = denormalize
 Table.distinct = distinct
-Table.dot_chart = dot_chart
 Table.exclude = exclude
 Table.find = find
 Table.from_csv = from_csv
@@ -370,6 +371,7 @@ Table.print_html = print_html
 Table.print_structure = print_structure
 Table.print_table = print_table
 Table.rename = rename
+Table.scatterplot = scatterplot
 Table.select = select
 Table.to_csv = to_csv
 Table.to_json = to_json

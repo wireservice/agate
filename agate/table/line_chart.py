@@ -6,14 +6,16 @@ import leather
 from agate import utils
 
 
-def line_chart(self, x, y, path=None, width=None, height=None):
+def line_chart(self, x=0, y=1, path=None, width=None, height=None):
     """
     Render a line chart using `leather`.
 
     :param x:
-        The name of a column to plot as the x-axis.
+        The name or index of a column to plot as the x-axis. Defaults to the
+        first column in the table.
     :param y:
-        The name of a column to plot as the y-axis.
+        The name or index of a column to plot as the y-axis. Defaults to the
+        second column in the table.
     :param path:
         If specified, the resulting SVG will be saved to this location. If
         :code:`None` and running in IPython, then the SVG will be rendered
@@ -23,11 +25,9 @@ def line_chart(self, x, y, path=None, width=None, height=None):
     :param height:
         The height of the output SVG.
     """
-    data = tuple(zip(self._columns[x], self._columns[y]))
-
     chart = leather.Chart()
     chart.add_x_axis(name=x)
     chart.add_y_axis(name=y)
-    chart.add_lines(data)
+    chart.add_line(self, x=x, y=y)
 
-    return chart.to_svg(path, width=width, height=height)
+    return chart.to_svg(path=path, width=width, height=height)
