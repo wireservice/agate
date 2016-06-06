@@ -8,7 +8,7 @@ from agate import utils
 
 def column_chart(self, label=0, value=1, path=None, width=None, height=None):
     """
-    Render a column chart using `leather`.
+    Render a column chart using :class:`leather.Chart`.
 
     :param label:
         The name or index of a column to plot as the labels of the chart.

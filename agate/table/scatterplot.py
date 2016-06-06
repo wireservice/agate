@@ -8,7 +8,7 @@ from agate import utils
 
 def scatterplot(self, x=0, y=1, path=None, width=None, height=None):
     """
-    Render a scatterplot using `leather`.
+    Render a scatterplot using :class:`leather.Chart`.
 
     :param x:
         The name or index of a column to plot as the x-axis. Defaults to the

@@ -17,7 +17,8 @@ extensions = [
 autodoc_default_flags = ['members', 'show-inheritance']
 
 intersphinx_mapping = {
-    'python': ('http://docs.python.org/3.5', None)
+    'python': ('http://docs.python.org/3.5', None),
+    'leather': ('http://leather.readthedocs.io/en/latest/', None)
 }
 
 # Templates

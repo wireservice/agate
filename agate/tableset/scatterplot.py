@@ -8,7 +8,7 @@ from agate import utils
 
 def scatterplot(self, x=0, y=1, path=None, width=None, height=None):
     """
-    Render a lattice/grid of scatterplots using `leather`.
+    Render a lattice/grid of scatterplots using :class:`leather.Lattice`.
 
     :param x:
         The name or index of a column to plot as the x axis of the chart.

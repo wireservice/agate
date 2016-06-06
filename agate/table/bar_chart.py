@@ -8,7 +8,7 @@ from agate import utils
 
 def bar_chart(self, label=0, value=1, path=None, width=None, height=None):
     """
-    Render a bar chart using `leather`.
+    Render a bar chart using :class:`leather.Chart`.
 
     :param label:
         The name or index of a column to plot as the labels of the chart.
