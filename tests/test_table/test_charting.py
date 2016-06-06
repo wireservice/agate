@@ -12,7 +12,7 @@ from agate import Table
 from agate.data_types import Number, Text
 
 
-class TestCharts(leather.LeatherTestCase):
+class TestTableCharts(leather.LeatherTestCase):
     def setUp(self):
         self.rows = (
             (1, 4, 'a'),

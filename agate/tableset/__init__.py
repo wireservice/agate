@@ -187,19 +187,27 @@ class TableSet(MappedSequence, Patchable):
 
 
 from agate.tableset.aggregate import aggregate
+from agate.tableset.bar_chart import bar_chart
+from agate.tableset.column_chart import column_chart
 from agate.tableset.from_csv import from_csv
 from agate.tableset.from_json import from_json
 from agate.tableset.having import having
+from agate.tableset.line_chart import line_chart
 from agate.tableset.merge import merge
 from agate.tableset.print_structure import print_structure
+from agate.tableset.scatterplot import scatterplot
 from agate.tableset.to_csv import to_csv
 from agate.tableset.to_json import to_json
 
 TableSet.aggregate = aggregate
+TableSet.bar_chart = bar_chart
+TableSet.column_chart = column_chart
 TableSet.from_csv = from_csv
 TableSet.from_json = from_json
 TableSet.having = having
+TableSet.line_chart = line_chart
 TableSet.merge = merge
 TableSet.print_structure = print_structure
+TableSet.scatterplot = scatterplot
 TableSet.to_csv = to_csv
 TableSet.to_json = to_json

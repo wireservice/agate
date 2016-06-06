@@ -56,6 +56,17 @@ Previewing
 
     agate.TableSet.print_structure
 
+Charting
+--------
+
+.. autosummary::
+    :nosignatures:
+
+    agate.Table.bar_chart
+    agate.Table.column_chart
+    agate.Table.line_chart
+    agate.Table.scatterplot
+
 Detailed list
 -------------
 

@@ -97,7 +97,7 @@ Charting
 --------
 
 .. autosummary::
-    :nosignature:
+    :nosignatures:
 
     agate.Table.bar_chart
     agate.Table.column_chart
