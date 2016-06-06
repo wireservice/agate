@@ -210,10 +210,15 @@ class Table(utils.Patchable):
 
     def __iter__(self):
         """
-        Iterating over a table is equivalent to iterating over
-        :code:`table.rows`.
+        Shorthand for :code:`for row in table.rows`.
         """
-        return iter(self._rows)
+        return self._rows.__iter__()
+
+    def __getitem__(self, key):
+        """
+        Shorthand for :code:`table.rows[foo]`.
+        """
+        return self._rows.__getitem__(key)
 
     @property
     def column_types(self):
