@@ -253,6 +253,38 @@ class TestTableComputation(unittest.TestCase):
                 ('test', PercentChange('three', 'one'))
             ])
 
+    def test_percent_change_nulls(self):
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
+            new_table = self.table.compute([
+                ('test', PercentChange('three', 'four'))
+            ])
+
+        with self.assertRaises(NullCalculationWarning):
+            new_table = self.table.compute([
+                ('test', PercentChange('four', 'three'))
+            ])
+
+        warnings.simplefilter('ignore')
+
+        new_table = self.table.compute([
+            ('test', PercentChange('three', 'four'))
+        ])
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+
+        def to_one_place(d):
+            return d.quantize(Decimal('0.1'))
+
+        self.assertSequenceEqual(new_table.rows[2], ('a', Decimal('2'), Decimal('4'), None, None))
+        self.assertEqual(to_one_place(new_table.columns['test'][0]), Decimal('33.3'))
+        self.assertEqual(new_table.columns['test'][1], None)
+        self.assertEqual(new_table.columns['test'][2], None)
+        self.assertEqual(new_table.columns['test'][3], None)
+
     def test_rank_number(self):
         new_table = self.table.compute([
             ('rank', Rank('two'))
