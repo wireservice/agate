@@ -1,7 +1,8 @@
 1.4.1
 -----
 
-* :class:`.Table` can now be iterated and indexed, yielding :class:`Row` instances. (Previously it was necessarily to use :code:`table.rows`.)
+* :class:`.PercentChange` is now null-safe, returns None for null values. (#623)
+* :class:`.Table` can now be iterated, yielding :class:`Row` instances. (Previously it was necessarily to iterate :code:`table.rows`.)
 
 1.4.0 - May 26, 2016
 --------------------

@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
+from agate.aggregations.has_nulls import HasNulls
 from agate.computations.base import Computation
 
 from agate.data_types import Number
 from agate.exceptions import DataTypeError
+from agate.warns import warn_null_calculation
 
 
 class PercentChange(Computation):
@@ -32,6 +34,12 @@ class PercentChange(Computation):
         if not isinstance(after_column.data_type, Number):
             raise DataTypeError('PercentChange after column must contain Number data.')
 
+        if HasNulls(self._before_column_name).run(table):
+            warn_null_calculation(self, before_column)
+
+        if HasNulls(self._after_column_name).run(table):
+            warn_null_calculation(self, after_column)
+
     def run(self, table):
         """
         :returns:
@@ -40,6 +48,12 @@ class PercentChange(Computation):
         new_column = []
 
         for row in table.rows:
-            new_column.append((row[self._after_column_name] - row[self._before_column_name]) / row[self._before_column_name] * 100)
+            before = row[self._before_column_name]
+            after = row[self._after_column_name]
+
+            if before and after:
+                new_column.append((after - before) / before * 100)
+            else:
+                new_column.append(None)
 
         return new_column
