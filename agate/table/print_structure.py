@@ -24,4 +24,4 @@ def print_structure(self, output=sys.stdout, max_rows=None):
 
     table = Table(rows, column_names, column_types)
 
-    return table.print_table(output=output, max_column_width=None, max_rows=None)
+    return table.print_table(output=output, max_column_width=None, max_rows=max_rows)
