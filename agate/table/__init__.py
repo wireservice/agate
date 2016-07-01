@@ -176,7 +176,7 @@ class Table(utils.Patchable):
                 raise ValueError('row_names must be a column name, function or sequence')
 
             for row_name in computed_row_names:
-                if isinstance(row_name, int):
+                if type(row_name) is int:
                     raise ValueError('Row names cannot be of type int. Use Decimal for numbered row names.')
 
             self._row_names = tuple(computed_row_names)

@@ -222,15 +222,15 @@ class TestBasic(AgateTestCase):
         self.assertRowNames(table, ['a', 'b', u'👍'])
 
     def test_row_names_non_string(self):
-        table = Table(self.rows, self.column_names, self.column_types, row_names='one')
+        table = Table(self.rows, self.column_names, self.column_types, row_names=[Decimal('2'), True, None])
 
         self.assertSequenceEqual(table.row_names, [
-            Decimal('1'),
             Decimal('2'),
-            None
+            True,
+            None,
         ])
-        self.assertSequenceEqual(table.rows[Decimal('1')], (1, 4, 'a'))
-        self.assertSequenceEqual(table.rows[Decimal('2')], (2, 3, 'b'))
+        self.assertSequenceEqual(table.rows[Decimal('2')], (1, 4, 'a'))
+        self.assertSequenceEqual(table.rows[True], (2, 3, 'b'))
         self.assertSequenceEqual(table.rows[None], (None, 2, u'👍'))
 
     def test_row_names_int(self):
