@@ -294,7 +294,7 @@ def slugify(values, ensure_unique=False, **kwargs):
     See: https://github.com/dimka665/awesome-slugify
     """
     # Default to all lowercase
-    slug_args = { 'to_lower': True }
+    slug_args = {'to_lower': True}
     slug_args.update(kwargs)
 
     if ensure_unique:
