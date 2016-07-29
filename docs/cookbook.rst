@@ -14,6 +14,7 @@ Welcome to the agate cookbook, a source of how-to's and use cases.
     cookbook/filter
     cookbook/sort
     cookbook/search
+    cookbook/standardize
     cookbook/statistics
     cookbook/compute
     cookbook/datetime
@@ -38,6 +39,7 @@ Basics
 * `Filtering rows of data <cookbook/filter.html>`_
 * `Sorting rows of data <cookbook/sort.html>`_
 * `Searching through a table <cookbook/search.html>`_
+* `Standardize names and values <cookbook/standardize.html>`_
 * `Calculating statistics <cookbook/statistics.html>`_
 * `Computing new columns <cookbook/compute.html>`_
 * `Handling dates and times <cookbook/datetime.html>`_
