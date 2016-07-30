@@ -6,7 +6,7 @@ This module contains the global configuration for agate. Users should use
 :meth:`get_option` and :meth:`set_option` to modify the global
 configuration.
 
-Available configuation options:
+**Available configuation options:**
 
 +-------------------------+------------------------------------------+-----------------------------------------+
 | Option                  | Description                              | Default value                           |
