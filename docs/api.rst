@@ -18,3 +18,4 @@ API
     api/exceptions
     api/warns
     api/testcase
+    api/config
