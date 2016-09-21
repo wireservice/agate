@@ -1,6 +1,7 @@
 1.4.1
 -----
 
+* :meth:`.Table.print_table` now has a `max_precision` argument to limit Number precision. (#544)
 * Slug computation now accepts an array of column names to merge. (#617)
 * Cookbook: standardize column values with Slugify computation. (#613)
 * Cookbook: slugify/standardize row and column names. (#612)
