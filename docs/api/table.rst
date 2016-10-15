@@ -30,6 +30,7 @@ Creating
 
     agate.Table.from_csv
     agate.Table.from_json
+    agate.Table.from_fixed
     agate.Table.from_object
 
 Saving

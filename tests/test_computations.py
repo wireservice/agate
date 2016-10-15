@@ -253,6 +253,38 @@ class TestTableComputation(unittest.TestCase):
                 ('test', PercentChange('three', 'one'))
             ])
 
+    def test_percent_change_nulls(self):
+        warnings.simplefilter('error')
+
+        with self.assertRaises(NullCalculationWarning):
+            new_table = self.table.compute([
+                ('test', PercentChange('three', 'four'))
+            ])
+
+        with self.assertRaises(NullCalculationWarning):
+            new_table = self.table.compute([
+                ('test', PercentChange('four', 'three'))
+            ])
+
+        warnings.simplefilter('ignore')
+
+        new_table = self.table.compute([
+            ('test', PercentChange('three', 'four'))
+        ])
+
+        self.assertIsNot(new_table, self.table)
+        self.assertEqual(len(new_table.rows), 4)
+        self.assertEqual(len(new_table.columns), 5)
+
+        def to_one_place(d):
+            return d.quantize(Decimal('0.1'))
+
+        self.assertSequenceEqual(new_table.rows[2], ('a', Decimal('2'), Decimal('4'), None, None))
+        self.assertEqual(to_one_place(new_table.columns['test'][0]), Decimal('33.3'))
+        self.assertEqual(new_table.columns['test'][1], None)
+        self.assertEqual(new_table.columns['test'][2], None)
+        self.assertEqual(new_table.columns['test'][3], None)
+
     def test_rank_number(self):
         new_table = self.table.compute([
             ('rank', Rank('two'))
@@ -332,6 +364,36 @@ class TestTableComputation(unittest.TestCase):
             ('He11O W0rld', 3)
         )
         expected = ['hello-world', 'ab-c-e', 'he11o-w0rld']
+
+        table = Table(rows, ['one', 'two'], [self.text_type, self.number_type]).compute([
+            ('slugs', Slug('one'))
+        ])
+
+        self.assertSequenceEqual(table.columns['slugs'], expected)
+
+    def test_slug_column_name_sequence(self):
+        rows = (
+            ('hello world', 2, 'Ab*c #e'),
+            ('Ab*c #e', 2, 'He11O W0rld'),
+            ('He11O W0rld', 3, 'hello world')
+        )
+        expected = ['hello-world-ab-c-e', 'ab-c-e-he11o-w0rld', 'he11o-w0rld-hello-world']
+
+        table1 = Table(rows, ['one', 'two', 'three'], [self.text_type, self.number_type, self.text_type])
+        table2 = table1.compute([
+            ('slugs', Slug(['one', 'three']))
+        ])
+
+        self.assertSequenceEqual(table2.columns['slugs'], expected)
+
+    def test_slug_ensure_unique(self):
+        rows = (
+            ('hello world', 2),
+            ('Ab*c #e', 2),
+            ('He11O W0rld', 3),
+            ('HellO WOrld ', 3)
+        )
+        expected = ['hello-world', 'ab-c-e', 'he11o-w0rld', 'hello-world-1']
 
         table = Table(rows, ['one', 'two'], [self.text_type, self.number_type]).compute([
             ('slugs', Slug('one', ensure_unique=True))

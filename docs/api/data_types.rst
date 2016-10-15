@@ -21,6 +21,7 @@ Supported types
     agate.Boolean
     agate.Date
     agate.DateTime
+    agate.TimeDelta
 
 Detailed list
 -------------
@@ -31,3 +32,4 @@ Detailed list
 .. autoclass:: agate.Boolean
 .. autoclass:: agate.Date
 .. autoclass:: agate.DateTime
+.. autoclass:: agate.TimeDelta

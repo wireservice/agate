@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-The :class:`.Table` object is the most important class agate. Tables are
+The :class:`.Table` object is the most important class in agate. Tables are
 created by supplying row data, column names and subclasses of :class:`.DataType`
 to the constructor. Once created, the data in a table **can not be changed**.
 This concept is central to agate.
@@ -10,7 +10,7 @@ Instead of modifying the data, various methods can be used to create new,
 derivative tables. For example, the :meth:`.Table.select` method creates a new
 table with only the specified columns. The :meth:`.Table.where` method creates
 a new table with only those rows that pass a test. And :meth:`.Table.order_by`
-creates a sorted table. In all of these cases the output is new :class:`.Table`
+creates a sorted table. In all of these cases the output is a new :class:`.Table`
 and the existing table remains unmodified.
 
 Tables are not themselves iterable, but the columns of the table can be
@@ -48,7 +48,7 @@ class Table(utils.Patchable):
     index or by unique column name.
 
     The sequence of :class:`.Row` instances are retrieved via the
-    :attr:`.Table.rows` property. They maybe be accessed by either numeric index
+    :attr:`.Table.rows` property. They may be accessed by either numeric index
     or, if specified, unique row names.
 
     :param rows:
@@ -176,7 +176,7 @@ class Table(utils.Patchable):
                 raise ValueError('row_names must be a column name, function or sequence')
 
             for row_name in computed_row_names:
-                if isinstance(row_name, int):
+                if type(row_name) is int:
                     raise ValueError('Row names cannot be of type int. Use Decimal for numbered row names.')
 
             self._row_names = tuple(computed_row_names)

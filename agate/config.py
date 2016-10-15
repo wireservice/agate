@@ -3,8 +3,33 @@
 
 """
 This module contains the global configuration for agate. Users should use
-:function:`.get_option` and :function:`.set_option` to modify the global
+:meth:`get_option` and :meth:`set_option` to modify the global
 configuration.
+
+**Available configuation options:**
+
++-------------------------+------------------------------------------+-----------------------------------------+
+| Option                  | Description                              | Default value                           |
++=========================+==========================================+=========================================+
+| default_locale          | Default locale for number formatting     | default_locale('LC_NUMERIC') or 'en_US' |
++-------------------------+------------------------------------------+-----------------------------------------+
+| horizontal_line_char    | Character to render for horizontal lines | u'-'                                    |
++-------------------------+------------------------------------------+-----------------------------------------+
+| vertical_line_char      | Character to render for vertical lines   | u'|'                                    |
++-------------------------+------------------------------------------+-----------------------------------------+
+| bar_char                | Character to render for bar chart units  | u'░'                                    |
++-------------------------+------------------------------------------+-----------------------------------------+
+| printable_bar_char      | Printable character for bar chart units  | u':'                                    |
++-------------------------+------------------------------------------+-----------------------------------------+
+| zero_line_char          | Character to render for zero line units  | u'▓'                                    |
++-------------------------+------------------------------------------+-----------------------------------------+
+| printable_zero_line_char| Printable character for zero line units  | u'|'                                    |
++-------------------------+------------------------------------------+-----------------------------------------+
+| tick_char               | Character to render for axis ticks       | u'+'                                    |
++-------------------------+------------------------------------------+-----------------------------------------+
+| ellipsis_chars          | Characters to render for ellipsis        | u'...'                                  |
++-------------------------+------------------------------------------+-----------------------------------------+
+
 """
 
 from babel.core import default_locale
