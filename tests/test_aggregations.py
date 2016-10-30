@@ -67,6 +67,17 @@ class TestSimpleAggregation(unittest.TestCase):
         self.assertEqual(All('one', lambda d: d != 5).run(self.table), True)
         self.assertEqual(All('one', lambda d: d == 2).run(self.table), False)
 
+    def test_first(self):
+        with self.assertRaises(ValueError):
+            First('one', lambda d: d == 5).validate(self.table)
+
+        First('one', lambda d: d).validate(self.table)
+
+        self.assertIsInstance(First('one').get_aggregate_data_type(self.table), Number)
+        self.assertEqual(First('one').run(self.table), 1)
+        self.assertEqual(First('one', lambda d: d == 2).run(self.table), 2)
+        self.assertEqual(First('one', lambda d: not d).run(self.table), None)
+
     def test_count(self):
         rows = (
             (1, 2, 'a'),
