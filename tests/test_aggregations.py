@@ -138,6 +138,7 @@ class TestBooleanAggregation(unittest.TestCase):
         table = Table(rows, ['test'], [Boolean()])
         Any('test').validate(table)
         self.assertEqual(Any('test').run(table), False)
+        self.assertEqual(Any('test', lambda r: not r).run(table), True)
 
     def test_all(self):
         rows = [
