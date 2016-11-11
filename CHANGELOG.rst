@@ -9,6 +9,7 @@
 * Cookbook: slugify/standardize row and column names. (#612)
 * Fix condition that prevents integer row names to allow bools in :meth:`.Table.__init__`. (#627)
 * :class:`.PercentChange` is now null-safe, returns None for null values. (#623)
+* :class:`.Table` can now be iterated, yielding :class:`Row` instances. (Previously it was necessarily to iterate :code:`table.rows`.)
 
 1.4.0 - May 26, 2016
 --------------------
