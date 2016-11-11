@@ -13,4 +13,4 @@ isodate>=0.5.4
 awesome-slugify>=1.6.5
 lxml>=3.6.0
 cssselect>=0.9.1
-leather>=0.3.0
+leather>=0.3.2

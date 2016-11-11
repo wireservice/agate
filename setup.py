@@ -9,7 +9,7 @@ install_requires = [
     'Babel>=2.0',
     'isodate>=0.5.4',
     'awesome-slugify>=1.6.5',
-    'leather>=0.3.0'
+    'leather>=0.3.2'
 ]
 
 setup(
