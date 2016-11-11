@@ -8,12 +8,13 @@ install_requires = [
     'parsedatetime>=2.1',
     'Babel>=2.0',
     'isodate>=0.5.4',
-    'awesome-slugify>=1.6.5'
+    'awesome-slugify>=1.6.5',
+    'leather>=0.3.0'
 ]
 
 setup(
     name='agate',
-    version='1.4.1',
+    version='1.5.0',
     description='A data analysis library that is optimized for humans instead of machines.',
     long_description=open('README.rst').read(),
     author='Christopher Groskopf',

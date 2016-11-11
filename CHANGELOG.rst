@@ -1,6 +1,7 @@
-1.4.1
+1.5.0
 -----
 
+* Simple SVG charting is now integrated via `leather <http://leather.rtfd.io>`_.
 * :meth:`.Table.print_table` now has a `max_precision` argument to limit Number precision. (#544)
 * Slug computation now accepts an array of column names to merge. (#617)
 * Cookbook: standardize column values with Slugify computation. (#613)
