@@ -1,6 +1,7 @@
 1.5.0
 -----
 
+* :class:`.Table` now supports ``len`` as a proxy for ``len(table.rows)``.
 * Simple SVG charting is now integrated via `leather <http://leather.rtfd.io>`_.
 * :meth:`.Table.print_table` now has a `max_precision` argument to limit Number precision. (#544)
 * Slug computation now accepts an array of column names to merge. (#617)

@@ -208,9 +208,15 @@ class Table(utils.Patchable):
 
         return structure.getvalue()
 
+    def __len__(self):
+        """
+        Shorthand for :code:`len(table.rows)`.
+        """
+        return self._rows.__len__()
+
     def __iter__(self):
         """
-        Shorthand for :code:`for row in table.rows`.
+        Shorthand for :code:`iter(table.rows)`.
         """
         return self._rows.__iter__()
 
