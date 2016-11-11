@@ -3,11 +3,12 @@
 
 * :class:`.Table` now supports ``len`` as a proxy for ``len(table.rows)``.
 * Simple SVG charting is now integrated via `leather <http://leather.rtfd.io>`_.
+* Added :class:`.First` computation. (#634)
 * :meth:`.Table.print_table` now has a `max_precision` argument to limit Number precision. (#544)
 * Slug computation now accepts an array of column names to merge. (#617)
 * Cookbook: standardize column values with Slugify computation. (#613)
 * Cookbook: slugify/standardize row and column names. (#612)
-* Fix condition that prevents integer row names to allow bools in :meth:`.Table.__init__`. (#627)
+* Fixed condition that prevents integer row names to allow bools in :meth:`.Table.__init__`. (#627)
 * :class:`.PercentChange` is now null-safe, returns None for null values. (#623)
 * :class:`.Table` can now be iterated, yielding :class:`Row` instances. (Previously it was necessarily to iterate :code:`table.rows`.)
 

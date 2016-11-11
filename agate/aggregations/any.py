@@ -32,7 +32,7 @@ class Any(Aggregation):
         column = table.columns[self._column_name]
         data = column.values()
 
-        if isinstance(column.data_type, Boolean):
+        if isinstance(column.data_type, Boolean) and self._test is None:
             return any(data)
 
         return any(self._test(d) for d in data)
