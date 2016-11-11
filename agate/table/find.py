@@ -7,7 +7,7 @@ from agate import utils
 @utils.allow_tableset_proxy
 def find(self, test):
     """
-    Find the first row that passes test.
+    Find the first row that passes a test.
 
     :param test:
         A function that takes a :class:`.Row` and returns :code:`True` if

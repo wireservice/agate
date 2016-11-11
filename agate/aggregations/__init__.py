@@ -21,6 +21,7 @@ from agate.aggregations.all import All  # noqa
 from agate.aggregations.any import Any  # noqa
 from agate.aggregations.count import Count  # noqa
 from agate.aggregations.deciles import Deciles  # noqa
+from agate.aggregations.first import First  # noqa
 from agate.aggregations.has_nulls import HasNulls  # noqa
 from agate.aggregations.iqr import IQR  # noqa
 from agate.aggregations.mad import MAD  # noqa

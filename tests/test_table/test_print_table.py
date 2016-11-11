@@ -57,6 +57,38 @@ class TestPrintTable(AgateTestCase):
         self.assertEqual(len(lines), 8)
         self.assertEqual(len(lines[0]), 25)
 
+    def test_print_table_max_precision(self):
+        rows = (
+            ('1.745', 1.745, 1.72),
+            ('11.123456', 11.123456, 5.10),
+            ('0', 0, 0.10)
+        )
+
+        column_names = ['text_number', 'real_long_number', 'real_short_number']
+        column_types = [
+            self.text_type,
+            self.number_type,
+            self.number_type
+        ]
+        table = Table(rows, column_names, column_types)
+
+        output = six.StringIO()
+        table.print_table(output=output, max_precision=2)
+        lines = output.getvalue().split('\n')
+
+        # Text shouldn't be affected
+        self.assertIn(u' 1.745 ', lines[3])
+        self.assertIn(u' 11.123456 ', lines[4])
+        self.assertIn(u' 0 ', lines[5])
+        # Test real precision above max
+        self.assertIn(u' 1.74… ', lines[3])
+        self.assertIn(u' 11.12… ', lines[4])
+        self.assertIn(u' 0.00… ', lines[5])
+        # Test real precision below max
+        self.assertIn(u' 1.72 ', lines[3])
+        self.assertIn(u' 5.10 ', lines[4])
+        self.assertIn(u' 0.10 ', lines[5])
+
     def test_print_table_max_column_width(self):
         rows = (
             ('1.7', 2, 'this is long'),

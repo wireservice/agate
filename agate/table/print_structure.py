@@ -6,7 +6,7 @@ import sys
 from agate.data_types import Text
 
 
-def print_structure(self, output=sys.stdout):
+def print_structure(self, output=sys.stdout, max_rows=None):
     """
     Print this table's column names and types as a plain-text table.
 
@@ -24,4 +24,4 @@ def print_structure(self, output=sys.stdout):
 
     table = Table(rows, column_names, column_types)
 
-    return table.print_table(output=output, max_column_width=None)
+    return table.print_table(output=output, max_column_width=None, max_rows=max_rows)

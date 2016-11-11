@@ -23,7 +23,7 @@ agate:
 
 .. code-block:: python
 
-    new_table = table.select(('state', 'total'))
+    new_table = table.select(['state', 'total'])
 
 WHERE
 =====
@@ -159,7 +159,7 @@ agate:
 .. code-block:: python
 
     new_table = table \
-        .select(('state', 'total')) \
+        .select(['state', 'total']) \
         .where(lambda row: row['state'].lower() == 'california') \
         .order_by('total', reverse=True)
 

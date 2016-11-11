@@ -366,6 +366,36 @@ class TestTableComputation(unittest.TestCase):
         expected = ['hello-world', 'ab-c-e', 'he11o-w0rld']
 
         table = Table(rows, ['one', 'two'], [self.text_type, self.number_type]).compute([
+            ('slugs', Slug('one'))
+        ])
+
+        self.assertSequenceEqual(table.columns['slugs'], expected)
+
+    def test_slug_column_name_sequence(self):
+        rows = (
+            ('hello world', 2, 'Ab*c #e'),
+            ('Ab*c #e', 2, 'He11O W0rld'),
+            ('He11O W0rld', 3, 'hello world')
+        )
+        expected = ['hello-world-ab-c-e', 'ab-c-e-he11o-w0rld', 'he11o-w0rld-hello-world']
+
+        table1 = Table(rows, ['one', 'two', 'three'], [self.text_type, self.number_type, self.text_type])
+        table2 = table1.compute([
+            ('slugs', Slug(['one', 'three']))
+        ])
+
+        self.assertSequenceEqual(table2.columns['slugs'], expected)
+
+    def test_slug_ensure_unique(self):
+        rows = (
+            ('hello world', 2),
+            ('Ab*c #e', 2),
+            ('He11O W0rld', 3),
+            ('HellO WOrld ', 3)
+        )
+        expected = ['hello-world', 'ab-c-e', 'he11o-w0rld', 'hello-world-1']
+
+        table = Table(rows, ['one', 'two'], [self.text_type, self.number_type]).compute([
             ('slugs', Slug('one', ensure_unique=True))
         ])
 

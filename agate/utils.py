@@ -190,14 +190,19 @@ def max_precision(values):
     return max_decimal_places
 
 
-def make_number_formatter(decimal_places):
+def make_number_formatter(decimal_places, add_ellipsis=False):
     """
     Given a number of decimal places creates a formatting string that will
     display numbers with that precision.
-    """
-    fraction = '0' * decimal_places
 
-    return ''.join(['#,##0.', fraction, ';-#,##0.', fraction])
+    :param decimal_places:
+        The number of decimal places
+    :param add_ellipsis:
+        Optionally add an ellipsis symbol at the end of a number
+    """
+    fraction = u'0' * decimal_places
+    ellipsis = u'…' if add_ellipsis else u''
+    return u''.join([u'#,##0.', fraction, ellipsis, u';-#,##0.', fraction, ellipsis])
 
 
 def round_limits(minimum, maximum):
@@ -294,7 +299,7 @@ def slugify(values, ensure_unique=False, **kwargs):
     See: https://github.com/dimka665/awesome-slugify
     """
     # Default to all lowercase
-    slug_args = { 'to_lower': True }
+    slug_args = {'to_lower': True}
     slug_args.update(kwargs)
 
     if ensure_unique:

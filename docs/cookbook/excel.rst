@@ -77,7 +77,7 @@ IF
 VLOOKUP
 =======
 
-There are two ways to get the equivalent of Excel's VLOOKUP with agate. If you're lookup source is another agate :class:`.Table`, then you'll want to use the :meth:`.Table.join` method:
+There are two ways to get the equivalent of Excel's VLOOKUP with agate. If your lookup source is another agate :class:`.Table`, then you'll want to use the :meth:`.Table.join` method:
 
 .. code-block:: python
 
@@ -85,7 +85,7 @@ There are two ways to get the equivalent of Excel's VLOOKUP with agate. If you'r
 
 This will add all the columns from the `states` table to the `mvp_table`, where their `state_abbr` columns match.
 
-If you're lookup source is a Python dictionary or some other object you can implement the lookup using a :class:`.Formula` computation:
+If your lookup source is a Python dictionary or some other object you can implement the lookup using a :class:`.Formula` computation:
 
 .. code-block:: python
 

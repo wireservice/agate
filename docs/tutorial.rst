@@ -442,7 +442,7 @@ First, we use :meth:`.Table.group_by` to group the data by state.
 
     by_state = exonerations.group_by('state')
 
-This takes our original :class:`.Table` and groups it into a :class:`.TableSet`, which contains one table per county. As mentioned much earlier in this tutorial, TableSets are instances of :class:`.MappedSequence`. That means they work very much like :class:`.Column` and :class:`.Row`.
+This takes our original :class:`.Table` and groups it into a :class:`.TableSet`, which contains one table per state. As mentioned much earlier in this tutorial, TableSets are instances of :class:`.MappedSequence`. That means they work very much like :class:`.Column` and :class:`.Row`.
 
 Now we need to aggregate the total for each state. This works in a very similar way to how it did when we were aggregating columns of a single table, except that we'll use the :class:`.Count` aggregation to count the total number of rows in each group.
 
