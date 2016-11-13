@@ -16,5 +16,6 @@ This is the release process for agate:
 #. Upload to `PyPI <https://pypi.python.org/pypi/agate>`_: ``python setup.py sdist bdist_wheel upload``.
 #. Flag the release to build on `RTFD <https://readthedocs.org/dashboard/agate/versions/>`_.
 #. Update the "default version" on `RTFD <https://readthedocs.org/dashboard/agate/versions/>`_ to the latest.
-#. Rev to latest version: ``docs/conf.py``, ``setup.py`` and ``CHANGELOG.rst`` need updates.
+#. Rev to latest version: ``docs/conf.py``, ``docs/tutorial.rst``, ``setup.py``, ``CHANGELOG.rst`` need updates.
+#. Find/replace ``en/[old version]`` to ``en/[new version]`` in ``tutorial.ipynb``.
 #. Commit revision: ``git commit -am "Update to version x.y.z for development."``.
