@@ -43,14 +43,12 @@ Values are divided into the sum of the column by default.
 
     new_table.print_table()
 
-    |--------+----------|
-    |  value | percent  |
-    |--------+----------|
-    |      1 |      10  |
-    |      2 |      20  |
-    |      2 |      20  |
-    |      5 |      50  |
-    |--------+----------|
+    | value | percent |
+    | ----- | ------- |
+    |     1 |      10 |
+    |     2 |      20 |
+    |     2 |      20 |
+    |     5 |      50 |
 
 Override the denominator with a keyword argument.
 
@@ -62,14 +60,12 @@ Override the denominator with a keyword argument.
 
     new_table.print_table()
 
-    |--------+----------|
-    |  value | percent  |
-    |--------+----------|
-    |      1 |      20  |
-    |      2 |      40  |
-    |      2 |      40  |
-    |      5 |     100  |
-    |--------+----------|
+    | value | percent |
+    | ----- | ------- |
+    |     1 |      20 |
+    |     2 |      40 |
+    |     2 |      40 |
+    |     5 |     100 |
 
 Percent change
 ==============

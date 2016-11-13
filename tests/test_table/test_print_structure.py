@@ -34,4 +34,4 @@ class TestPrintStructure(AgateTestCase):
         table.print_structure(output=output)
         lines = output.getvalue().strip().split('\n')
 
-        self.assertEqual(len(lines), 7)
+        self.assertEqual(len(lines), 5)

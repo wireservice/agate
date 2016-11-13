@@ -257,7 +257,7 @@ class TestTableSet(AgateTestCase):
         tableset.print_structure(output=output)
         lines = output.getvalue().strip().split('\n')
 
-        self.assertEqual(len(lines), 7)
+        self.assertEqual(len(lines), 5)
 
     def test_print_structure_row_limit(self):
         tables = self.tables
@@ -269,7 +269,7 @@ class TestTableSet(AgateTestCase):
         tableset.print_structure(output=output)
         lines = output.getvalue().strip().split('\n')
 
-        self.assertEqual(len(lines), 24)
+        self.assertEqual(len(lines), 22)
 
     def test_nested(self):
         tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')

@@ -31,7 +31,7 @@ totals.limit(20).print_bars('county', 'total_cost_sum', width=80)
 
 print('Five most spendy counties:')
 
-totals.print_table(5, max_column_width=9)
+totals.print_table(5)
 
 # Question 3: What are the most recent purchases?
 

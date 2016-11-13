@@ -1,6 +1,7 @@
 1.5.0
 -----
 
+* Tables rendered by :meth:`.Table.print_table` are now Github Friendly Markdown (GFM) compatible. (#626)
 * The agate tutorial has been converted to a Jupyter Notebook.
 * :class:`.Table` now supports ``len`` as a proxy for ``len(table.rows)``.
 * Simple SVG charting is now integrated via `leather <http://leather.rtfd.io>`_.

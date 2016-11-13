@@ -15,6 +15,8 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
     """
     Print a text-based view of the data in this table.
 
+    The output of this method is Github Friendly Markdown (GFM) compatible.
+
     :param max_rows:
         The maximum number of rows to display before truncating the data. This
         defaults to :code:`20` to prevent accidental printing of the entire
@@ -46,12 +48,12 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
         max_precision = float('inf')
 
     ellipsis = config.get_option('ellipsis_chars')
-    vertical_line = config.get_option('vertical_line_char')
+    h_line = config.get_option('horizontal_line_char')
+    v_line = config.get_option('vertical_line_char')
     locale = locale or config.get_option('default_locale')
 
     rows_truncated = max_rows < len(self._rows)
     columns_truncated = max_columns < len(self._column_names)
-
     column_names = []
     for column_name in self.column_names[:max_columns]:
         if max_column_width is not None and len(column_name) > max_column_width:
@@ -127,20 +129,29 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
         for j, d in enumerate(formatted_row):
             # Text is left-justified, all other values are right-justified
             if isinstance(self._column_types[j], Text):
-                row_output.append(' %s ' % d.ljust(widths[j]))
+                output = '%s' % d.ljust(widths[j])
             else:
-                row_output.append(' %s ' % d.rjust(widths[j]))
+                output = '%s' % d.rjust(widths[j])
 
-        line = vertical_line.join(row_output)
+            if j > 0:
+                output = ' %s' % output
 
-        write('%s %s %s' % (vertical_line, line, vertical_line))
+            if j < len(formatted_row) - 1:
+                output = '%s ' % output
+
+            row_output.append(output)
+
+        text = v_line.join(row_output)
+
+        write('%s %s %s' % (v_line, text, v_line))
 
     # Dashes span each width with '+' character at intersection of
     # horizontal and vertical dividers.
-    divider = '|--%s--|' % '-+-'.join('-' * w for w in widths)
-
-    # Initial divider
-    write(divider)
+    divider = '%(v_line)s %(columns)s %(v_line)s' % {
+        'h_line': h_line,
+        'v_line': v_line,
+        'columns': ' | '.join(h_line * w for w in widths)
+    }
 
     # Headers
     write_row(column_names)
@@ -153,6 +164,3 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
     # Row indicating data was truncated
     if rows_truncated:
         write_row([ellipsis for n in column_names])
-
-    # Final divider
-    write(divider)

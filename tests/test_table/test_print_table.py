@@ -34,8 +34,8 @@ class TestPrintTable(AgateTestCase):
         table.print_table(output=output)
         lines = output.getvalue().split('\n')
 
-        self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 27)
+        self.assertEqual(len(lines), 6)
+        self.assertEqual(len(lines[0]), 25)
 
     def test_print_table_max_rows(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -44,8 +44,8 @@ class TestPrintTable(AgateTestCase):
         table.print_table(max_rows=2, output=output)
         lines = output.getvalue().split('\n')
 
-        self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 27)
+        self.assertEqual(len(lines), 6)
+        self.assertEqual(len(lines[0]), 25)
 
     def test_print_table_max_columns(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -54,8 +54,8 @@ class TestPrintTable(AgateTestCase):
         table.print_table(max_columns=2, output=output)
         lines = output.getvalue().split('\n')
 
-        self.assertEqual(len(lines), 8)
-        self.assertEqual(len(lines[0]), 25)
+        self.assertEqual(len(lines), 6)
+        self.assertEqual(len(lines[0]), 23)
 
     def test_print_table_max_precision(self):
         rows = (
@@ -77,17 +77,17 @@ class TestPrintTable(AgateTestCase):
         lines = output.getvalue().split('\n')
 
         # Text shouldn't be affected
-        self.assertIn(u' 1.745 ', lines[3])
-        self.assertIn(u' 11.123456 ', lines[4])
-        self.assertIn(u' 0 ', lines[5])
+        self.assertIn(u' 1.745 ', lines[2])
+        self.assertIn(u' 11.123456 ', lines[3])
+        self.assertIn(u' 0 ', lines[4])
         # Test real precision above max
-        self.assertIn(u' 1.74… ', lines[3])
-        self.assertIn(u' 11.12… ', lines[4])
-        self.assertIn(u' 0.00… ', lines[5])
+        self.assertIn(u' 1.74… ', lines[2])
+        self.assertIn(u' 11.12… ', lines[3])
+        self.assertIn(u' 0.00… ', lines[4])
         # Test real precision below max
-        self.assertIn(u' 1.72 ', lines[3])
-        self.assertIn(u' 5.10 ', lines[4])
-        self.assertIn(u' 0.10 ', lines[5])
+        self.assertIn(u' 1.72 ', lines[2])
+        self.assertIn(u' 5.10 ', lines[3])
+        self.assertIn(u' 0.10 ', lines[4])
 
     def test_print_table_max_column_width(self):
         rows = (
@@ -103,9 +103,9 @@ class TestPrintTable(AgateTestCase):
         table.print_table(output=output, max_column_width=7)
         lines = output.getvalue().split('\n')
 
-        self.assertIn(' also... ', lines[1])
-        self.assertIn(' this... ', lines[3])
-        self.assertIn(' nope ', lines[5])
+        self.assertIn(' also... ', lines[0])
+        self.assertIn(' this... ', lines[2])
+        self.assertIn(' nope ', lines[4])
 
     def test_print_table_locale(self):
         """
