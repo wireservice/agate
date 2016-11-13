@@ -1,6 +1,7 @@
 1.5.0
 -----
 
+* The agate tutorial has been converted to a Jupyter Notebook.
 * :class:`.Table` now supports ``len`` as a proxy for ``len(table.rows)``.
 * Simple SVG charting is now integrated via `leather <http://leather.rtfd.io>`_.
 * Added :class:`.First` computation. (#634)
