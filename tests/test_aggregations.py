@@ -47,23 +47,20 @@ class TestSimpleAggregation(unittest.TestCase):
         self.assertEqual(has_nulls.run(self.table), True)
 
     def test_any(self):
-        with self.assertRaises(ValueError):
-            Any('one').validate(self.table)
-
         Any('one', lambda d: d).validate(self.table)
 
-        self.assertIsInstance(Any('one').get_aggregate_data_type(None), Boolean)
+        self.assertIsInstance(Any('one', 2).get_aggregate_data_type(None), Boolean)
+
+        self.assertEqual(Any('one', 2).run(self.table), True)
+        self.assertEqual(Any('one', 5).run(self.table), False)
 
         self.assertEqual(Any('one', lambda d: d == 2).run(self.table), True)
         self.assertEqual(Any('one', lambda d: d == 5).run(self.table), False)
 
     def test_all(self):
-        with self.assertRaises(ValueError):
-            All('one').validate(self.table)
-
         All('one', lambda d: d).validate(self.table)
 
-        self.assertIsInstance(All('one').get_aggregate_data_type(None), Boolean)
+        self.assertIsInstance(All('one', 5).get_aggregate_data_type(None), Boolean)
         self.assertEqual(All('one', lambda d: d != 5).run(self.table), True)
         self.assertEqual(All('one', lambda d: d == 2).run(self.table), False)
 
@@ -137,8 +134,8 @@ class TestBooleanAggregation(unittest.TestCase):
         ]
 
         table = Table(rows, ['test'], [Boolean()])
-        Any('test').validate(table)
-        self.assertEqual(Any('test').run(table), True)
+        Any('test', True).validate(table)
+        self.assertEqual(Any('test', True).run(table), True)
 
         rows = [
             [False],
@@ -147,8 +144,10 @@ class TestBooleanAggregation(unittest.TestCase):
         ]
 
         table = Table(rows, ['test'], [Boolean()])
-        Any('test').validate(table)
-        self.assertEqual(Any('test').run(table), False)
+        Any('test', True).validate(table)
+        self.assertEqual(Any('test', True).run(table), False)
+        self.assertEqual(Any('test', lambda r: r).run(table), False)
+        self.assertEqual(Any('test', False).run(table), True)
         self.assertEqual(Any('test', lambda r: not r).run(table), True)
 
     def test_all(self):
@@ -159,8 +158,8 @@ class TestBooleanAggregation(unittest.TestCase):
         ]
 
         table = Table(rows, ['test'], [Boolean()])
-        All('test').validate(table)
-        self.assertEqual(All('test').run(table), False)
+        All('test', True).validate(table)
+        self.assertEqual(All('test', True).run(table), False)
 
         rows = [
             [True],
@@ -169,8 +168,11 @@ class TestBooleanAggregation(unittest.TestCase):
         ]
 
         table = Table(rows, ['test'], [Boolean()])
-        All('test').validate(table)
-        self.assertEqual(All('test').run(table), True)
+        All('test', True).validate(table)
+        self.assertEqual(All('test', True).run(table), True)
+        self.assertEqual(All('test', lambda r: r).run(table), True)
+        self.assertEqual(All('test', False).run(table), False)
+        self.assertEqual(All('test', lambda r: not r).run(table), False)
 
 
 class TestDateTimeAggregation(unittest.TestCase):

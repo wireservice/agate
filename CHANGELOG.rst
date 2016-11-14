@@ -1,6 +1,9 @@
 1.5.0
 -----
 
+* :class:`.Any` and :class:`.All` aggregations no longer behave differently for boolean data. (#636)
+* :class:`.Any` and :class:`.All` aggregations now accept a single value as a test argument, in addition to a function.
+* :class:`.Any` and :class:`.All` aggregations now require a test argument.
 * Tables rendered by :meth:`.Table.print_table` are now Github Friendly Markdown (GFM) compatible. (#626)
 * The agate tutorial has been converted to a Jupyter Notebook.
 * :class:`.Table` now supports ``len`` as a proxy for ``len(table.rows)``.
