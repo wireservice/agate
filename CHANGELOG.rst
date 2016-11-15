@@ -1,6 +1,7 @@
 1.5.0
 -----
 
+* :class:`.TableSet` methods which proxy :class:`.Table` methods now appear in the API docs. (#640)
 * :class:`.Any` and :class:`.All` aggregations no longer behave differently for boolean data. (#636)
 * :class:`.Any` and :class:`.All` aggregations now accept a single value as a test argument, in addition to a function.
 * :class:`.Any` and :class:`.All` aggregations now require a test argument.
