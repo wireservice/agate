@@ -46,6 +46,7 @@ Processing
     :nosignatures:
 
     agate.TableSet.aggregate
+    agate.TableSet.having
     agate.TableSet.merge
 
 Previewing
