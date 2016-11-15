@@ -8,7 +8,9 @@ This is the release process for agate:
 2. Verify 100% test coverage: ``nosetests --with-coverage tests``.
 3. Ensure any new modules have been added to setup.py's ``packages`` list.
 #. Ensure any new public interfaces have been added to the documentation.
+#. Ensure TableSet proxy methods have been added for new Table methods.
 #. Make sure the example script still works: ``python example.py``.
+#. Ensure ``python charts.py`` works and has been run recently.
 #. Ensure ``CHANGELOG.rst`` is up to date. Add the release date and summary.
 #. Create a release tag: ``git tag -a x.y.z -m "x.y.z release."``
 #. Push tags upstream: ``git push --tags``

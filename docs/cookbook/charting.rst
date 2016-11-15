@@ -2,8 +2,10 @@
 Charts
 ======
 
-Bar chart
-=========
+Agate offers two kinds of built in charting: very simple text bar charts and SVG charting via `leather <http://leather.rtfd.io/>`_. Both are intended for efficiently exploring data, rather than producing publication-ready charts.
+
+Text-based bar chart
+====================
 
 agate has a builtin text-based bar-chart generator:
 
@@ -27,8 +29,8 @@ agate has a builtin text-based bar-chart generator:
                              +-------------+------------+------------+-------------+
                              0          20,000       40,000       60,000      80,000
 
-Histogram
-=========
+Text-based histogram
+====================
 
 :meth:`.Table.print_bars` can be combined with :meth:`.Table.pivot` or :meth:`.Table.bins` to produce fast histograms:
 
@@ -51,6 +53,67 @@ Histogram
     [90,000 - 100,000]     0 ▓
                              +-------------+------------+------------+-------------+
                              0.0          7.5         15.0         22.5         30.0
+
+SVG bar chart
+=============
+
+.. code-block:: Python
+
+    table.limit(10).bar_chart('State Name', 'TOTAL', 'docs/images/bar_chart.svg')
+
+.. figure:: ../images/bar_chart.svg
+
+SVG column chart
+================
+
+.. code-block:: Python
+
+    table.limit(10).column_chart('State Name', 'TOTAL', 'docs/images/column_chart.svg')
+
+.. figure:: ../images/column_chart.svg
+
+SVG line chart
+==============
+
+.. code-block:: Python
+
+    by_year_exonerated = table.group_by('exonerated')
+    counts = by_year_exonerated.aggregate([
+        ('count', agate.Count())
+    ])
+
+    counts.order_by('exonerated').line_chart('exonerated', 'count', 'docs/images/line_chart.svg')
+
+.. figure:: ../images/line_chart.svg
+
+SVG dots chart
+==============
+
+.. code-block:: Python
+
+    table.scatterplot('exonerated', 'age', 'docs/images/dots_chart.svg')
+
+.. figure:: ../images/dots_chart.svg
+
+SVG lattice chart
+==================
+
+.. code-block:: Python
+
+    top_crimes = table.group_by('crime').having([
+        ('count', agate.Count())
+    ], lambda t: t['count'] > 100)
+    # by_year_exonerated = table.group_by('exonerated')
+    by_year = top_crimes.group_by('exonerated')
+    counts = by_year.aggregate([
+        ('count', agate.Count())
+    ])
+
+    by_crime = counts.group_by('crime')
+
+    by_crime.order_by('exonerated').line_chart('exonerated', 'count', 'docs/images/lattice.svg')
+
+.. figure:: ../images/lattice.svg
 
 Using matplotlib
 ================
