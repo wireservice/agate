@@ -103,8 +103,9 @@ SVG lattice chart
     top_crimes = table.group_by('crime').having([
         ('count', agate.Count())
     ], lambda t: t['count'] > 100)
-    # by_year_exonerated = table.group_by('exonerated')
+
     by_year = top_crimes.group_by('exonerated')
+    
     counts = by_year.aggregate([
         ('count', agate.Count())
     ])
