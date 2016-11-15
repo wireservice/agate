@@ -129,21 +129,15 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
         for j, d in enumerate(formatted_row):
             # Text is left-justified, all other values are right-justified
             if isinstance(self._column_types[j], Text):
-                output = '%s' % d.ljust(widths[j])
+                output = ' %s ' % d.ljust(widths[j])
             else:
-                output = '%s' % d.rjust(widths[j])
-
-            if j > 0:
-                output = ' %s' % output
-
-            if j < len(formatted_row) - 1:
-                output = '%s ' % output
+                output = ' %s ' % d.rjust(widths[j])
 
             row_output.append(output)
 
         text = v_line.join(row_output)
 
-        write('%s %s %s' % (v_line, text, v_line))
+        write('%s%s%s' % (v_line, text, v_line))
 
     # Dashes span each width with '+' character at intersection of
     # horizontal and vertical dividers.
