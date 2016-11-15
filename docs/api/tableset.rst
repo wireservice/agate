@@ -63,10 +63,32 @@ Charting
 .. autosummary::
     :nosignatures:
 
-    agate.Table.bar_chart
-    agate.Table.column_chart
-    agate.Table.line_chart
-    agate.Table.scatterplot
+    agate.TableSet.bar_chart
+    agate.TableSet.column_chart
+    agate.TableSet.line_chart
+    agate.TableSet.scatterplot
+
+Table Proxy Methods
+-------------------
+
+.. autosummary::
+    :nosignatures:
+
+    agate.TableSet.bins
+    agate.TableSet.compute
+    agate.TableSet.denormalize
+    agate.TableSet.distinct
+    agate.TableSet.exclude
+    agate.TableSet.find
+    agate.TableSet.group_by
+    agate.TableSet.homogenize
+    agate.TableSet.join
+    agate.TableSet.limit
+    agate.TableSet.normalize
+    agate.TableSet.order_by
+    agate.TableSet.pivot
+    agate.TableSet.select
+    agate.TableSet.where
 
 Detailed list
 -------------

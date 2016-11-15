@@ -7,7 +7,6 @@ from agate.aggregations import Count
 from agate import utils
 
 
-@utils.allow_tableset_proxy
 def pivot(self, key=None, pivot=None, aggregation=None, computation=None, default_value=utils.default, key_name=None):
     """
     Create a new table by grouping the data, aggregating those groups,

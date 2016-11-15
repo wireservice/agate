@@ -4,7 +4,6 @@
 from agate import utils
 
 
-@utils.allow_tableset_proxy
 def distinct(self, key=None):
     """
     Create a new table with only unique rows.

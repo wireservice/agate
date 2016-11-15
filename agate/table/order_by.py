@@ -4,7 +4,6 @@
 from agate import utils
 
 
-@utils.allow_tableset_proxy
 def order_by(self, key, reverse=False):
     """
     Create a new table that is sorted.

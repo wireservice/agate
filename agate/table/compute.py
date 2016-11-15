@@ -5,10 +5,8 @@ from collections import OrderedDict
 from copy import copy
 
 from agate.rows import Row
-from agate import utils
 
 
-@utils.allow_tableset_proxy
 def compute(self, computations, replace=False):
     """
     Create a new table by applying one or more :class:`.Computation` instances

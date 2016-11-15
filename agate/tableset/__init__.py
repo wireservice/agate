@@ -33,29 +33,6 @@ from agate.table import Table
 from agate.utils import Patchable
 
 
-class TableMethodProxy(object):
-    """
-    A proxy for :class:`TableSet` methods that converts them to individual
-    calls on each :class:`.Table` in the set.
-    """
-    def __init__(self, tableset, method_name):
-        self.tableset = tableset
-        self.method_name = method_name
-
-    def __call__(self, *args, **kwargs):
-        tables = []
-
-        for table in self.tableset:
-            tables.append(getattr(table, self.method_name)(*args, **kwargs))
-
-        return TableSet(
-            tables,
-            self.tableset.keys(),
-            key_name=self.tableset.key_name,
-            key_type=self.tableset.key_type
-        )
-
-
 class TableSet(MappedSequence, Patchable):
     """
     An group of named tables with identical column definitions. Supports
@@ -117,23 +94,6 @@ class TableSet(MappedSequence, Patchable):
 
         return structure.getvalue()
 
-    def __getattr__(self, name):
-        """
-        Proxy method access to :class:`Table` methods via instances of
-        :class:`TableMethodProxy` that are created on-demand.
-        """
-        if name in self.__dict__:
-            return self.__dict__[name]
-
-        # Proxy table methods
-        if name in Table.__dict__:
-            if hasattr(Table.__dict__[name], 'allow_tableset_proxy'):
-                return TableMethodProxy(self, name)
-            else:
-                raise AttributeError('Table method "%s" cannot be used as a TableSet method.' % name)
-
-        raise AttributeError
-
     @property
     def key_name(self):
         """
@@ -185,6 +145,20 @@ class TableSet(MappedSequence, Patchable):
 
         return TableSet(tables, keys, key_name, key_type, _is_fork=True)
 
+    def _proxy(self, method_name, *args, **kwargs):
+        """
+        Calls a method on each table in this :class:`.TableSet`.
+        """
+        tables = []
+
+        for key, table in self.items():
+            tables.append(getattr(table, method_name)(*args, **kwargs))
+
+        return self._fork(
+            tables,
+            self.keys()
+        )
+
 
 from agate.tableset.aggregate import aggregate
 from agate.tableset.bar_chart import bar_chart
@@ -195,19 +169,37 @@ from agate.tableset.having import having
 from agate.tableset.line_chart import line_chart
 from agate.tableset.merge import merge
 from agate.tableset.print_structure import print_structure
+from agate.tableset.proxy_methods import bins, compute, denormalize, distinct, \
+    exclude, find, group_by, homogenize, join, limit, normalize, order_by, \
+    pivot, select, where
 from agate.tableset.scatterplot import scatterplot
 from agate.tableset.to_csv import to_csv
 from agate.tableset.to_json import to_json
 
 TableSet.aggregate = aggregate
 TableSet.bar_chart = bar_chart
+TableSet.bins = bins
 TableSet.column_chart = column_chart
+TableSet.compute = compute
+TableSet.denormalize = denormalize
+TableSet.distinct = distinct
+TableSet.exclude = exclude
+TableSet.find = find
 TableSet.from_csv = from_csv
 TableSet.from_json = from_json
+TableSet.group_by = group_by
 TableSet.having = having
+TableSet.homogenize = homogenize
+TableSet.join = join
+TableSet.limit = limit
 TableSet.line_chart = line_chart
 TableSet.merge = merge
+TableSet.normalize = normalize
+TableSet.order_by = order_by
+TableSet.pivot = pivot
 TableSet.print_structure = print_structure
 TableSet.scatterplot = scatterplot
+TableSet.select = select
 TableSet.to_csv = to_csv
 TableSet.to_json = to_json
+TableSet.where = where

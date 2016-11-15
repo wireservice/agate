@@ -12,7 +12,6 @@ from agate.aggregations import Min, Max
 from agate import utils
 
 
-@utils.allow_tableset_proxy
 def bins(self, column_name, count=10, start=None, end=None):
     """
     Generates (approximately) evenly sized bins for the values in a column.

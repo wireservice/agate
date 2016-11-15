@@ -6,7 +6,6 @@ from agate.rows import Row
 from agate import utils
 
 
-@utils.allow_tableset_proxy
 def normalize(self, key, properties, property_column='property', value_column='value', column_types=None):
     """
     Create a new table with columns converted into rows values.

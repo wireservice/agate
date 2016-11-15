@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # pylint: disable=W0212
 
-from agate import utils
 
-
-@utils.allow_tableset_proxy
 def limit(self, start_or_stop=None, stop=None, step=None):
     """
     Create a new table with fewer rows.

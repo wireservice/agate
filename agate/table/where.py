@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # pylint: disable=W0212
 
-from agate import utils
 
-
-@utils.allow_tableset_proxy
 def where(self, test):
     """
     Create a new :class:`.Table` with only those rows that pass a test.

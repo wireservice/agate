@@ -5,10 +5,8 @@ from collections import OrderedDict
 
 from agate.data_types import Text
 from agate.tableset import TableSet
-from agate import utils
 
 
-@utils.allow_tableset_proxy
 def group_by(self, key, key_name=None, key_type=None):
     """
     Create a :class:`.TableSet` with a table for each unique key.

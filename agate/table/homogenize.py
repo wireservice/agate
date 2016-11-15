@@ -5,7 +5,6 @@ from agate.rows import Row
 from agate import utils
 
 
-@utils.allow_tableset_proxy
 def homogenize(self, key, compare_values, default_row=None):
     """
     Fill in missing rows in a series.

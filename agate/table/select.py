@@ -5,7 +5,6 @@ from agate.rows import Row
 from agate import utils
 
 
-@utils.allow_tableset_proxy
 def select(self, key):
     """
     Create a new table with only the specified columns.

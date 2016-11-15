@@ -42,16 +42,6 @@ def memoize(func):
     return wrapper
 
 
-def allow_tableset_proxy(func):
-    """
-    Decorator to flag that a given :class:`.Table` method can be proxied as a
-    :class:`.TableSet` method.
-    """
-    func.allow_tableset_proxy = True
-
-    return func
-
-
 class Patchable(object):
     """
     Adds a monkeypatching extensibility pattern to subclasses.

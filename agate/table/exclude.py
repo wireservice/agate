@@ -4,7 +4,6 @@
 from agate import utils
 
 
-@utils.allow_tableset_proxy
 def exclude(self, key):
     """
     Create a new table without the specified columns.
