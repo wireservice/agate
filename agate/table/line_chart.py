@@ -25,9 +25,19 @@ def line_chart(self, x=0, y=1, path=None, width=None, height=None):
     :param height:
         The height of the output SVG.
     """
+    if type(x) is int:
+        x_name = self.column_names[x]
+    else:
+        x_name = x
+
+    if type(y) is int:
+        y_name = self.column_names[y]
+    else:
+        y_name = y
+
     chart = leather.Chart()
-    chart.add_x_axis(name=x)
-    chart.add_y_axis(name=y)
+    chart.add_x_axis(name=x_name)
+    chart.add_y_axis(name=y_name)
     chart.add_line(self, x=x, y=y)
 
     return chart.to_svg(path=path, width=width, height=height)

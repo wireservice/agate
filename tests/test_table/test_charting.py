@@ -37,6 +37,10 @@ class TestTableCharts(leather.LeatherTestCase):
         self.assertElementCount(svg, '.bars', 1)
         self.assertElementCount(svg, 'rect', 3)
 
+        text2 = self.table.bar_chart(label=2, value=0)
+
+        self.assertEqual(text, text2)
+
     def test_column_chart(self):
         text = self.table.column_chart(label='three', value='one')
         svg = self.parse_svg(text)
@@ -46,6 +50,10 @@ class TestTableCharts(leather.LeatherTestCase):
         self.assertElementCount(svg, '.columns', 1)
         self.assertElementCount(svg, 'rect', 3)
 
+        text2 = self.table.column_chart(label=2, value=0)
+
+        self.assertEqual(text, text2)
+
     def test_line_chart(self):
         text = self.table.line_chart(x='one', y='two')
         svg = self.parse_svg(text)
@@ -53,6 +61,10 @@ class TestTableCharts(leather.LeatherTestCase):
         self.assertElementCount(svg, '.axis', 2)
         self.assertElementCount(svg, '.series', 1)
         self.assertElementCount(svg, 'path', 1)
+
+        text2 = self.table.line_chart(x=0, y=1)
+
+        self.assertEqual(text, text2)
 
     def test_scatterplot(self):
         text = self.table.scatterplot(x='one', y='two')
@@ -62,3 +74,7 @@ class TestTableCharts(leather.LeatherTestCase):
         self.assertElementCount(svg, '.series', 1)
         self.assertElementCount(svg, '.dots', 1)
         self.assertElementCount(svg, 'circle', 2)
+
+        text2 = self.table.scatterplot(x=0, y=1)
+
+        self.assertEqual(text, text2)
