@@ -42,33 +42,6 @@ def memoize(func):
     return wrapper
 
 
-class Patchable(object):
-    """
-    Adds a monkeypatching extensibility pattern to subclasses.
-
-    Calling :code:`Class.monkeypatch(AnotherClass)` will dynamically add
-    :code:`AnotherClass` as a base class of :code:`Class`. This effective is
-    global--even existing instances of the class will have the new methods.
-
-    This can only be used to add new methods. It can not be used to override
-    the implementation of an existing method on the patched class.
-    """
-    @classmethod
-    def monkeypatch(cls, patch_cls):
-        """
-        Dynamically add :code:`patch_cls` as a base class of this class.
-
-        :param patch_cls:
-            The class to be patched on.
-        """
-        warnings.warn('Monkey patching of extensions has been deprecated. It will be removed in a future version. Please upgrade your extensions.', DeprecationWarning)
-
-        if patch_cls in cls.__bases__:
-            return
-
-        cls.__bases__ += (patch_cls, )
-
-
 class NullOrder(object):
     """
     Dummy object used for sorting in place of None.

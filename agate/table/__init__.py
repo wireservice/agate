@@ -37,7 +37,7 @@ from agate.warns import warn_duplicate_column
 
 
 @six.python_2_unicode_compatible
-class Table(utils.Patchable):
+class Table(object):
     """
     A dataset consisting of rows and columns. Columns refer to "vertical" slices
     of data that must all be of the same type. Rows refer to "horizontal" slices

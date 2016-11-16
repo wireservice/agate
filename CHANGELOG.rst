@@ -1,6 +1,13 @@
 1.5.0
 -----
 
+This release adds SVG charting via the `leather <http://leather.rtfd.io>`_ charting library. Fast exploratory charting is now supported for both :class:`.Table` and :class:`.TableSet`. See the revised tutorial and new cookbook entries for examples.
+
+Also in this release is a :class:`.Slugify` computation and a variety of small fixes and improvements.
+
+The complete list of changes is as follows:
+
+* Remove support for monkey-patching of extensions. (#594)
 * :class:`.TableSet` methods which proxy :class:`.Table` methods now appear in the API docs. (#640)
 * :class:`.Any` and :class:`.All` aggregations no longer behave differently for boolean data. (#636)
 * :class:`.Any` and :class:`.All` aggregations now accept a single value as a test argument, in addition to a function.
@@ -12,7 +19,7 @@
 * Added :class:`.First` computation. (#634)
 * :meth:`.Table.print_table` now has a `max_precision` argument to limit Number precision. (#544)
 * Slug computation now accepts an array of column names to merge. (#617)
-* Cookbook: standardize column values with Slugify computation. (#613)
+* Cookbook: standardize column values with :class:`.Slugify` computation. (#613)
 * Cookbook: slugify/standardize row and column names. (#612)
 * Fixed condition that prevents integer row names to allow bools in :meth:`.Table.__init__`. (#627)
 * :class:`.PercentChange` is now null-safe, returns None for null values. (#623)

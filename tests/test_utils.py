@@ -16,77 +16,7 @@ import warnings
 from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
 from agate.table import Table
-from agate.utils import Patchable, Quantiles, round_limits, letter_name
-
-
-class TryPatch(object):
-    def test(self, n):
-        return n
-
-    @classmethod
-    def testcls(cls, n):
-        return n
-
-
-class TryPatchShadow(object):
-    def __init__(self):
-        self.foo = 'foo'
-
-    def column_names(self):
-        return 'foo'
-
-
-class TestMonkeyPatching(unittest.TestCase):
-    def setUp(self):
-        # Workaround for https://bugs.python.org/issue4180
-        if sys.version_info[0] == 2 or sys.version_info[:2] == (3, 3):
-            warnings.simplefilter('always')
-
-    def test_monkeypatch(self):
-        before_table = Table([], ['foo'], [Text()])
-
-        Table.monkeypatch(TryPatch)
-
-        after_table = Table([], ['foo'], [Text()])
-
-        self.assertSequenceEqual(Table.__bases__, [Patchable, TryPatch])
-
-        self.assertIsNotNone(getattr(before_table, 'test'))
-        self.assertIsNotNone(getattr(before_table, 'testcls'))
-
-        self.assertIsNotNone(getattr(after_table, 'test'))
-        self.assertIsNotNone(getattr(after_table, 'testcls'))
-
-        self.assertEqual(before_table.test(5), 5)
-        self.assertEqual(after_table.test(5), 5)
-        self.assertEqual(Table.testcls(5), 5)
-
-    def test_monkeypatch_deprecated(self):
-        with warnings.catch_warnings():
-            warnings.simplefilter('error')
-
-            with self.assertRaises(DeprecationWarning):
-                Table.monkeypatch(TryPatch)
-
-    def test_monkeypatch_shadow(self):
-        before_table = Table([['blah'], ], ['foo'], [Text()])
-
-        Table.monkeypatch(TryPatchShadow)
-
-        after_table = Table([['blah'], ], ['foo'], [Text()])
-
-        self.assertIsInstance(before_table.columns, MappedSequence)
-        self.assertIsInstance(after_table.columns, MappedSequence)
-
-        with self.assertRaises(AttributeError):
-            after_table.foo == 'foo'
-
-    def test_monkeypatch_double(self):
-        Table.monkeypatch(TryPatch)
-        Table.monkeypatch(TryPatch)
-        Table.monkeypatch(TryPatch)
-
-        self.assertSequenceEqual(Table.__bases__, [Patchable, TryPatch])
+from agate.utils import Quantiles, round_limits, letter_name
 
 
 class TestQuantiles(unittest.TestCase):

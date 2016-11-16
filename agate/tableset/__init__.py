@@ -30,10 +30,9 @@ from six.moves import zip_longest
 from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
 from agate.table import Table
-from agate.utils import Patchable
 
 
-class TableSet(MappedSequence, Patchable):
+class TableSet(MappedSequence):
     """
     An group of named tables with identical column definitions. Supports
     (almost) all the same operations as :class:`.Table`. When executed on a
