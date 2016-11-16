@@ -1,9 +1,9 @@
-1.5.0
------
+1.5.0 - November 16, 2016
+-------------------------
 
-This release adds SVG charting via the `leather <http://leather.rtfd.io>`_ charting library. Fast exploratory charting is now supported for both :class:`.Table` and :class:`.TableSet`. See the revised tutorial and new cookbook entries for examples.
+This release adds SVG charting via the `leather <http://leather.rtfd.io>`_ charting library. Charts methods have been added for both :class:`.Table` and :class:`.TableSet`. (The latter create lattice plots.) See the revised tutorial and new cookbook entries for examples. Leather is still an early library. Please `report any bugs <https://github.com/wireservice/agate/issues>`_.
 
-Also in this release is a :class:`.Slugify` computation and a variety of small fixes and improvements.
+Also in this release are a :class:`.Slugify` computation and a variety of small fixes and improvements.
 
 The complete list of changes is as follows:
 
