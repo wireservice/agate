@@ -1,26 +1,26 @@
 #!/usr/bin/env python
 
 """
-The :class:`TableSet` class collects a set of related tables in a single data
-structure. The most common way of creating a :class:`TableSet` is using the
+The :class:`.TableSet` class collects a set of related tables in a single data
+structure. The most common way of creating a :class:`.TableSet` is using the
 :meth:`.Table.group_by` method, which is similar to SQL's ``GROUP BY`` keyword.
 The resulting set of tables will all have identical columns structure.
 
-:class:`TableSet` functions as a dictionary. Individual tables in the set can
+:class:`.TableSet` functions as a dictionary. Individual tables in the set can
 be accessed by using their name as a key. If the table set was created using
 :meth:`.Table.group_by` then the names of the tables will be the grouping
 factors found in the original data.
 
-:class:`TableSet` replicates the majority of the features of :class:`.Table`.
-When methods such as :meth:`TableSet.select`, :meth:`TableSet.where` or
-:meth:`TableSet.order_by` are used, the operation is applied to *each* table
+:class:`.TableSet` replicates the majority of the features of :class:`.Table`.
+When methods such as :meth:`.TableSet.select`, :meth:`.TableSet.where` or
+:meth:`.TableSet.order_by` are used, the operation is applied to *each* table
 in the set and the result is a new :class:`TableSet` instance made up of
 entirely new :class:`.Table` instances.
 
-:class:`TableSet` instances can also contain other TableSet's. This means you
-can chain calls to :meth:`.Table.group_by` and :meth:`TableSet.group_by`
+:class:`.TableSet` instances can also contain other TableSet's. This means you
+can chain calls to :meth:`.Table.group_by` and :meth:`.TableSet.group_by`
 and end up with data grouped across multiple dimensions.
-:meth:`TableSet.aggregate` on nested TableSets will then group across multiple
+:meth:`.TableSet.aggregate` on nested TableSets will then group across multiple
 dimensions.
 """
 
