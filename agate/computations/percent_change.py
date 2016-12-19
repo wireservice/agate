@@ -51,7 +51,7 @@ class PercentChange(Computation):
             before = row[self._before_column_name]
             after = row[self._after_column_name]
 
-            if before and after:
+            if before is not None and after is not None:
                 new_column.append((after - before) / before * 100)
             else:
                 new_column.append(None)
