@@ -1,6 +1,7 @@
 1.5.1
 -----
 
+* Update extensions documentation to match new API. (#645)
 * Fix bug in :class:`.Change` and :class:`.PercentChange` where ``0`` values could cause ``None`` to be returned incorrectly.
 
 1.5.0 - November 16, 2016
