@@ -33,4 +33,9 @@ class MaxLength(Aggregation):
         """
         column = table.columns[self._column_name]
 
-        return Decimal(max([len(d) for d in column.values_without_nulls()]))
+        lens = [len(d) for d in column.values_without_nulls()]
+
+        if not lens:
+            return Decimal('0')
+
+        return Decimal(max(lens))
