@@ -1,6 +1,7 @@
 1.5.1
 -----
 
+* Documented differing behavior of :class:`.MaxLength` under Python 2. (#649)
 * agate is now tested against Python 3.6. (#650)
 * Fix bug when :class:`.MaxLength` was called on an all-null column.
 * Update extensions documentation to match new API. (#645)

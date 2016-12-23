@@ -1,13 +1,17 @@
-#!/usr/bin/env Python
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
 
 import datetime
 from decimal import Decimal
+import platform
 import warnings
 
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
+
+import six
 
 from agate import Table
 from agate.aggregations import *
@@ -605,6 +609,32 @@ class TestTextAggregation(unittest.TestCase):
         table = Table(rows, ['test'], [Text()])
         MaxLength('test').validate(table)
         self.assertEqual(MaxLength('test').run(table), 6)
+        self.assertIsInstance(MaxLength('test').run(table), Decimal)
+
+    def test_max_length_unicode(self):
+        """
+        This text documents different handling of wide-unicode characters in
+        Python 2 and Python 3. The former's behavior is broken, but can not
+        be easily fixed.
+
+        Bug: https://github.com/wireservice/agate/issues/649
+        Reference: http://stackoverflow.com/a/35462951
+        """
+        rows = [
+            ['a'],
+            [u'👍'],
+            ['w']
+        ]
+
+        table = Table(rows, ['test'], [Text()])
+
+        MaxLength('test').validate(table)
+
+        if six.PY2 and platform.python_implementation() != 'PyPy':
+            self.assertEqual(MaxLength('test').run(table), 2)
+        else:
+            self.assertEqual(MaxLength('test').run(table), 1)
+
         self.assertIsInstance(MaxLength('test').run(table), Decimal)
 
     def test_max_length_invalid(self):
