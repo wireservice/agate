@@ -4,6 +4,7 @@
 import datetime
 from decimal import Decimal
 import platform
+import sys
 import warnings
 
 try:
@@ -630,8 +631,10 @@ class TestTextAggregation(unittest.TestCase):
 
         MaxLength('test').validate(table)
 
-        if six.PY2 and platform.python_implementation() != 'PyPy':
+        # Non 4-byte versions of Python 2 (but not PyPy)
+        if sys.maxunicode <= 65535:
             self.assertEqual(MaxLength('test').run(table), 2)
+        # Modern versions of Python
         else:
             self.assertEqual(MaxLength('test').run(table), 1)
 
