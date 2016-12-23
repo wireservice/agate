@@ -1,5 +1,7 @@
-1.5.1
------
+1.5.1 - December 23, 2016
+-------------------------
+
+This is a minor release fixing several small bugs that were blocking a downstream release of csvkit.
 
 * Documented differing behavior of :class:`.MaxLength` under Python 2. (#649)
 * agate is now tested against Python 3.6. (#650)
