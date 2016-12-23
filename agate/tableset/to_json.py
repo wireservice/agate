@@ -58,7 +58,7 @@ def to_json(self, path, nested=False, indent=None, **kwargs):
             json_kwargs['encoding'] = 'utf-8'
 
         json_kwargs.update(kwargs)
-        json.dump(tableset_dict, f, json_kwargs)
+        json.dump(tableset_dict, f, **json_kwargs)
 
         if close and f is not None:
             f.close()
