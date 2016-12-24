@@ -1,5 +1,5 @@
-1.5.2
------
+1.5.2 - December 24, 2016
+-------------------------
 
 * Improved handling of non-ascii encoded CSV files under Python 2.
 
