@@ -3,6 +3,8 @@
 
 import io
 
+import six
+
 from agate import Table
 from agate.testcase import AgateTestCase
 from agate.data_types import *
@@ -55,8 +57,13 @@ class TestFromCSV(AgateTestCase):
     def test_from_csv_file_like_object(self):
         table1 = Table(self.rows, self.column_names, self.column_types)
 
-        with io.open('examples/test.csv', encoding='utf-8') as f:
-            table2 = Table.from_csv(f)
+        if six.PY2:
+            f = open('examples/test.csv', 'rb')
+        else:
+            f = io.open('examples/test.csv', encoding='utf-8')
+
+        table2 = Table.from_csv(f)
+        f.close()
 
         self.assertColumnNames(table2, table1.column_names)
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])

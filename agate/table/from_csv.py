@@ -17,7 +17,8 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
 
     :param path:
         Filepath or file-like object from which to read CSV data. If a file-like
-        object is specified, it must be seekable.
+        object is specified, it must be seekable. If using Python 2, the file
+        should be opened in binary mode (`rb`).
     :param column_names:
         See :meth:`.Table.__init__`.
     :param column_types:
@@ -25,7 +26,8 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
     :param row_names:
         See :meth:`.Table.__init__`.
     :param skip_lines:
-        The number of lines to skip from the top of the file.
+        The number of lines to skip from the top of the file. Note that skip
+        lines will not work with
     :param header:
         If :code:`True`, the first row of the CSV is assumed to contain column
         names. If :code:`header` and :code:`column_names` are both specified
@@ -46,7 +48,11 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
     if hasattr(path, 'read'):
         f = path
     else:
-        f = io.open(path, encoding=encoding)
+        if six.PY2:
+            f = open(path, 'Urb')
+        else:
+            f = io.open(path, encoding=encoding)
+
         close = True
 
     if isinstance(skip_lines, int):
@@ -63,10 +69,10 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
     elif sniff_limit > 0:
         kwargs['dialect'] = csv.Sniffer().sniff(f.read(sniff_limit))
 
-    f.seek(start)
-
     if six.PY2:
-        f = six.StringIO(f.read().encode('utf-8'))
+        kwargs['encoding'] = encoding
+
+    f.seek(start)
 
     reader = csv.reader(f, header=header, **kwargs)
 
