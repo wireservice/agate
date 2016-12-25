@@ -98,7 +98,23 @@ class TestFromCSV(AgateTestCase):
         self.assertColumnNames(table, self.column_names)
         self.assertColumnTypes(table, [Number, Text, Boolean, Date, DateTime, TimeDelta])
 
-    def test_from_csv_sniff_limit(self):
+    def test_from_csv_sniff_limit_0(self):
+        table1 = Table(self.rows, self.column_names, self.column_types)
+        table2 = Table.from_csv('examples/test_csv_sniff.csv', sniff_limit=0)
+
+        self.assertColumnNames(table2, ['number|text|boolean|date|datetime|timedelta'])
+        self.assertColumnTypes(table2, [Text])
+
+    def test_from_csv_sniff_limit_200(self):
+        table1 = Table(self.rows, self.column_names, self.column_types)
+        table2 = Table.from_csv('examples/test_csv_sniff.csv', sniff_limit=200)
+
+        self.assertColumnNames(table2, table1.column_names)
+        self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
+
+        self.assertRows(table2, table1.rows)
+
+    def test_from_csv_sniff_limit_none(self):
         table1 = Table(self.rows, self.column_names, self.column_types)
         table2 = Table.from_csv('examples/test_csv_sniff.csv', sniff_limit=None)
 

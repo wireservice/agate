@@ -62,19 +62,17 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
     else:
         raise ValueError('skip_lines argument must be an int')
 
-    start = f.tell()
+    contents = six.StringIO(f.read())
 
     if sniff_limit is None:
-        kwargs['dialect'] = csv.Sniffer().sniff(f.read())
+        kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue())
     elif sniff_limit > 0:
-        kwargs['dialect'] = csv.Sniffer().sniff(f.read(sniff_limit))
+        kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue()[:sniff_limit])
 
     if six.PY2:
         kwargs['encoding'] = encoding
 
-    f.seek(start)
-
-    reader = csv.reader(f, header=header, **kwargs)
+    reader = csv.reader(contents, header=header, **kwargs)
 
     if header:
         if column_names is None:

@@ -1,7 +1,7 @@
 1.5.3
 -----
 
-
+* :meth:`.Table.from_csv` now buffers input files to prevent issues with using STDIN as an input.
 
 1.5.2 - December 24, 2016
 -------------------------
