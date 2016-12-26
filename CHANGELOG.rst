@@ -1,6 +1,7 @@
 1.5.3
 -----
 
+* :meth:`.Table.join` now supports full outer joins via the ``full_outer`` keyword.
 * :meth:`.Table.join` can now accept column indicies instead of column names.
 * :meth:`.Table.from_csv` now buffers input files to prevent issues with using STDIN as an input.
 
