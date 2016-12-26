@@ -5,35 +5,59 @@ from agate.rows import Row
 from agate import utils
 
 
-def join(self, right_table, left_key, right_key=None, inner=False, full_outer=False, require_match=False, columns=None):
+def join(self, right_table, left_key=None, right_key=None, inner=False, full_outer=False, require_match=False, columns=None):
     """
-    Create a new table by joining two table's on common values.
+    Create a new table by joining two table's on common values. This method
+    implements most varieties of SQL join, in addition to some unique features.
 
-    This method performs the equivalent of SQL's "left outer join", combining
-    columns from this table and from :code:`right_table` anywhere that the
-    :code:`left_key` and :code:`right_key` are equivalent.
+    If :code:`left_key` and :code:`right_key` are both :code:`None` then this
+    method will peform a "sequential join", which is to say it will join on row
+    number. The :code:`inner` and :code:`full_outer` arguments will determine
+    whether dangling left-hand and right-hand rows are included, respectively.
 
-    Where there is no match for :code:`left_key` the left columns will
-    be included with the right columns set to :code:`None` unless
-    the :code:`inner` argument is specified.
+    If :code:`left_key` is specified, then a "left outer join" will be
+    performed. This will combine columns from the :code:`right_table` anywhere
+    that :code:`left_key` and :code:`right_key` are equal. Unmatched rows from
+    the left table will be included with the right-hand columns set to
+    :code:`None`.
 
-    If :code:`left_key` and :code:`right_key` are column names, only
-    the left columns will be included in the output table.
+    If :code:`inner` is :code:`True` then an "inner join" will be performed.
+    Unmatched rows from either table will be left out.
+
+    If :code:`full_outer` is :code:`True` then a "full outer join" will be
+    performed. Unmatched rows from both tables will be included, with the
+    columns in the other table set to :code:`None`.
+
+    In all cases, if :code:`right_key` is :code:`None` then it :code:`left_key`
+    will be used for both tables.
+
+    If :code:`left_key` and :code:`right_key` are column names, the right-hand
+    identifier column will not be included in the output table.
+
+    If :code:`require_match` is :code:`True` unmatched rows will raise an
+    exception. This is like an "inner join" except any row that doesn't have a
+    match will raise an exception instead of being dropped. This is useful for
+    enforcing expectations about datasets that should match.
 
     Column names from the right table which also exist in this table will
     be suffixed "2" in the new table.
+
+    A subset of columns from the right-hand table can be included in the joined
+    table using the :code:`columns` argument.
 
     :param right_table:
         The "right" table to join to.
     :param left_key:
         Either the name of a column from the this table to join on, the index
-        of a column, a sequence of such column identifiers, or a
-        :class:`function` that takes a row and returns a value to join on.
+        of a column, a sequence of such column identifiers, a
+        :class:`function` that takes a row and returns a value to join on, or
+        :code:`None` in which case the tables will be joined on row number.
     :param right_key:
         Either the name of a column from :code:table` to join on, the index of
         a column, a sequence of such column identifiers, or a :class:`function`
         that takes a ow and returns a value to join on. If :code:`None` then
-        :code:`left_key` will be used for both.
+        :code:`left_key` will be used for both. If :code:`left_key` is
+        :code:`None` then this value is ignored.
     :param inner:
         Perform a SQL-style "inner join" instead of a left outer join. Rows
         which have no match for :code:`left_key` will not be included in
@@ -63,8 +87,11 @@ def join(self, right_table, left_key, right_key=None, inner=False, full_outer=Fa
     left_key_is_func = hasattr(left_key, '__call__')
     left_key_is_sequence = utils.issequence(left_key)
 
+    # Left key is None
+    if left_key is None:
+        left_data = tuple(range(len(self._rows)))
     # Left key is a function
-    if left_key_is_func:
+    elif left_key_is_func:
         left_data = [left_key(row) for row in self._rows]
     # Left key is a sequence
     elif left_key_is_sequence:
@@ -77,8 +104,11 @@ def join(self, right_table, left_key, right_key=None, inner=False, full_outer=Fa
     right_key_is_func = hasattr(right_key, '__call__')
     right_key_is_sequence = utils.issequence(right_key)
 
+    # Sequential join
+    if left_key is None:
+        right_data = tuple(range(len(right_table._rows)))
     # Right key is a function
-    if right_key_is_func:
+    elif right_key_is_func:
         right_data = [right_key(row) for row in right_table._rows]
     # Right key is a sequence
     elif right_key_is_sequence:

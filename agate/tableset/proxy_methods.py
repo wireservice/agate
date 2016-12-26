@@ -37,12 +37,6 @@ def find(self, *args, **kwargs):
     """
     return self._proxy('find', *args, **kwargs)
 
-def fuse(self, *args, **kwargs):
-    """
-    Calls :meth:`.Table.fuse` on each table in the TableSet.
-    """
-    return self._proxy('fuse', *args, **kwargs)
-
 def group_by(self, *args, **kwargs):
     """
     Calls :meth:`.Table.group_by` on each table in the TableSet.

@@ -330,7 +330,6 @@ from agate.table.from_csv import from_csv
 from agate.table.from_fixed import from_fixed
 from agate.table.from_json import from_json
 from agate.table.from_object import from_object
-from agate.table.fuse import fuse
 from agate.table.group_by import group_by
 from agate.table.homogenize import homogenize
 from agate.table.join import join
@@ -364,7 +363,6 @@ Table.from_csv = from_csv
 Table.from_fixed = from_fixed
 Table.from_json = from_json
 Table.from_object = from_object
-Table.fuse = fuse
 Table.group_by = group_by
 Table.homogenize = homogenize
 Table.join = join

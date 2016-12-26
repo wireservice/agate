@@ -279,3 +279,50 @@ class TestJoin(AgateTestCase):
             (3, 2, 'c', None, None, None),
             (None, None, None, 4, 2, 'c')
         ])
+
+    def test_join_by_row_number(self):
+        new_table = self.left.join(self.right, full_outer=True)
+
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, self.right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'five', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 1, 4, 'a'),
+            (2, 3, 'b', 2, 3, 'b'),
+            (None, 2, 'c', None, 2, 'c')
+        ])
+
+    def test_join_by_row_number_short_right(self):
+        right_rows = self.right_rows + ((7, 9, 'z'),)
+        right = Table(right_rows, self.right_column_names, self.column_types)
+
+        new_table = self.left.join(right, full_outer=True)
+
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'five', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 1, 4, 'a'),
+            (2, 3, 'b', 2, 3, 'b'),
+            (None, 2, 'c', None, 2, 'c'),
+            (None, None, None, 7, 9, 'z')
+        ])
+
+    def test_join_by_row_number_short_left(self):
+        left_rows = self.left_rows + ((7, 9, 'z'),)
+        left = Table(left_rows, self.left_column_names, self.column_types)
+
+        new_table = left.join(self.right, full_outer=True)
+
+        self.assertIsNot(new_table, left)
+        self.assertIsNot(new_table, self.right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'five', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 1, 4, 'a'),
+            (2, 3, 'b', 2, 3, 'b'),
+            (None, 2, 'c', None, 2, 'c'),
+            (7, 9, 'z', None, None, None)
+        ])
