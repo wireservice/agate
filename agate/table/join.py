@@ -26,13 +26,13 @@ def join(self, right_table, left_key, right_key=None, inner=False, require_match
     :param right_table:
         The "right" table to join to.
     :param left_key:
-        Either the name of a column from the this table to join on, a
-        sequence of such column names, or a :class:`function` that takes a
-        row and returns a value to join on.
+        Either the name of a column from the this table to join on, the index
+        of a column, a sequence of such column identifiers, or a
+        :class:`function` that takes a row and returns a value to join on.
     :param right_key:
-        Either the name of a column from :code:table` to join on, a
-        sequence of such column names, or a :class:`function` that takes a
-        row and returns a value to join on. If :code:`None` then
+        Either the name of a column from :code:table` to join on, the index of
+        a column, a sequence of such column identifiers, or a :class:`function`
+        that takes a ow and returns a value to join on. If :code:`None` then
         :code:`left_key` will be used for both.
     :param inner:
         Perform a SQL-style "inner join" instead of a left outer join. Rows
@@ -83,7 +83,7 @@ def join(self, right_table, left_key, right_key=None, inner=False, require_match
     else:
         right_column = right_table._columns[right_key]
         right_data = right_column.values()
-        right_key_indices = [right_table._columns._keys.index(right_key)]
+        right_key_indices = [right_table._columns.index(right_column)]
 
     # Build names and type lists
     column_names = list(self._column_names)

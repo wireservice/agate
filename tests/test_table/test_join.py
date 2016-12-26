@@ -43,6 +43,19 @@ class TestJoin(AgateTestCase):
             (None, 2, 'c', 2, 'c')
         ])
 
+    def test_join_column_indicies(self):
+        new_table = self.left.join(self.right, 0, 0)
+
+        self.assertIsNot(new_table, self.left)
+        self.assertIsNot(new_table, self.right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'five', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 4, 'a'),
+            (2, 3, 'b', 3, 'b'),
+            (None, 2, 'c', 2, 'c')
+        ])
+
     def test_join_match_multiple(self):
         left_rows = (
             (1, 4, 'a'),
