@@ -1,5 +1,7 @@
-1.5.3
------
+1.5.3 - December 26, 2016
+-------------------------
+
+This is a minor release that adds one feature: sequential joins (by row number). It also fixes several small bugs blocking a downstream release of csvkit.
 
 * Fixed empty :class:`.Table` column names would be intialized as list instead of tuple.
 * :meth:`.Table.join` can now join by row numbers—a sequential join.
