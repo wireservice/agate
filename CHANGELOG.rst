@@ -1,6 +1,7 @@
 1.5.3
 -----
 
+* Fixed empty :class:`.Table` column names would be intialized as list instead of tuple.
 * Added :meth:`.Table.fuse` to join tables sequentially without filtering.
 * :meth:`.Table.join` now supports full outer joins via the ``full_outer`` keyword.
 * :meth:`.Table.join` can now accept column indicies instead of column names.

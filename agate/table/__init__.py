@@ -110,7 +110,7 @@ class Table(object):
             self._column_names = tuple(utils.letter_name(i) for i in range(len(rows[0])))
             warnings.warn('Column names not specified. "%s" will be used as names.' % str(self._column_names), RuntimeWarning, stacklevel=2)
         else:
-            self._column_names = []
+            self._column_names = tuple()
 
         len_column_names = len(self._column_names)
 
