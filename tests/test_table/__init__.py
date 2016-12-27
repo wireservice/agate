@@ -6,6 +6,7 @@ try:
 except ImportError:  # pragma: no cover
     from decimal import Decimal
 
+import platform
 import warnings
 
 import six
@@ -32,7 +33,12 @@ class TestBasic(AgateTestCase):
         self.column_types = [self.number_type, self.number_type, self.text_type]
 
     def test_create_table(self):
-        table = Table(self.rows)
+        warnings.simplefilter('ignore')
+
+        try:
+            table = Table(self.rows)
+        finally:
+            warnings.resetwarnings()
 
         self.assertColumnNames(table, ['a', 'b', 'c'])
         self.assertColumnTypes(table, [Number, Number, Text])
@@ -56,7 +62,13 @@ class TestBasic(AgateTestCase):
 
     def test_create_table_column_types(self):
         column_types = [self.number_type, self.text_type, self.text_type]
-        table = Table(self.rows, column_types=column_types)
+
+        warnings.simplefilter('ignore')
+
+        try:
+            table = Table(self.rows, column_types=column_types)
+        finally:
+            warnings.resetwarnings()
 
         self.assertColumnNames(table, ['a', 'b', 'c'])
         self.assertColumnTypes(table, [Number, Text, Text])
@@ -113,16 +125,30 @@ class TestBasic(AgateTestCase):
     def test_create_table_null_column_names(self):
         column_names = ['one', None, 'three']
 
-        with warnings.catch_warnings():
-            warnings.simplefilter('error')
+        with self.assertWarns(RuntimeWarning):
+            table2 = Table(self.rows, column_names, self.column_types)  # noqa
 
-            with self.assertRaises(RuntimeWarning):
-                table1 = Table(self.rows, column_types=self.column_types)  # noqa
+        warnings.simplefilter('ignore')
 
-            with self.assertRaises(RuntimeWarning):
-                table2 = Table(self.rows, column_names, self.column_types)  # noqa
+        try:
+            table3 = Table(self.rows, column_names, self.column_types)
+        finally:
+            warnings.resetwarnings()
 
-        table3 = Table(self.rows, column_names, self.column_types)
+        self.assertColumnNames(table3, ['one', 'b', 'three'])
+
+    def test_create_table_empty_column_names(self):
+        column_names = ['one', '', 'three']
+
+        with self.assertWarns(RuntimeWarning):
+            table2 = Table(self.rows, column_names, self.column_types)  # noqa
+
+        warnings.simplefilter('ignore')
+
+        try:
+            table3 = Table(self.rows, column_names, self.column_types)
+        finally:
+            warnings.resetwarnings()
 
         self.assertColumnNames(table3, ['one', 'b', 'three'])
 
@@ -135,14 +161,15 @@ class TestBasic(AgateTestCase):
     def test_create_duplicate_column_names(self):
         column_names = ['one', 'two', 'two']
 
-        warnings.simplefilter('error')
-
-        with self.assertRaises(DuplicateColumnWarning):
+        with self.assertWarns(DuplicateColumnWarning):
             table = Table(self.rows, column_names, self.column_types)
 
         warnings.simplefilter('ignore')
 
-        table = Table(self.rows, column_names, self.column_types)
+        try:
+            table = Table(self.rows, column_names, self.column_types)
+        finally:
+            warnings.resetwarnings()
 
         self.assertColumnNames(table, ['one', 'two', 'two_2'])
         self.assertColumnTypes(table, [Number, Number, Text])
@@ -162,7 +189,13 @@ class TestBasic(AgateTestCase):
         )
 
         table = Table(rows, self.column_names, self.column_types)
-        table2 = Table(rows)
+
+        warnings.simplefilter('ignore')
+
+        try:
+            table2 = Table(rows)
+        finally:
+            warnings.resetwarnings()
 
         self.assertColumnNames(table, self.column_names)
         self.assertColumnTypes(table, [Number, Number, Text])
@@ -180,7 +213,12 @@ class TestBasic(AgateTestCase):
         ])
 
     def test_create_table_no_column_names(self):
-        table = Table(self.rows, None, self.column_types)
+        warnings.simplefilter('ignore')
+
+        try:
+            table = Table(self.rows, None, self.column_types)
+        finally:
+            warnings.resetwarnings()
 
         self.assertEqual(len(table.rows), 3)
         self.assertEqual(len(table.columns), 3)
@@ -278,20 +316,35 @@ class TestBasic(AgateTestCase):
             self.assertIn(u'👍', u)
 
     def test_str(self):
-        table = Table(self.rows)
+        warnings.simplefilter('ignore')
+
+        try:
+            table = Table(self.rows)
+        finally:
+            warnings.resetwarnings()
 
         self.assertColumnNames(table, ['a', 'b', 'c'])
         self.assertColumnTypes(table, [Number, Number, Text])
         self.assertRows(table, self.rows)
 
     def test_iter(self):
-        table = Table(self.rows)
+        warnings.simplefilter('ignore')
+
+        try:
+            table = Table(self.rows)
+        finally:
+            warnings.resetwarnings()
 
         for row, table_row, row_row in zip(self.rows, table, table.rows):
             self.assertEqual(row, table_row, row_row)
 
     def test_indexing(self):
-        table = Table(self.rows)
+        warnings.simplefilter('ignore')
+
+        try:
+            table = Table(self.rows)
+        finally:
+            warnings.resetwarnings()
 
         self.assertEqual(table[1], self.rows[1])
         self.assertEqual(table[-1], self.rows[-1])

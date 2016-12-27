@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+import warnings
+
 from agate import Table
 from agate.testcase import AgateTestCase
 from agate.data_types import *
@@ -93,7 +95,13 @@ class TestRename(AgateTestCase):
     def test_rename_slugify_columns_in_place(self):
         column_names = ['Test kož', 'test 2', 'test 2']
 
-        table = Table(self.rows, column_names, self.column_types)
+        warnings.simplefilter('ignore')
+
+        try:
+            table = Table(self.rows, column_names, self.column_types)
+        finally:
+            warnings.resetwarnings()
+
         table2 = table.rename(slug_columns=True)
         table3 = table.rename(slug_columns=True, separator='.')
 

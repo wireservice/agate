@@ -262,33 +262,37 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(Max('two').run(self.table), Decimal('4.1'))
 
     def test_mean(self):
-        warnings.simplefilter('error')
-
-        with self.assertRaises(NullCalculationWarning):
+        with self.assertWarns(NullCalculationWarning):
             Mean('one').validate(self.table)
+
+        Mean('two').validate(self.table)
 
         with self.assertRaises(DataTypeError):
             Mean('three').validate(self.table)
-
-        Mean('two').validate(self.table)
 
         self.assertEqual(Mean('two').run(self.table), Decimal('3.2825'))
 
     def test_mean_with_nulls(self):
         warnings.simplefilter('ignore')
 
-        Mean('one').validate(self.table)
+        try:
+            Mean('one').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         self.assertAlmostEqual(Mean('one').run(self.table), Decimal('2.16666666'))
 
     def test_median(self):
-        warnings.simplefilter('error')
-
-        with self.assertRaises(NullCalculationWarning):
+        with self.assertWarns(NullCalculationWarning):
             Median('one').validate(self.table)
 
-        with self.assertRaises(DataTypeError):
-            Median('three').validate(self.table)
+        warnings.simplefilter('ignore')
+
+        try:
+            with self.assertRaises(DataTypeError):
+                Median('three').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         Median('two').validate(self.table)
 
@@ -296,43 +300,61 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(Median('two').run(self.table), Decimal('3.42'))
 
     def test_mode(self):
-        warnings.simplefilter('error')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
 
-        with self.assertRaises(NullCalculationWarning):
-            Mode('one').validate(self.table)
+            with self.assertRaises(NullCalculationWarning):
+                Mode('one').validate(self.table)
 
-        with self.assertRaises(DataTypeError):
-            Mode('three').validate(self.table)
+            with self.assertRaises(DataTypeError):
+                Mode('three').validate(self.table)
 
-        Mode('two').validate(self.table)
+        warnings.simplefilter('ignore')
+
+        try:
+            Mode('two').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         self.assertIsInstance(Mode('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(Mode('two').run(self.table), Decimal('3.42'))
 
     def test_iqr(self):
-        warnings.simplefilter('error')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
 
-        with self.assertRaises(NullCalculationWarning):
-            IQR('one').validate(self.table)
+            with self.assertRaises(NullCalculationWarning):
+                IQR('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
             IQR('three').validate(self.table)
 
-        IQR('two').validate(self.table)
+        warnings.simplefilter('ignore')
+
+        try:
+            IQR('two').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         self.assertIsInstance(IQR('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(IQR('two').run(self.table), Decimal('0.955'))
 
     def test_variance(self):
-        warnings.simplefilter('error')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
 
-        with self.assertRaises(NullCalculationWarning):
-            Variance('one').validate(self.table)
+            with self.assertRaises(NullCalculationWarning):
+                Variance('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
             Variance('three').validate(self.table)
 
-        Variance('two').validate(self.table)
+        warnings.simplefilter('ignore')
+
+        try:
+            Variance('two').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         self.assertIsInstance(Variance('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(
@@ -341,15 +363,21 @@ class TestNumberAggregation(unittest.TestCase):
         )
 
     def test_population_variance(self):
-        warnings.simplefilter('error')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
 
-        with self.assertRaises(NullCalculationWarning):
-            PopulationVariance('one').validate(self.table)
+            with self.assertRaises(NullCalculationWarning):
+                PopulationVariance('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
             PopulationVariance('three').validate(self.table)
 
-        PopulationVariance('two').validate(self.table)
+        warnings.simplefilter('ignore')
+
+        try:
+            PopulationVariance('two').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         self.assertIsInstance(PopulationVariance('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(
@@ -358,15 +386,21 @@ class TestNumberAggregation(unittest.TestCase):
         )
 
     def test_stdev(self):
-        warnings.simplefilter('error')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
 
-        with self.assertRaises(NullCalculationWarning):
-            StDev('one').validate(self.table)
+            with self.assertRaises(NullCalculationWarning):
+                StDev('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
             StDev('three').validate(self.table)
 
-        StDev('two').validate(self.table)
+        warnings.simplefilter('ignore')
+
+        try:
+            StDev('two').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         self.assertIsInstance(StDev('two').get_aggregate_data_type(self.table), Number)
         self.assertAlmostEqual(
@@ -375,15 +409,21 @@ class TestNumberAggregation(unittest.TestCase):
         )
 
     def test_population_stdev(self):
-        warnings.simplefilter('error')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
 
-        with self.assertRaises(NullCalculationWarning):
-            PopulationStDev('one').validate(self.table)
+            with self.assertRaises(NullCalculationWarning):
+                PopulationStDev('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
             PopulationStDev('three').validate(self.table)
 
-        PopulationStDev('two').validate(self.table)
+        warnings.simplefilter('ignore')
+
+        try:
+            PopulationStDev('two').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         self.assertIsInstance(PopulationStDev('two').get_aggregate_data_type(self.table), Number)
         self.assertAlmostEqual(
@@ -392,29 +432,41 @@ class TestNumberAggregation(unittest.TestCase):
         )
 
     def test_mad(self):
-        warnings.simplefilter('error')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
 
-        with self.assertRaises(NullCalculationWarning):
-            MAD('one').validate(self.table)
+            with self.assertRaises(NullCalculationWarning):
+                MAD('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
             MAD('three').validate(self.table)
 
-        MAD('two').validate(self.table)
+        warnings.simplefilter('ignore')
+
+        try:
+            MAD('two').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         self.assertIsInstance(MAD('two').get_aggregate_data_type(self.table), Number)
         self.assertAlmostEqual(MAD('two').run(self.table), Decimal('0'))
 
     def test_percentiles(self):
-        warnings.simplefilter('error')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
 
-        with self.assertRaises(NullCalculationWarning):
-            Percentiles('one').validate(self.table)
+            with self.assertRaises(NullCalculationWarning):
+                Percentiles('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
             Percentiles('three').validate(self.table)
 
-        Percentiles('two').validate(self.table)
+        warnings.simplefilter('ignore')
+
+        try:
+            Percentiles('two').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         rows = [(n,) for n in range(1, 1001)]
 
@@ -451,15 +503,21 @@ class TestNumberAggregation(unittest.TestCase):
         CDF quartile tests from:
         http://www.amstat.org/publications/jse/v14n3/langford.html#Parzen1979
         """
-        warnings.simplefilter('error')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
 
-        with self.assertRaises(NullCalculationWarning):
-            Quartiles('one').validate(self.table)
+            with self.assertRaises(NullCalculationWarning):
+                Quartiles('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
             Quartiles('three').validate(self.table)
 
-        Quartiles('two').validate(self.table)
+        warnings.simplefilter('ignore')
+
+        try:
+            Quartiles('two').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         # N = 4
         rows = [(n,) for n in [1, 2, 3, 4]]
@@ -565,15 +623,21 @@ class TestNumberAggregation(unittest.TestCase):
             quartiles.locate(11)
 
     def test_quintiles(self):
-        warnings.simplefilter('error')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
 
-        with self.assertRaises(NullCalculationWarning):
-            Quintiles('one').validate(self.table)
+            with self.assertRaises(NullCalculationWarning):
+                Quintiles('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
             Quintiles('three').validate(self.table)
 
-        Quintiles('two').validate(self.table)
+        warnings.simplefilter('ignore')
+
+        try:
+            Quintiles('two').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         rows = [(n,) for n in range(1, 1001)]
 
@@ -582,15 +646,21 @@ class TestNumberAggregation(unittest.TestCase):
         quintiles = Quintiles('ints').run(table)  # noqa
 
     def test_deciles(self):
-        warnings.simplefilter('error')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
 
-        with self.assertRaises(NullCalculationWarning):
-            Deciles('one').validate(self.table)
+            with self.assertRaises(NullCalculationWarning):
+                Deciles('one').validate(self.table)
 
         with self.assertRaises(DataTypeError):
             Deciles('three').validate(self.table)
 
-        Deciles('two').validate(self.table)
+        warnings.simplefilter('ignore')
+
+        try:
+            Deciles('two').validate(self.table)
+        finally:
+            warnings.resetwarnings()
 
         rows = [(n,) for n in range(1, 1001)]
 

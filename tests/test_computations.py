@@ -115,23 +115,24 @@ class TestTableComputation(unittest.TestCase):
             ])
 
     def test_change_nulls(self):
-        warnings.simplefilter('error')
-
-        with self.assertRaises(NullCalculationWarning):
+        with self.assertWarns(NullCalculationWarning):
             new_table = self.table.compute([
                 ('test', Change('three', 'four'))
             ])
 
-        with self.assertRaises(NullCalculationWarning):
+        with self.assertWarns(NullCalculationWarning):
             new_table = self.table.compute([
                 ('test', Change('four', 'three'))
             ])
 
         warnings.simplefilter('ignore')
 
-        new_table = self.table.compute([
-            ('test', Change('three', 'four'))
-        ])
+        try:
+            new_table = self.table.compute([
+                ('test', Change('three', 'four'))
+            ])
+        finally:
+            warnings.resetwarnings()
 
         self.assertIsNot(new_table, self.table)
         self.assertEqual(len(new_table.rows), 4)
@@ -209,9 +210,14 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('0.0'))
 
     def test_percent_nulls(self):
-        new_table = self.table.compute([
-            ('test', Percent('four'))
-        ])
+        warnings.simplefilter('ignore')
+
+        try:
+            new_table = self.table.compute([
+                ('test', Percent('four'))
+            ])
+        finally:
+            warnings.resetwarnings()
 
         def to_one_place(d):
             return d.quantize(Decimal('0.1'))
@@ -254,23 +260,24 @@ class TestTableComputation(unittest.TestCase):
             ])
 
     def test_percent_change_nulls(self):
-        warnings.simplefilter('error')
-
-        with self.assertRaises(NullCalculationWarning):
+        with self.assertWarns(NullCalculationWarning):
             new_table = self.table.compute([
                 ('test', PercentChange('three', 'four'))
             ])
 
-        with self.assertRaises(NullCalculationWarning):
+        with self.assertWarns(NullCalculationWarning):
             new_table = self.table.compute([
                 ('test', PercentChange('four', 'three'))
             ])
 
         warnings.simplefilter('ignore')
 
-        new_table = self.table.compute([
-            ('test', PercentChange('three', 'four'))
-        ])
+        try:
+            new_table = self.table.compute([
+                ('test', PercentChange('three', 'four'))
+            ])
+        finally:
+            warnings.resetwarnings()
 
         self.assertIsNot(new_table, self.table)
         self.assertEqual(len(new_table.rows), 4)

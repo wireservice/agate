@@ -1,7 +1,8 @@
 1.5.4
 -----
 
-
+* Cleaned up handling of warnings in tests.
+* Blank column names are not treated as unspecified (letter names will be generated).
 
 1.5.3 - December 26, 2016
 -------------------------

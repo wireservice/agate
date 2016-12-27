@@ -2,6 +2,7 @@
 # -*- coding: utf8 -*-
 
 import io
+import warnings
 
 import six
 
@@ -87,7 +88,12 @@ class TestFromCSV(AgateTestCase):
         self.assertColumnTypes(table, [Text, Text, Text, Text, Text, Text])
 
     def test_from_csv_no_header(self):
-        table = Table.from_csv('examples/test_no_header.csv', header=False)
+        warnings.simplefilter('ignore')
+
+        try:
+            table = Table.from_csv('examples/test_no_header.csv', header=False)
+        finally:
+            warnings.resetwarnings()
 
         self.assertColumnNames(table, ['a', 'b', 'c', 'd', 'e', 'f'])
         self.assertColumnTypes(table, [Number, Text, Boolean, Date, DateTime, TimeDelta])
@@ -124,8 +130,13 @@ class TestFromCSV(AgateTestCase):
         self.assertRows(table2, table1.rows)
 
     def test_from_csv_skip_lines(self):
-        table1 = Table(self.rows[1:], column_types=self.column_types)
-        table2 = Table.from_csv('examples/test.csv', header=False, skip_lines=2)
+        warnings.simplefilter('ignore')
+
+        try:
+            table1 = Table(self.rows[1:], column_types=self.column_types)
+            table2 = Table.from_csv('examples/test.csv', header=False, skip_lines=2)
+        finally:
+            warnings.resetwarnings()
 
         self.assertColumnNames(table2, table1.column_names)
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
@@ -133,8 +144,13 @@ class TestFromCSV(AgateTestCase):
         self.assertRows(table2, table1.rows)
 
     def test_from_csv_skip_lines_crlf(self):
-        table1 = Table(self.rows[1:], column_types=self.column_types)
-        table2 = Table.from_csv('examples/test_crlf.csv', header=False, skip_lines=2)
+        warnings.simplefilter('ignore')
+
+        try:
+            table1 = Table(self.rows[1:], column_types=self.column_types)
+            table2 = Table.from_csv('examples/test_crlf.csv', header=False, skip_lines=2)
+        finally:
+            warnings.resetwarnings()
 
         self.assertColumnNames(table2, table1.column_names)
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
@@ -142,8 +158,13 @@ class TestFromCSV(AgateTestCase):
         self.assertRows(table2, table1.rows)
 
     def test_from_csv_skip_lines_cr(self):
-        table1 = Table(self.rows[1:], column_types=self.column_types)
-        table2 = Table.from_csv('examples/test_cr.csv', header=False, skip_lines=2)
+        warnings.simplefilter('ignore')
+
+        try:
+            table1 = Table(self.rows[1:], column_types=self.column_types)
+            table2 = Table.from_csv('examples/test_cr.csv', header=False, skip_lines=2)
+        finally:
+            warnings.resetwarnings()
 
         self.assertColumnNames(table2, table1.column_names)
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
