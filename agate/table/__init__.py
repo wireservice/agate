@@ -87,7 +87,6 @@ class Table(object):
             for i, column_name in enumerate(column_names):
                 if not column_name:
                     new_column_name = utils.letter_name(i)
-                    print('not column_name', new_column_name)
                     warnings.warn('Column name not specified. "%s" will be used as name.' % new_column_name, RuntimeWarning)
                 elif isinstance(column_name, six.string_types):
                     new_column_name = column_name
@@ -109,7 +108,6 @@ class Table(object):
             self._column_names = tuple(final_column_names)
         elif rows:
             self._column_names = tuple(utils.letter_name(i) for i in range(len(rows[0])))
-            print('not specified')
             warnings.warn('Column names not specified. "%s" will be used as names.' % str(self._column_names), RuntimeWarning, stacklevel=2)
         else:
             self._column_names = tuple()

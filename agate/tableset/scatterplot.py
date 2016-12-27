@@ -35,8 +35,6 @@ def scatterplot(self, x=0, y=1, path=None, width=None, height=None):
     else:
         y_name = y
 
-    print(x, y, x_name, y_name)
-
     chart = leather.Lattice(shape=leather.Dots())
     chart.add_x_axis(name=x_name)
     chart.add_y_axis(name=y_name)
