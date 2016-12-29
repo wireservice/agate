@@ -39,6 +39,8 @@ class TestText(unittest.TestCase):
         self.assertEqual(self.type.test('4:10'), True)
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), True)
         self.assertEqual(self.type.test('a'), True)
+        self.assertEqual(self.type.test('A\nB'), True)
+        self.assertEqual(self.type.test(u'👍'), True)
 
     def test_cast(self):
         values = ('a', 1, None, Decimal('2.7'), 'n/a', u'👍')
@@ -82,6 +84,8 @@ class TestBoolean(unittest.TestCase):
         self.assertEqual(self.type.test('4:10'), False)
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
         self.assertEqual(self.type.test('a'), False)
+        self.assertEqual(self.type.test('A\nB'), False)
+        self.assertEqual(self.type.test(u'👍'), False)
 
     def test_cast(self):
         values = (True, 'yes', None, False, 'no', 'n/a', '1', 0)
@@ -124,6 +128,8 @@ class TestNumber(unittest.TestCase):
         self.assertEqual(self.type.test('4:10'), False)
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
         self.assertEqual(self.type.test('a'), False)
+        self.assertEqual(self.type.test('A\nB'), False)
+        self.assertEqual(self.type.test(u'👍'), False)
 
     def test_cast(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a', '2.7', '200,000,000')
@@ -179,6 +185,8 @@ class TestDate(unittest.TestCase):
         self.assertEqual(self.type.test('4:10'), False)
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
         self.assertEqual(self.type.test('a'), False)
+        self.assertEqual(self.type.test('A\nB'), False)
+        self.assertEqual(self.type.test(u'👍'), False)
 
     def test_test_format(self):
         date_type = Date(date_format='%m-%d-%Y')
@@ -250,6 +258,8 @@ class TestDateTime(unittest.TestCase):
         self.assertEqual(self.type.test('4:10'), False)
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
         self.assertEqual(self.type.test('a'), False)
+        self.assertEqual(self.type.test('A\nB'), False)
+        self.assertEqual(self.type.test(u'👍'), False)
 
     def test_test_format(self):
         datetime_type = DateTime(datetime_format='%m-%d-%Y %I:%M %p')
@@ -338,6 +348,8 @@ class TestTimeDelta(unittest.TestCase):
         self.assertEqual(self.type.test('4:10'), True)
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), True)
         self.assertEqual(self.type.test('a'), False)
+        self.assertEqual(self.type.test('A\nB'), False)
+        self.assertEqual(self.type.test(u'👍'), False)
 
     def test_cast_parser(self):
         values = ('4:10', '1.2m', '172 hours', '5 weeks, 2 days', 'n/a')

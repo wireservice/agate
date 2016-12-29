@@ -32,7 +32,10 @@ class TimeDelta(DataType):
         else:
             raise CastError('Can not parse value "%s" as timedelta.' % d)
 
-        seconds = pytimeparse.parse(d)
+        try:
+            seconds = pytimeparse.parse(d)
+        except AttributeError:
+            seconds = None
 
         if seconds is None:
             raise CastError('Can not parse value "%s" to as timedelta.' % d)
