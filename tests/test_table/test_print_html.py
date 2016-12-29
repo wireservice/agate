@@ -16,11 +16,12 @@ class TableHTMLParser(html_parser.HTMLParser):
     Parser for use in testing HTML rendering of tables.
     """
     def __init__(self):
-        with warnings.catch_warnings():
-            # Silence deprecation warning
-            warnings.simplefilter('ignore')
+        warnings.simplefilter('ignore')
 
+        try:
             html_parser.HTMLParser.__init__(self)
+        finally:
+            warnings.resetwarnings()
 
         self.has_table = False
         self.has_thead = False

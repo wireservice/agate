@@ -93,7 +93,7 @@ class TestRename(AgateTestCase):
         self.assertRowNames(table3, ['test.koz', 'test.2', 'test.2.1'])
 
     def test_rename_slugify_columns_in_place(self):
-        column_names = ['Test kož', 'test 2', 'test 2']
+        column_names = [u'Test kož', 'test 2', 'test 2']
 
         warnings.simplefilter('ignore')
 
@@ -105,7 +105,7 @@ class TestRename(AgateTestCase):
         table2 = table.rename(slug_columns=True)
         table3 = table.rename(slug_columns=True, separator='.')
 
-        self.assertColumnNames(table, ['Test kož', 'test 2', 'test 2_2'])
+        self.assertColumnNames(table, [u'Test kož', 'test 2', 'test 2_2'])
         self.assertColumnNames(table2, ['test-koz', 'test-2', 'test-2-2'])
         self.assertColumnNames(table3, ['test.koz', 'test.2', 'test.2.2'])
 
