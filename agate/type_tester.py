@@ -6,6 +6,7 @@ from agate.data_types.boolean import Boolean
 from agate.data_types.date import Date
 from agate.data_types.date_time import DateTime
 from agate.data_types.number import Number
+from agate.data_types.null import Null
 from agate.data_types.text import Text
 from agate.data_types.time_delta import TimeDelta
 
@@ -25,9 +26,10 @@ class TypeTester(object):
 
     By default, data types will be tested against each column in this order:
 
-    1. :class:`.Boolean`
-    2. :class:`.Number`
-    3. :class:`.TimeDelta`
+    1. :class:`.Null`
+    2. :class:`.Boolean`
+    3. :class:`.Number`
+    #. :class:`.TimeDelta`
     #. :class:`.Date`
     #. :class:`.DateTime`
     #. :class:`.Text`
@@ -62,6 +64,7 @@ class TypeTester(object):
         else:
             # In order of preference
             self._possible_types = [
+                Null(),
                 Boolean(),
                 Number(),
                 TimeDelta(),

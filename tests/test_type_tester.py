@@ -80,6 +80,17 @@ class TestTypeTester(unittest.TestCase):
 
         self.assertIsInstance(inferred[0], Boolean)
 
+    def test_null_type(self):
+        rows = [
+            ('',),
+            (None,),
+            ('',)
+        ]
+
+        inferred = self.tester.run(rows, ['one'])
+
+        self.assertIsInstance(inferred[0], Null)
+
     def test_date_type(self):
         rows = [
             ('5/7/1984',),

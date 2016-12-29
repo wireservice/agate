@@ -179,6 +179,49 @@ class TestNumber(unittest.TestCase):
             self.type.cast('quack')
 
 
+class TestNull(unittest.TestCase):
+    def setUp(self):
+        self.type = Null()
+
+    def test_test(self):
+        self.assertEqual(self.type.test(None), True)
+        self.assertEqual(self.type.test('N/A'), True)
+        self.assertEqual(self.type.test(True), False)
+        self.assertEqual(self.type.test('True'), False)
+        self.assertEqual(self.type.test('1'), False)
+        self.assertEqual(self.type.test(1), False)
+        self.assertEqual(self.type.test(Decimal('1')), False)
+        self.assertEqual(self.type.test('0'), False)
+        self.assertEqual(self.type.test(0), False)
+        self.assertEqual(self.type.test(Decimal('0')), False)
+        self.assertEqual(self.type.test('2.7'), False)
+        self.assertEqual(self.type.test(2.7), False)
+        self.assertEqual(self.type.test('3/1/1994'), False)
+        self.assertEqual(self.type.test(datetime.date(1994, 3, 1)), False)
+        self.assertEqual(self.type.test('3/1/1994 12:30 PM'), False)
+        self.assertEqual(self.type.test('2015-01-01 02:34'), False)
+        self.assertEqual(self.type.test(datetime.datetime(1994, 3, 1, 12, 30)), False)
+        self.assertEqual(self.type.test('4:10'), False)
+        self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
+        self.assertEqual(self.type.test('a'), False)
+        self.assertEqual(self.type.test('A\nB'), False)
+        self.assertEqual(self.type.test(u'👍'), False)
+        self.assertEqual(self.type.test('05_leslie3d_base'), False)
+        self.assertEqual(self.type.test('2016-12-29'), False)
+        self.assertEqual(self.type.test('2016-12-29T11:43:30Z'), False)
+        self.assertEqual(self.type.test('2016-12-29T11:43:30+06:00'), False)
+        self.assertEqual(self.type.test('2016-12-29T11:43:30-06:00'), False)
+
+    def test_cast(self):
+        values = (None, '', '.', 'n/a')
+        casted = tuple(self.type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (None, None, None, None))
+
+    def test_cast_error(self):
+        with self.assertRaises(CastError):
+            self.type.cast('quack')
+
+
 class TestDate(unittest.TestCase):
     def setUp(self):
         self.type = Date()

@@ -14,6 +14,7 @@ from agate.data_types.boolean import Boolean, DEFAULT_TRUE_VALUES, DEFAULT_FALSE
 from agate.data_types.date import Date  # noqa
 from agate.data_types.date_time import DateTime  # noqa
 from agate.data_types.number import Number  # noqa
+from agate.data_types.null import Null  # noqa
 from agate.data_types.text import Text  # noqa
 from agate.data_types.time_delta import TimeDelta  # noqa
 from agate.exceptions import CastError  # noqa
