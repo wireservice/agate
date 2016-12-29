@@ -106,6 +106,21 @@ agate:
 
     joined = patients.join(doctors, 'doctor', 'id')
 
+FULL OUTER JOIN
+===============
+
+SQL:
+
+.. code-block:: postgres
+
+    SELECT * FROM patient FULL OUTER JOIN doctor ON (patient.doctor = doctor.id);
+
+agate:
+
+.. code-block:: python
+
+    joined = patients.join(doctors, 'doctor', 'id', full_outer=True)
+
 GROUP BY
 ========
 
