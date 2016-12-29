@@ -33,7 +33,7 @@ from agate.rows import Row
 from agate.type_tester import TypeTester
 from agate import utils
 from agate.exceptions import CastError
-from agate.warns import warn_duplicate_column
+from agate.warns import warn_duplicate_column, warn_unnamed_column
 
 
 @six.python_2_unicode_compatible
@@ -87,7 +87,7 @@ class Table(object):
             for i, column_name in enumerate(column_names):
                 if not column_name:
                     new_column_name = utils.letter_name(i)
-                    warnings.warn('Column name not specified. "%s" will be used as name.' % new_column_name, RuntimeWarning)
+                    warn_unnamed_column(i, new_column_name)
                 elif isinstance(column_name, six.string_types):
                     new_column_name = column_name
                 else:

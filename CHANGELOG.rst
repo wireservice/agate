@@ -1,6 +1,7 @@
 1.5.5
 -----
 
+* Warnings are now more explicit when column names are missing. (#652)
 * :meth:`.Date.cast` will no longer parse strings like :code:`05_leslie3d_base` as dates. (#653)
 * :meth:`.Text.cast` will no longer strip leading or trailing whitespace. (#654)
 * Fixed :code:`'NoneType' object has no attribute 'groupdict'` error in :meth:`.TimeDelta.cast`. (#656)

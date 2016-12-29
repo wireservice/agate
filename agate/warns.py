@@ -32,3 +32,18 @@ def warn_duplicate_column(column_name, column_rename):
         column_name,
         column_rename
     ), DuplicateColumnWarning, stacklevel=2)
+
+
+class UnnamedColumnWarning(RuntimeWarning):  # pragma: no cover
+    """
+    Warning raised when a column has no name and an a programmatically generated
+    name is used.
+    """
+    pass
+
+
+def warn_unnamed_column(column_id, new_column_name):
+    warnings.warn('Column %i has no name. Using "%s".' % (
+        column_id,
+        new_column_name
+    ), UnnamedColumnWarning, stacklevel=2)

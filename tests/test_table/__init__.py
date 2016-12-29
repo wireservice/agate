@@ -238,6 +238,13 @@ class TestBasic(AgateTestCase):
         with self.assertRaises(KeyError):
             table.columns['']
 
+    def test_no_column_name_warning(self):
+        with self.assertWarnsRegex(RuntimeWarning, 'Column 1 has no name. Using "b".'):
+            Table(self.rows, ['a', None, 'c'], self.column_types)
+
+        with self.assertWarnsRegex(RuntimeWarning, 'Column 1 has no name. Using "b".'):
+            Table(self.rows, ['a', '', 'c'], self.column_types)
+
     def test_row_too_long(self):
         rows = (
             (1, 4, 'a', 'foo'),
