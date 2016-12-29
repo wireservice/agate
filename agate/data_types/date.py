@@ -77,16 +77,6 @@ class Date(DataType):
         if ctx.hasDate and not ctx.hasTime:
             return value.date()
 
-        try:
-            dt = isodate.parse_date(d)
-
-            if ctx.hasTime:
-                raise ValueError('isodate.parse_date discarded a time component')
-
-            return dt
-        except (isodate.ISO8601Error, ValueError):
-            pass
-
         raise CastError('Can not parse value "%s" as date.' % d)
 
     def csvify(self, d):
