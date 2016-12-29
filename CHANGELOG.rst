@@ -1,7 +1,8 @@
 1.5.5
 -----
 
-* Fixed :code:`'NoneType' object has no attribute 'groupdict'` in :meth:`.TimeDelta.cast`. (#656)
+* :meth:`.Text.cast` will no longer strip leading or trailing whitespace. (#654)
+* Fixed :code:`'NoneType' object has no attribute 'groupdict'` error in :meth:`.TimeDelta.cast`. (#656)
 
 1.5.4 - December 27, 2016
 -------------------------

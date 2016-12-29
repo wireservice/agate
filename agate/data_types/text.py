@@ -30,9 +30,7 @@ class Text(DataType):
         if d is None:
             return d
         elif isinstance(d, six.string_types):
-            d = d.strip()
-
-            if self.cast_nulls and d.lower() in self.null_values:
+            if self.cast_nulls and d.strip().lower() in self.null_values:
                 return None
 
         return six.text_type(d)

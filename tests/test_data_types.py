@@ -43,9 +43,9 @@ class TestText(unittest.TestCase):
         self.assertEqual(self.type.test(u'👍'), True)
 
     def test_cast(self):
-        values = ('a', 1, None, Decimal('2.7'), 'n/a', u'👍')
+        values = ('a', 1, None, Decimal('2.7'), 'n/a', u'👍', ' foo', 'foo ')
         casted = tuple(self.type.cast(v) for v in values)
-        self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None, u'👍'))
+        self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None, u'👍', ' foo', 'foo '))
 
     def test_no_cast_nulls(self):
         values = ('', 'N/A', None)
