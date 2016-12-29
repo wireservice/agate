@@ -1,5 +1,5 @@
-1.5.5
------
+1.5.5 - December 29, 2016
+-------------------------
 
 * Added a "full outer join" example to the SQL section of the cookbook. (#658)
 * Warnings are now more explicit when column names are missing. (#652)
