@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+import warnings
+
 import six
 from six.moves import html_parser
 
@@ -13,8 +15,12 @@ class TableHTMLParser(html_parser.HTMLParser):
     """
     Parser for use in testing HTML rendering of tables.
     """
-    def __init__(self, *args, **kwargs):
-        html_parser.HTMLParser.__init__(self, *args, **kwargs)
+    def __init__(self):
+        with warnings.catch_warnings():
+            # Silence deprecation warning
+            warnings.simplefilter('ignore')
+
+            html_parser.HTMLParser.__init__(self)
 
         self.has_table = False
         self.has_thead = False
