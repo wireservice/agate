@@ -34,8 +34,6 @@ def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
     if newline and indent is not None:
         raise ValueError('newline and indent may not be specified together.')
 
-    key_is_row_function = hasattr(key, '__call__')
-
     json_kwargs = {
         'ensure_ascii': False,
         'indent': indent
@@ -72,19 +70,7 @@ def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
 
         # Keyed
         if key is not None:
-            output = OrderedDict()
-
-            for row in self._rows:
-                if key_is_row_function:
-                    k = key(row)
-                else:
-                    k = row[key]
-
-                if k in output:
-                    raise ValueError('Value %s is not unique in the key column.' % six.text_type(k))
-
-                values = tuple(json_funcs[i](d) for i, d in enumerate(row))
-                output[k] = OrderedDict(zip(row.keys(), values))
+            output = self.to_dict(key, column_funcs=json_funcs)
             dump_json(output)
         # Newline-delimited
         elif newline:
