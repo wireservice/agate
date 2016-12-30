@@ -347,6 +347,7 @@ from agate.table.rename import rename
 from agate.table.scatterplot import scatterplot
 from agate.table.select import select
 from agate.table.to_csv import to_csv
+from agate.table.to_dict import to_dict
 from agate.table.to_json import to_json
 from agate.table.where import where
 
@@ -380,5 +381,6 @@ Table.rename = rename
 Table.scatterplot = scatterplot
 Table.select = select
 Table.to_csv = to_csv
+Table.to_dict = to_dict
 Table.to_json = to_json
 Table.where = where
