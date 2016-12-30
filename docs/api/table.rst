@@ -40,6 +40,7 @@ Saving
     :nosignatures:
 
     agate.Table.to_csv
+    agate.Table.to_dict
     agate.Table.to_json
 
 Basic processing
