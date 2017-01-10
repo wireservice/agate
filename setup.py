@@ -3,7 +3,7 @@
 from setuptools import setup
 
 install_requires = [
-    'six>=1.6.1',
+    'six>=1.9.0',
     'pytimeparse>=1.1.5',
     'parsedatetime>=2.1',
     'Babel>=2.0',
