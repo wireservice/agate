@@ -10,7 +10,8 @@ from collections import OrderedDict, Sequence
 from functools import wraps
 import string
 import warnings
-from slugify import Slugify, UniqueSlugify
+from slugify import slugify as pslugify
+from warns import warn_duplicate_column, warn_unnamed_column
 
 try:
     from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING, getcontext
@@ -252,22 +253,51 @@ def issequence(obj):
     return isinstance(obj, Sequence) and not isinstance(obj, six.string_types)
 
 
+def deduplicate(values):
+    """
+    Append a unique identifer to duplicate strings in a given sequence of
+    strings. Identifers are an underscore followed by the occurance number of
+    the specific string.
+
+    ['abc', 'abc', 'cde', 'abc'] -> ['abc', 'abc_2', 'cde', 'abc_3']
+    """
+    final_values = []
+
+    for i, value in enumerate(values):
+        if not value:
+            new_value = letter_name(i)
+            warn_unnamed_column(i, new_value)
+        elif isinstance(value, six.string_types):
+            new_value = value
+        else:
+            raise ValueError('Column names must be strings or None.')
+
+        final_value = new_value
+        duplicates = 0
+
+        while final_value in final_values:
+            final_value = new_value + '_' + str(duplicates + 2)
+            duplicates += 1
+
+        if duplicates > 0:
+            warn_duplicate_column(new_value, final_value)
+
+        final_values.append(final_value)
+
+    return tuple(final_values)
+
+
 def slugify(values, ensure_unique=False, **kwargs):
     """
     Given a sequence of strings, returns a standardized version of the sequence.
     If ``ensure_unique`` is True, any duplicate strings will be appended with
-    a unique identifier. Any kwargs will be passed to the Slugify or
-    UniqueSlugify class constructor
+    a unique identifier.
 
-    See: https://github.com/dimka665/awesome-slugify
+    Any kwargs will be passed to the slugify method in python-slugify. See:
+    https://github.com/un33k/python-slugify
     """
-    # Default to all lowercase
-    slug_args = {'to_lower': True}
-    slug_args.update(kwargs)
-
     if ensure_unique:
-        custom_slugify = UniqueSlugify(**slug_args)
+        new_values = tuple(pslugify(value, **kwargs) for value in values)
+        return deduplicate(new_values)
     else:
-        custom_slugify = Slugify(**slug_args)
-
-    return tuple(custom_slugify(value) for value in values)
+        return tuple(pslugify(value, **kwargs) for value in values)

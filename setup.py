@@ -8,7 +8,7 @@ install_requires = [
     'parsedatetime>=2.1',
     'Babel>=2.0',
     'isodate>=0.5.4',
-    'awesome-slugify>=1.6.5',
+    'python-slugify>=1.2.1',
     'leather>=0.3.2'
 ]
 

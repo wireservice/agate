@@ -400,7 +400,7 @@ class TestTableComputation(unittest.TestCase):
             ('He11O W0rld', 3),
             ('HellO WOrld ', 3)
         )
-        expected = ['hello-world', 'ab-c-e', 'he11o-w0rld', 'hello-world-1']
+        expected = ['hello-world', 'ab-c-e', 'he11o-w0rld', 'hello-world_2']
 
         table = Table(rows, ['one', 'two'], [self.text_type, self.number_type]).compute([
             ('slugs', Slug('one', ensure_unique=True))
