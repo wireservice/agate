@@ -11,7 +11,7 @@ from functools import wraps
 import string
 import warnings
 from slugify import slugify as pslugify
-from warns import warn_duplicate_column, warn_unnamed_column
+from agate.warns import warn_duplicate_column, warn_unnamed_column
 
 try:
     from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING, getcontext
