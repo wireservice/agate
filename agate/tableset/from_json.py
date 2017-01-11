@@ -12,7 +12,7 @@ from agate.table import Table
 
 
 @classmethod
-def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwargs):
+def from_json(cls, path, column_names=None, column_types=None, keys=None, suffix='.json', **kwargs):
     """
     Create a new :class:`TableSet` from a directory of JSON files or a
     single JSON object with key value (Table key and list of row objects)
@@ -37,13 +37,13 @@ def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwar
     tables = OrderedDict()
 
     if isinstance(path, six.string_types) and os.path.isdir(path):
-        filepaths = glob(os.path.join(path, '*.json'))
+        filepaths = glob(os.path.join(path, '*%s'% suffix))
 
         if keys is not None and len(keys) != len(filepaths):
             raise ValueError('If specified, keys must have length equal to number of JSON files')
 
         for i, filepath in enumerate(filepaths):
-            name = os.path.split(filepath)[1].strip('.json')
+            name = os.path.basename(filepath).strip(suffix)
 
             if keys is not None:
                 tables[name] = Table.from_json(filepath, keys[i], column_types=column_types, **kwargs)
