@@ -253,24 +253,32 @@ def issequence(obj):
     return isinstance(obj, Sequence) and not isinstance(obj, six.string_types)
 
 
-def deduplicate(values):
+def deduplicate(values, column_names=False):
     """
     Append a unique identifer to duplicate strings in a given sequence of
     strings. Identifers are an underscore followed by the occurance number of
     the specific string.
 
     ['abc', 'abc', 'cde', 'abc'] -> ['abc', 'abc_2', 'cde', 'abc_3']
+
+    :param column_names:
+        If True, values are treated as column names. Warnings will be thrown
+        if column names are None or duplicates. None values will be replaced with
+        letter indices.
     """
     final_values = []
 
     for i, value in enumerate(values):
-        if not value:
-            new_value = letter_name(i)
-            warn_unnamed_column(i, new_value)
-        elif isinstance(value, six.string_types):
-            new_value = value
+        if column_names:
+            if not value:
+                new_value = letter_name(i)
+                warn_unnamed_column(i, new_value)
+            elif isinstance(value, six.string_types):
+                new_value = value
+            else:
+                raise ValueError('Column names must be strings or None.')
         else:
-            raise ValueError('Column names must be strings or None.')
+            new_value = value
 
         final_value = new_value
         duplicates = 0
@@ -279,7 +287,7 @@ def deduplicate(values):
             final_value = new_value + '_' + str(duplicates + 2)
             duplicates += 1
 
-        if duplicates > 0:
+        if column_names and duplicates > 0:
             warn_duplicate_column(new_value, final_value)
 
         final_values.append(final_value)

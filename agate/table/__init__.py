@@ -82,7 +82,7 @@ class Table(object):
 
         # Validate column names
         if column_names:
-            self._column_names = utils.deduplicate(column_names)
+            self._column_names = utils.deduplicate(column_names, column_names=True)
         elif rows:
             self._column_names = tuple(utils.letter_name(i) for i in range(len(rows[0])))
             warnings.warn('Column names not specified. "%s" will be used as names.' % str(self._column_names), RuntimeWarning, stacklevel=2)

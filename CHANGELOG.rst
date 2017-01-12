@@ -1,6 +1,7 @@
 1.5.6
 -----
-
+* Reimplemented slugify with python-slugify instead of awesome-slugify. (#660)
+* Slugify renaming of duplicate values is now consistent with :meth:`.Table.init`. (#615)
 
 
 1.5.5 - December 29, 2016
