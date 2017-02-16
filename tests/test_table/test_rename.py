@@ -78,7 +78,7 @@ class TestRename(AgateTestCase):
         table3 = table.rename(strings, slug_columns=True, separator='.')
 
         self.assertColumnNames(table, ['one', 'two', 'three'])
-        self.assertColumnNames(table2, ['test-koz', 'test-2', 'test-2_2'])
+        self.assertColumnNames(table2, ['test_koz', 'test_2', 'test_2_2'])
         self.assertColumnNames(table3, ['test.koz', 'test.2', 'test.2_2'])
 
     def test_rename_slugify_rows(self):
@@ -89,8 +89,8 @@ class TestRename(AgateTestCase):
         table3 = table.rename(row_names=strings, slug_rows=True, separator='.')
 
         self.assertIs(table.row_names, None)
-        self.assertRowNames(table2, ['test-koz', 'test-2', 'test-2_2'])
-        self.assertRowNames(table3, ['test.koz', 'test.2', 'test.2_2'])
+        self.assertRowNames(table2, ['test_koz', 'test_2', 'test_2_2'])
+        self.assertRowNames(table3, ['test.koz', 'test.2', 'test.2.2'])
 
     def test_rename_slugify_columns_in_place(self):
         column_names = [u'Test kož', 'test 2', 'test 2']
@@ -106,7 +106,7 @@ class TestRename(AgateTestCase):
         table3 = table.rename(slug_columns=True, separator='.')
 
         self.assertColumnNames(table, [u'Test kož', 'test 2', 'test 2_2'])
-        self.assertColumnNames(table2, ['test-koz', 'test-2', 'test-2-2'])
+        self.assertColumnNames(table2, ['test_koz', 'test_2', 'test_2_2'])
         self.assertColumnNames(table3, ['test.koz', 'test.2', 'test.2.2'])
 
     def test_rename_slugify_rows_in_place(self):
@@ -117,5 +117,5 @@ class TestRename(AgateTestCase):
         table3 = table.rename(slug_rows=True, separator='.')
 
         self.assertRowNames(table, ['Test kož', 'test 2', 'test 2'])
-        self.assertRowNames(table2, ['test-koz', 'test-2', 'test-2_2'])
-        self.assertRowNames(table3, ['test.koz', 'test.2', 'test.2_2'])
+        self.assertRowNames(table2, ['test_koz', 'test_2', 'test_2_2'])
+        self.assertRowNames(table3, ['test.koz', 'test.2', 'test.2.2'])

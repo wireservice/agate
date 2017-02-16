@@ -253,7 +253,7 @@ def issequence(obj):
     return isinstance(obj, Sequence) and not isinstance(obj, six.string_types)
 
 
-def deduplicate(values, column_names=False):
+def deduplicate(values, column_names=False, separator='_'):
     """
     Append a unique identifer to duplicate strings in a given sequence of
     strings. Identifers are an underscore followed by the occurance number of
@@ -284,7 +284,7 @@ def deduplicate(values, column_names=False):
         duplicates = 0
 
         while final_value in final_values:
-            final_value = new_value + '_' + str(duplicates + 2)
+            final_value = new_value + separator + str(duplicates + 2)
             duplicates += 1
 
         if column_names and duplicates > 0:
@@ -301,11 +301,17 @@ def slugify(values, ensure_unique=False, **kwargs):
     If ``ensure_unique`` is True, any duplicate strings will be appended with
     a unique identifier.
 
+    agate uses an underscore as a default separator but this can be changed with
+    kwargs.
+
     Any kwargs will be passed to the slugify method in python-slugify. See:
     https://github.com/un33k/python-slugify
     """
+    slug_args = {'separator': '_'}
+    slug_args.update(kwargs)
+
     if ensure_unique:
-        new_values = tuple(pslugify(value, **kwargs) for value in values)
-        return deduplicate(new_values)
+        new_values = tuple(pslugify(value, **slug_args) for value in values)
+        return deduplicate(new_values, separator=slug_args['separator'])
     else:
-        return tuple(pslugify(value, **kwargs) for value in values)
+        return tuple(pslugify(value, **slug_args) for value in values)

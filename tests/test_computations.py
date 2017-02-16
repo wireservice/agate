@@ -370,7 +370,7 @@ class TestTableComputation(unittest.TestCase):
             ('Ab*c #e', 2),
             ('He11O W0rld', 3)
         )
-        expected = ['hello-world', 'ab-c-e', 'he11o-w0rld']
+        expected = ['hello_world', 'ab_c_e', 'he11o_w0rld']
 
         table = Table(rows, ['one', 'two'], [self.text_type, self.number_type]).compute([
             ('slugs', Slug('one'))
@@ -384,7 +384,7 @@ class TestTableComputation(unittest.TestCase):
             ('Ab*c #e', 2, 'He11O W0rld'),
             ('He11O W0rld', 3, 'hello world')
         )
-        expected = ['hello-world-ab-c-e', 'ab-c-e-he11o-w0rld', 'he11o-w0rld-hello-world']
+        expected = ['hello_world_ab_c_e', 'ab_c_e_he11o_w0rld', 'he11o_w0rld_hello_world']
 
         table1 = Table(rows, ['one', 'two', 'three'], [self.text_type, self.number_type, self.text_type])
         table2 = table1.compute([
@@ -400,7 +400,7 @@ class TestTableComputation(unittest.TestCase):
             ('He11O W0rld', 3),
             ('HellO WOrld ', 3)
         )
-        expected = ['hello-world', 'ab-c-e', 'he11o-w0rld', 'hello-world_2']
+        expected = ['hello_world', 'ab_c_e', 'he11o_w0rld', 'hello_world_2']
 
         table = Table(rows, ['one', 'two'], [self.text_type, self.number_type]).compute([
             ('slugs', Slug('one', ensure_unique=True))
