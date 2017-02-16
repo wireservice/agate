@@ -42,7 +42,10 @@ def rename(self, column_names=None, row_names=None, slug_columns=False, slug_row
         column_names = column_names or self._column_names
 
         if column_names is not None:
-            column_names = utils.slugify(column_names, ensure_unique=False, **kwargs)
+            if column_names == self._column_names:
+                column_names = utils.slugify(column_names, ensure_unique=False, **kwargs)
+            else:
+                column_names = utils.slugify(column_names, ensure_unique=True, **kwargs)
 
     if slug_rows:
         row_names = row_names or self.row_names

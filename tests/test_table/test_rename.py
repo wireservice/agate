@@ -79,7 +79,7 @@ class TestRename(AgateTestCase):
 
         self.assertColumnNames(table, ['one', 'two', 'three'])
         self.assertColumnNames(table2, ['test_koz', 'test_2', 'test_2_2'])
-        self.assertColumnNames(table3, ['test.koz', 'test.2', 'test.2_2'])
+        self.assertColumnNames(table3, ['test.koz', 'test.2', 'test.2.2'])
 
     def test_rename_slugify_rows(self):
         strings = ['Test kož', 'test 2', 'test 2']
