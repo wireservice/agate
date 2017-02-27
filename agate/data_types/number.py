@@ -6,6 +6,8 @@ try:
 except ImportError:  # pragma: no cover
     from decimal import Decimal, InvalidOperation
 
+import warnings
+
 from babel.core import Locale
 import six
 
@@ -41,8 +43,14 @@ class Number(DataType):
         self.locale = Locale.parse(locale)
 
         self.currency_symbols = currency_symbols
-        self.group_symbol = group_symbol or self.locale.number_symbols.get('group', ',')
-        self.decimal_symbol = decimal_symbol or self.locale.number_symbols.get('decimal', '.')
+
+        # Suppress Babel warning on Python 3.6
+        # See #665
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+
+            self.group_symbol = group_symbol or self.locale.number_symbols.get('group', ',')
+            self.decimal_symbol = decimal_symbol or self.locale.number_symbols.get('decimal', '.')
 
     def cast(self, d):
         """
