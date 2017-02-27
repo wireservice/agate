@@ -10,7 +10,7 @@ import six
 
 from agate.exceptions import FieldSizeLimitError
 
-POSSIBLE_DELIMITERS = [',', '\t', ';', ' ', ':', '|']
+POSSIBLE_DELIMITERS = [',', '\t', ';', ':', '|']
 
 
 class Reader(six.Iterator):
