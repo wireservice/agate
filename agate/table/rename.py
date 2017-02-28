@@ -11,9 +11,8 @@ def rename(self, column_names=None, row_names=None, slug_columns=False, slug_row
     By enabling :code:`slug_columns` or :code:`slug_rows` and not specifying
     new names you may slugify the table's existing names.
 
-    :code:`kwargs` will be passed through to
-    `awesome-slugify's <https://github.com/dimka665/awesome-slugify>`_
-    :code:`UniqueSlugify` class.
+    :code:`kwargs` will be passed to the slugify method in python-slugify. See:
+    https://github.com/un33k/python-slugify
 
     :param column_names:
         New column names for the renamed table. May be either an array or
