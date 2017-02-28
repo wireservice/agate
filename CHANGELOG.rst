@@ -1,5 +1,7 @@
-1.5.6
------
+1.6.0 - February 28, 2017
+-------------------------
+
+This update should not cause any breaking changes, however, it is being classified as major release because the dependency on awesome-slugify, which is licensed with GPLv3, has been replaced with python-slugify, which is licensed with MIT.
 
 * Suppress warning from babel about Time Zone expressions on Python 3.6. (#665)
 * Reimplemented slugify with python-slugify instead of awesome-slugify. (#660)
