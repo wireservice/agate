@@ -1,11 +1,12 @@
 language: python
+cache: pip
 python:
   - "2.7"
   - "3.3"
   - "3.4"
   - "3.5"
   - "3.6"
-  - "pypy-5.3.1"
+  - "pypy-5.7.1"
 # command to install dependencies
 install:
     - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip install -r requirements-py3.txt; else pip install -r requirements-py2.txt; fi
