@@ -92,7 +92,7 @@ class Writer(object):
 
     def writerows(self, rows):
         for row in rows:
-            self.writer.writerow(row)
+            self.writerow(row)
 
 
 class DictReader(csv.DictReader):
