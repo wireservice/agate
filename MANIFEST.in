@@ -1,0 +1,3 @@
+include CHANGELOG.rst COPYING
+recursive-include docs *
+recursive-include tests *
