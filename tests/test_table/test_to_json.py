@@ -53,6 +53,19 @@ class TestJSON(AgateTestCase):
 
         self.assertEqual(js1, js2)
 
+    def test_to_json_non_string_key(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = six.StringIO()
+        table.to_json(output, key='number', indent=4)
+
+        js1 = json.loads(output.getvalue())
+
+        with open('examples/test_non_string_keyed.json') as f:
+            js2 = json.load(f)
+
+        self.assertEqual(js1, js2)
+
     def test_to_json_key_func(self):
         table = Table(self.rows, self.column_names, self.column_types)
 

@@ -78,7 +78,7 @@ def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
                 if key_is_row_function:
                     k = key(row)
                 else:
-                    k = row[key]
+                    k = str(row[key]) if six.PY3 else unicode(row[key])
 
                 if k in output:
                     raise ValueError('Value %s is not unique in the key column.' % six.text_type(k))
