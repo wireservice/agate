@@ -78,16 +78,21 @@ class DateTime(DataType):
             except:
                 raise CastError('Value "%s" does not match date format.' % d)
 
-        value, ctx = self._parser.parseDT(
-            d,
-            sourceTime=self._source_time,
-            tzinfo=self.timezone
-        )
+        try:
+            (_, _, _, _, matched_text), = self._parser.nlp(d, sourceTime=self._source_time)
+        except:
+            matched_text = None
+        else:
+            value, ctx = self._parser.parseDT(
+                d,
+                sourceTime=self._source_time,
+                tzinfo=self.timezone
+            )
 
-        if ctx.hasDate and ctx.hasTime:
-            return value
-        elif ctx.hasDate and not ctx.hasTime:
-            return datetime.datetime.combine(value.date(), datetime.time.min)
+            if matched_text == d and ctx.hasDate and ctx.hasTime:
+                return value
+            elif matched_text == d and ctx.hasDate and not ctx.hasTime:
+                return datetime.datetime.combine(value.date(), datetime.time.min)
 
         try:
             dt = isodate.parse_datetime(d)
