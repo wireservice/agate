@@ -72,10 +72,13 @@ class Date(DataType):
 
             return dt.date()
 
-        value, ctx = self.parser.parseDT(d, sourceTime=ZERO_DT)
-
-        if ctx.hasDate and not ctx.hasTime:
-            return value.date()
+        try:
+            (value, ctx, _, _, matched_text), = self.parser.nlp(d, sourceTime=ZERO_DT)
+        except (TypeError, ValueError):
+            raise CastError('Value "%s" does not match date format.' % d)
+        else:
+            if matched_text == d and ctx.hasDate and not ctx.hasTime:
+                return value.date()
 
         raise CastError('Can not parse value "%s" as date.' % d)
 
