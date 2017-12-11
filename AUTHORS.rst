@@ -18,3 +18,4 @@ agate is made by a community. The following individuals have contributed code, d
 * `Kevin Schaul <https://github.com/kevinschaul>`_
 * `Eli Murray <https://github.com/ejmurra>`_
 * `Or Sharir <https://github.com/orsharir>`_
+* `Forest Gregg <https://github.com/fgregg>`_
