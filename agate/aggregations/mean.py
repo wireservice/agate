@@ -38,4 +38,4 @@ class Mean(Aggregation):
 
         sum_total = self._sum.run(table)
 
-        return sum_total / len(column.values_without_nulls())
+        return sum_total / (len(column.values_without_nulls()) or 1)
