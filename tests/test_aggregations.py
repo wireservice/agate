@@ -274,12 +274,14 @@ class TestNumberAggregation(unittest.TestCase):
 
     def test_mean_all_nulls(self):
         """
-        Small test to confirm that if mean calculation is ran on a column of
-        nulls then zero will be returned.
+        Test to confirm mean of only nulls doesn't cause a critical error.
 
+        The assumption here is that if you attempt to perform a mean
+        calculation, on a column which contains only null values, then a null
+        value should be returned to the caller.
         :return:
         """
-        self.assertEqual(Mean('four').run(self.table), Decimal('0'))
+        self.assertIsNone(Mean('four').run(self.table))
 
     def test_mean_with_nulls(self):
         warnings.simplefilter('ignore')
