@@ -211,17 +211,17 @@ class TestDateTimeAggregation(unittest.TestCase):
 class TestNumberAggregation(unittest.TestCase):
     def setUp(self):
         self.rows = (
-            (Decimal('1.1'), Decimal('2.19'), 'a'),
-            (Decimal('2.7'), Decimal('3.42'), 'b'),
-            (None, Decimal('4.1'), 'c'),
-            (Decimal('2.7'), Decimal('3.42'), 'c')
+            (Decimal('1.1'), Decimal('2.19'), 'a', None),
+            (Decimal('2.7'), Decimal('3.42'), 'b', None),
+            (None, Decimal('4.1'), 'c', None),
+            (Decimal('2.7'), Decimal('3.42'), 'c', None)
         )
 
         self.number_type = Number()
         self.text_type = Text()
 
-        self.column_names = ['one', 'two', 'three']
-        self.column_types = [self.number_type, self.number_type, self.text_type]
+        self.column_names = ['one', 'two', 'three', 'four']
+        self.column_types = [self.number_type, self.number_type, self.text_type, self.number_type]
 
         self.table = Table(self.rows, self.column_names, self.column_types)
 
@@ -271,6 +271,15 @@ class TestNumberAggregation(unittest.TestCase):
             Mean('three').validate(self.table)
 
         self.assertEqual(Mean('two').run(self.table), Decimal('3.2825'))
+
+    def test_mean_all_nulls(self):
+        """
+        Small test to confirm that if mean calculation is ran on a column of
+        nulls then zero will be returned.
+
+        :return:
+        """
+        self.assertEqual(Mean('four').run(self.table), Decimal('0'))
 
     def test_mean_with_nulls(self):
         warnings.simplefilter('ignore')
