@@ -2,10 +2,6 @@
     :target: https://travis-ci.org/wireservice/agate
     :alt: Build status
 
-.. image:: https://img.shields.io/pypi/dw/agate.svg
-    :target: https://pypi.python.org/pypi/agate
-    :alt: PyPI downloads
-
 .. image:: https://img.shields.io/pypi/v/agate.svg
     :target: https://pypi.python.org/pypi/agate
     :alt: Version
