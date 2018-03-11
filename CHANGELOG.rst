@@ -1,5 +1,5 @@
-1.6.1
------
+1.6.1 - March 11, 2018
+----------------------
 
 * :meth:`Date.cast` and :meth:`DateTime.cast` will no longer parse strings that contain dates as dates. (#705)
 * Added Forest Gregg to Authors.
