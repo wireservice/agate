@@ -133,7 +133,7 @@ def max_precision(values):
     precision = getcontext().prec
 
     for value in values:
-        if value is None or math.isnan(value):
+        if value is None or math.isnan(value) or math.isinf(value):
             continue
 
         sign, digits, exponent = value.normalize().as_tuple()
