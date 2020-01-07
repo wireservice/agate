@@ -91,7 +91,7 @@ class Date(DataType):
             return dt.date()
 
         try:
-            (value, ctx, _, _, matched_text), = self.parser.nlp(d, sourceTime=ZERO_DT)
+            (value, ctx, _, _, matched_text), = self._parser.nlp(d, sourceTime=ZERO_DT)
         except (TypeError, ValueError):
             raise CastError('Value "%s" does not match date format.' % d)
         else:
