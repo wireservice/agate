@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # pylint: disable=W0212
 
+import math
 import sys
 
 from babel.numbers import format_decimal
@@ -95,7 +96,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
                 v = ellipsis
             elif v is None:
                 v = ''
-            elif number_formatters[j] is not None:
+            elif number_formatters[j] is not None and not math.isinf(v):
                 v = format_decimal(
                     v,
                     format=number_formatters[j],

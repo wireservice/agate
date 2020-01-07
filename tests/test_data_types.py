@@ -207,6 +207,8 @@ class TestDate(unittest.TestCase):
         self.assertEqual(self.type.test('2016-12-29T11:43:30Z'), False)
         self.assertEqual(self.type.test('2016-12-29T11:43:30+06:00'), False)
         self.assertEqual(self.type.test('2016-12-29T11:43:30-06:00'), False)
+        self.assertEqual(self.type.test('MC 5.7.10 Per Dorothy Carroll'), False)
+        self.assertEqual(self.type.test('testing workgroup fix - 4/7/2010 - Marcy Liberty'), False)
 
     def test_test_format(self):
         date_type = Date(date_format='%m-%d-%Y')
@@ -285,6 +287,7 @@ class TestDateTime(unittest.TestCase):
         self.assertEqual(self.type.test('2016-12-29T11:43:30Z'), True)
         self.assertEqual(self.type.test('2016-12-29T11:43:30+06:00'), True)
         self.assertEqual(self.type.test('2016-12-29T11:43:30-06:00'), True)
+        self.assertEqual(self.type.test('720(38-4)31A-1.1(A)'), False)
 
     def test_test_format(self):
         datetime_type = DateTime(datetime_format='%m-%d-%Y %I:%M %p')

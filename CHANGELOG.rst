@@ -1,6 +1,14 @@
-1.6.1
+1.6.2
 -----
 
+1.6.1 - March 11, 2018
+----------------------
+
+* :meth:`Date.cast` and :meth:`DateTime.cast` will no longer parse strings that contain dates as dates. (#705)
+* Added Forest Gregg to Authors.
+* :meth:`Table.to_json` can now use Decimal as keys. (#696)
+* Link to tutorial now uses version through sphinx to avoid bad links on future releases. (#682)
+* lxml limited to >= 3.6 and < 4 for pypy compatibility.
 
 
 1.6.0 - February 28, 2017

@@ -8,6 +8,7 @@ agate.
 
 from collections import OrderedDict, Sequence
 from functools import wraps
+import math
 import string
 import warnings
 from slugify import slugify as pslugify
@@ -132,7 +133,7 @@ def max_precision(values):
     precision = getcontext().prec
 
     for value in values:
-        if value is None:
+        if value is None or math.isnan(value) or math.isinf(value):
             continue
 
         sign, digits, exponent = value.normalize().as_tuple()
