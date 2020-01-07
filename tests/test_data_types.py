@@ -249,6 +249,32 @@ class TestDate(unittest.TestCase):
             None
         ))
 
+    def test_cast_format_locale(self):
+        date_type = Date(date_format='%d-%b-%Y', locale='de_DE')
+
+        values = ('01-Mrz-1994', '17-Feb-2011', None, '05-Jan-1984', 'n/a')
+        casted = tuple(date_type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.date(1994, 3, 1),
+            datetime.date(2011, 2, 17),
+            None,
+            datetime.date(1984, 1, 5),
+            None
+        ))
+
+    def test_cast_locale(self):
+        date_type = Date(locale='fr_FR')
+
+        values = ('01 mars 1994', 'jeudi 17 février 2011', None, '5 janvier 1984', 'n/a')
+        casted = tuple(date_type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.date(1994, 3, 1),
+            datetime.date(2011, 2, 17),
+            None,
+            datetime.date(1984, 1, 5),
+            None
+        ))
+
     def test_cast_error(self):
         with self.assertRaises(CastError):
             self.type.cast('quack')
@@ -256,7 +282,9 @@ class TestDate(unittest.TestCase):
     def test_pickle_parser(self):
         from_pickle = pickle.loads(pickle.dumps(self.type))
         self.assertEqual(from_pickle.date_format, self.type.date_format)
-        self.assertIsInstance(from_pickle.parser, parsedatetime.Calendar)
+        self.assertEqual(from_pickle.locale, self.type.locale)
+        self.assertIsInstance(from_pickle._constants, parsedatetime.Constants)
+        self.assertIsInstance(from_pickle._parser, parsedatetime.Calendar)
 
 
 class TestDateTime(unittest.TestCase):
@@ -333,11 +361,37 @@ class TestDateTime(unittest.TestCase):
     def test_cast_format(self):
         datetime_type = DateTime(datetime_format='%m-%d-%Y %I:%M %p')
 
-        values = ('03-01-1994 12:30 PM', '02-17-1011 06:30 AM', None, '01-05-1984 06:30 PM', 'n/a')
+        values = ('03-01-1994 12:30 PM', '02-17-2011 06:30 AM', None, '01-05-1984 06:30 PM', 'n/a')
         casted = tuple(datetime_type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.datetime(1994, 3, 1, 12, 30, 0),
-            datetime.datetime(1011, 2, 17, 6, 30, 0),
+            datetime.datetime(2011, 2, 17, 6, 30, 0),
+            None,
+            datetime.datetime(1984, 1, 5, 18, 30, 0),
+            None
+        ))
+
+    def test_cast_format_locale(self):
+        date_type = DateTime(datetime_format='%Y-%m-%d %I:%M %p', locale='ko_KR')
+
+        values = ('1994-03-01 12:30 오후', '2011-02-17 06:30 오전', None, '1984-01-05 06:30 오후', 'n/a')
+        casted = tuple(date_type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.datetime(1994, 3, 1, 12, 30, 0),
+            datetime.datetime(2011, 2, 17, 6, 30, 0),
+            None,
+            datetime.datetime(1984, 1, 5, 18, 30, 0),
+            None
+        ))
+
+    def test_cast_locale(self):
+        date_type = DateTime(locale='fr_FR')
+
+        values = ('01/03/1994 12:30', '17/2/11 6:30', None, '5/01/84 18:30', 'n/a')
+        casted = tuple(date_type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (
+            datetime.datetime(1994, 3, 1, 12, 30, 0),
+            datetime.datetime(2011, 2, 17, 6, 30, 0),
             None,
             datetime.datetime(1984, 1, 5, 18, 30, 0),
             None
@@ -351,7 +405,9 @@ class TestDateTime(unittest.TestCase):
         from_pickle = pickle.loads(pickle.dumps(self.type))
         self.assertEqual(from_pickle.datetime_format, self.type.datetime_format)
         self.assertEqual(from_pickle.timezone, self.type.timezone)
+        self.assertEqual(from_pickle.locale, self.type.locale)
         self.assertEqual(from_pickle._source_time, self.type._source_time)
+        self.assertIsInstance(from_pickle._constants, parsedatetime.Constants)
         self.assertIsInstance(from_pickle._parser, parsedatetime.Calendar)
 
 

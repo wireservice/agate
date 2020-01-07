@@ -3,6 +3,7 @@
 from datetime import date, datetime, time
 
 import isodate
+import locale
 import parsedatetime
 import six
 
@@ -20,37 +21,46 @@ class Date(DataType):
     :param date_format:
         A formatting string for :meth:`datetime.datetime.strptime` to use
         instead of using regex-based parsing.
+    :param locale:
+        A locale specification such as :code:`en_US` or :code:`de_DE` to use
+        for parsing formatted dates.
     """
-    def __init__(self, date_format=None, **kwargs):
+    def __init__(self, date_format=None, locale=None, **kwargs):
         super(Date, self).__init__(**kwargs)
 
         self.date_format = date_format
-        self.parser = parsedatetime.Calendar(version=parsedatetime.VERSION_CONTEXT_STYLE)
+        self.locale = locale
+
+        self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=True)
+        self._parser = parsedatetime.Calendar(constants=self._constants, version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def __getstate__(self):
         """
-        Return state values to be pickled. Exclude _parser because parsedatetime
+        Return state values to be pickled. Exclude _constants and _parser because parsedatetime
         cannot be pickled.
         """
         odict = self.__dict__.copy()
-        del odict['parser']
+        del odict['_constants']
+        del odict['_parser']
         return odict
 
-    def __setstate__(self, data):
+    def __setstate__(self, ndict):
         """
-        Restore state from the unpickled state values. Set _parser to an instance
+        Restore state from the unpickled state values. Set _constants to an instance
+        of the parsedatetime Constants class, and _parser to an instance
         of the parsedatetime Calendar class.
         """
-        self.__dict__.update(data)
-        self.parser = parsedatetime.Calendar(version=parsedatetime.VERSION_CONTEXT_STYLE)
+        self.__dict__.update(ndict)
+        self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=True)
+        self._parser = parsedatetime.Calendar(constants=self._constants, version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def cast(self, d):
         """
         Cast a single value to a :class:`datetime.date`.
 
-        :param date_format:
-            An optional :func:`datetime.strptime` format string for parsing
-            datetimes in this column.
+        If both `date_format` and `locale` have been specified
+        in the `agate.Date` instance, the `cast()` function
+        is not thread-safe.
         :returns:
             :class:`datetime.date` or :code:`None`.
         """
@@ -65,10 +75,18 @@ class Date(DataType):
             raise CastError('Can not parse value "%s" as date.' % d)
 
         if self.date_format:
+            orig_locale = None
+            if self.locale:
+                orig_locale = locale.getlocale(locale.LC_TIME)
+                locale.setlocale(locale.LC_TIME, (self.locale, 'UTF-8'))
+
             try:
                 dt = datetime.strptime(d, self.date_format)
             except:
                 raise CastError('Value "%s" does not match date format.' % d)
+            finally:
+                if orig_locale:
+                    locale.setlocale(locale.LC_TIME, orig_locale)
 
             return dt.date()
 
