@@ -4,8 +4,8 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
-  - "pypy2.7-6.0"
-  - "pypy3.5-6.0"
+  - "pypy"
+  - "pypy3"
 # command to install dependencies
 install:
     - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip install -r requirements-py3.txt; else pip install -r requirements-py2.txt; fi
