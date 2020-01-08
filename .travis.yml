@@ -12,3 +12,9 @@ install:
 # command to run tests
 script: nosetests tests
 sudo: false
+addons:
+  apt:
+    packages:
+    - sqlite3
+    sources:
+    - travis-ci/sqlite3
