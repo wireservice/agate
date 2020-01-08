@@ -267,7 +267,7 @@ class TestDate(unittest.TestCase):
     def test_cast_locale(self):
         date_type = Date(locale='fr_FR')
 
-        values = ('01 mars 1994', 'jeudi 17 février 2011', None, '5 janvier 1984', 'n/a')
+        values = ('01 mars 1994', u'jeudi 17 février 2011', None, '5 janvier 1984', 'n/a')
         casted = tuple(date_type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.date(1994, 3, 1),
