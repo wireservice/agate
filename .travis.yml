@@ -41,7 +41,7 @@ jobs:
   - fast_finish: true
 # command to install dependencies
 install:
-    - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip3 install --user -r requirements-py3.txt; else pip install --user -r requirements-py2.txt; fi
+    - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip3 install -r requirements-py3.txt; else pip install -r requirements-py2.txt; fi
 # command to run tests
 script: nosetests tests
 addons:
