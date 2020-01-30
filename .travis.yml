@@ -1,21 +1,44 @@
 language: python
-python:
-  - "2.7"
-  - "3.5"
-  - "3.6"
-  - "3.7"
-  - "3.8"
-  - "pypy2.7-6.0"
-  - "pypy3.5-6.0"
+jobs:
+  include:
+    - name: "Python on Linux"
+      os: linux
+      python:
+      - "2.7"
+      - "3.5"
+      - "3.6"
+      - "3.7"
+      - "3.8"
+      - "pypy"
+      - "pypy2.7-6.0"
+      - "pypy2.7-7.0.0"
+      - "pypy3"
+      - "pypy3.5-6.0"
+      - "pypy3.5-7.0"
+      - "pypy3.6-7.0.0"
+    - name: "Python on macOS"
+      os: osx
+      osx_image: xcode11.2  # Python 3.7.4 running on macOS 10.14.4
+      language: shell       # 'language: python' is an error on Travis CI macOS
+    - name: "Python on Windows"
+      os: windows           # Windows 10.0.17134 N/A Build 17134
+      language: shell       # 'language: python' is an error on Travis CI Windows
+      before_install:
+        - choco install python --version 3.8.0
+        - choco install sqlite
+        - python -m pip install --upgrade pip
+      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
 # command to install dependencies
 install:
-    - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip install -r requirements-py3.txt; else pip install -r requirements-py2.txt; fi
+    - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip3 install -r requirements-py3.txt; else pip install -r requirements-py2.txt; fi
 # command to run tests
 script: nosetests tests
-sudo: false
 addons:
   apt:
     packages:
     - sqlite3
     sources:
     - travis-ci/sqlite3
+  homebrew:
+    packages:
+    - sqlite3
