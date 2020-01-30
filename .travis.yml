@@ -23,14 +23,15 @@ jobs:
         - python3 -m pip install --upgrade pip
         - CFLAGS="-O0" STATIC_DEPS=true python3 -m pip install lxml
         - python3 --version
+        - python --version
     - os: windows           # Windows 10.0.17134 N/A Build 17134
       python: "3.8"
       language: shell       # 'language: python' is an error on Travis CI Windows
       before_install:
         - choco install python --version 3.8.0
         - choco install sqlite
-        - python3 -m pip install --upgrade pip
-        - python3 --version
+        - python -m pip install --upgrade pip
+        - python --version
       env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
   # allow failure on OSes other than Linux
   - allow_failures:
