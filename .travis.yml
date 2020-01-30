@@ -1,30 +1,21 @@
 language: python
 jobs:
   - include:
-    - name: "Python 2.7 on Linux"
-      os: linux
-      python: "2.7"
-    - name: "Python 3.5 on Linux"
-      os: linux
-      python: "3.5"
-    - name: "Python 3.6 on Linux"
-      os: linux
-      python: "3.6"
-    - name: "Python 3.7 on Linux"
-      os: linux
-      python: "3.7"
     - name: "Python 3.8 on Linux"
       os: linux
       python: "3.8"
-    - name: "Python pypy on Linux"
+    - name: "Python 3.7 on Linux"
       os: linux
-      python: "pypy"
-    - name: "Python pypy2.7-6.0 on Linux"
+      python: "3.7"
+    - name: "Python 3.6 on Linux"
       os: linux
-      python: "pypy2.7-6.0"
-    - name: "Python pypy2.7-7.0.0 on Linux"
+      python: "3.6"
+    - name: "Python 3.5 on Linux"
       os: linux
-      python: "pypy2.7-7.0.0"
+      python: "3.5"
+    - name: "Python 2.7 on Linux"
+      os: linux
+      python: "2.7"
     - name: "Python pypy3 on Linux"
       os: linux
       python: "pypy3"
@@ -37,6 +28,15 @@ jobs:
     - name: "Python pypy3.6-7.0.0 on Linux"
       os: linux
       python: "pypy3.6-7.0.0"
+    - name: "Python pypy on Linux"
+      os: linux
+      python: "pypy"
+    - name: "Python pypy2.7-6.0 on Linux"
+      os: linux
+      python: "pypy2.7-6.0"
+    - name: "Python pypy2.7-7.0.0 on Linux"
+      os: linux
+      python: "pypy2.7-7.0.0"
     - name: "Python on macOS"
       os: osx
       python: "3.7"
