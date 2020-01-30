@@ -15,8 +15,7 @@ python:
   - "pypy2.7-7.0.0"
 jobs:
   - include:
-    - name: "Python on macOS"
-      os: osx
+    - os: osx
       python: "3.7"
       osx_image: xcode11.2  # Python 3.7.4 running on macOS 10.14.4
       language: shell       # 'language: python' is an error on Travis CI macOS
@@ -24,8 +23,7 @@ jobs:
         - python3 -m pip install --upgrade pip
         - CFLAGS="-O0" STATIC_DEPS=true python3 -m pip install lxml
         - python3 --version
-    - name: "Python on Windows"
-      os: windows           # Windows 10.0.17134 N/A Build 17134
+    - os: windows           # Windows 10.0.17134 N/A Build 17134
       python: "3.8"
       language: shell       # 'language: python' is an error on Travis CI Windows
       before_install:
