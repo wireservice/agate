@@ -1,6 +1,6 @@
 language: python
 jobs:
-  include:
+  - include:
     - name: "Python 2.7 on Linux"
       os: linux
       python: "2.7"
