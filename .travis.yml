@@ -55,13 +55,12 @@ jobs:
         - python3 -m pip install --upgrade pip
         - python3 --version
       env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
-# allow failure on OSes other than Linux
-matrix:
+  # allow failure on OSes other than Linux
   - allow_failures:
     - os:
       - osx
       - windows
-fast_finish: true
+  - fast_finish: true
 # command to install dependencies
 install:
     - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip3 install -r requirements-py3.txt; else pip install -r requirements-py2.txt; fi
