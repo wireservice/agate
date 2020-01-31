@@ -42,7 +42,6 @@ jobs:
         - choco install python --version 3.8.0
         - choco install sqlite
         - python -m pip install --upgrade pip
-        - python -m pip install "https://files.pythonhosted.org/packages/82/99/6f9263fda49f7c5c768386826aa0a829cbebc2719a911e50f9e582b96cfb/lxml-4.5.0-cp38-cp38-win_amd64.whl" # see https://pypi.org/simple/lxml/
         - python --version
       env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
   # allow failure on OSes other than Linux
