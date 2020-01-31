@@ -42,7 +42,7 @@ jobs:
         - choco install python --version 3.8.0
         - choco install sqlite
         - python -m pip install --upgrade pip
-        - python -m pip install "https://files.pythonhosted.org/packages/82/99/6f9263fda49f7c5c768386826aa0a829cbebc2719a911e50f9e582b96cfb/lxml-4.5.0-cp38-cp38-win_amd64.whl"
+        - python -m pip install "https://files.pythonhosted.org/packages/82/99/6f9263fda49f7c5c768386826aa0a829cbebc2719a911e50f9e582b96cfb/lxml-4.5.0-cp38-cp38-win_amd64.whl" # see https://pypi.org/simple/lxml/
         - python --version
       env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
   # allow failure on OSes other than Linux
@@ -53,7 +53,7 @@ jobs:
   - fast_finish: true
 # command to install dependencies
 install:
-    - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip3 install -r requirements-py3.txt; else pip install -r requirements-py2.txt; fi
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then pip install -r requirements-py2.txt; else pip3 install -r requirements-py3.txt; fi
 # command to run tests
 script: nosetests tests
 addons:
