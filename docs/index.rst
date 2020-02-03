@@ -64,7 +64,7 @@ Show me code
                            +-------------+-------------+-------------+-------------+
                            0          250,000       500,000       750,000  1,000,000
 
-This example, along with detailed comments, are available as a `Jupyter notebook <http://nbviewer.ipython.org/urls/gist.githubusercontent.com/onyxfish/36f459dab02545cbdce3/raw/534698388e5c404996a7b570a7228283344adbb1/example.py.ipynb>`_.
+This example, along with detailed comments, are available as a `Jupyter notebook <https://github.com/wireservice/agate/blob/master/example.py.ipynb>`_.
 
 Join us
 =======
