@@ -12,8 +12,8 @@ install:
 script: nosetests tests
 sudo: false
 addons:
-    apt:
-        packages:
-            - language-pack-fr
-            - language-pack-de
-            - language-pack-ko
+  apt:
+    packages:
+      - language-pack-fr
+      - language-pack-de
+      - language-pack-ko
