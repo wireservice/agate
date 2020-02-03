@@ -70,6 +70,10 @@ class Number(DataType):
             return Decimal(d)
         elif t is float:
             return Decimal(repr(d))
+        elif t == False:
+            return Decimal(0)
+        elif t == True:
+            return Decimal(1)
         elif not isinstance(d, six.string_types):
             raise CastError('Can not parse value "%s" as Decimal.' % d)
 
