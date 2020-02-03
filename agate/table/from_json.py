@@ -44,6 +44,9 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
 
     close = False
 
+    if six.PY2:
+        kwargs['encoding'] = encoding
+
     if newline:
         js = []
 
@@ -58,9 +61,6 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
 
             close = True
 
-            if six.PY2:
-                kwargs['encoding'] = encoding
-
             for line in f:
                 js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
     else:
@@ -73,9 +73,6 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
                 f = io.open(path, encoding=encoding)
 
             close = True
-
-            if six.PY2:
-                kwargs['encoding'] = encoding
 
             js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
 
