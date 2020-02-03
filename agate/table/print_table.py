@@ -16,7 +16,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
     """
     Print a text-based view of the data in this table.
 
-    The output of this method is Github Friendly Markdown (GFM) compatible.
+    The output of this method is GitHub Flavored Markdown (GFM) compatible.
 
     :param max_rows:
         The maximum number of rows to display before truncating the data. This

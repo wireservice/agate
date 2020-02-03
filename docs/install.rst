@@ -20,7 +20,7 @@ Developers
 
 If you are a developer that also wants to hack on agate, install it from git::
 
-    git clone git://github.com/onyxfish/agate.git
+    git clone git://github.com/wireservice/agate.git
     cd agate
     mkvirtualenv agate
 
