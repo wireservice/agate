@@ -46,9 +46,8 @@ jobs:
       env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
   # allow failure on OSes other than Linux
   allow_failures:
-    - os:
-      - osx
-      - windows
+    - os: osx
+    - os: windows
   fast_finish: true
 # command to install dependencies
 install:
