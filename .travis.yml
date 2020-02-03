@@ -1,19 +1,18 @@
 language: python
 os: linux
 python:
-# These now work; we deactivate them to investigate pypy3 quicker
-#OK  - "3.8"
-#OK  - "3.7"
-#OK  - "3.6"
-#OK  - "3.5"
-#OK  - "2.7"
+  - "3.8"
+  - "3.7"
+  - "3.6"
+  - "3.5"
+  - "2.7"
   - "pypy3"
   - "pypy3.5-6.0"
   - "pypy3.5-7.0"
   - "pypy3.6-7.0.0"
-#OK  - "pypy"
-#OK  - "pypy2.7-6.0"
-#OK  - "pypy2.7-7.0.0"
+  - "pypy"
+  - "pypy2.7-6.0"
+  - "pypy2.7-7.0.0"
 jobs:
   include:
     - os: osx
@@ -54,5 +53,4 @@ jobs:
 install:
     - if [[ "$TRAVIS_PYTHON_VERSION" == "2"* ]] || [[ "$TRAVIS_PYTHON_VERSION" == "pypy"* ]]; then pip install -r requirements-py2.txt; else pip3 install -r requirements-py3.txt; fi
 # command to run tests
-#script: nosetests tests
 script: for s in tests/*.py; do nosetests -v "$s" || exit $?; done
