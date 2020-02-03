@@ -142,7 +142,7 @@ class DictWriter(csv.DictWriter):
 
 class Sniffer(object):
     """
-    A functinonal wrapper of ``csv.Sniffer()``.
+    A functional wrapper of ``csv.Sniffer()``.
     """
     def sniff(self, sample):
         """
