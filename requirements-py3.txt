@@ -14,4 +14,3 @@ python-slugify>=1.2.1
 lxml>=3.6.0
 cssselect>=0.9.1
 leather>=0.3.2
-pypy-fix-cython-warning
