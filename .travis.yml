@@ -1,18 +1,19 @@
 language: python
 os: linux
 python:
-  - "3.8"
-  - "3.7"
-  - "3.6"
-  - "3.5"
-  - "2.7"
+# These now work; we deactivate them to investigate pypy3 quicker
+#OK  - "3.8"
+#OK  - "3.7"
+#OK  - "3.6"
+#OK  - "3.5"
+#OK  - "2.7"
   - "pypy3"
   - "pypy3.5-6.0"
   - "pypy3.5-7.0"
   - "pypy3.6-7.0.0"
-  - "pypy"
-  - "pypy2.7-6.0"
-  - "pypy2.7-7.0.0"
+#OK  - "pypy"
+#OK  - "pypy2.7-6.0"
+#OK  - "pypy2.7-7.0.0"
 jobs:
   include:
     - os: osx
