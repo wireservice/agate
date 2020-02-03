@@ -6,7 +6,7 @@ import json
 
 
 @classmethod
-def from_json(cls, path, row_names=None, key=None, newline=False, column_types=None, **kwargs):
+def from_json(cls, path, row_names=None, key=None, newline=False, column_types=None, encoding='utf-8', **kwargs):
     """
     Create a new table from a JSON file.
 
@@ -29,6 +29,11 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
         If `True` then the file will be parsed as "newline-delimited JSON".
     :param column_types:
         See :meth:`.Table.__init__`.
+    :param encoding:
+        According to RFC4627, JSON text shall be encoded in Unicode; the default encoding is
+        UTF-8. You can override this by using any encoding supported by your Python's open() function
+        if :code:`path` is a filepath. If passing in a file handle, it is assumed you have already opened it with the correct
+        encoding specified.
     """
     from agate.table import Table
 
@@ -42,7 +47,7 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
             for line in path:
                 js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
         else:
-            with open(path, 'r') as f:
+            with open(path, 'r', encoding=encoding) as f:
                 for line in f:
                     js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
     else:
