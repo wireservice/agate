@@ -13,13 +13,13 @@ For example, here we find all states that start with "C".
 
     import re
 
-    new_table = table.where(lambda row: re.match('^C', row['state']))
+    new_table = table.where(lambda row: re.match('^C', str(row['state'])))
 
 This can also be useful for finding values that **don't** match your expectations. For example, finding all values in the "phone number" column that don't look like phone numbers:
 
 .. code-block:: python
 
-    new_table = table.where(lambda row: not re.match('\d{3}-\d{3}-\d{4}', row['phone']))
+    new_table = table.where(lambda row: not re.match('\d{3}-\d{3}-\d{4}', str(row['phone'])))
 
 By glob
 =======
