@@ -14,7 +14,7 @@ python:
   - "pypy2.7-6.0"
   - "pypy2.7-7.0.0"
 jobs:
-  - include:
+  include:
     - os: osx
       python: "3.7"
       osx_image: xcode11.2  # Python 3.7.4 running on macOS 10.14.4
@@ -45,11 +45,11 @@ jobs:
         - python --version
       env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
   # allow failure on OSes other than Linux
-  - allow_failures:
+  allow_failures:
     - os:
       - osx
       - windows
-  - fast_finish: true
+  fast_finish: true
 # command to install dependencies
 install:
     - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then pip install -r requirements-py2.txt; else pip3 install -r requirements-py3.txt; fi
