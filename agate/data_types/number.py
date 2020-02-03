@@ -94,7 +94,7 @@ class Number(DataType):
 
         try:
             return Decimal(d) * sign
-        except InvalidOperation:
+        except (InvalidOperation, ValueError):
             pass
 
         raise CastError('Can not parse value "%s" as Decimal.' % d)
