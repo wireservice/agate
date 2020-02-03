@@ -56,12 +56,3 @@ install:
 # command to run tests
 #script: nosetests tests
 script: for s in tests/*.py; do nosetests -v "$s"; done
-addons:
-  apt:
-    packages:
-    - sqlite3
-    sources:
-    - travis-ci/sqlite3
-  homebrew:
-    packages:
-    - sqlite3
