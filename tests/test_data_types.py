@@ -139,7 +139,7 @@ class TestNumber(unittest.TestCase):
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
         self.assertEqual(self.type.test('a'), False)
         self.assertEqual(self.type.test('A\nB'), False)
-        self.assertEqual(self.type.test(u'👍'), False)
+        self.assertEqual(self.type.test(u'⇔'), False)
         self.assertEqual(self.type.test('05_leslie3d_base'), False)
         self.assertEqual(self.type.test('2016-12-29'), False)
         self.assertEqual(self.type.test('2016-12-29T11:43:30Z'), False)
