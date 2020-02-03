@@ -1,12 +1,17 @@
-1.6.2
------
+1.6.2 - Unreleased
+------------------
+
+* :meth:`.Date.__init__` and :meth:`.DateTime.__init__` accepts a ``locale`` keyword argument (e.g. :code:`en_US`) for parsing formatted dates. (#730)
+* :meth:`.utils.max_precision` ignores infinity when calculating precision. (#726)
+* :meth:`.Date.cast` catches ``OverflowError`` when type testing. (#720)
+* Included examples in Python package. (#716)
 
 1.6.1 - March 11, 2018
 ----------------------
 
-* :meth:`Date.cast` and :meth:`DateTime.cast` will no longer parse strings that contain dates as dates. (#705)
+* :meth:`.Date.cast` and :meth:`.DateTime.cast` will no longer parse strings that contain dates as dates. (#705)
 * Added Forest Gregg to Authors.
-* :meth:`Table.to_json` can now use Decimal as keys. (#696)
+* :meth:`.Table.to_json` can now use Decimal as keys. (#696)
 * Link to tutorial now uses version through sphinx to avoid bad links on future releases. (#682)
 * lxml limited to >= 3.6 and < 4 for pypy compatibility.
 
@@ -107,7 +112,7 @@ The complete list of changes is as follows:
 * Added a deprecation warning for ``patch`` methods. New extensions should not use it. (#594)
 * Added :class:`.Slug` computation (#466)
 * Added ``slug_columns`` and ``slug_rows`` arguments to :meth:`Table.rename`. (#466)
-* Added :meth:`utils.slugify` to standardize a sequence of strings. (#466)
+* Added :meth:`.utils.slugify` to standardize a sequence of strings. (#466)
 * :meth:`.Table.__init__` now prints row and column on ``CastError``. (#593)
 * Fix null sorting in :meth:`.Table.order_by` when ordering by multiple columns. (#607)
 * Implemented configuration system.
