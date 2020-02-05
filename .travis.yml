@@ -20,6 +20,8 @@ jobs:
       osx_image: xcode11.2  # Python 3.7.4 running on macOS 10.14.4
       language: shell       # 'language: python' is an error on Travis CI macOS
       before_install:
+        - brew install pkg-config
+        - brew install icu4c
         - python3 -m pip install --upgrade pip
         - python3 -m pip install --upgrade virtualenv
         - virtualenv -p python3 --system-site-packages "$HOME/venv"
@@ -39,6 +41,7 @@ jobs:
       python: "3.8"
       language: shell       # 'language: python' is an error on Travis CI Windows
       before_install:
+        - choco install pkgconfiglite
         - choco install python --version 3.8.0
         - choco install sqlite
         - python -m pip install --upgrade pip
@@ -86,3 +89,4 @@ addons:
       - language-pack-fr
       - language-pack-de
       - language-pack-ko
+      - pkg-config
