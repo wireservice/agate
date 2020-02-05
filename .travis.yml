@@ -22,6 +22,7 @@ jobs:
       before_install:
         - brew install pkg-config
         - brew install icu4c
+        - export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig"
         - python3 -m pip install --upgrade pip
         - python3 -m pip install --upgrade virtualenv
         - virtualenv -p python3 --system-site-packages "$HOME/venv"
