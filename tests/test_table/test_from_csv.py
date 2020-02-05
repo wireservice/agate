@@ -71,6 +71,19 @@ class TestFromCSV(AgateTestCase):
 
         self.assertRows(table2, table1.rows)
 
+    def test_from_csv_file_like_object_in_text_mode(self):
+        table1 = Table(self.rows, self.column_names, self.column_types)
+
+        f = io.open('examples/test.csv', encoding='utf-8')
+
+        table2 = Table.from_csv(f)
+        f.close()
+
+        self.assertColumnNames(table2, table1.column_names)
+        self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
+
+        self.assertRows(table2, table1.rows)
+
     def test_from_csv_type_tester(self):
         tester = TypeTester(force={
             'number': Text()
@@ -165,6 +178,19 @@ class TestFromCSV(AgateTestCase):
             table2 = Table.from_csv('examples/test_cr.csv', header=False, skip_lines=2)
         finally:
             warnings.resetwarnings()
+
+        self.assertColumnNames(table2, table1.column_names)
+        self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
+
+        self.assertRows(table2, table1.rows)
+
+    def test_from_csv_unicode_delimiter(self):
+        table1 = Table(self.rows, self.column_names, self.column_types)
+        if six.PY2:
+            # the Python2 csv module is limited to 8-bit encodings and a single char for delimiters
+            table2 = Table.from_csv('examples/test.csv', delimiter=unicode(','))
+        else:
+            table2 = Table.from_csv('examples/test_unicode_delimiter.csv', delimiter='ê')
 
         self.assertColumnNames(table2, table1.column_names)
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
