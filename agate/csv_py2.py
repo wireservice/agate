@@ -43,7 +43,8 @@ class UnicodeReader(object):
 
         f = UTF8Recoder(f, encoding)
 
-        self.reader = csv.reader(f, **kwargs)
+        str_kwargs = _key_to_str_value_map(kwargs)
+        self.reader = csv.reader(f, **str_kwargs)
 
         if field_size_limit:
             csv.field_size_limit(field_size_limit)
@@ -88,13 +89,14 @@ class UnicodeWriter(object):
     def __init__(self, f, encoding='utf-8', **kwargs):
         self.encoding = encoding
         self._eight_bit = (self.encoding.lower().replace('_', '-') in EIGHT_BIT_ENCODINGS)
+        str_kwargs = _key_to_str_value_map(kwargs)
 
         if self._eight_bit:
-            self.writer = csv.writer(f, **kwargs)
+            self.writer = csv.writer(f, **str_kwargs)
         else:
             # Redirect output to a queue for reencoding
             self.queue = six.StringIO()
-            self.writer = csv.writer(self.queue, **kwargs)
+            self.writer = csv.writer(self.queue, **str_kwargs)
             self.stream = f
             self.encoder = codecs.getincrementalencoder(encoding)()
 
@@ -252,6 +254,20 @@ class Sniffer(object):
             dialect = None
 
         return dialect
+
+
+_binary_type = str
+_text_type = unicode
+def _key_to_str_value_map(key_to_value_map):
+    """
+    Similar to ``key_to_value_map`` but with values of type `unicode`
+    converted to `str` because in Python 2 `csv.reader` can only process
+    byte strings for formatting parameters, e.g. delimiter=b';' instead of
+    delimiter=u';'. This quickly becomes an annoyance to the caller, in
+    particular with `from __future__ import unicode_literals` enabled.
+    """
+    return dict((key, value if not isinstance(value, _text_type) else _binary_type(value))
+                for key, value in key_to_value_map.items())
 
 
 def reader(*args, **kwargs):
