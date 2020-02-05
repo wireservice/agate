@@ -18,8 +18,9 @@ EIGHT_BIT_ENCODINGS = [
 
 POSSIBLE_DELIMITERS = [',', '\t', ';', ' ', ':', '|']
 
-_binary_type = str
-_text_type = unicode
+if six.PY2:
+    _binary_type = str
+    _text_type = unicode
 
 
 class BytesIOWrapper:
