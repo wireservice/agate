@@ -94,6 +94,8 @@ class Number(DataType):
 
         try:
             return Decimal(d) * sign
+        # The Decimal class will return an InvalidOperation exception on most Python implementations,
+        # but PyPy3 may return a ValueError if the string is not translatable to ASCII
         except (InvalidOperation, ValueError):
             pass
 
