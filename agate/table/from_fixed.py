@@ -38,28 +38,30 @@ def from_fixed(cls, path, schema_path, column_names=utils.default, column_types=
 
     close_f = False
 
-    if not hasattr(path, 'read'):
-        f = io.open(path, encoding=encoding)
-        close_f = True
-    else:
-        f = path
-
     close_schema_f = False
 
-    if not hasattr(schema_path, 'read'):
-        schema_f = io.open(schema_path, encoding=schema_encoding)
-        close_schema_f = True
-    else:
-        schema_f = path
+    try:
+        if not hasattr(path, 'read'):
+            f = io.open(path, encoding=encoding)
+            close_f = True
+        else:
+            f = path
 
-    reader = fixed.reader(f, schema_f)
-    rows = list(reader)
+        if not hasattr(schema_path, 'read'):
+            schema_f = io.open(schema_path, encoding=schema_encoding)
+            close_schema_f = True
+        else:
+            schema_f = path
 
-    if close_f:
-        f.close()
+        reader = fixed.reader(f, schema_f)
+        rows = list(reader)
 
-    if close_schema_f:
-        schema_f.close()
+    finally:
+        if close_f:
+            f.close()
+
+        if close_schema_f:
+            schema_f.close()
 
     if column_names == utils.default:
         column_names = reader.fieldnames
