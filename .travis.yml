@@ -65,7 +65,9 @@ script:
       find tests -type f -name "*.py" | while read s; do \
         ( [ ! -x "$s" ] && nosetests -v "$s" ) || echo "$s" >> "script-failures.log" \
       done; \
-      [ -e "script-failures.log" ] && exit 1; \
+      if [ -e "script-failures.log" ]; then \
+        exit 1; \
+      fi; \
     else \
       nosetests tests; \
     fi
