@@ -52,27 +52,30 @@ jobs:
 # command to install dependencies
 install:
   - >
-    if [[ "$TRAVIS_PYTHON_VERSION" == "2"* ]] || [[ "$TRAVIS_PYTHON_VERSION" == "pypy"* ]]; then \
-      pip install -r requirements-py2.txt; \
-    else \
-      pip3 install -r requirements-py3.txt; \
+    if [[ "$TRAVIS_PYTHON_VERSION" == "2"* ]] || [[ "$TRAVIS_PYTHON_VERSION" == "pypy"* ]]; then
+      pip install -r requirements-py2.txt;
+    else
+      pip3 install -r requirements-py3.txt;
     fi
 # command to run tests
 script:
   # pypy3 segfaults if running all tests in the same process
   - >
-    if [[ "$TRAVIS_PYTHON_VERSION" == "pypy"* ]]; then \
-      find tests -type f -name "*.py" | while read s; do \
-        ( [ ! -x "$s" ] && nosetests -v "$s" ) || echo "$s" >> "script-failures.log" \
-      done; \
-      if [ -e "script-failures.log" ]; then \
-        exit 1; \
-      fi; \
-    else \
-      nosetests tests; \
+    if [[ "$TRAVIS_PYTHON_VERSION" == "pypy"* ]]; then
+      find tests -type f -name "*.py" | while read s; do
+        ( [ ! -x "$s" ] && nosetests -v "$s" ) || echo "$s" >> "script-failures.log";
+      done;
+      if [ -e "script-failures.log" ]; then
+        exit 1;
+      fi;
+    else
+      nosetests tests;
     fi
-after_script:
-  - echo $(cat "script-failures.log")
+after_failure:
+  - >
+    if [ -e "script-failures.log" ]; then
+      echo $(cat "script-failures.log");
+    fi
 addons:
   apt:
     packages:
