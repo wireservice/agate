@@ -48,7 +48,10 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         if hasattr(path, 'read'):
             f = path
         else:
-            f = io.open(path, encoding=encoding)
+            if six.PY2:
+                f = open(path, 'Urb')
+            else:
+                f = io.open(path, encoding=encoding)
 
             close = True
 
@@ -65,6 +68,9 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
             kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue())
         elif sniff_limit > 0:
             kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue()[:sniff_limit])
+
+        if six.PY2:
+            kwargs['encoding'] = encoding
 
         reader = csv.reader(contents, header=header, **kwargs)
 
