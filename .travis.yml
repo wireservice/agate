@@ -62,14 +62,15 @@ script:
   # pypy3 segfaults if running all tests in the same process
   - >
     if [[ "$TRAVIS_PYTHON_VERSION" == "pypy"* ]]; then \
-      FAILURES=(); \
       find tests -type f -name "*.py" | while read s; do \
-        ( [ ! -x "$s" ] && nosetests -v "$s" ) || FAILURES+=("$s"); \
+        ( [ ! -x "$s" ] && nosetests -v "$s" ) || echo "$s" >> "script-failures.log" \
       done; \
-      [ "${#FAILURES[@]}" -ne 0 ] && ( echo "Tests failed in the following files:\n\t${FAILURES[@]}"; exit 1 ); \
+      [ -e "script-failures.log" ] && exit 1; \
     else \
       nosetests tests; \
     fi
+after_script:
+  - echo $(cat "script-failures.log")
 addons:
   apt:
     packages:
