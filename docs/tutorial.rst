@@ -12,4 +12,4 @@ Find it |link-pre|\ |version|\ |link-post|
 
 .. |link-post| raw:: html
 
-	 /tutorial.ipynb">on Github</a>!
+	 /tutorial.ipynb">on GitHub</a>!

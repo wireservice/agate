@@ -189,7 +189,7 @@ Use the `agate-remote <http://agate-remote.readthedocs.org/>`_ extension.
 
     agateremote.patch()
 
-    table = agate.Table.from_url('https://raw.githubusercontent.com/onyxfish/agate/master/examples/test.csv')
+    table = agate.Table.from_url('https://raw.githubusercontent.com/wireservice/agate/master/examples/test.csv')
 
 agate-remote also let’s you create an Archive, which is a reference to a group of tables with a known path structure.
 

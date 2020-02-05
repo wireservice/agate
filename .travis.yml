@@ -68,3 +68,9 @@ script:
     else \
       nosetests tests; \
     fi
+addons:
+  apt:
+    packages:
+      - language-pack-fr
+      - language-pack-de
+      - language-pack-ko
