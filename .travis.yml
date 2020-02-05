@@ -22,7 +22,9 @@ jobs:
       before_install:
         - brew install pkg-config
         - brew install icu4c
+        - export PATH="$PATH:/usr/local/opt/icu4c/bin"
         - export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig"
+        - uconv -V
         - python3 -m pip install --upgrade pip
         - python3 -m pip install --upgrade virtualenv
         - virtualenv -p python3 --system-site-packages "$HOME/venv"
@@ -43,8 +45,8 @@ jobs:
       language: shell       # 'language: python' is an error on Travis CI Windows
       before_install:
         - choco install pkgconfiglite
+        - uconv -V
         - choco install python --version 3.8.0
-        - choco install sqlite
         - python -m pip install --upgrade pip
         - python --version
       env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
