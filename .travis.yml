@@ -53,8 +53,13 @@ jobs:
   allow_failures:
     - os: osx
     - os: windows
-    - python: pypy3
-    - python: pypy
+    - python: "pypy3"
+    - python: "pypy3.5-6.0"
+    - python: "pypy3.5-7.0"
+    - python: "pypy3.6-7.0.0"
+    - python: "pypy"
+    - python: "pypy2.7-6.0"
+    - python: "pypy2.7-7.0.0"
   fast_finish: true
 # command to install dependencies
 install:
