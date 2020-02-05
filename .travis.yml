@@ -55,4 +55,4 @@ install:
 # command to run tests
 script:
   # pypy3 segfaults if running all tests in the same process
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "pypy3"* ]]; then find tests -name "*.py" -print0 | xargs -0 -n1 nosetests -v; else nosetests tests; fi
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "pypy3"* ]]; then FAILURES=0; find tests -name "*.py" | while read s; do nosetests "$s" || ((FAILURES++)); done; [ "$FAILURES" -ne 0 ] && exit 1; else nosetests tests; fi
