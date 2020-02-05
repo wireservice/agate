@@ -45,6 +45,9 @@ jobs:
       language: shell       # 'language: python' is an error on Travis CI Windows
       before_install:
         - choco install pkgconfiglite
+        - wget https://github.com/unicode-org/icu/releases/download/release-65-1/icu4c-65_1-Win64-MSVC2017.zip -O icu4c.zip
+        - unzip icu4c.zip -d icu4c
+        - export PATH="$PATH:$PWD/icu4c"
         - uconv -V
         - choco install python --version 3.8.0
         - python -m pip install --upgrade pip
