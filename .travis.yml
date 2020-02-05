@@ -53,4 +53,6 @@ jobs:
 install:
     - if [[ "$TRAVIS_PYTHON_VERSION" == "2"* ]] || [[ "$TRAVIS_PYTHON_VERSION" == "pypy"* ]]; then pip install -r requirements-py2.txt; else pip3 install -r requirements-py3.txt; fi
 # command to run tests
-script: for s in tests/*.py; do nosetests -v "$s" || exit $?; done
+script:
+  # pypy3 segfaults if running all tests in the same process
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "pypy3"* ]]; then find tests -name "*.py" -print0 | xargs -0 -n1 nosetests -v; else nosetests tests; fi
