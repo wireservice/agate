@@ -45,9 +45,6 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
     close = False
 
     try:
-        if six.PY2:
-            kwargs['encoding'] = encoding
-
         if newline:
             js = []
 
@@ -55,11 +52,7 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
                 for line in path:
                     js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
             else:
-                if six.PY2:
-                    f = open(path, 'Urb')
-                else:
-                    f = io.open(path, encoding=encoding)
-
+                f = io.open(path, encoding=encoding)
                 close = True
 
                 for line in f:
@@ -68,11 +61,7 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
             if hasattr(path, 'read'):
                 js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
             else:
-                if six.PY2:
-                    f = open(path, 'Urb')
-                else:
-                    f = io.open(path, encoding=encoding)
-
+                f = io.open(path, encoding=encoding)
                 close = True
 
                 js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
