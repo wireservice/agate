@@ -44,45 +44,47 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
 
     close = False
 
-    if six.PY2:
-        kwargs['encoding'] = encoding
+    try:
+        if six.PY2:
+            kwargs['encoding'] = encoding
 
-    if newline:
-        js = []
+        if newline:
+            js = []
 
-        if hasattr(path, 'read'):
-            for line in path:
-                js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
-        else:
-            if six.PY2:
-                f = open(path, 'Urb')
+            if hasattr(path, 'read'):
+                for line in path:
+                    js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
             else:
-                f = io.open(path, encoding=encoding)
+                if six.PY2:
+                    f = open(path, 'Urb')
+                else:
+                    f = io.open(path, encoding=encoding)
 
-            close = True
+                close = True
 
-            for line in f:
-                js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
-    else:
-        if hasattr(path, 'read'):
-            js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
+                for line in f:
+                    js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
         else:
-            if six.PY2:
-                f = open(path, 'Urb')
+            if hasattr(path, 'read'):
+                js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
             else:
-                f = io.open(path, encoding=encoding)
+                if six.PY2:
+                    f = open(path, 'Urb')
+                else:
+                    f = io.open(path, encoding=encoding)
 
-            close = True
+                close = True
 
-            js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
+                js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
 
-    if isinstance(js, dict):
-        if not key:
-            raise TypeError('When converting a JSON document with a top-level dictionary element, a key must be specified.')
+        if isinstance(js, dict):
+            if not key:
+                raise TypeError('When converting a JSON document with a top-level dictionary element, a key must be specified.')
 
-        js = js[key]
+            js = js[key]
 
-    if close:
-        f.close()
+    finally:
+        if close:
+            f.close()
 
     return Table.from_object(js, row_names=row_names, column_types=column_types)
