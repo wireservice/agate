@@ -9,7 +9,8 @@ install_requires = [
     'Babel>=2.0',
     'isodate>=0.5.4',
     'python-slugify>=1.2.1',
-    'leather>=0.3.2'
+    'leather>=0.3.2',
+    'PyICU>=2.4.2',
 ]
 
 setup(

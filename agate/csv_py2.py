@@ -110,7 +110,7 @@ class UnicodeWriter(object):
     A CSV writer which will write rows to a file in the specified encoding.
 
     NB: Optimized so that eight-bit encodings skip re-encoding. See:
-        https://github.com/onyxfish/csvkit/issues/175
+        https://github.com/wireservice/csvkit/issues/175
     """
     def __init__(self, f, encoding='utf-8', **kwargs):
         self.encoding = encoding
@@ -267,7 +267,7 @@ class DictWriter(UnicodeDictWriter):
 
 class Sniffer(object):
     """
-    A functinonal wrapper of ``csv.Sniffer()``.
+    A functional wrapper of ``csv.Sniffer()``.
     """
     def sniff(self, sample):
         """
