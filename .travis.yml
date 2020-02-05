@@ -52,7 +52,7 @@ jobs:
 # command to install dependencies
 install:
   - >
-    if [[ "$TRAVIS_PYTHON_VERSION" == "2"* ]] || [[ "$TRAVIS_PYTHON_VERSION" == "pypy"* ]]; then
+    if [[ "$TRAVIS_PYTHON_VERSION" == "2"* ]] || [[ "$TRAVIS_PYTHON_VERSION" == "pypy"* ]] && [[ "$TRAVIS_PYTHON_VERSION" != "pypy3"* ]]; then
       pip install -r requirements-py2.txt;
     else
       pip3 install -r requirements-py3.txt;
@@ -63,7 +63,7 @@ script:
   - >
     if [[ "$TRAVIS_PYTHON_VERSION" == "pypy"* ]]; then
       find tests -type f -name "*.py" | while read s; do
-        ( [ ! -x "$s" ] && nosetests -v "$s" ) || echo "$s" >> "script-failures.log";
+        ( [ ! -x "$s" ] && nosetests -v "$s" ) || ( echo "$s" >> "script-failures.log" );
       done;
       if [ -e "script-failures.log" ]; then
         exit 1;
