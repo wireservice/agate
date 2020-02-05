@@ -66,10 +66,6 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         elif sniff_limit > 0:
             kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue()[:sniff_limit])
 
-        if six.PY2:
-            # On Python 2, we need to specify the encoding to csv.reader()
-            kwargs['encoding'] = encoding
-
         reader = csv.reader(contents, header=header, **kwargs)
 
         if header:
