@@ -376,15 +376,29 @@ class TestDateTime(unittest.TestCase):
     def test_cast_format_locale(self):
         date_type = DateTime(datetime_format='%Y-%m-%d %I:%M %p', locale='ko_KR')
 
-        values = ('1994-03-01 12:30 오후', '2011-02-17 06:30 오전', None, '1984-01-05 06:30 오후', 'n/a')
-        casted = tuple(date_type.cast(v) for v in values)
-        self.assertSequenceEqual(casted, (
-            datetime.datetime(1994, 3, 1, 12, 30, 0),
-            datetime.datetime(2011, 2, 17, 6, 30, 0),
-            None,
-            datetime.datetime(1984, 1, 5, 18, 30, 0),
-            None
-        ))
+        # Date formats depend on the platform's strftime/strptime implementation;
+        # some platforms like macOS always return AM/PM for day periods (%p)
+        possible_values = (
+            ('1994-03-01 12:30 오후', '2011-02-17 06:30 오전', None, '1984-01-05 06:30 오후', 'n/a'),
+            ('1994-03-01 12:30 PM', '2011-02-17 06:30 AM', None, '1984-01-05 06:30 PM', 'n/a'),
+        )
+        valid = False
+        exceptions = []
+        for values in possible_values:
+            try:
+                casted = tuple(date_type.cast(v) for v in values)
+                self.assertSequenceEqual(casted, (
+                    datetime.datetime(1994, 3, 1, 12, 30, 0),
+                    datetime.datetime(2011, 2, 17, 6, 30, 0),
+                    None,
+                    datetime.datetime(1984, 1, 5, 18, 30, 0),
+                    None
+                ))
+                valid = True
+            except CastError as e:
+                exceptions.append(e)
+        if not valid:
+            raise CastError(exceptions)
 
     def test_cast_locale(self):
         date_type = DateTime(locale='fr_FR')
