@@ -104,7 +104,7 @@ script:
         | while read func class etc; do
           class="${class//[()]/}";
           class="${class%.*}:${class##*.}";
-          python3 -m nose -v "$class.$func";
+          nosetests -v "$class.$func";
         done || ( echo "$s" >> "script-failures.log" );
       if [ -e "script-failures.log" ]; then
         exit 1;
