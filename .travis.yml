@@ -26,8 +26,8 @@ jobs:
         - export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig"
         - uconv -V
         - locale -a
-        - LANG=ko_KR.UTF-8 LC_ALL=ko_KR.UTF-8 date -d '1994-03-01 18:30' +'%p'
-        - LANG=ko_KR.UTF-8 LC_ALL=ko_KR.UTF-8 date -d '1994-03-01 01:30' +'%p'
+        - LANG=ko_KR.UTF-8 LC_ALL=ko_KR.UTF-8 date -r 762543000 +'%p' # 18:30
+        - LANG=ko_KR.UTF-8 LC_ALL=ko_KR.UTF-8 date -r 762481800 +'%p' # 01:30
         - python3 -m pip install --upgrade pip
         - python3 -m pip install --upgrade virtualenv
         - virtualenv -p python3 --system-site-packages "$HOME/venv"
