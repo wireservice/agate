@@ -100,13 +100,13 @@ script:
   - >
     if [[ "$TRAVIS_PYTHON_VERSION" == "pypy"* ]]; then
       find tests -type f -name "*.py" | while read s; do
-        ( [ ! -x "$s" ] && nosetests -v "$s" ) || ( echo "$s" >> "script-failures.log" );
+        ( [ ! -x "$s" ] && nosetests -s -v --no-byte-compile "$s" ) || ( echo "$s" >> "script-failures.log" );
       done;
       if [ -e "script-failures.log" ]; then
         exit 1;
       fi;
     else
-      nosetests tests;
+      nosetests --no-byte-compile --with-coverage tests;
     fi
 after_failure:
   - >
