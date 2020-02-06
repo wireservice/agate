@@ -56,6 +56,7 @@ jobs:
         - ./vcpkg integrate install
         - ./vcpkg install icu:x64-windows
         - popd
+        - find . -type f
 #        - export PATH="$PATH:$PWD/icu4c/bin64"
 #        - export LD_LIBRARY_PATH="$PATH:$PWD/icu4c/bin64:$PWD/icu4c/lib64"
 #        - export PYICU_INCLUDES="$PWD/icu4c/include"
