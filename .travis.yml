@@ -99,8 +99,8 @@ script:
   # pypy2 and pypy3 segfault on Travis CI if running all tests in the same process
   - >
     if [[ "$TRAVIS_PYTHON_VERSION" == "pypy" ]]; then
-      nosetests --collect-only -v tests 2>&1
-        | grep -e 'ok$'
+      nosetests --collect-only -v tests 2>&1 \
+        | grep -e 'ok$' \
         | while read func class etc; do
           class="${class//[()]/}";
           class="${class%.*}:${class##*.}";
