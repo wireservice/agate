@@ -52,6 +52,7 @@ jobs:
         - export LD_LIBRARY_PATH="$PATH:$PWD/icu4c/bin64:$PWD/icu4c/lib64"
         - export PYICU_INCLUDES="$PWD/icu4c/include"
         - export PYICU_LFLAGS='/LIBPATH:$PWD/icu4c/lib64'
+        - export PYICU_LIBRARIES="icuin;icuuc;icudt"
         - uconv -V
         - export ICU_VERSION="$(uconv -V | sed -e 's,.*\<ICU \([^ ]*\).*,\1,')"
         - locale --all
