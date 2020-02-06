@@ -25,7 +25,7 @@ jobs:
         - export PATH="$PATH:/usr/local/opt/icu4c/bin"
         - export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig"
         - uconv -V
-        - locale --all
+        - locale -a
         - python3 -m pip install --upgrade pip
         - python3 -m pip install --upgrade virtualenv
         - virtualenv -p python3 --system-site-packages "$HOME/venv"
@@ -55,7 +55,7 @@ jobs:
         - export PYICU_LIBRARIES="icuin;icuuc;icudt"
         - uconv -V
         - export ICU_VERSION="$(uconv -V | sed -e 's,.*\<ICU \([^ ]*\).*,\1,')"
-        - locale --all
+        - locale -a
         - choco install python --version 3.8.0
         - python -m pip install --upgrade pip
         - python --version
