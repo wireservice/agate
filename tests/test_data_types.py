@@ -124,7 +124,7 @@ class TestNumber(unittest.TestCase):
     def test_test(self):
         self.assertEqual(self.type.test(None), True)
         self.assertEqual(self.type.test('N/A'), True)
-        self.assertEqual(self.type.test(True), False)
+        self.assertEqual(self.type.test(True), True)
         self.assertEqual(self.type.test('True'), False)
         self.assertEqual(self.type.test(1), True)
         self.assertEqual(self.type.test(Decimal('1')), True)
@@ -155,6 +155,11 @@ class TestNumber(unittest.TestCase):
     def test_cast_long(self):
         self.assertEqual(self.type.test(long('141414')), True)
         self.assertEqual(self.type.cast(long('141414')), Decimal('141414'))
+
+    def test_boolean_cast(self):
+        values = (True, False)
+        casted = tuple(self.type.cast(v) for v in values)
+        self.assertSequenceEqual(casted, (Decimal('1'), Decimal('0')))
 
     def test_currency_cast(self):
         values = ('$2.70', '-$0.70', u'€14', u'50¢', u'-75¢', u'-$1,287')
