@@ -52,7 +52,7 @@ jobs:
 #        - unzip -q icu4c.zip -d icu4c
         - git clone https://github.com/Microsoft/vcpkg.git
         - pushd vcpkg
-        - ./bootstrap-vcpkg.bat
+        - ./bootstrap-vcpkg.bat -disableMetrics
         - ./vcpkg integrate install
         - ./vcpkg install icu:x64-windows
         - popd
