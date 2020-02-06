@@ -48,15 +48,19 @@ jobs:
       language: shell       # 'language: python' is an error on Travis CI Windows
       before_install:
         - choco install pkgconfiglite
-#        - wget -q https://github.com/unicode-org/icu/releases/download/release-65-1/icu4c-65_1-Win64-MSVC2017.zip -O icu4c.zip
-#        - unzip -q icu4c.zip -d icu4c
         - git clone https://github.com/Microsoft/vcpkg.git
         - pushd vcpkg
         - ./bootstrap-vcpkg.bat -disableMetrics
         - ./vcpkg integrate install
         - ./vcpkg install icu:x64-windows
+        - cp buildtrees/icu/x64-windows-rel/bin/uconv.exe installed/x64-windows/bin/
         - popd
-        - find . -type f
+        - export PATH="$PATH:$PWD/vcpkg/installed/x64-windows/bin"
+        - export LD_LIBRARY_PATH="$PATH:$PWD/vcpkg/installed/x64-windows/bin:$PWD/vcpkg/installed/x64-windows/lib"
+        - export PYICU_INCLUDES="$PWD/vcpkg/installed/x64-windows/include"
+        - export PYICU_LFLAGS='/LIBPATH:$PWD/vcpkg/installed/x64-windows/bin'
+#        - wget -q https://github.com/unicode-org/icu/releases/download/release-65-1/icu4c-65_1-Win64-MSVC2017.zip -O icu4c.zip
+#        - unzip -q icu4c.zip -d icu4c
 #        - export PATH="$PATH:$PWD/icu4c/bin64"
 #        - export LD_LIBRARY_PATH="$PATH:$PWD/icu4c/bin64:$PWD/icu4c/lib64"
 #        - export PYICU_INCLUDES="$PWD/icu4c/include"
