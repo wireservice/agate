@@ -26,8 +26,8 @@ jobs:
         - export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig"
         - uconv -V
         - locale -a
-        - LANG=ko_KR.UTF-8 LC_ALL=ko_KR.UTF-8 date -r 762543000 +'%p' # 18:30
-        - LANG=ko_KR.UTF-8 LC_ALL=ko_KR.UTF-8 date -r 762481800 +'%p' # 01:30
+        - LANG=sv_SV.UTF-8 LC_ALL=ko_KR.UTF-8 date -r 762543000 +'%p' # 18:30
+        - LANG=sv_SV.UTF-8 LC_ALL=ko_KR.UTF-8 date -r 762481800 +'%p' # 01:30
         - python3 -m pip install --upgrade pip
         - python3 -m pip install --upgrade virtualenv
         - virtualenv -p python3 --system-site-packages "$HOME/venv"
@@ -48,12 +48,18 @@ jobs:
       language: shell       # 'language: python' is an error on Travis CI Windows
       before_install:
         - choco install pkgconfiglite
-        - wget -q https://github.com/unicode-org/icu/releases/download/release-65-1/icu4c-65_1-Win64-MSVC2017.zip -O icu4c.zip
-        - unzip -q icu4c.zip -d icu4c
-        - export PATH="$PATH:$PWD/icu4c/bin64"
-        - export LD_LIBRARY_PATH="$PATH:$PWD/icu4c/bin64:$PWD/icu4c/lib64"
-        - export PYICU_INCLUDES="$PWD/icu4c/include"
-        - export PYICU_LFLAGS='/LIBPATH:$PWD/icu4c/lib64'
+#        - wget -q https://github.com/unicode-org/icu/releases/download/release-65-1/icu4c-65_1-Win64-MSVC2017.zip -O icu4c.zip
+#        - unzip -q icu4c.zip -d icu4c
+        - git clone https://github.com/Microsoft/vcpkg.git
+        - pushd vcpkg
+        - ./bootstrap-vcpkg.bat
+        - ./vcpkg integrate install
+        - ./vcpkg install icu:x64-windows
+        - popd
+#        - export PATH="$PATH:$PWD/icu4c/bin64"
+#        - export LD_LIBRARY_PATH="$PATH:$PWD/icu4c/bin64:$PWD/icu4c/lib64"
+#        - export PYICU_INCLUDES="$PWD/icu4c/include"
+#        - export PYICU_LFLAGS='/LIBPATH:$PWD/icu4c/lib64'
         - uconv -V
         - export ICU_VERSION="$(uconv -V | sed -e 's,.*\<ICU \([^ ]*\).*,\1,')"
         - locale -a
