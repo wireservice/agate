@@ -96,11 +96,22 @@ install:
     fi
 # command to run tests
 script:
-  # pypy3 segfaults if running all tests in the same process
+  # pypy2 and pypy3 segfault on Travis CI if running all tests in the same process
   - >
-    if [[ "$TRAVIS_PYTHON_VERSION" == "pypy"* ]]; then
+    if [[ "$TRAVIS_PYTHON_VERSION" == "pypy" ]]; then
+      nosetests --collect-only -v tests 2>&1
+        | grep -e 'ok$'
+        | while read func class etc; do
+          class="${class//[()]/}";
+          class="${class%.*}:${class##*.}";
+          python3 -m nose -v "$class.$func";
+        done || ( echo "$s" >> "script-failures.log" );
+      if [ -e "script-failures.log" ]; then
+        exit 1;
+      fi;
+    elif [[ "$TRAVIS_PYTHON_VERSION" == "pypy3" ]]; then
       find tests -type f -name "*.py" | while read s; do
-        ( [ ! -x "$s" ] && nosetests -s -v --no-byte-compile "$s" ) || ( echo "$s" >> "script-failures.log" );
+        ( [ ! -x "$s" ] && nosetests --no-byte-compile -s -v "$s" ) || ( echo "$s" >> "script-failures.log" );
       done;
       if [ -e "script-failures.log" ]; then
         exit 1;
