@@ -28,8 +28,6 @@ jobs:
         - uconv -V
         - export ICU_VERSION="$(uconv -V | sed -e 's,.*\<ICU \([^ ]*\).*,\1,')"
         - locale -a
-        - LANG=sv_SV.UTF-8 LC_ALL=sv_SV.UTF-8 date -r 762543000 +'%p' # 18:30
-        - LANG=sv_SV.UTF-8 LC_ALL=sv_SV.UTF-8 date -r 762481800 +'%p' # 01:30
         - python3 -m pip install --upgrade pip
         - python3 -m pip install --upgrade virtualenv
         - virtualenv -p python3 --system-site-packages "$HOME/venv"
