@@ -207,6 +207,18 @@ class TestDateTimeAggregation(unittest.TestCase):
         Max('test').validate(table)
         self.assertEqual(Max('test').run(table), datetime.datetime(1994, 3, 3, 6, 31))
 
+    def test_sum(self):
+        rows = [
+            [datetime.timedelta(seconds=10)],
+            [datetime.timedelta(seconds=20)],
+        ]
+
+        table = Table(rows, ['test'], [TimeDelta()])
+
+        self.assertIsInstance(Sum('test').get_aggregate_data_type(table), TimeDelta)
+        Sum('test').validate(table)
+        self.assertEqual(Sum('test').run(table), datetime.timedelta(seconds=30))
+
 
 class TestNumberAggregation(unittest.TestCase):
     def setUp(self):
