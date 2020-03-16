@@ -27,11 +27,7 @@ class Change(Computation):
     def get_computed_data_type(self, table):
         before_column = table.columns[self._before_column_name]
 
-        if isinstance(before_column.data_type, Date):
-            return TimeDelta()
-        elif isinstance(before_column.data_type, DateTime):
-            return TimeDelta()
-        elif isinstance(before_column.data_type, TimeDelta):
+        if isinstance(before_column.data_type, (Date, DateTime, TimeDelta)):
             return TimeDelta()
         elif isinstance(before_column.data_type, Number):
             return Number()
