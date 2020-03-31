@@ -110,7 +110,7 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
     if pivot is not None:
         groups = groups.group_by(pivot)
 
-        column_type = aggregation.get_aggregate_data_type(groups)
+        column_type = aggregation.get_aggregate_data_type(self)
 
         table = groups.aggregate([
             (aggregation_name, aggregation)
