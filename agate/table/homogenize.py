@@ -64,7 +64,7 @@ def homogenize(self, key, compare_values, default_row=None):
             rows.append(Row(default_row(difference), self._column_names))
         else:
             if default_row is not None:
-                new_row = default_row
+                new_row = list(default_row)
             else:
                 new_row = [None] * (len(self._column_names) - len(key))
 
