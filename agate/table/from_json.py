@@ -2,11 +2,13 @@
 
 from collections import OrderedDict
 from decimal import Decimal
+import io
 import json
+import six
 
 
 @classmethod
-def from_json(cls, path, row_names=None, key=None, newline=False, column_types=None, **kwargs):
+def from_json(cls, path, row_names=None, key=None, newline=False, column_types=None, encoding='utf-8', **kwargs):
     """
     Create a new table from a JSON file.
 
@@ -29,33 +31,49 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
         If `True` then the file will be parsed as "newline-delimited JSON".
     :param column_types:
         See :meth:`.Table.__init__`.
+    :param encoding:
+        According to RFC4627, JSON text shall be encoded in Unicode; the default encoding is
+        UTF-8. You can override this by using any encoding supported by your Python's open() function
+        if :code:`path` is a filepath. If passing in a file handle, it is assumed you have already opened it with the correct
+        encoding specified.
     """
     from agate.table import Table
 
     if key is not None and newline:
         raise ValueError('key and newline may not be specified together.')
 
-    if newline:
-        js = []
+    close = False
 
-        if hasattr(path, 'read'):
-            for line in path:
-                js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
-        else:
-            with open(path, 'r') as f:
+    try:
+        if newline:
+            js = []
+
+            if hasattr(path, 'read'):
+                for line in path:
+                    js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
+            else:
+                f = io.open(path, encoding=encoding)
+                close = True
+
                 for line in f:
                     js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
-    else:
-        if hasattr(path, 'read'):
-            js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
         else:
-            with open(path, 'r') as f:
+            if hasattr(path, 'read'):
+                js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
+            else:
+                f = io.open(path, encoding=encoding)
+                close = True
+
                 js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
 
-    if isinstance(js, dict):
-        if not key:
-            raise TypeError('When converting a JSON document with a top-level dictionary element, a key must be specified.')
+        if isinstance(js, dict):
+            if not key:
+                raise TypeError('When converting a JSON document with a top-level dictionary element, a key must be specified.')
 
-        js = js[key]
+            js = js[key]
+
+    finally:
+        if close:
+            f.close()
 
     return Table.from_object(js, row_names=row_names, column_types=column_types)
