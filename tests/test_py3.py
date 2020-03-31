@@ -50,7 +50,7 @@ class TestReader(unittest.TestCase):
             self.assertEqual(reader.line_num, 1)
 
     def test_line_numbers(self):
-        with open('examples/test.csv') as f:
+        with open('examples/test.csv', encoding='utf-8') as f:
             rows = list(csv_py3.Reader(f, line_numbers=True))
 
         sample_rows = [
@@ -69,7 +69,7 @@ class TestFieldSizeLimit(unittest.TestCase):
     def setUp(self):
         self.lim = csv.field_size_limit()
 
-        with open('.test.csv', 'w') as f:
+        with open('.test.csv', 'w', encoding='utf-8') as f:
             f.write('a' * 10)
 
     def tearDown(self):
@@ -79,7 +79,7 @@ class TestFieldSizeLimit(unittest.TestCase):
 
     def test_field_size_limit(self):
         # Testing field_size_limit for failure. Creating data using str * int.
-        with open('.test.csv', 'r') as f:
+        with open('.test.csv', 'r', encoding='utf-8') as f:
             c = csv_py3.Reader(f, field_size_limit=9)
             try:
                 c.__next__()
@@ -89,7 +89,7 @@ class TestFieldSizeLimit(unittest.TestCase):
                 raise AssertionError('Expected FieldSizeLimitError')
 
         # Now testing higher field_size_limit.
-        with open('.test.csv', 'r') as f:
+        with open('.test.csv', 'r', encoding='utf-8') as f:
             c = csv_py3.Reader(f, field_size_limit=11)
             self.assertEqual(['a' * 10], c.__next__())
 
@@ -165,7 +165,7 @@ class TestDictReader(unittest.TestCase):
             ['', 'b', '', '', '', '']
         ]
 
-        self.f = open('examples/test.csv')
+        self.f = open('examples/test.csv', encoding='utf-8')
 
     def tearDown(self):
         self.f.close()
@@ -248,6 +248,6 @@ class TestSniffer(unittest.TestCase):
         pass
 
     def test_sniffer(self):
-        with open('examples/test.csv') as f:
+        with open('examples/test.csv', encoding='utf-8') as f:
             contents = f.read()
             self.assertEqual(csv_py3.Sniffer().sniff(contents).__dict__, csv.Sniffer().sniff(contents).__dict__)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+from babel.numbers import format_decimal
 import six
 
 from agate import Table
@@ -98,8 +99,8 @@ class TestPrintBars(AgateTestCase):
                          output=output)
 
         self.assertEqual(output.getvalue(), "three   two\n"
-                                            "a     2,000 |:::::::\n"
+                                            "a     " + format_decimal(2000, format=u'#,##0') + " |:::::::\n"
                                             "None      - |       \n"
                                             "c         1 |       \n"
                                             "            +------+\n"
-                                            "            0  2,000\n")
+                                            "            0  " + format_decimal(2000, format=u'#,##0') + "\n")

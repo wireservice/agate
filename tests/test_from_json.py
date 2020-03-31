@@ -5,6 +5,7 @@ from agate import Table
 from agate.testcase import AgateTestCase
 from agate.data_types import *
 from agate.type_tester import TypeTester
+import six
 
 
 class TestJSON(AgateTestCase):
@@ -34,8 +35,12 @@ class TestJSON(AgateTestCase):
     def test_from_json_file_like_object(self):
         table1 = Table(self.rows, self.column_names, self.column_types)
 
-        with open('examples/test.json') as f:
-            table2 = Table.from_json(f)
+        if six.PY2:
+            with open('examples/test.json') as f:
+                table2 = Table.from_json(f)
+        else:
+            with open('examples/test.json', encoding='utf-8') as f:
+                table2 = Table.from_json(f)
 
         self.assertColumnNames(table2, self.column_names)
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
