@@ -41,3 +41,4 @@ agate is made by a community. The following individuals have contributed code, d
 * `Kartik Agaram <https://github.com/akkartik>`_
 * `Loïc Corbasson <https://github.com/lcorbasson>`_
 * `Robert Schütz <https://github.com/dotlambda>`_
+* `Danny Sepler <https://github.com/dannysepler>`_
