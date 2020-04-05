@@ -27,7 +27,7 @@ configuration.
 +-------------------------+------------------------------------------+-----------------------------------------+
 | tick_char               | Character to render for axis ticks       | u'+'                                    |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| ellipsis_chars          | Characters to render for ellipsis        | u'...'                                  |
+| ellipsis_char           | Character to render for ellipsis         | u'…'                                    |
 +-------------------------+------------------------------------------+-----------------------------------------+
 
 """
@@ -52,8 +52,8 @@ _options = {
     'printable_zero_line_char': u'|',
     #: Character to render for axis ticks
     'tick_char': u'+',
-    #: Characters to render for ellipsis
-    'ellipsis_chars': u'...',
+    #: Character to render for ellipsis
+    'ellipsis_char': u'…',
 }
 
 

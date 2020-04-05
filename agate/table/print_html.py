@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
 # pylint: disable=W0212
 
 import sys
@@ -39,7 +40,7 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
     if max_columns is None:
         max_columns = len(self._columns)
 
-    ellipsis = config.get_option('ellipsis_chars')
+    ellipsis = config.get_option('ellipsis_char')
     locale = locale or config.get_option('default_locale')
 
     rows_truncated = max_rows < len(self._rows)
@@ -86,7 +87,7 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
                 v = six.text_type(v)
 
             if max_column_width is not None and len(v) > max_column_width:
-                v = '%s...' % v[:max_column_width - 3]
+                v = u'%s…' % v[:max_column_width - 1]
 
             formatted_row.append(v)
 

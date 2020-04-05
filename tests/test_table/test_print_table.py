@@ -58,7 +58,7 @@ class TestPrintTable(AgateTestCase):
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 6)
-        self.assertEqual(len(lines[0]), 23)
+        self.assertEqual(len(lines[0]), 21)
 
     def test_print_table_max_precision(self):
         rows = (
@@ -106,8 +106,8 @@ class TestPrintTable(AgateTestCase):
         table.print_table(output=output, max_column_width=7)
         lines = output.getvalue().split('\n')
 
-        self.assertIn(' also... ', lines[0])
-        self.assertIn(' this... ', lines[2])
+        self.assertIn(u' also, … ', lines[0])
+        self.assertIn(u' this i… ', lines[2])
         self.assertIn(' nope ', lines[4])
 
     def test_print_table_locale_american(self):

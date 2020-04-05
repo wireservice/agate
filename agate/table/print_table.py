@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
 # pylint: disable=W0212
 
 import math
@@ -48,7 +49,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
     if max_precision is None:
         max_precision = float('inf')
 
-    ellipsis = config.get_option('ellipsis_chars')
+    ellipsis = config.get_option('ellipsis_char')
     h_line = config.get_option('horizontal_line_char')
     v_line = config.get_option('vertical_line_char')
     locale = locale or config.get_option('default_locale')
@@ -58,7 +59,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
     column_names = []
     for column_name in self.column_names[:max_columns]:
         if max_column_width is not None and len(column_name) > max_column_width:
-            column_names.append('%s...' % column_name[:max_column_width - 3])
+            column_names.append(u'%s…' % column_name[:max_column_width - 1])
         else:
             column_names.append(column_name)
 
@@ -106,7 +107,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
                 v = six.text_type(v)
 
             if max_column_width is not None and len(v) > max_column_width:
-                v = '%s...' % v[:max_column_width - 3]
+                v = u'%s…' % v[:max_column_width - 1]
 
             if len(v) > widths[j]:
                 widths[j] = len(v)
