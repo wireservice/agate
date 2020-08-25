@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 import io
+import itertools
 import six
 
 
 @classmethod
-def from_csv(cls, path, column_names=None, column_types=None, row_names=None, skip_lines=0, header=True, sniff_limit=0, encoding='utf-8', **kwargs):
+def from_csv(cls, path, column_names=None, column_types=None, row_names=None, skip_lines=0, header=True, sniff_limit=0, encoding='utf-8', row_limit=None, **kwargs):
     """
     Create a new table from a CSV.
 
@@ -38,6 +39,8 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         Character encoding of the CSV file. Note: if passing in a file
         handle it is assumed you have already opened it with the correct
         encoding specified.
+    :param row_limit:
+        Limit how many rows of data will be read
     """
     from agate import csv
     from agate.table import Table
@@ -80,7 +83,10 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
             else:
                 next(reader)
 
-        rows = tuple(reader)
+        if row_limit is None:
+            rows = tuple(reader)
+        else:
+            rows = tuple(itertools.islice(reader, row_limit))
 
     finally:
         if close:

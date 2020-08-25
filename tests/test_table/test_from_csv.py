@@ -170,3 +170,21 @@ class TestFromCSV(AgateTestCase):
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
 
         self.assertRows(table2, table1.rows)
+
+    def test_from_csv_row_limit(self):
+        table1 = Table(self.rows[:2], self.column_names, self.column_types)
+        table2 = Table.from_csv('examples/test.csv', row_limit=2)
+
+        self.assertColumnNames(table2, table1.column_names)
+        self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
+
+        self.assertRows(table2, table1.rows)
+
+    def test_from_csv_row_limit_no_header_columns(self):
+        table1 = Table(self.rows[:2], self.column_names, self.column_types)
+        table2 = Table.from_csv('examples/test_no_header.csv', self.column_names, header=False, row_limit=2)
+
+        self.assertColumnNames(table2, table1.column_names)
+        self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
+
+        self.assertRows(table2, table1.rows)
