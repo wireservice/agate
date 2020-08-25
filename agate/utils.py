@@ -6,7 +6,11 @@ This module contains a collection of utility classes and functions used in
 agate.
 """
 
-from collections import OrderedDict, Sequence
+from collections import OrderedDict
+try:
+    from collections.abc import Sequence
+except ImportError:
+    from collections import Sequence
 from functools import wraps
 import math
 import string

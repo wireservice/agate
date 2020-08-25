@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import io
-
 import six
 
 
@@ -45,44 +44,46 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
 
     close = False
 
-    if hasattr(path, 'read'):
-        f = path
-    else:
+    try:
+        if hasattr(path, 'read'):
+            f = path
+        else:
+            if six.PY2:
+                f = open(path, 'Urb')
+            else:
+                f = io.open(path, encoding=encoding)
+
+            close = True
+
+        if isinstance(skip_lines, int):
+            while skip_lines > 0:
+                f.readline()
+                skip_lines -= 1
+        else:
+            raise ValueError('skip_lines argument must be an int')
+
+        contents = six.StringIO(f.read())
+
+        if sniff_limit is None:
+            kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue())
+        elif sniff_limit > 0:
+            kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue()[:sniff_limit])
+
         if six.PY2:
-            f = open(path, 'Urb')
-        else:
-            f = io.open(path, encoding=encoding)
+            kwargs['encoding'] = encoding
 
-        close = True
+        reader = csv.reader(contents, header=header, **kwargs)
 
-    if isinstance(skip_lines, int):
-        while skip_lines > 0:
-            f.readline()
-            skip_lines -= 1
-    else:
-        raise ValueError('skip_lines argument must be an int')
+        if header:
+            if column_names is None:
+                column_names = next(reader)
+            else:
+                next(reader)
 
-    contents = six.StringIO(f.read())
+        rows = tuple(reader)
 
-    if sniff_limit is None:
-        kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue())
-    elif sniff_limit > 0:
-        kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue()[:sniff_limit])
-
-    if six.PY2:
-        kwargs['encoding'] = encoding
-
-    reader = csv.reader(contents, header=header, **kwargs)
-
-    if header:
-        if column_names is None:
-            column_names = next(reader)
-        else:
-            next(reader)
-
-    rows = tuple(reader)
-
-    if close:
-        f.close()
+    finally:
+        if close:
+            f.close()
 
     return Table(rows, column_names, column_types, row_names=row_names)

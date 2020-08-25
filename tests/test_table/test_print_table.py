@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+from babel.numbers import get_decimal_symbol
 import six
 
 from agate import Table
@@ -11,19 +12,21 @@ from agate.testcase import AgateTestCase
 class TestPrintTable(AgateTestCase):
     def setUp(self):
         self.rows = (
-            ('1.7', 2000, 'a'),
-            ('11.18', None, None),
-            ('0', 1, 'c')
+            ('1.7', 2000, 2000, 'a'),
+            ('11.18', None, None, None),
+            ('0', 1, 1, 'c')
         )
 
         self.number_type = Number()
-        self.international_number_type = Number(locale='de_DE')
+        self.american_number_type = Number(locale='en_US')
+        self.german_number_type = Number(locale='de_DE')
         self.text_type = Text()
 
-        self.column_names = ['one', 'two', 'three']
+        self.column_names = ['one', 'two', 'three', 'four']
         self.column_types = [
             self.number_type,
-            self.international_number_type,
+            self.american_number_type,
+            self.german_number_type,
             self.text_type
         ]
 
@@ -35,7 +38,7 @@ class TestPrintTable(AgateTestCase):
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 6)
-        self.assertEqual(len(lines[0]), 25)
+        self.assertEqual(len(lines[0]), 32)
 
     def test_print_table_max_rows(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -45,7 +48,7 @@ class TestPrintTable(AgateTestCase):
         lines = output.getvalue().split('\n')
 
         self.assertEqual(len(lines), 6)
-        self.assertEqual(len(lines[0]), 25)
+        self.assertEqual(len(lines[0]), 32)
 
     def test_print_table_max_columns(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -81,22 +84,22 @@ class TestPrintTable(AgateTestCase):
         self.assertIn(u' 11.123456 ', lines[3])
         self.assertIn(u' 0 ', lines[4])
         # Test real precision above max
-        self.assertIn(u' 1.74… ', lines[2])
-        self.assertIn(u' 11.12… ', lines[3])
-        self.assertIn(u' 0.00… ', lines[4])
+        self.assertIn(u' 1' + get_decimal_symbol() + u'74… ', lines[2])
+        self.assertIn(u' 11' + get_decimal_symbol() + u'12… ', lines[3])
+        self.assertIn(u' 0' + get_decimal_symbol() + u'00… ', lines[4])
         # Test real precision below max
-        self.assertIn(u' 1.72 ', lines[2])
-        self.assertIn(u' 5.10 ', lines[3])
-        self.assertIn(u' 0.10 ', lines[4])
+        self.assertIn(u' 1' + get_decimal_symbol() + u'72 ', lines[2])
+        self.assertIn(u' 5' + get_decimal_symbol() + u'10 ', lines[3])
+        self.assertIn(u' 0' + get_decimal_symbol() + u'10 ', lines[4])
 
     def test_print_table_max_column_width(self):
         rows = (
-            ('1.7', 2, 'this is long'),
-            ('11.18', None, None),
-            ('0', 1, 'nope')
+            ('1.7', 2, 2, 'this is long'),
+            ('11.18', None, None, None),
+            ('0', 1, 1, 'nope')
         )
 
-        column_names = ['one', 'two', 'also, this is long']
+        column_names = ['one', 'two', 'three', 'also, this is long']
         table = Table(rows, column_names, self.column_types)
 
         output = six.StringIO()
@@ -107,9 +110,21 @@ class TestPrintTable(AgateTestCase):
         self.assertIn(' this... ', lines[2])
         self.assertIn(' nope ', lines[4])
 
-    def test_print_table_locale(self):
+    def test_print_table_locale_american(self):
         """
-        Verify that the locale of the international number is correctly
+        Verify that the locale of the german number is correctly
+        controlling the format of how it is printed.
+        """
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        output = six.StringIO()
+        table.print_table(max_columns=2, output=output, locale='en_US')
+        # If it's working, 2000 should appear as the english '2,000'
+        self.assertTrue("2,000" in output.getvalue())
+
+    def test_print_table_locale_german(self):
+        """
+        Verify that the locale of the german number is correctly
         controlling the format of how it is printed.
         """
         table = Table(self.rows, self.column_names, self.column_types)

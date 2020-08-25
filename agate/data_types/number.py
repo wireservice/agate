@@ -70,6 +70,10 @@ class Number(DataType):
             return Decimal(d)
         elif t is float:
             return Decimal(repr(d))
+        elif d is False:
+            return Decimal(0)
+        elif d is True:
+            return Decimal(1)
         elif not isinstance(d, six.string_types):
             raise CastError('Can not parse value "%s" as Decimal.' % d)
 
@@ -94,7 +98,9 @@ class Number(DataType):
 
         try:
             return Decimal(d) * sign
-        except InvalidOperation:
+        # The Decimal class will return an InvalidOperation exception on most Python implementations,
+        # but PyPy3 may return a ValueError if the string is not translatable to ASCII
+        except (InvalidOperation, ValueError):
             pass
 
         raise CastError('Can not parse value "%s" as Decimal.' % d)

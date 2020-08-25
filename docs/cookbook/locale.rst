@@ -18,7 +18,7 @@ To correctly parse numbers from non-US locales, you must pass a :code:`locale` p
 
 .. code-block:: python
 
-    dutch_numbers = agate.Number(locale='de_DE')
+    dutch_numbers = agate.Number(locale='nl_NL')
 
     column_names = ['city', 'population']
     column_types = [text_type, dutch_numbers]
