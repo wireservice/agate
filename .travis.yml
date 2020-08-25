@@ -20,7 +20,6 @@ jobs:
       osx_image: xcode11.2  # Python 3.7.4 running on macOS 10.14.4
       language: shell       # 'language: python' is an error on Travis CI macOS
       before_install:
-        - brew install pkg-config
         - brew install icu4c
         - export PATH="$PATH:/usr/local/opt/icu4c/bin"
         - export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig"
