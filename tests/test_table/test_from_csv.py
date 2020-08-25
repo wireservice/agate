@@ -188,3 +188,12 @@ class TestFromCSV(AgateTestCase):
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
 
         self.assertRows(table2, table1.rows)
+
+    def test_from_csv_row_limit_too_high(self):
+        table1 = Table(self.rows, self.column_names, self.column_types)
+        table2 = Table.from_csv('examples/test.csv', row_limit=200)
+
+        self.assertColumnNames(table2, table1.column_names)
+        self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
+
+        self.assertRows(table2, table1.rows)
