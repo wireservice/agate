@@ -396,9 +396,11 @@ class TestDateTime(unittest.TestCase):
             try:
                 casted = tuple(date_type.cast(v) for v in values)
             except CastError as e:
+                # We store the exception to be able to display it if there is no match with any %p value
                 exceptions.append(repr(e))
                 continue
             except locale.Error as e:
+                # This locale is not available on the test system -- we skip it
                 raise unittest.case.SkipTest(repr(e))
             self.assertSequenceEqual(casted, (
                 datetime.datetime(1994, 3, 1, 12, 30, 0),
