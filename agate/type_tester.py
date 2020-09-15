@@ -54,7 +54,7 @@ class TypeTester(object):
         :class:`.Text`. Take care in specifying the order of the list. It is
         the order they are tested in. :class:`.Text` should always be last.
     :param null_values:
-        If :code:`types` is :code:`None`, a sequence of values which should be 
+        If :code:`types` is :code:`None`, a sequence of values which should be
         cast to :code:`None` when encountered by the default data types.
     """
     def __init__(self, force={}, limit=None, types=None, null_values=DEFAULT_NULL_VALUES):
