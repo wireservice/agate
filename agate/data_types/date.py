@@ -31,10 +31,7 @@ class Date(DataType):
         self.date_format = date_format
         self.locale = locale
 
-        try:
-            self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=True)
-        except AttributeError:
-            self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=False)
+        self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=True)
         self._parser = parsedatetime.Calendar(constants=self._constants, version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def __getstate__(self):
