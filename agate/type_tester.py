@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from copy import copy
+import warnings
 
 from agate.data_types.boolean import Boolean
 from agate.data_types.date import Date
@@ -86,7 +87,7 @@ class TypeTester(object):
             try:
                 force_indices.append(column_names.index(name))
             except ValueError:
-                raise ValueError('"%s" does not match the name of any column in this table.' % name)
+                warnings.warn('"%s" does not match the name of any column in this table.' % name, RuntimeWarning)
 
         if self._limit:
             sample_rows = rows[:self._limit]
