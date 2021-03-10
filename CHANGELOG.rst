@@ -1,5 +1,5 @@
-1.6.2 - Unreleased
-------------------
+1.6.2 - March 10, 2021
+----------------------
 
 * :meth:`.Date.__init__` and :meth:`.DateTime.__init__` accepts a ``locale`` keyword argument (e.g. :code:`en_US`) for parsing formatted dates. (#730)
 * :meth:`.utils.max_precision` ignores infinity when calculating precision. (#726)
