@@ -5,7 +5,7 @@ from setuptools import setup
 install_requires = [
     'six>=1.9.0',
     'pytimeparse>=1.1.5',
-    'parsedatetime>=2.1',
+    'parsedatetime>=2.1,!=2.5',
     'Babel>=2.0',
     'isodate>=0.5.4',
     'python-slugify>=1.2.1',
