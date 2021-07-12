@@ -9,6 +9,8 @@ To use agate install it with pip::
 
     pip install agate
 
+For non-English locale support, `install PyICU <https://gitlab.pyicu.org/main/pyicu#installing-pyicu>`__.
+
 .. note::
 
     Need more speed? Upgrade to Python 3. It's 3-5x faster than Python 2.

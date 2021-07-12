@@ -36,7 +36,7 @@ class DateTime(DataType):
         self._source_time = datetime.datetime(
             now.year, now.month, now.day, 0, 0, 0, 0, None
         )
-        self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=True)
+        self._constants = parsedatetime.Constants(localeID=self.locale)
         self._parser = parsedatetime.Calendar(constants=self._constants, version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def __getstate__(self):
@@ -56,7 +56,7 @@ class DateTime(DataType):
         of the parsedatetime Calendar class.
         """
         self.__dict__.update(ndict)
-        self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=True)
+        self._constants = parsedatetime.Constants(localeID=self.locale)
         self._parser = parsedatetime.Calendar(constants=self._constants, version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def cast(self, d):

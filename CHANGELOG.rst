@@ -1,3 +1,8 @@
+Unreleased
+----------
+
+* Make PyICU an optional dependency.
+
 1.6.2 - March 10, 2021
 ----------------------
 
