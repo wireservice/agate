@@ -142,7 +142,6 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
     # Dashes span each width with '+' character at intersection of
     # horizontal and vertical dividers.
     divider = '%(v_line)s %(columns)s %(v_line)s' % {
-        'h_line': h_line,
         'v_line': v_line,
         'columns': ' | '.join(h_line * w for w in widths)
     }
