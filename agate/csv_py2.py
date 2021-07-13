@@ -228,7 +228,9 @@ class DictWriter(UnicodeDictWriter):
             self._append_line_number(row)
 
         # Convert embedded Mac line endings to unix style line endings so they get quoted
-        row = dict([(k, v.replace('\r', '\n')) if isinstance(v, basestring) else (k, v) for k, v in row.items()])
+        row = dict([
+            (k, v.replace('\r', '\n')) if isinstance(v, basestring) else (k, v) for k, v in row.items()  # noqa: F821
+        ])
 
         UnicodeDictWriter.writerow(self, row)
 
@@ -248,7 +250,7 @@ class Sniffer(object):
         """
         try:
             dialect = csv.Sniffer().sniff(sample, POSSIBLE_DELIMITERS)
-        except:
+        except Exception:
             dialect = None
 
         return dialect

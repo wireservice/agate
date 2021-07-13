@@ -15,6 +15,7 @@ class TableHTMLParser(html_parser.HTMLParser):
     """
     Parser for use in testing HTML rendering of tables.
     """
+
     def __init__(self):
         warnings.simplefilter('ignore')
 

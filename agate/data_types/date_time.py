@@ -89,7 +89,7 @@ class DateTime(DataType):
 
             try:
                 dt = datetime.datetime.strptime(d, self.datetime_format)
-            except:
+            except (ValueError, TypeError):
                 raise CastError('Value "%s" does not match date format.' % d)
             finally:
                 if orig_locale:
@@ -99,7 +99,7 @@ class DateTime(DataType):
 
         try:
             (_, _, _, _, matched_text), = self._parser.nlp(d, sourceTime=self._source_time)
-        except:
+        except Exception:
             matched_text = None
         else:
             value, ctx = self._parser.parseDT(
@@ -117,7 +117,7 @@ class DateTime(DataType):
             dt = isodate.parse_datetime(d)
 
             return dt
-        except:
+        except Exception:
             pass
 
         raise CastError('Can not parse value "%s" as datetime.' % d)

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from agate.aggregations.base import Aggregation
-from agate.data_types import Boolean
 
 
 class First(Aggregation):

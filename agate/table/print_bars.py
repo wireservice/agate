@@ -88,8 +88,8 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
                 locale=locale
             ))
 
-    max_label_width = max(max([len(l) for l in formatted_labels]), len(y_label))
-    max_value_width = max(max([len(v) for v in formatted_values]), len(x_label))
+    max_label_width = max(max([len(label) for label in formatted_labels]), len(y_label))
+    max_value_width = max(max([len(value) for value in formatted_values]), len(x_label))
 
     plot_width = width - (max_label_width + max_value_width + 2)
 

@@ -29,7 +29,6 @@ from six.moves import zip_longest
 
 from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
-from agate.table import Table
 
 
 class TableSet(MappedSequence):

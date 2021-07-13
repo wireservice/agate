@@ -5,8 +5,6 @@ import json
 from collections import OrderedDict
 from decimal import Decimal
 
-import six
-
 
 @classmethod
 def from_json(cls, path, row_names=None, key=None, newline=False, column_types=None, encoding='utf-8', **kwargs):

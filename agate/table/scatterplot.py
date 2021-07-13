@@ -3,8 +3,6 @@
 
 import leather
 
-from agate import utils
-
 
 def scatterplot(self, x=0, y=1, path=None, width=None, height=None):
     """

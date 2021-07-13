@@ -3,8 +3,6 @@
 
 import leather
 
-from agate import utils
-
 
 def bar_chart(self, label=0, value=1, path=None, width=None, height=None):
     """

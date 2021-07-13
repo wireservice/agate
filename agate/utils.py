@@ -15,7 +15,6 @@ except ImportError:
 
 import math
 import string
-import warnings
 from functools import wraps
 
 from slugify import slugify as pslugify

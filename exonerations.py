@@ -89,6 +89,7 @@ def race_and_age(data):
     # Print out the results
     sorted_groups.print_table(max_rows=10)
 
+
 analysis = proof.Analysis(load_data)
 analysis.then(confessions)
 analysis.then(median_age)

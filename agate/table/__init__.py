@@ -33,7 +33,6 @@ from agate.exceptions import CastError
 from agate.mapped_sequence import MappedSequence
 from agate.rows import Row
 from agate.type_tester import TypeTester
-from agate.warns import warn_duplicate_column, warn_unnamed_column
 
 
 @six.python_2_unicode_compatible

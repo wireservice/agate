@@ -3,7 +3,6 @@
 import locale
 from datetime import date, datetime, time
 
-import isodate
 import parsedatetime
 import six
 
@@ -81,7 +80,7 @@ class Date(DataType):
 
             try:
                 dt = datetime.strptime(d, self.date_format)
-            except:
+            except (ValueError, TypeError):
                 raise CastError('Value "%s" does not match date format.' % d)
             finally:
                 if orig_locale:

@@ -66,7 +66,7 @@ class Number(DataType):
 
         if t is int:
             return Decimal(d)
-        elif six.PY2 and t is long:
+        elif six.PY2 and t is long:  # noqa: F821
             return Decimal(d)
         elif t is float:
             return Decimal(repr(d))
