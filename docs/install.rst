@@ -33,7 +33,6 @@ If you are a developer that also wants to hack on agate, install it from git::
     pip install -r requirements-py2.txt
 
     python setup.py develop
-    tox
 
 .. note::
 

@@ -4,7 +4,7 @@ Release process
 
 This is the release process for agate:
 
-1. Verify all unit tests pass with fresh environments: ``tox -r``.
+#. Verify all tests pass on continuous integration.
 2. Verify 100% test coverage: ``nosetests --with-coverage tests``.
 3. Ensure any new modules have been added to setup.py's ``packages`` list.
 #. Ensure any new public interfaces have been added to the documentation.
