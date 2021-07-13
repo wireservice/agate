@@ -2,6 +2,7 @@
 # -*- coding: utf8 -*-
 
 from babel.numbers import get_decimal_symbol
+
 try:
     from cdecimal import Decimal
 except ImportError:  # pragma: no cover

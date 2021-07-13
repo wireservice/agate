@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-from collections import OrderedDict
-from decimal import Decimal
 import io
 import json
+from collections import OrderedDict
+from decimal import Decimal
+
 import six
 
 

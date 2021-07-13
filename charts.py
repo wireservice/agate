@@ -2,7 +2,6 @@
 
 import agate
 
-
 table = agate.Table.from_csv('examples/realdata/Datagov_FY10_EDU_recp_by_State.csv')
 
 table.limit(10).bar_chart('State Name', 'TOTAL', 'docs/images/bar_chart.svg')

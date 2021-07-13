@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # pylint: disable=W0212
 
-from agate.rows import Row
 from agate import utils
+from agate.rows import Row
 
 
 def join(self, right_table, left_key=None, right_key=None, inner=False, full_outer=False, require_match=False, columns=None):

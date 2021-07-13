@@ -3,8 +3,8 @@
 
 import six
 
-from agate.aggregations import Count
 from agate import utils
+from agate.aggregations import Count
 
 
 def pivot(self, key=None, pivot=None, aggregation=None, computation=None, default_value=utils.default, key_name=None):

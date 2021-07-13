@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # pylint: disable=W0212
 
-from agate.rows import Row
 from agate import utils
+from agate.rows import Row
 
 
 def homogenize(self, key, compare_values, default_row=None):

@@ -2,8 +2,9 @@
 # -*- coding: utf8 -*-
 
 import datetime
-from decimal import Decimal
 import pickle
+from decimal import Decimal
+
 import parsedatetime
 
 try:

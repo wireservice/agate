@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import datetime
+import locale
 
 import isodate
-import locale
 import parsedatetime
 import six
 

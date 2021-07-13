@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-from babel.numbers import get_decimal_symbol
 import six
+from babel.numbers import get_decimal_symbol
 
 from agate import Table
 from agate.data_types import *

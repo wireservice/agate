@@ -2,8 +2,7 @@
 
 import io
 
-from agate import fixed
-from agate import utils
+from agate import fixed, utils
 
 
 @classmethod

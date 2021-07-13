@@ -4,12 +4,11 @@
 import math
 import sys
 
-from babel.numbers import format_decimal
 import six
+from babel.numbers import format_decimal
 
-from agate import config
+from agate import config, utils
 from agate.data_types import Number, Text
-from agate import utils
 
 
 def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_width=20, locale=None, max_precision=3):

@@ -3,8 +3,8 @@
 
 from agate import Table
 from agate.data_types import *
-from agate.testcase import AgateTestCase
 from agate.exceptions import DataTypeError
+from agate.testcase import AgateTestCase
 
 
 class TestMerge(AgateTestCase):

@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-from agate import Table
-from agate.testcase import AgateTestCase
-from agate.data_types import *
-from agate.type_tester import TypeTester
 import six
+
+from agate import Table
+from agate.data_types import *
+from agate.testcase import AgateTestCase
+from agate.type_tester import TypeTester
 
 
 class TestJSON(AgateTestCase):

@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 
+import locale
 from datetime import date, datetime, time
 
 import isodate
-import locale
 import parsedatetime
 import six
 
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
-
 
 ZERO_DT = datetime.combine(date.min, time.min)
 

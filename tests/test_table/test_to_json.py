@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+import json
 import os
 import sys
+
 import six
-import json
 
 from agate import Table
-from agate.testcase import AgateTestCase
 from agate.data_types import *
+from agate.testcase import AgateTestCase
 
 
 class TestJSON(AgateTestCase):

@@ -8,8 +8,8 @@ except ImportError:  # pragma: no cover
 
 import warnings
 
-from babel.core import Locale
 import six
+from babel.core import Locale
 
 from agate.data_types.base import DataType
 from agate.exceptions import CastError

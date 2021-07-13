@@ -7,13 +7,13 @@ try:
 except ImportError:
     from io import StringIO
 
-import shutil
 import json
+import shutil
 
 from agate import Table, TableSet
 from agate.aggregations import *
-from agate.data_types import *
 from agate.computations import Formula
+from agate.data_types import *
 from agate.testcase import AgateTestCase
 
 

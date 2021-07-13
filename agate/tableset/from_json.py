@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
+import json
+import os
 from collections import OrderedDict
 from decimal import Decimal
 from glob import glob
-import json
-import os
 
 import six
 

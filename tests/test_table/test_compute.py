@@ -4,8 +4,8 @@
 import six
 
 from agate import Table
-from agate.data_types import *
 from agate.computations import Formula
+from agate.data_types import *
 from agate.testcase import AgateTestCase
 
 

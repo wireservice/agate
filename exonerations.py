@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import agate
 import proof
+
+import agate
 
 
 def load_data(data):

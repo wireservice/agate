@@ -2,9 +2,9 @@
 # pylint: disable=W0212
 
 import codecs
-from collections import OrderedDict
 import json
 import os
+from collections import OrderedDict
 
 import six
 

@@ -2,10 +2,10 @@
 # -*- coding: utf8 -*-
 
 import datetime
-from decimal import Decimal
 import platform
 import sys
 import warnings
+from decimal import Decimal
 
 try:
     import unittest2 as unittest

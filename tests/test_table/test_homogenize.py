@@ -2,6 +2,7 @@
 # -*- coding: utf8 -*-
 
 from six.moves import range
+
 from agate import Table
 from agate.data_types import *
 from agate.testcase import AgateTestCase

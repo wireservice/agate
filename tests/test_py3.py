@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import csv
-import six
 import os
+
+import six
 
 try:
     import unittest2 as unittest

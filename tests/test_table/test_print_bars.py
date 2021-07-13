@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-from babel.numbers import format_decimal
 import six
+from babel.numbers import format_decimal
 
 from agate import Table
 from agate.data_types import *
-from agate.testcase import AgateTestCase
 from agate.exceptions import DataTypeError
+from agate.testcase import AgateTestCase
 
 
 class TestPrintBars(AgateTestCase):

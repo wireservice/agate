@@ -7,24 +7,27 @@ agate.
 """
 
 from collections import OrderedDict
+
 try:
     from collections.abc import Sequence
 except ImportError:
     from collections import Sequence
-from functools import wraps
+
 import math
 import string
 import warnings
+from functools import wraps
+
 from slugify import slugify as pslugify
+
 from agate.warns import warn_duplicate_column, warn_unnamed_column
 
 try:
-    from cdecimal import Decimal, ROUND_FLOOR, ROUND_CEILING, getcontext
+    from cdecimal import ROUND_CEILING, ROUND_FLOOR, Decimal, getcontext
 except ImportError:  # pragma: no cover
     from decimal import Decimal, ROUND_FLOOR, ROUND_CEILING, getcontext
 
 import six
-
 
 #: Sentinal for use when `None` is an valid argument value
 default = object()

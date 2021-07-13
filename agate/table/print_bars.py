@@ -11,15 +11,13 @@ except ImportError:  # pragma: no cover
 
 import sys
 
-
-from babel.numbers import format_decimal
 import six
+from babel.numbers import format_decimal
 
-from agate.aggregations import Min, Max
-from agate import config
+from agate import config, utils
+from agate.aggregations import Max, Min
 from agate.data_types import Number
 from agate.exceptions import DataTypeError
-from agate import utils
 
 
 def print_bars(self, label_column_name='group', value_column_name='Count', domain=None, width=120, output=sys.stdout, printable=False):

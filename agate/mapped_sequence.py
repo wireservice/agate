@@ -7,6 +7,7 @@ rows and columns.
 """
 
 from collections import OrderedDict
+
 try:
     from collections.abc import Sequence
 except ImportError:

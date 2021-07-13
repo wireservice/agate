@@ -3,8 +3,8 @@
 
 from agate import Table
 from agate.data_types import *
-from agate.type_tester import TypeTester
 from agate.testcase import AgateTestCase
+from agate.type_tester import TypeTester
 
 
 class TestDenormalize(AgateTestCase):
