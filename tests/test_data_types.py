@@ -15,7 +15,6 @@ except ImportError:
 
 import pytz
 
-from agate.columns import *
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.exceptions import CastError
 
@@ -155,8 +154,8 @@ class TestNumber(unittest.TestCase):
 
     @unittest.skipIf(six.PY3, 'Not supported in Python 3.')
     def test_cast_long(self):
-        self.assertEqual(self.type.test(long('141414')), True)  # noqa: F405
-        self.assertEqual(self.type.cast(long('141414')), Decimal('141414'))  # noqa: F405
+        self.assertEqual(self.type.test(long('141414')), True)  # noqa: F821
+        self.assertEqual(self.type.cast(long('141414')), Decimal('141414'))  # noqa: F821
 
     def test_boolean_cast(self):
         values = (True, False)
