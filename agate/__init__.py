@@ -16,8 +16,7 @@ from agate.tableset import TableSet
 from agate.testcase import AgateTestCase
 from agate.type_tester import TypeTester
 from agate.utils import *
-from agate.warns import (DuplicateColumnWarning, NullCalculationWarning, warn_duplicate_column,
-                         warn_null_calculation)
+from agate.warns import DuplicateColumnWarning, NullCalculationWarning, warn_duplicate_column, warn_null_calculation
 
 if six.PY2:  # pragma: no cover
     import agate.csv_py2 as csv

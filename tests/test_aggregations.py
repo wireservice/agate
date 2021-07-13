@@ -12,10 +12,10 @@ except ImportError:
     import unittest
 
 from agate import Table
-from agate.aggregations import (All, Any, Count, Deciles, First, HasNulls, IQR, MAD, Max, MaxLength, MaxPrecision,
+from agate.aggregations import (IQR, MAD, All, Any, Count, Deciles, First, HasNulls, Max, MaxLength, MaxPrecision,
                                 Mean, Median, Min, Mode, Percentiles, PopulationStDev, PopulationVariance, Quartiles,
                                 Quintiles, StDev, Sum, Summary, Variance)
-from agate.data_types import Boolean, Number, DateTime, Text, TimeDelta
+from agate.data_types import Boolean, DateTime, Number, Text, TimeDelta
 from agate.exceptions import DataTypeError
 from agate.warns import NullCalculationWarning
 
