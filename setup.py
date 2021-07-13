@@ -45,7 +45,7 @@ setup(
         'test': [
             'coverage>=3.7.1',
             'cssselect>=0.9.1',
-            'lxml>=3.6.0,<4.0.0',
+            'lxml>=3.6.0',
             'nose>=1.1.2',
             'PyICU>=2.4.2;sys_platform=="linux"',
             'pytz>=2015.4',
