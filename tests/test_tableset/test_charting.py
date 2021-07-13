@@ -3,11 +3,6 @@
 
 from collections import OrderedDict
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
 import leather
 
 from agate import Table, TableSet

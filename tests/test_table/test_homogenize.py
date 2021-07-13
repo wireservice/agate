@@ -4,7 +4,7 @@
 from six.moves import range
 
 from agate import Table
-from agate.data_types import *
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 

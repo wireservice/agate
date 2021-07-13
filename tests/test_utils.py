@@ -10,12 +10,6 @@ try:
 except ImportError:
     import unittest
 
-import sys
-import warnings
-
-from agate.data_types import Text
-from agate.mapped_sequence import MappedSequence
-from agate.table import Table
 from agate.utils import Quantiles, letter_name, round_limits
 
 

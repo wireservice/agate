@@ -9,7 +9,7 @@ except ImportError:  # pragma: no cover
     from decimal import Decimal
 
 from agate import Table
-from agate.data_types import *
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 

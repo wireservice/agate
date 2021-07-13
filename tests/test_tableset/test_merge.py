@@ -3,8 +3,7 @@
 from collections import OrderedDict
 
 from agate import Table, TableSet
-from agate.aggregations import *
-from agate.data_types import *
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 

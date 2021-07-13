@@ -10,9 +10,9 @@ except ImportError:
     import unittest
 
 from agate import Table
-from agate.computations import *
-from agate.data_types import *
-from agate.exceptions import *
+from agate.computations import Change, Formula, Percent, PercentChange, PercentileRank, Rank, Slug
+from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
+from agate.exceptions import CastError, DataTypeError
 from agate.warns import NullCalculationWarning
 
 

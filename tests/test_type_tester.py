@@ -6,7 +6,7 @@ try:
 except ImportError:
     import unittest
 
-from agate.data_types import *
+from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.type_tester import TypeTester
 
 

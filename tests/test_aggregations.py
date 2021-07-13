@@ -2,7 +2,6 @@
 # -*- coding: utf8 -*-
 
 import datetime
-import platform
 import sys
 import warnings
 from decimal import Decimal
@@ -12,12 +11,12 @@ try:
 except ImportError:
     import unittest
 
-import six
-
 from agate import Table
-from agate.aggregations import *
-from agate.data_types import *
-from agate.exceptions import *
+from agate.aggregations import (All, Any, Count, Deciles, First, HasNulls, IQR, MAD, Max, MaxLength, MaxPrecision,
+                                Mean, Median, Min, Mode, Percentiles, PopulationStDev, PopulationVariance, Quartiles,
+                                Quintiles, StDev, Sum, Summary, Variance)
+from agate.data_types import Boolean, Number, DateTime, Text, TimeDelta
+from agate.exceptions import DataTypeError
 from agate.warns import NullCalculationWarning
 
 

@@ -5,7 +5,7 @@ import six
 from babel.numbers import get_decimal_symbol
 
 from agate import Table
-from agate.data_types import *
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 

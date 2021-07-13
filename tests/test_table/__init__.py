@@ -6,14 +6,14 @@ try:
 except ImportError:  # pragma: no cover
     from decimal import Decimal
 
-import platform
 import warnings
 
 import six
 
 from agate import Table
 from agate.computations import Formula
-from agate.data_types import *
+from agate.data_types import Number, Text
+from agate.exceptions import CastError
 from agate.testcase import AgateTestCase
 from agate.warns import DuplicateColumnWarning
 
@@ -304,7 +304,7 @@ class TestBasic(AgateTestCase):
         table = Table(self.rows, column_names)
 
         if six.PY2:
-            u = unicode(table)
+            u = unicode(table)  # noqa: F821
 
             self.assertIn('foo', u)
             self.assertIn('bar', u)
