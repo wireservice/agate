@@ -10,11 +10,15 @@ jobs:
         exclude:
           # UnicodeDecodeError on test_to_csv
           - os: windows-latest
+            python-version: 2.7
+          - os: windows-latest
+            python-version: pypy-2.7
+          - os: windows-latest
             python-version: 3.6
           - os: windows-latest
-            python-version: 3.7
-          - os: windows-latest
             python-version: pypy-3.6
+          - os: windows-latest
+            python-version: 3.7
           - os: windows-latest
             python-version: pypy-3.7
     steps:
