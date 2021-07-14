@@ -199,8 +199,8 @@ class TestTypeTester(unittest.TestCase):
             ('',)
         ]
 
-        tester = TypeTester(types=[Number(locale='de_DE'), Text()])
+        tester = TypeTester(types=[Number(locale='de_DE.UTF-8'), Text()])
         inferred = tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0], Number)
-        self.assertEqual(str(inferred[0].locale), 'de_DE')
+        self.assertEqual(str(inferred[0].locale), 'de_DE.UTF-8')

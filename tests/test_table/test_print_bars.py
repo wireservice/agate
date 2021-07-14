@@ -19,7 +19,7 @@ class TestPrintBars(AgateTestCase):
         )
 
         self.number_type = Number()
-        self.international_number_type = Number(locale='de_DE')
+        self.international_number_type = Number(locale='de_DE.UTF-8')
         self.text_type = Text()
 
         self.column_names = ['one', 'two', 'three']
