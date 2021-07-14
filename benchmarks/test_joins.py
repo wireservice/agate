@@ -32,4 +32,4 @@ class TestTableJoin(unittest.TestCase):
 
         min_time = min(results)
 
-        self.assertLess(min_time, 10)  # CI unreliable, 5 witnessed
+        self.assertLess(min_time, 10)  # CI unreliable, 5s witnessed
