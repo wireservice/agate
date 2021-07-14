@@ -1,5 +1,5 @@
-1.6.3 - Unreleased
-------------------
+1.6.3 - July 14, 2021
+---------------------
 
 * feat: :meth:`.Table.from_csv` accepts a ``row_limit`` keyword argument. (#740)
 * feat: :meth:`.Table.from_json` accepts an ``encoding`` keyword argument. (#734)

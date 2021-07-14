@@ -245,6 +245,8 @@ class TestDictWriter(unittest.TestCase):
 
 @unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestSniffer(unittest.TestCase):
+    maxDiff = None
+
     def test_sniffer(self):
         with open('examples/test.csv', encoding='utf-8') as f:
             contents = f.read()
