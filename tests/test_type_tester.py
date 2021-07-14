@@ -14,6 +14,18 @@ class TestTypeTester(unittest.TestCase):
     def setUp(self):
         self.tester = TypeTester()
 
+    def test_empty(self):
+        rows = [
+            (None,),
+            (None,),
+            (None,),
+        ]
+
+        inferred = self.tester.run(rows, ['one'])
+
+        # This behavior is not necessarily desirable. See https://github.com/wireservice/agate/issues/371
+        self.assertIsInstance(inferred[0], Boolean)
+
     def test_text_type(self):
         rows = [
             ('a',),
