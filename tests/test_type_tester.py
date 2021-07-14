@@ -203,4 +203,4 @@ class TestTypeTester(unittest.TestCase):
         inferred = tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0], Number)
-        self.assertEqual(str(inferred[0].locale), 'de_DE.UTF-8')
+        self.assertEqual(str(inferred[0].locale), 'de_DE')

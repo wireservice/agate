@@ -19,12 +19,11 @@ jobs:
             python-version: pypy-3.7
     steps:
       - if: matrix.os == 'ubuntu-latest'
-        name: Install Ubuntu dependencies
+        name: Install UTF-8 locales and lxml requirements
         run: |
           sudo apt install libxml2-dev libxslt-dev
           sudo locale-gen de_DE.UTF-8
           sudo locale-gen en_US.UTF-8
-          sudo locale-gen fr_FR.UTF-8
           sudo locale-gen ko_KR.UTF-8
           sudo update-locale
       - uses: actions/checkout@v2

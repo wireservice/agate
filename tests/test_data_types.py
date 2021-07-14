@@ -266,7 +266,7 @@ class TestDate(unittest.TestCase):
         ))
 
     def test_cast_locale(self):
-        date_type = Date(locale='fr_FR.UTF-8')
+        date_type = Date(locale='fr_FR')
 
         values = ('01 mars 1994', u'jeudi 17 février 2011', None, '5 janvier 1984', 'n/a')
         casted = tuple(date_type.cast(v) for v in values)
@@ -404,7 +404,7 @@ class TestDateTime(unittest.TestCase):
             raise AssertionError('\n\n'.join(exceptions))
 
     def test_cast_locale(self):
-        date_type = DateTime(locale='fr_FR.UTF-8')
+        date_type = DateTime(locale='fr_FR')
 
         values = ('01/03/1994 12:30', '17/2/11 6:30', None, '5/01/84 18:30', 'n/a')
         casted = tuple(date_type.cast(v) for v in values)
