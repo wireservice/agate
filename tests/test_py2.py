@@ -350,9 +350,6 @@ class TestDictWriter(unittest.TestCase):
 
 @unittest.skipIf(six.PY3, "Not supported in Python 3.")
 class TestSniffer(unittest.TestCase):
-    def setUp(self):
-        pass
-
     def test_sniffer(self):
         with open('examples/test.csv') as f:
             contents = f.read()
