@@ -16,7 +16,6 @@ from six.moves import range
 import agate
 
 
-@unittest.skipIf(platform.system() != "Linux")
 class TestTableJoin(unittest.TestCase):
     def test_join(self):
         left_rows = [(six.text_type(i), i) for i in range(100000)]
@@ -38,4 +37,4 @@ class TestTableJoin(unittest.TestCase):
 
         min_time = min(results)
 
-        self.assertLess(min_time, 0)
+        self.assertLess(min_time, 2.5)  # 2.5 for CI
