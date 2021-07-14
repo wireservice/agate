@@ -4,10 +4,7 @@ import datetime
 import warnings
 from decimal import Decimal
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 from agate import Table
 from agate.computations import Change, Formula, Percent, PercentChange, PercentileRank, Rank, Slug

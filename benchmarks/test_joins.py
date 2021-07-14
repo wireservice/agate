@@ -4,10 +4,7 @@
 from random import shuffle
 from timeit import Timer
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 import six
 from six.moves import range

@@ -6,10 +6,7 @@ import os
 
 import six
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 from agate import csv_py3
 from agate.exceptions import FieldSizeLimitError

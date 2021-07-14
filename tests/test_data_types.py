@@ -8,10 +8,7 @@ from decimal import Decimal
 import parsedatetime
 import six
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 import pytz
 

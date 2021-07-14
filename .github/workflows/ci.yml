@@ -12,9 +12,9 @@ jobs:
           - os: windows-latest
             python-version: 3.6
           - os: windows-latest
-            python-version: 3.7
-          - os: windows-latest
             python-version: pypy-3.6
+          - os: windows-latest
+            python-version: 3.7
           - os: windows-latest
             python-version: pypy-3.7
     steps:
@@ -22,8 +22,9 @@ jobs:
         name: Install Ubuntu dependencies
         run: |
           sudo apt install libxml2-dev libxslt-dev
-          sudo locale-gen en_US.UTF-8
           sudo locale-gen de_DE
+          sudo locale-gen en_US
+          sudo locale-gen fr_FR
           sudo locale-gen ko_KR
           sudo update-locale
       - uses: actions/checkout@v2
