@@ -76,4 +76,5 @@ def homogenize(self, key, compare_values, default_row=None):
         new_row = [self._columns[i].data_type.cast(v) for i, v in enumerate(new_row)]
         rows.append(Row(new_row, self._column_names))
 
-    return self._fork(rows)
+    # Do not copy the row_names, since this function adds rows.
+    return self._fork(rows, row_names=[])
