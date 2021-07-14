@@ -34,9 +34,10 @@ jobs:
       - run: check-manifest
       - run: flake8 .
       - run: isort . --check-only
-      - name: Set up locales
+      - name: Install Ubuntu dependencies
         if: matrix.os == 'ubuntu-latest'
         run: |
+          sudo apt install libxml2-dev libxslt-dev
           sudo locale-gen en_US.UTF-8
           sudo update-locale
       - run: pip install .[test]
