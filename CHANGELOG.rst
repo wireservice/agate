@@ -11,6 +11,7 @@
 * fix: :meth:`.Table.homogenize` casts ``compare_values`` and ``default_row``. (#700)
 * fix: :meth:`.Table.homogenize` accepts tuples. (#710)
 * fix: :meth:`.TableSet.group_by` accepts input with no rows. (#703)
+* fix: :class:`.TypeTester` warns if a column specified by the ``force`` argument is not in the table, instead of raising an error. (#747)
 * fix: Aggregations return ``None`` if all values are ``None``, instead of raising an error. Note that ``Sum``, ``MaxLength`` and ``MaxPrecision`` continue to return ``0`` if all values are ``None``. (#706)
 * fix: Ensure files are closed when errors occur. (#734)
 * build: Make PyICU an optional dependency.
