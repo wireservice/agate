@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from copy import copy
 import warnings
+from copy import copy
 
 from agate.data_types.base import DEFAULT_NULL_VALUES
 from agate.data_types.boolean import Boolean
