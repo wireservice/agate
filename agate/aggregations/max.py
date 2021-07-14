@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from agate.aggregations.base import Aggregation
-from agate.data_types import Date, DateTime, Number
+from agate.data_types import Date, DateTime, Number, TimeDelta
 from agate.exceptions import DataTypeError
 
 
@@ -21,13 +21,13 @@ class Max(Aggregation):
     def get_aggregate_data_type(self, table):
         column = table.columns[self._column_name]
 
-        if isinstance(column.data_type, (Number, Date, DateTime)):
+        if isinstance(column.data_type, (Date, DateTime, Number, TimeDelta)):
             return column.data_type
 
     def validate(self, table):
         column = table.columns[self._column_name]
 
-        if not isinstance(column.data_type, (Number, Date, DateTime)):
+        if not isinstance(column.data_type, (Date, DateTime, Number, TimeDelta)):
             raise DataTypeError('Min can only be applied to columns containing DateTime, Date or Number data.')
 
     def run(self, table):

@@ -3,7 +3,7 @@
 
 * feat: :meth:`.Table.from_json` accepts an ``encoding`` keyword argument. (#734)
 * feat: :meth:`.Table.print_html` accepts a ``max_precision`` keyword argument. (#753)
-* feat: :class:`.Sum` works with :class:`.TimeDelta`. (#735)
+* feat: :class:`.Min`, :class:`.Max` and :class:`.Sum` work with :class:`.TimeDelta`. (#735)
 * feat: :class:`.FieldSizeLimitError` includes the line number in the error message. (#681)
 * fix: :meth:`.Table.normalize` works with :meth:`.Table.where`. (#691)
 * fix: :meth:`.Table.homogenize` accepts tuples. (#710)

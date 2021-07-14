@@ -205,6 +205,11 @@ class TestDateTimeAggregation(unittest.TestCase):
     def test_min_all_nulls(self):
         self.assertIsNone(Min('null').run(self.table))
 
+    def test_min_time_delta(self):
+        self.assertIsInstance(Min('test').get_aggregate_data_type(self.time_delta_table), TimeDelta)
+        Min('test').validate(self.time_delta_table)
+        self.assertEqual(Min('test').run(self.time_delta_table), datetime.timedelta(0, 10))
+
     def test_max(self):
         self.assertIsInstance(Max('test').get_aggregate_data_type(self.table), DateTime)
         Max('test').validate(self.table)
@@ -212,6 +217,11 @@ class TestDateTimeAggregation(unittest.TestCase):
 
     def test_max_all_nulls(self):
         self.assertIsNone(Max('null').run(self.table))
+
+    def test_max_time_delta(self):
+        self.assertIsInstance(Max('test').get_aggregate_data_type(self.time_delta_table), TimeDelta)
+        Max('test').validate(self.time_delta_table)
+        self.assertEqual(Max('test').run(self.time_delta_table), datetime.timedelta(0, 20))
 
     def test_sum(self):
         self.assertIsInstance(Sum('test').get_aggregate_data_type(self.time_delta_table), TimeDelta)
