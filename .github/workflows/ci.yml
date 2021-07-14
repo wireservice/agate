@@ -12,6 +12,10 @@ jobs:
             python-version: 3.6
           - os: windows-latest
             python-version: 3.7
+          - os: windows-latest
+            python-version: pypy-3.6
+          - os: windows-latest
+            python-version: pypy-3.7
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -30,8 +34,15 @@ jobs:
       - run: check-manifest
       - run: flake8 .
       - run: isort . --check-only
+      - name: Set up locales
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo locale-gen en_US.UTF-8
+          sudo update-locale
       - run: pip install .[test]
       - run: nosetests --with-coverage --cover-package=agate
-      - if: matrix.os != 'windows-latest'
-        run: python example.py
-      - run: python charts.py
+      - name: Test example scripts
+        if: matrix.os != 'windows-latest'
+        run: |
+          python example.py
+          python charts.py
