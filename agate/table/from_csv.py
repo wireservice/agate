@@ -40,7 +40,7 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         handle it is assumed you have already opened it with the correct
         encoding specified.
     :param row_limit:
-        Limit how many rows of data will be read
+        Limit how many rows of data will be read.
     """
     from agate import csv
     from agate.table import Table

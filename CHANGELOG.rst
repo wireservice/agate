@@ -4,6 +4,7 @@
 * feat: :meth:`.Table.from_csv` accepts a ``row_limit`` keyword argument. (#740)
 * feat: :meth:`.Table.from_json` accepts an ``encoding`` keyword argument. (#734)
 * feat: :meth:`.Table.print_html` accepts a ``max_precision`` keyword argument. (#753)
+* feat: :class:`.TypeTester` accepts a ``null_values`` keyword argument. (#745)
 * feat: :class:`.Min`, :class:`.Max` and :class:`.Sum` (#735) work with :class:`.TimeDelta`.
 * feat: :class:`.FieldSizeLimitError` includes the line number in the error message. (#681)
 * fix: :meth:`.Table.normalize` works with :meth:`.Table.where`. (#691)
