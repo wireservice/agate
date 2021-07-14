@@ -2,6 +2,7 @@
 
 from copy import copy
 
+from agate.data_types.base import DEFAULT_NULL_VALUES
 from agate.data_types.boolean import Boolean
 from agate.data_types.date import Date
 from agate.data_types.date_time import DateTime
@@ -52,8 +53,11 @@ class TypeTester(object):
         options such as ``locale`` to :class:`.Number` or ``cast_nulls`` to
         :class:`.Text`. Take care in specifying the order of the list. It is
         the order they are tested in. :class:`.Text` should always be last.
+    :param null_values:
+        If :code:`types` is :code:`None`, a sequence of values which should be
+        cast to :code:`None` when encountered by the default data types.
     """
-    def __init__(self, force={}, limit=None, types=None):
+    def __init__(self, force={}, limit=None, types=None, null_values=DEFAULT_NULL_VALUES):
         self._force = force
         self._limit = limit
 
@@ -62,12 +66,12 @@ class TypeTester(object):
         else:
             # In order of preference
             self._possible_types = [
-                Boolean(),
-                Number(),
-                TimeDelta(),
-                Date(),
-                DateTime(),
-                Text()
+                Boolean(null_values=null_values),
+                Number(null_values=null_values),
+                TimeDelta(null_values=null_values),
+                Date(null_values=null_values),
+                DateTime(null_values=null_values),
+                Text(null_values=null_values)
             ]
 
     def run(self, rows, column_names):
