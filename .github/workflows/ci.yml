@@ -50,6 +50,6 @@ jobs:
       - run: pip install .[test]
       - run: nosetests --with-coverage --cover-package=agate
       # UnicodeDecodeError on print_bars
-      - if: matrix.os != 'windows-latest' && matrix.python-version != '2.7' && matrix.python-version != 'pypy-2.7'
+      - if: matrix.python-version != '2.7' && matrix.python-version != 'pypy-2.7'
         run: python example.py
       - run: python charts.py
