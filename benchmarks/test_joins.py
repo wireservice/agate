@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-import platform
 from random import shuffle
 from timeit import Timer
 
