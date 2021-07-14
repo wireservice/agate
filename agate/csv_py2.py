@@ -250,7 +250,7 @@ class Sniffer(object):
         """
         try:
             dialect = csv.Sniffer().sniff(sample, POSSIBLE_DELIMITERS)
-        except Exception:
+        except csv.Error:
             dialect = None
 
         return dialect
