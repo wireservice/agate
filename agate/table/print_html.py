@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # pylint: disable=W0212
 
+import math
 import sys
 
 import six
@@ -10,7 +11,7 @@ from agate import config, utils
 from agate.data_types import Number, Text
 
 
-def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_width=20, locale=None):
+def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_width=20, locale=None, max_precision=3):
     """
     Print an HTML version of this table.
 
@@ -31,12 +32,19 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
     :param locale:
         Provide a locale you would like to be used to format the output.
         By default it will use the system's setting.
+    :max_precision:
+        Puts a limit on the maximum precision displayed for number types.
+        Numbers with lesser precision won't be affected.
+        This defaults to :code:`3`. Pass :code:`None` to disable limit.
     """
     if max_rows is None:
         max_rows = len(self._rows)
 
     if max_columns is None:
         max_columns = len(self._columns)
+
+    if max_precision is None:
+        max_precision = float('inf')
 
     ellipsis = config.get_option('ellipsis_chars')
     locale = locale or config.get_option('default_locale')
@@ -59,7 +67,11 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
 
         if isinstance(c.data_type, Number):
             max_places = utils.max_precision(c[:max_rows])
-            number_formatters.append(utils.make_number_formatter(max_places))
+            add_ellipsis = False
+            if max_places > max_precision:
+                add_ellipsis = True
+                max_places = max_precision
+            number_formatters.append(utils.make_number_formatter(max_places, add_ellipsis))
         else:
             number_formatters.append(None)
 
@@ -75,7 +87,7 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
                 v = ellipsis
             elif v is None:
                 v = ''
-            elif number_formatters[j] is not None:
+            elif number_formatters[j] is not None and not math.isinf(v):
                 v = format_decimal(
                     v,
                     format=number_formatters[j],
