@@ -76,7 +76,7 @@ class TestMerge(AgateTestCase):
         table_b = Table(self.rows, self.column_names, column_types)
 
         with self.assertRaises(DataTypeError):
-            table_c = Table.merge([table_a, table_b])  # noqa
+            Table.merge([table_a, table_b])
 
     def test_merge_with_row_names(self):
         table_a = Table(self.rows, self.column_names, self.column_types, row_names='three')

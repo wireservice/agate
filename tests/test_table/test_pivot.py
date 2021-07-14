@@ -83,7 +83,7 @@ class TestPivot(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types)
 
         with self.assertRaises(ValueError):
-            pivot_table = table.pivot(['race', 'gender'], key_name='foo')  # noqa
+            table.pivot(['race', 'gender'], key_name='foo')
 
     def test_pivot_no_key(self):
         table = Table(self.rows, self.column_names, self.column_types)

@@ -75,10 +75,10 @@ class TestAggregate(AgateTestCase):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         with self.assertRaises(ValueError):
-            table = tableset.merge(groups=['red', 'blue'], group_name='color_code')  # noqa
+            tableset.merge(groups=['red', 'blue'], group_name='color_code')
 
     def test_merge_groups_invalid_type(self):
         tableset = TableSet(self.tables.values(), self.tables.keys())
 
         with self.assertRaises(ValueError):
-            table = tableset.merge(groups='invalid', group_name='color_code')  # noqa
+            tableset.merge(groups='invalid', group_name='color_code')

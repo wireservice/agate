@@ -54,7 +54,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_formula_invalid(self):
         with self.assertRaises(CastError):
-            new_table = self.table.compute([  # noqa
+            self.table.compute([
                 ('test', Formula(self.number_type, lambda r: r['one']))
             ])
 
@@ -179,11 +179,11 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(to_one_place(new_table.columns['test'][3]), Decimal('60.0'))
 
         with self.assertRaises(DataTypeError):
-            new_table = self.table.compute([
+            self.table.compute([
                 ('test', Percent('two', 0))
             ])
         with self.assertRaises(DataTypeError):
-            new_table = self.table.compute([
+            self.table.compute([
                 ('test', Percent('two', -1))
             ])
         with self.assertRaises(DataTypeError):
@@ -250,12 +250,12 @@ class TestTableComputation(unittest.TestCase):
 
     def test_percent_change_invalid_columns(self):
         with self.assertRaises(DataTypeError):
-            new_table = self.table.compute([
+            self.table.compute([
                 ('test', PercentChange('one', 'three'))
             ])
 
         with self.assertRaises(DataTypeError):
-            new_table = self.table.compute([  # noqa
+            self.table.compute([
                 ('test', PercentChange('three', 'one'))
             ])
 

@@ -93,4 +93,4 @@ class TestJSON(AgateTestCase):
 
     def test_from_json_error_newline_key(self):
         with self.assertRaises(ValueError):
-            table = Table.from_json('examples/test.json', newline=True, key='test')  # noqa
+            Table.from_json('examples/test.json', newline=True, key='test')
