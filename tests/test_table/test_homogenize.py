@@ -33,6 +33,8 @@ class TestHomogenize(AgateTestCase):
             (2, 3, 'd')
         )
 
+        homogenized.print_table()
+
         self.assertColumnNames(homogenized, self.column_names)
         self.assertColumnTypes(homogenized, [Number, Number, Text])
         self.assertRows(homogenized, rows)
@@ -47,6 +49,8 @@ class TestHomogenize(AgateTestCase):
             (None, 2, 'c'),
             (2, None, None)
         )
+
+        homogenized.print_table()
 
         self.assertColumnNames(homogenized, self.column_names)
         self.assertColumnTypes(homogenized, [Number, Number, Text])
@@ -65,6 +69,8 @@ class TestHomogenize(AgateTestCase):
             (None, 2, 'c'),
             (2, 5, 'c')
         )
+
+        homogenized.print_table()
 
         self.assertColumnNames(homogenized, self.column_names)
         self.assertColumnTypes(homogenized, [Number, Number, Text])
@@ -86,6 +92,8 @@ class TestHomogenize(AgateTestCase):
             (None, 2, 'c'),
             (2, 4, 'c')
         )
+
+        homogenized.print_table()
 
         self.assertColumnNames(homogenized, self.column_names)
         self.assertColumnTypes(homogenized, [Number, Number, Text])

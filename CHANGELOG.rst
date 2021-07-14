@@ -3,9 +3,10 @@
 
 * feat: :meth:`.Table.from_json` accepts an ``encoding`` keyword argument. (#734)
 * feat: :meth:`.Table.print_html` accepts a ``max_precision`` keyword argument. (#753)
-* feat: :class:`.Min`, :class:`.Max` and :class:`.Sum` work with :class:`.TimeDelta`. (#735)
+* feat: :class:`.Min`, :class:`.Max` and :class:`.Sum` (#735) work with :class:`.TimeDelta`.
 * feat: :class:`.FieldSizeLimitError` includes the line number in the error message. (#681)
 * fix: :meth:`.Table.normalize` works with :meth:`.Table.where`. (#691)
+* fix: :meth:`.Table.homogenize` casts ``compare_values`` and ``default_row``. (#700)
 * fix: :meth:`.Table.homogenize` accepts tuples. (#710)
 * fix: :meth:`.TableSet.group_by` accepts input with no rows. (#703)
 * fix: Aggregations return ``None`` if all values are ``None``, instead of raising an error. Note that ``Sum``, ``MaxLength`` and ``MaxPrecision`` continue to return ``0`` if all values are ``None``. (#706)
