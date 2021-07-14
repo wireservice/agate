@@ -11,7 +11,7 @@ def join(self, right_table, left_key=None, right_key=None, inner=False, full_out
     implements most varieties of SQL join, in addition to some unique features.
 
     If :code:`left_key` and :code:`right_key` are both :code:`None` then this
-    method will peform a "sequential join", which is to say it will join on row
+    method will perform a "sequential join", which is to say it will join on row
     number. The :code:`inner` and :code:`full_outer` arguments will determine
     whether dangling left-hand and right-hand rows are included, respectively.
 
