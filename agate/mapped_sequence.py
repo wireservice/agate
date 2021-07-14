@@ -83,6 +83,9 @@ class MappedSequence(Sequence):
 
         return str(self.__unicode__())
 
+    def __repr__(self):
+        return self.__str__()
+
     def __getitem__(self, key):
         """
         Retrieve values from this array by index, slice or key.
