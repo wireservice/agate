@@ -27,5 +27,6 @@ jobs:
       - run: isort . --check-only
       - run: pip install .[test]
       - run: nosetests --with-coverage --cover-package=agate
-      - run: python example.py
+      - if: matrix.os != 'windows-latest'
+        run: python example.py
       - run: python charts.py
