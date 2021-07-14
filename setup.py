@@ -49,7 +49,8 @@ setup(
             'cssselect>=0.9.1',
             'lxml>=3.6.0',
             'nose>=1.1.2',
-            'PyICU>=2.4.2',
+            # CI is not configured to install PyICU on macOS and Windows.
+            'PyICU>=2.4.2;sys_platform=="linux"',
             'pytz>=2015.4',
             'mock>=1.3.0;python_version<"3"',
             'unittest2>=1.1.0;python_version<"3"',
