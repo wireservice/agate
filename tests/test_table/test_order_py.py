@@ -2,8 +2,8 @@
 # -*- coding: utf8 -*-
 
 from agate import Table
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
-from agate.data_types import *
 
 
 class TestOrderBy(AgateTestCase):

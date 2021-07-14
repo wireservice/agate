@@ -2,9 +2,9 @@
 # pylint: disable=W0212
 
 import codecs
-from collections import OrderedDict
 import json
 import os
+from collections import OrderedDict
 
 import six
 
@@ -78,7 +78,7 @@ def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
                 if key_is_row_function:
                     k = key(row)
                 else:
-                    k = str(row[key]) if six.PY3 else unicode(row[key])
+                    k = str(row[key]) if six.PY3 else unicode(row[key])  # noqa: F821
 
                 if k in output:
                     raise ValueError('Value %s is not unique in the key column.' % six.text_type(k))

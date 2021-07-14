@@ -2,19 +2,19 @@
 # -*- coding: utf8 -*-
 
 import datetime
-from decimal import Decimal
 import pickle
-import parsedatetime
+from decimal import Decimal
 
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
 
+import parsedatetime
 import pytz
+import six
 
-from agate.columns import *
-from agate.data_types import *
+from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.exceptions import CastError
 
 
@@ -153,8 +153,8 @@ class TestNumber(unittest.TestCase):
 
     @unittest.skipIf(six.PY3, 'Not supported in Python 3.')
     def test_cast_long(self):
-        self.assertEqual(self.type.test(long('141414')), True)
-        self.assertEqual(self.type.cast(long('141414')), Decimal('141414'))
+        self.assertEqual(self.type.test(long('141414')), True)  # noqa: F821
+        self.assertEqual(self.type.cast(long('141414')), Decimal('141414'))  # noqa: F821
 
     def test_boolean_cast(self):
         values = (True, False)
@@ -168,7 +168,7 @@ class TestNumber(unittest.TestCase):
 
     def test_cast_locale(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a', '2,7', '200.000.000')
-        casted = tuple(Number(locale='de_DE').cast(v) for v in values)
+        casted = tuple(Number(locale='de_DE.UTF-8').cast(v) for v in values)
         self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000')))
 
     def test_cast_text(self):
@@ -255,7 +255,7 @@ class TestDate(unittest.TestCase):
         ))
 
     def test_cast_format_locale(self):
-        date_type = Date(date_format='%d-%b-%Y', locale='de_DE')
+        date_type = Date(date_format='%d-%b-%Y', locale='de_DE.UTF-8')
 
         # March can be abbreviated to Mrz or Mär depending on the locale version,
         # so we use December in the first value to ensure the test passes everywhere
@@ -379,7 +379,7 @@ class TestDateTime(unittest.TestCase):
         ))
 
     def test_cast_format_locale(self):
-        date_type = DateTime(datetime_format='%Y-%m-%d %I:%M %p', locale='ko_KR')
+        date_type = DateTime(datetime_format='%Y-%m-%d %I:%M %p', locale='ko_KR.UTF-8')
 
         # Date formats depend on the platform's strftime/strptime implementation;
         # some platforms like macOS always return AM/PM for day periods (%p),

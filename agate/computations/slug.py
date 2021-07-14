@@ -4,7 +4,7 @@ from agate.aggregations.has_nulls import HasNulls
 from agate.computations.base import Computation
 from agate.data_types import Text
 from agate.exceptions import DataTypeError
-from agate.utils import slugify, issequence
+from agate.utils import issequence, slugify
 
 
 class Slug(Computation):

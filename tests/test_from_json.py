@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-from agate import Table
-from agate.testcase import AgateTestCase
-from agate.data_types import *
-from agate.type_tester import TypeTester
 import six
+
+from agate import Table
+from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
+from agate.testcase import AgateTestCase
+from agate.type_tester import TypeTester
 
 
 class TestJSON(AgateTestCase):
@@ -92,4 +93,4 @@ class TestJSON(AgateTestCase):
 
     def test_from_json_error_newline_key(self):
         with self.assertRaises(ValueError):
-            table = Table.from_json('examples/test.json', newline=True, key='test')  # noqa
+            Table.from_json('examples/test.json', newline=True, key='test')

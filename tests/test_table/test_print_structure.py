@@ -4,7 +4,7 @@
 import six
 
 from agate import Table
-from agate.data_types import *
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 
@@ -17,7 +17,7 @@ class TestPrintStructure(AgateTestCase):
         )
 
         self.number_type = Number()
-        self.international_number_type = Number(locale='de_DE')
+        self.international_number_type = Number(locale='de_DE.UTF-8')
         self.text_type = Text()
 
         self.column_names = ['one', 'two', 'three']

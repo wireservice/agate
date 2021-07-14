@@ -7,7 +7,6 @@ except ImportError:
 
 import six
 
-from agate.data_types import *
 from agate.mapped_sequence import MappedSequence
 
 

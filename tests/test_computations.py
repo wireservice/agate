@@ -1,8 +1,8 @@
 #!/usr/bin/env Python
 
 import datetime
-from decimal import Decimal
 import warnings
+from decimal import Decimal
 
 try:
     import unittest2 as unittest
@@ -10,9 +10,9 @@ except ImportError:
     import unittest
 
 from agate import Table
-from agate.data_types import *
-from agate.computations import *
-from agate.exceptions import *
+from agate.computations import Change, Formula, Percent, PercentChange, PercentileRank, Rank, Slug
+from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
+from agate.exceptions import CastError, DataTypeError
 from agate.warns import NullCalculationWarning
 
 
@@ -54,7 +54,7 @@ class TestTableComputation(unittest.TestCase):
 
     def test_formula_invalid(self):
         with self.assertRaises(CastError):
-            new_table = self.table.compute([  # noqa
+            self.table.compute([
                 ('test', Formula(self.number_type, lambda r: r['one']))
             ])
 
@@ -179,11 +179,11 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(to_one_place(new_table.columns['test'][3]), Decimal('60.0'))
 
         with self.assertRaises(DataTypeError):
-            new_table = self.table.compute([
+            self.table.compute([
                 ('test', Percent('two', 0))
             ])
         with self.assertRaises(DataTypeError):
-            new_table = self.table.compute([
+            self.table.compute([
                 ('test', Percent('two', -1))
             ])
         with self.assertRaises(DataTypeError):
@@ -250,12 +250,12 @@ class TestTableComputation(unittest.TestCase):
 
     def test_percent_change_invalid_columns(self):
         with self.assertRaises(DataTypeError):
-            new_table = self.table.compute([
+            self.table.compute([
                 ('test', PercentChange('one', 'three'))
             ])
 
         with self.assertRaises(DataTypeError):
-            new_table = self.table.compute([  # noqa
+            self.table.compute([
                 ('test', PercentChange('three', 'one'))
             ])
 

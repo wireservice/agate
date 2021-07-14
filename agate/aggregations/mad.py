@@ -39,6 +39,6 @@ class MAD(Aggregation):
         column = table.columns[self._column_name]
 
         data = column.values_without_nulls_sorted()
-        m = self._median.run(table)
-
-        return median(tuple(abs(n - m) for n in data))
+        if data:
+            m = self._median.run(table)
+            return median(tuple(abs(n - m) for n in data))

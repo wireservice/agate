@@ -2,7 +2,7 @@
 # -*- coding: utf8 -*-
 
 from agate import Table
-from agate.data_types import *
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 
@@ -213,10 +213,10 @@ class TestJoin(AgateTestCase):
 
     def test_join_require_match(self):
         with self.assertRaises(ValueError):
-            new_table = self.left.join(self.right, 'one', 'five', require_match=True)  # noqa
+            self.left.join(self.right, 'one', 'five', require_match=True)
 
         with self.assertRaises(ValueError):
-            new_table = self.left.join(self.right, 'one', 'five', require_match=True)  # noqa
+            self.left.join(self.right, 'one', 'five', require_match=True)
 
         new_table = self.left.join(self.right, 'one', 'four', require_match=True)  # noqa
 

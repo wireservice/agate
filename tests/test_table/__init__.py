@@ -6,14 +6,14 @@ try:
 except ImportError:  # pragma: no cover
     from decimal import Decimal
 
-import platform
 import warnings
 
 import six
 
 from agate import Table
-from agate.data_types import *
 from agate.computations import Formula
+from agate.data_types import Number, Text
+from agate.exceptions import CastError
 from agate.testcase import AgateTestCase
 from agate.warns import DuplicateColumnWarning
 
@@ -46,7 +46,7 @@ class TestBasic(AgateTestCase):
 
     def test_create_filename(self):
         with self.assertRaises(ValueError):
-            table = Table('foo.csv')  # noqa
+            Table('foo.csv')
 
     def test_create_empty_table(self):
         table = Table([])
@@ -118,7 +118,7 @@ class TestBasic(AgateTestCase):
         column_types = [self.number_type, self.number_type, self.number_type]
 
         with self.assertRaises(CastError) as e:
-            table = Table(self.rows, self.column_names, column_types)  # noqa
+            Table(self.rows, self.column_names, column_types)
 
         self.assertIn('Error at row 0 column three.', str(e.exception))
 
@@ -126,31 +126,31 @@ class TestBasic(AgateTestCase):
         column_names = ['one', None, 'three']
 
         with self.assertWarns(RuntimeWarning):
-            table2 = Table(self.rows, column_names, self.column_types)  # noqa
+            Table(self.rows, column_names, self.column_types)
 
         warnings.simplefilter('ignore')
 
         try:
-            table3 = Table(self.rows, column_names, self.column_types)
+            table = Table(self.rows, column_names, self.column_types)
         finally:
             warnings.resetwarnings()
 
-        self.assertColumnNames(table3, ['one', 'b', 'three'])
+        self.assertColumnNames(table, ['one', 'b', 'three'])
 
     def test_create_table_empty_column_names(self):
         column_names = ['one', '', 'three']
 
         with self.assertWarns(RuntimeWarning):
-            table2 = Table(self.rows, column_names, self.column_types)  # noqa
+            Table(self.rows, column_names, self.column_types)
 
         warnings.simplefilter('ignore')
 
         try:
-            table3 = Table(self.rows, column_names, self.column_types)
+            table = Table(self.rows, column_names, self.column_types)
         finally:
             warnings.resetwarnings()
 
-        self.assertColumnNames(table3, ['one', 'b', 'three'])
+        self.assertColumnNames(table, ['one', 'b', 'three'])
 
     def test_create_table_non_datatype_columns(self):
         column_types = [self.number_type, self.number_type, 'foo']
@@ -253,7 +253,7 @@ class TestBasic(AgateTestCase):
         )
 
         with self.assertRaises(ValueError):
-            table = Table(rows, self.column_names, self.column_types)  # noqa
+            Table(rows, self.column_names, self.column_types)
 
     def test_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
@@ -274,7 +274,7 @@ class TestBasic(AgateTestCase):
 
     def test_row_names_int(self):
         with self.assertRaises(ValueError):
-            table = Table(self.rows, self.column_names, self.column_types, row_names=['a', 'b', 3])  # noqa
+            Table(self.rows, self.column_names, self.column_types, row_names=['a', 'b', 3])
 
     def test_row_names_func(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names=lambda r: (r['one'], r['three']))
@@ -291,7 +291,7 @@ class TestBasic(AgateTestCase):
     def test_row_names_invalid(self):
 
         with self.assertRaises(ValueError):
-            table = Table(  # noqa
+            Table(
                 self.rows,
                 self.column_names,
                 self.column_types,
@@ -304,7 +304,7 @@ class TestBasic(AgateTestCase):
         table = Table(self.rows, column_names)
 
         if six.PY2:
-            u = unicode(table)
+            u = unicode(table)  # noqa: F821
 
             self.assertIn('foo', u)
             self.assertIn('bar', u)

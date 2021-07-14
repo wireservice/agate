@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import csv
-import six
 import os
 
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
+
+import six
 
 from agate import csv_py3
 from agate.exceptions import FieldSizeLimitError

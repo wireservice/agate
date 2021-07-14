@@ -29,7 +29,6 @@ from six.moves import zip_longest
 
 from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
-from agate.table import Table
 
 
 class TableSet(MappedSequence):
@@ -168,9 +167,8 @@ from agate.tableset.having import having
 from agate.tableset.line_chart import line_chart
 from agate.tableset.merge import merge
 from agate.tableset.print_structure import print_structure
-from agate.tableset.proxy_methods import bins, compute, denormalize, distinct, \
-    exclude, find, group_by, homogenize, join, limit, normalize, order_by, \
-    pivot, select, where
+from agate.tableset.proxy_methods import (bins, compute, denormalize, distinct, exclude, find, group_by, homogenize,
+                                          join, limit, normalize, order_by, pivot, select, where)
 from agate.tableset.scatterplot import scatterplot
 from agate.tableset.to_csv import to_csv
 from agate.tableset.to_json import to_json

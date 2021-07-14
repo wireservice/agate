@@ -14,7 +14,7 @@ except ImportError:
     import unittest
 
 from agate import Table
-from agate.data_types import *
+from agate.data_types import Number, Text
 
 
 class TestColumn(unittest.TestCase):

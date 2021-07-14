@@ -27,7 +27,7 @@ class Any(Aggregation):
         return Boolean()
 
     def validate(self, table):
-        column = table.columns[self._column_name]
+        table.columns[self._column_name]
 
     def run(self, table):
         column = table.columns[self._column_name]

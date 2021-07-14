@@ -9,7 +9,6 @@ from collections import OrderedDict, namedtuple
 
 import six
 
-
 Field = namedtuple('Field', ['name', 'start', 'length'])
 
 

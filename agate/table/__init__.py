@@ -19,21 +19,20 @@ sequences can be accessed either by numeric index or by name. (In the case of
 rows, row names are optional.)
 """
 
-from itertools import chain
 import sys
 import warnings
+from itertools import chain
 
 import six
 from six.moves import range  # pylint: disable=W0622
 
+from agate import utils
 from agate.columns import Column
 from agate.data_types import DataType
+from agate.exceptions import CastError
 from agate.mapped_sequence import MappedSequence
 from agate.rows import Row
 from agate.type_tester import TypeTester
-from agate import utils
-from agate.exceptions import CastError
-from agate.warns import warn_duplicate_column, warn_unnamed_column
 
 
 @six.python_2_unicode_compatible

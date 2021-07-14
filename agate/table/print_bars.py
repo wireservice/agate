@@ -11,15 +11,13 @@ except ImportError:  # pragma: no cover
 
 import sys
 
-
-from babel.numbers import format_decimal
 import six
+from babel.numbers import format_decimal
 
-from agate.aggregations import Min, Max
-from agate import config
+from agate import config, utils
+from agate.aggregations import Max, Min
 from agate.data_types import Number
 from agate.exceptions import DataTypeError
-from agate import utils
 
 
 def print_bars(self, label_column_name='group', value_column_name='Count', domain=None, width=120, output=sys.stdout, printable=False):
@@ -90,8 +88,8 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
                 locale=locale
             ))
 
-    max_label_width = max(max([len(l) for l in formatted_labels]), len(y_label))
-    max_value_width = max(max([len(v) for v in formatted_values]), len(x_label))
+    max_label_width = max(max([len(label) for label in formatted_labels]), len(y_label))
+    max_value_width = max(max([len(value) for value in formatted_values]), len(x_label))
 
     plot_width = width - (max_label_width + max_value_width + 2)
 

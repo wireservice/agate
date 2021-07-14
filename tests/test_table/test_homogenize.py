@@ -2,8 +2,9 @@
 # -*- coding: utf8 -*-
 
 from six.moves import range
+
 from agate import Table
-from agate.data_types import *
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 
@@ -32,6 +33,8 @@ class TestHomogenize(AgateTestCase):
             (2, 3, 'd')
         )
 
+        homogenized.print_table()
+
         self.assertColumnNames(homogenized, self.column_names)
         self.assertColumnTypes(homogenized, [Number, Number, Text])
         self.assertRows(homogenized, rows)
@@ -46,6 +49,8 @@ class TestHomogenize(AgateTestCase):
             (None, 2, 'c'),
             (2, None, None)
         )
+
+        homogenized.print_table()
 
         self.assertColumnNames(homogenized, self.column_names)
         self.assertColumnTypes(homogenized, [Number, Number, Text])
@@ -64,6 +69,8 @@ class TestHomogenize(AgateTestCase):
             (None, 2, 'c'),
             (2, 5, 'c')
         )
+
+        homogenized.print_table()
 
         self.assertColumnNames(homogenized, self.column_names)
         self.assertColumnTypes(homogenized, [Number, Number, Text])
@@ -85,6 +92,8 @@ class TestHomogenize(AgateTestCase):
             (None, 2, 'c'),
             (2, 4, 'c')
         )
+
+        homogenized.print_table()
 
         self.assertColumnNames(homogenized, self.column_names)
         self.assertColumnTypes(homogenized, [Number, Number, Text])

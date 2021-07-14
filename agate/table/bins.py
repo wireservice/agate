@@ -8,8 +8,8 @@ except ImportError:  # pragma: no cover
 
 from babel.numbers import format_decimal
 
-from agate.aggregations import Min, Max
 from agate import utils
+from agate.aggregations import Max, Min
 
 
 def bins(self, column_name, count=10, start=None, end=None):

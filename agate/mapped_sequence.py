@@ -7,6 +7,7 @@ rows and columns.
 """
 
 from collections import OrderedDict
+
 try:
     from collections.abc import Sequence
 except ImportError:
@@ -81,6 +82,9 @@ class MappedSequence(Sequence):
             return str(self.__unicode__().encode('utf8'))
 
         return str(self.__unicode__())
+
+    def __repr__(self):
+        return self.__str__()
 
     def __getitem__(self, key):
         """

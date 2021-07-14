@@ -22,7 +22,7 @@ Contributors should use the following roadmap to guide them through the process 
 1.  Fork the project on [GitHub].
 2.  Check out the [issue tracker] and find a task that needs to be done and is of a scope you can realistically expect to complete in a few days. Don’t worry about the priority of the issues at first, but try to choose something you’ll enjoy. You’re much more likely to finish something to the point it can be merged if it’s something you really enjoy hacking on.
 3.  Comment on the ticket letting everyone know you’re going to be hacking on it so that nobody duplicates your effort. It’s also good practice to provide some general idea of how you plan on resolving the issue so that other developers can make suggestions.
-4.  Write tests for the feature you’re building. Follow the format of the existing tests in the test directory to see how this works. You can run all the tests with the command `nosetests tests`. (Or `tox` to run across all supported versions of Python.)
+4.  Write tests for the feature you’re building. Follow the format of the existing tests in the test directory to see how this works. You can run all the tests with the command `nosetests tests`.
 5.  Write the code. Try to stay consistent with the style and organization of the existing codebase. A good patch won’t be refused for stylistic reasons, but large parts of it may be rewritten and nobody wants that.
 6.  As you are coding, periodically merge in work from the master branch and verify you haven’t broken anything by running the test suite.
 7.  Write documentation. Seriously.

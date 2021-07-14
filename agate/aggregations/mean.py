@@ -35,10 +35,7 @@ class Mean(Aggregation):
 
     def run(self, table):
         column = table.columns[self._column_name]
-        num_of_values = len(column.values_without_nulls())
-        # If there are no non-null columns then return null.
-        if num_of_values == 0:
-            return None
-
-        sum_total = self._sum.run(table)
-        return sum_total / num_of_values
+        data = column.values_without_nulls()
+        if data:
+            sum_total = self._sum.run(table)
+            return sum_total / len(data)

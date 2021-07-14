@@ -5,8 +5,7 @@ try:
 except ImportError:
     import unittest
 
-from agate import csv
-from agate import fixed
+from agate import csv, fixed
 
 
 class TestFixed(unittest.TestCase):

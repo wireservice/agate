@@ -6,13 +6,25 @@ try:
 except ImportError:
     import unittest
 
-from agate.data_types import *
+from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.type_tester import TypeTester
 
 
 class TestTypeTester(unittest.TestCase):
     def setUp(self):
         self.tester = TypeTester()
+
+    def test_empty(self):
+        rows = [
+            (None,),
+            (None,),
+            (None,),
+        ]
+
+        inferred = self.tester.run(rows, ['one'])
+
+        # This behavior is not necessarily desirable. See https://github.com/wireservice/agate/issues/371
+        self.assertIsInstance(inferred[0], Boolean)
 
     def test_text_type(self):
         rows = [
@@ -202,7 +214,7 @@ class TestTypeTester(unittest.TestCase):
             ('',)
         ]
 
-        tester = TypeTester(types=[Number(locale='de_DE'), Text()])
+        tester = TypeTester(types=[Number(locale='de_DE.UTF-8'), Text()])
         inferred = tester.run(rows, ['one'])
 
         self.assertIsInstance(inferred[0], Number)

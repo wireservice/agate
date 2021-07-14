@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-import six
-
 import os
 import sys
 
+import six
+
 from agate import Table
+from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.testcase import AgateTestCase
-from agate.data_types import *
 
 
 class TestToCSV(AgateTestCase):

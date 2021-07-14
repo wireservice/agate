@@ -1,21 +1,34 @@
-1.6.2 - Unreleased
+1.6.3 - Unreleased
 ------------------
 
-* :meth:`.Date.__init__` and :meth:`.DateTime.__init__` accepts a ``locale`` keyword argument (e.g. :code:`en_US`) for parsing formatted dates. (#730)
-* :meth:`.utils.max_precision` ignores infinity when calculating precision. (#726)
-* :meth:`.Date.cast` catches ``OverflowError`` when type testing. (#720)
-* :meth:`.Number.cast` casts ``True`` to ``1`` and ``False`` to ``0``. (#733)
+* feat: :meth:`.Table.from_csv` accepts a ``row_limit`` keyword argument. (#740)
+* feat: :meth:`.Table.from_json` accepts an ``encoding`` keyword argument. (#734)
+* feat: :meth:`.Table.print_html` accepts a ``max_precision`` keyword argument. (#753)
+* feat: :class:`.Min`, :class:`.Max` and :class:`.Sum` (#735) work with :class:`.TimeDelta`.
+* feat: :class:`.FieldSizeLimitError` includes the line number in the error message. (#681)
+* fix: :meth:`.Table.normalize` works with :meth:`.Table.where`. (#691)
+* fix: :meth:`.Table.homogenize` casts ``compare_values`` and ``default_row``. (#700)
+* fix: :meth:`.Table.homogenize` accepts tuples. (#710)
+* fix: :meth:`.TableSet.group_by` accepts input with no rows. (#703)
+* fix: Aggregations return ``None`` if all values are ``None``, instead of raising an error. Note that ``Sum``, ``MaxLength`` and ``MaxPrecision`` continue to return ``0`` if all values are ``None``. (#706)
+* fix: Ensure files are closed when errors occur. (#734)
+* build: Make PyICU an optional dependency.
+
+1.6.2 - March 10, 2021
+----------------------
+
+* feat: :meth:`.Date.__init__` and :meth:`.DateTime.__init__` accepts a ``locale`` keyword argument (e.g. :code:`en_US`) for parsing formatted dates. (#730)
+* feat: :meth:`.Number.cast` casts ``True`` to ``1`` and ``False`` to ``0``. (#733)
+* fix: :meth:`.utils.max_precision` ignores infinity when calculating precision. (#726)
+* fix: :meth:`.Date.cast` catches ``OverflowError`` when type testing. (#720)
 * Included examples in Python package. (#716)
 
 1.6.1 - March 11, 2018
 ----------------------
 
-* :meth:`.Date.cast` and :meth:`.DateTime.cast` will no longer parse strings that contain dates as dates. (#705)
-* Added Forest Gregg to Authors.
-* :meth:`.Table.to_json` can now use Decimal as keys. (#696)
-* Link to tutorial now uses version through sphinx to avoid bad links on future releases. (#682)
-* lxml limited to >= 3.6 and < 4 for pypy compatibility.
-
+* feat: :meth:`.Table.to_json` can use Decimal as keys. (#696)
+* fix: :meth:`.Date.cast` and :meth:`.DateTime.cast` no longer parse non-date strings that contain date sub-strings as dates. (#705)
+* docs: Link to tutorial now uses version through Sphinx to avoid bad links on future releases. (#682)
 
 1.6.0 - February 28, 2017
 -------------------------

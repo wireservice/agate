@@ -2,6 +2,7 @@
 
 import io
 import itertools
+
 import six
 
 
@@ -26,8 +27,7 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
     :param row_names:
         See :meth:`.Table.__init__`.
     :param skip_lines:
-        The number of lines to skip from the top of the file. Note that skip
-        lines will not work with
+        The number of lines to skip from the top of the file.
     :param header:
         If :code:`True`, the first row of the CSV is assumed to contain column
         names. If :code:`header` and :code:`column_names` are both specified

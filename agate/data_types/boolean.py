@@ -7,7 +7,7 @@ except ImportError:  # pragma: no cover
 
 import six
 
-from agate.data_types.base import DataType, DEFAULT_NULL_VALUES
+from agate.data_types.base import DEFAULT_NULL_VALUES, DataType
 from agate.exceptions import CastError
 
 #: Default values which will be automatically cast to :code:`True`.

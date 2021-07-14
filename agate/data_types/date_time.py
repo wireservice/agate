@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import datetime
+import locale
 
 import isodate
-import locale
 import parsedatetime
 import six
 
@@ -36,7 +36,7 @@ class DateTime(DataType):
         self._source_time = datetime.datetime(
             now.year, now.month, now.day, 0, 0, 0, 0, None
         )
-        self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=True)
+        self._constants = parsedatetime.Constants(localeID=self.locale)
         self._parser = parsedatetime.Calendar(constants=self._constants, version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def __getstate__(self):
@@ -56,7 +56,7 @@ class DateTime(DataType):
         of the parsedatetime Calendar class.
         """
         self.__dict__.update(ndict)
-        self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=True)
+        self._constants = parsedatetime.Constants(localeID=self.locale)
         self._parser = parsedatetime.Calendar(constants=self._constants, version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def cast(self, d):
@@ -89,7 +89,7 @@ class DateTime(DataType):
 
             try:
                 dt = datetime.datetime.strptime(d, self.datetime_format)
-            except:
+            except (ValueError, TypeError):
                 raise CastError('Value "%s" does not match date format.' % d)
             finally:
                 if orig_locale:
@@ -99,7 +99,7 @@ class DateTime(DataType):
 
         try:
             (_, _, _, _, matched_text), = self._parser.nlp(d, sourceTime=self._source_time)
-        except:
+        except Exception:
             matched_text = None
         else:
             value, ctx = self._parser.parseDT(
@@ -117,7 +117,7 @@ class DateTime(DataType):
             dt = isodate.parse_datetime(d)
 
             return dt
-        except:
+        except Exception:
             pass
 
         raise CastError('Can not parse value "%s" as datetime.' % d)

@@ -37,8 +37,11 @@ agate is made by a community. The following individuals have contributed code, d
 * `Neil MartinsenBurrell <https://github.com/neilmb>`_
 * `Aliaksei Urbanski <https://github.com/Jamim>`_
 * `Forest Gregg <https://github.com/fgregg>`_
+* `Robert Schütz <https://github.com/dotlambda>`_
 * `Wouter de Vries <https://github.com/wadevries>`_
 * `Kartik Agaram <https://github.com/akkartik>`_
 * `Loïc Corbasson <https://github.com/lcorbasson>`_
-* `Robert Schütz <https://github.com/dotlambda>`_
 * `Danny Sepler <https://github.com/dannysepler>`_
+* `brian-from-quantrocket <https://github.com/brian-from-quantrocket>`_
+* `mathdesc <https://github.com/mathdesc>`_
+* `Tim Gates <https://github.com/timgates42>`_

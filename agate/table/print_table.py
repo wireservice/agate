@@ -4,12 +4,11 @@
 import math
 import sys
 
-from babel.numbers import format_decimal
 import six
+from babel.numbers import format_decimal
 
-from agate import config
+from agate import config, utils
 from agate.data_types import Number, Text
-from agate import utils
 
 
 def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_width=20, locale=None, max_precision=3):
@@ -143,7 +142,6 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
     # Dashes span each width with '+' character at intersection of
     # horizontal and vertical dividers.
     divider = '%(v_line)s %(columns)s %(v_line)s' % {
-        'h_line': h_line,
         'v_line': v_line,
         'columns': ' | '.join(h_line * w for w in widths)
     }

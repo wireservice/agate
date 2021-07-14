@@ -55,6 +55,9 @@ def group_by(self, key, key_name=None, key_type=None):
 
         groups[group_name].append(row)
 
+    if not groups:
+        return TableSet([self._fork([])], [], key_name=key_name, key_type=key_type)
+
     output = OrderedDict()
 
     for group, rows in groups.items():

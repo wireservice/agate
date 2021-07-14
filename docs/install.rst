@@ -9,6 +9,8 @@ To use agate install it with pip::
 
     pip install agate
 
+For non-English locale support, `install PyICU <https://gitlab.pyicu.org/main/pyicu#installing-pyicu>`__.
+
 .. note::
 
     Need more speed? Upgrade to Python 3. It's 3-5x faster than Python 2.
@@ -31,7 +33,6 @@ If you are a developer that also wants to hack on agate, install it from git::
     pip install -r requirements-py2.txt
 
     python setup.py develop
-    tox
 
 .. note::
 

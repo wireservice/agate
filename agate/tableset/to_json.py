@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from collections import OrderedDict
 import json
 import os
+from collections import OrderedDict
 
 import six
 

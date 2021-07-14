@@ -7,8 +7,8 @@ import warnings
 import six
 
 from agate import Table
+from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.testcase import AgateTestCase
-from agate.data_types import *
 from agate.type_tester import TypeTester
 
 
@@ -105,7 +105,6 @@ class TestFromCSV(AgateTestCase):
         self.assertColumnTypes(table, [Number, Text, Boolean, Date, DateTime, TimeDelta])
 
     def test_from_csv_sniff_limit_0(self):
-        table1 = Table(self.rows, self.column_names, self.column_types)
         table2 = Table.from_csv('examples/test_csv_sniff.csv', sniff_limit=0)
 
         self.assertColumnNames(table2, ['number|text|boolean|date|datetime|timedelta'])

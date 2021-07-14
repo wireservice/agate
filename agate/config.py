@@ -34,7 +34,6 @@ configuration.
 
 from babel.core import default_locale
 
-
 _options = {
     #: Default locale for number formatting
     'default_locale': default_locale('LC_NUMERIC') or 'en_US',

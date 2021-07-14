@@ -8,8 +8,8 @@ except ImportError:  # pragma: no cover
 
 import warnings
 
-from babel.core import Locale
 import six
+from babel.core import Locale
 
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
@@ -66,7 +66,7 @@ class Number(DataType):
 
         if t is int:
             return Decimal(d)
-        elif six.PY2 and t is long:
+        elif six.PY2 and t is long:  # noqa: F821
             return Decimal(d)
         elif t is float:
             return Decimal(repr(d))

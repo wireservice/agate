@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-from babel.numbers import get_decimal_symbol
 import six
+from babel.numbers import get_decimal_symbol
 
 from agate import Table
-from agate.data_types import *
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 
@@ -19,7 +19,7 @@ class TestPrintTable(AgateTestCase):
 
         self.number_type = Number()
         self.american_number_type = Number(locale='en_US')
-        self.german_number_type = Number(locale='de_DE')
+        self.german_number_type = Number(locale='de_DE.UTF-8')
         self.text_type = Text()
 
         self.column_names = ['one', 'two', 'three', 'four']
@@ -130,6 +130,6 @@ class TestPrintTable(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types)
 
         output = six.StringIO()
-        table.print_table(max_columns=2, output=output, locale='de_DE')
+        table.print_table(max_columns=2, output=output, locale='de_DE.UTF-8')
         # If it's working, the english '2,000' should appear as '2.000'
         self.assertTrue("2.000" in output.getvalue())

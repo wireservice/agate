@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import agate
 import proof
+
+import agate
 
 
 def load_data(data):
@@ -87,6 +88,7 @@ def race_and_age(data):
 
     # Print out the results
     sorted_groups.print_table(max_rows=10)
+
 
 analysis = proof.Analysis(load_data)
 analysis.then(confessions)

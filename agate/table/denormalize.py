@@ -10,10 +10,10 @@ except ImportError:  # pragma: no cover
 
 import six
 
-from agate.data_types import Number
-from agate.type_tester import TypeTester
-from agate.rows import Row
 from agate import utils
+from agate.data_types import Number
+from agate.rows import Row
+from agate.type_tester import TypeTester
 
 
 def denormalize(self, key=None, property_column='property', value_column='value', default_value=utils.default, column_types=None):

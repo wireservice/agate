@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # pylint: disable=W0212
 
-from agate.type_tester import TypeTester
-from agate.rows import Row
 from agate import utils
+from agate.rows import Row
+from agate.type_tester import TypeTester
 
 
 def normalize(self, key, properties, property_column='property', value_column='value', column_types=None):
@@ -94,4 +94,4 @@ def normalize(self, key, properties, property_column='property', value_column='v
     else:
         new_column_types = key_column_types + list(column_types)
 
-    return Table(new_rows, new_column_names, new_column_types, row_names=row_names)
+    return Table(new_rows, new_column_names, new_column_types)
