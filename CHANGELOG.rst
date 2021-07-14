@@ -11,21 +11,18 @@
 1.6.2 - March 10, 2021
 ----------------------
 
-* :meth:`.Date.__init__` and :meth:`.DateTime.__init__` accepts a ``locale`` keyword argument (e.g. :code:`en_US`) for parsing formatted dates. (#730)
-* :meth:`.utils.max_precision` ignores infinity when calculating precision. (#726)
-* :meth:`.Date.cast` catches ``OverflowError`` when type testing. (#720)
-* :meth:`.Number.cast` casts ``True`` to ``1`` and ``False`` to ``0``. (#733)
+* feat: :meth:`.Date.__init__` and :meth:`.DateTime.__init__` accepts a ``locale`` keyword argument (e.g. :code:`en_US`) for parsing formatted dates. (#730)
+* feat: :meth:`.Number.cast` casts ``True`` to ``1`` and ``False`` to ``0``. (#733)
+* fix: :meth:`.utils.max_precision` ignores infinity when calculating precision. (#726)
+* fix: :meth:`.Date.cast` catches ``OverflowError`` when type testing. (#720)
 * Included examples in Python package. (#716)
 
 1.6.1 - March 11, 2018
 ----------------------
 
-* :meth:`.Date.cast` and :meth:`.DateTime.cast` will no longer parse strings that contain dates as dates. (#705)
-* Added Forest Gregg to Authors.
-* :meth:`.Table.to_json` can now use Decimal as keys. (#696)
-* Link to tutorial now uses version through sphinx to avoid bad links on future releases. (#682)
-* lxml limited to >= 3.6 and < 4 for pypy compatibility.
-
+* feat: :meth:`.Table.to_json` can use Decimal as keys. (#696)
+* fix: :meth:`.Date.cast` and :meth:`.DateTime.cast` no longer parse non-date strings that contain date sub-strings as dates. (#705)
+* docs: Link to tutorial now uses version through Sphinx to avoid bad links on future releases. (#682)
 
 1.6.0 - February 28, 2017
 -------------------------
