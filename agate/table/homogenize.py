@@ -68,7 +68,7 @@ def homogenize(self, key, compare_values, default_row=None):
             if default_row is not None:
                 new_row = list(default_row)
             else:
-                new_row = [None] * len(default_row_types)
+                new_row = [None] * (len(self._column_names) - len(key))
 
             for i, d in zip(column_indexes, difference):
                 new_row.insert(i, d)
