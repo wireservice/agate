@@ -54,7 +54,7 @@ class UnicodeReader(object):
         except csv.Error as e:
             # Terrible way to test for this exception, but there is no subclass
             if 'field larger than field limit' in str(e):
-                raise FieldSizeLimitError(csv.field_size_limit(), csv.line_num)
+                raise FieldSizeLimitError(csv.field_size_limit(), self.line_num)
             else:
                 raise e
 
