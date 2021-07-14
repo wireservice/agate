@@ -1,7 +1,12 @@
-Unreleased
-----------
+1.6.3 - Unreleased
+------------------
 
-* Make PyICU an optional dependency.
+* feat: :meth:`.Table.from_json` accepts an ``encoding`` keyword argument. (#734)
+* feat: :class:`.Max` works with :class:`.TimeDelta`. (#735)
+* fix: :class:`.Mean` returns ``None`` if there are no values to average. (#706)
+* fix: :meth:`.Table.homogenize` accepts tuples. (#710)
+* fix: Ensure files are closed when errors occur. (#734)
+* build: Make PyICU an optional dependency.
 
 1.6.2 - March 10, 2021
 ----------------------
