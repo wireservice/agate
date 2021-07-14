@@ -36,7 +36,9 @@ setup(
         'Babel>=2.0',
         'isodate>=0.5.4',
         'leather>=0.3.2',
-        'parsedatetime>=2.1,!=2.5',
+        # KeyError: 's' https://github.com/bear/parsedatetime/pull/233 https://github.com/wireservice/agate/issues/743
+        # AttributeError: 'module' object has no attribute 'Locale' https://github.com/bear/parsedatetime/pull/247
+        'parsedatetime>=2.1,!=2.5,!=2.6',
         'python-slugify>=1.2.1',
         'pytimeparse>=1.1.5',
         'six>=1.9.0',
@@ -47,7 +49,7 @@ setup(
             'cssselect>=0.9.1',
             'lxml>=3.6.0',
             'nose>=1.1.2',
-            'PyICU>=2.4.2;python_version>"2" and sys_platform=="linux"',
+            'PyICU>=2.4.2;sys_platform=="linux"',
             'pytz>=2015.4',
             'mock>=1.3.0;python_version<"3"',
         ],
