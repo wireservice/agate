@@ -3,14 +3,12 @@
 
 import datetime
 import pickle
+import unittest
 from decimal import Decimal
 
 import parsedatetime
-import six
-
-import unittest
-
 import pytz
+import six
 
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.exceptions import CastError

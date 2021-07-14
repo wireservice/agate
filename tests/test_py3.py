@@ -3,10 +3,9 @@
 
 import csv
 import os
+import unittest
 
 import six
-
-import unittest
 
 from agate import csv_py3
 from agate.exceptions import FieldSizeLimitError

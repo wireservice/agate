@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+import unittest
 from random import shuffle
 from timeit import Timer
-
-import unittest
 
 import six
 from six.moves import range
