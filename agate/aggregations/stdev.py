@@ -36,7 +36,9 @@ class StDev(Aggregation):
             warn_null_calculation(self, column)
 
     def run(self, table):
-        return self._variance.run(table).sqrt()
+        variance = self._variance.run(table)
+        if variance is not None:
+            return variance.sqrt()
 
 
 class PopulationStDev(StDev):
@@ -67,4 +69,6 @@ class PopulationStDev(StDev):
             warn_null_calculation(self, column)
 
     def run(self, table):
-        return self._population_variance.run(table).sqrt()
+        variance = self._population_variance.run(table)
+        if variance is not None:
+            return variance.sqrt()

@@ -51,6 +51,9 @@ class Percentiles(Aggregation):
 
         data = column.values_without_nulls_sorted()
 
+        if not data:
+            return Quantiles([None for percentile in range(101)])
+
         # Zeroth percentile is first datum
         quantiles = [data[0]]
 

@@ -5,7 +5,7 @@
 * feat: :meth:`.Table.print_html` accepts a ``max_precision`` keyword argument. (#753)
 * feat: :class:`.Max` works with :class:`.TimeDelta`. (#735)
 * feat: :class:`.FieldSizeLimitError` includes the line number in the error message. (#681)
-* fix: :class:`.Mean` returns ``None`` if there are no values to average. (#706)
+* fix: Aggregations return ``None`` if all values are ``None``, instead of raising an error. Note that ``Sum``, ``MaxLength`` and ``MaxPrecision`` continue to return ``0`` if all values are ``None``. (#706)
 * fix: :meth:`.Table.homogenize` accepts tuples. (#710)
 * fix: Ensure files are closed when errors occur. (#734)
 * build: Make PyICU an optional dependency.

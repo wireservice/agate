@@ -86,6 +86,9 @@ class Quantiles(Sequence):
     def __repr__(self):
         return repr(self._quantiles)
 
+    def __eq__(self, other):
+        return self._quantiles == other._quantiles
+
     def locate(self, value):
         """
         Identify which quantile a given value is part of.

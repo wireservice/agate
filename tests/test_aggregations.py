@@ -17,6 +17,7 @@ from agate.aggregations import (IQR, MAD, All, Any, Count, Deciles, First, HasNu
                                 Quintiles, StDev, Sum, Summary, Variance)
 from agate.data_types import Boolean, DateTime, Number, Text, TimeDelta
 from agate.exceptions import DataTypeError
+from agate.utils import Quantiles
 from agate.warns import NullCalculationWarning
 
 
@@ -180,43 +181,45 @@ class TestBooleanAggregation(unittest.TestCase):
 
 
 class TestDateTimeAggregation(unittest.TestCase):
-    def test_min(self):
-        rows = [
+    def setUp(self):
+        self.rows = [
             [datetime.datetime(1994, 3, 3, 6, 31)],
             [datetime.datetime(1994, 3, 3, 6, 30, 30)],
             [datetime.datetime(1994, 3, 3, 6, 30)],
         ]
 
-        table = Table(rows, ['test'], [DateTime()])
+        self.table = Table(self.rows, ['test', 'null'], [DateTime(), DateTime()])
 
-        self.assertIsInstance(Min('test').get_aggregate_data_type(table), DateTime)
-        Min('test').validate(table)
-        self.assertEqual(Min('test').run(table), datetime.datetime(1994, 3, 3, 6, 30))
+        self.time_delta_rows = [
+            [datetime.timedelta(seconds=10), None],
+            [datetime.timedelta(seconds=20), None],
+        ]
+
+        self.time_delta_table = Table(self.time_delta_rows, ['test', 'null'], [TimeDelta(), TimeDelta()])
+
+    def test_min(self):
+        self.assertIsInstance(Min('test').get_aggregate_data_type(self.table), DateTime)
+        Min('test').validate(self.table)
+        self.assertEqual(Min('test').run(self.table), datetime.datetime(1994, 3, 3, 6, 30))
+
+    def test_min_all_nulls(self):
+        self.assertIsNone(Min('null').run(self.table))
 
     def test_max(self):
-        rows = [
-            [datetime.datetime(1994, 3, 3, 6, 31)],
-            [datetime.datetime(1994, 3, 3, 6, 30, 30)],
-            [datetime.datetime(1994, 3, 3, 6, 30)],
-        ]
+        self.assertIsInstance(Max('test').get_aggregate_data_type(self.table), DateTime)
+        Max('test').validate(self.table)
+        self.assertEqual(Max('test').run(self.table), datetime.datetime(1994, 3, 3, 6, 31))
 
-        table = Table(rows, ['test'], [DateTime()])
-
-        self.assertIsInstance(Max('test').get_aggregate_data_type(table), DateTime)
-        Max('test').validate(table)
-        self.assertEqual(Max('test').run(table), datetime.datetime(1994, 3, 3, 6, 31))
+    def test_max_all_nulls(self):
+        self.assertIsNone(Max('null').run(self.table))
 
     def test_sum(self):
-        rows = [
-            [datetime.timedelta(seconds=10)],
-            [datetime.timedelta(seconds=20)],
-        ]
+        self.assertIsInstance(Sum('test').get_aggregate_data_type(self.time_delta_table), TimeDelta)
+        Sum('test').validate(self.time_delta_table)
+        self.assertEqual(Sum('test').run(self.time_delta_table), datetime.timedelta(seconds=30))
 
-        table = Table(rows, ['test'], [TimeDelta()])
-
-        self.assertIsInstance(Sum('test').get_aggregate_data_type(table), TimeDelta)
-        Sum('test').validate(table)
-        self.assertEqual(Sum('test').run(table), datetime.timedelta(seconds=30))
+    def test_sum_all_nulls(self):
+        self.assertEqual(Sum('null').run(self.time_delta_table), datetime.timedelta(0))
 
 
 class TestNumberAggregation(unittest.TestCase):
@@ -245,6 +248,9 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(MaxPrecision('one').run(self.table), 1)
         self.assertEqual(MaxPrecision('two').run(self.table), 2)
 
+    def test_max_precision_all_nulls(self):
+        self.assertEqual(MaxPrecision('four').run(self.table), 0)
+
     def test_sum(self):
         with self.assertRaises(DataTypeError):
             Sum('three').validate(self.table)
@@ -253,6 +259,9 @@ class TestNumberAggregation(unittest.TestCase):
 
         self.assertEqual(Sum('one').run(self.table), Decimal('6.5'))
         self.assertEqual(Sum('two').run(self.table), Decimal('13.13'))
+
+    def test_sum_all_nulls(self):
+        self.assertEqual(Sum('four').run(self.table), Decimal('0'))
 
     def test_min(self):
         with self.assertRaises(DataTypeError):
@@ -263,6 +272,9 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(Min('one').run(self.table), Decimal('1.1'))
         self.assertEqual(Min('two').run(self.table), Decimal('2.19'))
 
+    def test_min_all_nulls(self):
+        self.assertIsNone(Min('four').run(self.table))
+
     def test_max(self):
         with self.assertRaises(DataTypeError):
             Max('three').validate(self.table)
@@ -271,6 +283,9 @@ class TestNumberAggregation(unittest.TestCase):
 
         self.assertEqual(Max('one').run(self.table), Decimal('2.7'))
         self.assertEqual(Max('two').run(self.table), Decimal('4.1'))
+
+    def test_max_all_nulls(self):
+        self.assertIsNone(Max('four').run(self.table))
 
     def test_mean(self):
         with self.assertWarns(NullCalculationWarning):
@@ -284,14 +299,6 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(Mean('two').run(self.table), Decimal('3.2825'))
 
     def test_mean_all_nulls(self):
-        """
-        Test to confirm mean of only nulls doesn't cause a critical error.
-
-        The assumption here is that if you attempt to perform a mean
-        calculation, on a column which contains only null values, then a null
-        value should be returned to the caller.
-        :return:
-        """
         self.assertIsNone(Mean('four').run(self.table))
 
     def test_mean_with_nulls(self):
@@ -321,6 +328,9 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertIsInstance(Median('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(Median('two').run(self.table), Decimal('3.42'))
 
+    def test_median_all_nulls(self):
+        self.assertIsNone(Median('four').run(self.table))
+
     def test_mode(self):
         with warnings.catch_warnings():
             warnings.simplefilter('error')
@@ -341,6 +351,9 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertIsInstance(Mode('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(Mode('two').run(self.table), Decimal('3.42'))
 
+    def test_mode_all_nulls(self):
+        self.assertIsNone(Mode('four').run(self.table))
+
     def test_iqr(self):
         with warnings.catch_warnings():
             warnings.simplefilter('error')
@@ -360,6 +373,9 @@ class TestNumberAggregation(unittest.TestCase):
 
         self.assertIsInstance(IQR('two').get_aggregate_data_type(self.table), Number)
         self.assertEqual(IQR('two').run(self.table), Decimal('0.955'))
+
+    def test_irq_all_nulls(self):
+        self.assertIsNone(IQR('four').run(self.table))
 
     def test_variance(self):
         with warnings.catch_warnings():
@@ -384,6 +400,9 @@ class TestNumberAggregation(unittest.TestCase):
             Decimal('0.6332')
         )
 
+    def test_variance_all_nulls(self):
+        self.assertIsNone(Variance('four').run(self.table))
+
     def test_population_variance(self):
         with warnings.catch_warnings():
             warnings.simplefilter('error')
@@ -406,6 +425,9 @@ class TestNumberAggregation(unittest.TestCase):
             PopulationVariance('two').run(self.table).quantize(Decimal('0.0001')),
             Decimal('0.4749')
         )
+
+    def test_population_variance_all_nulls(self):
+        self.assertIsNone(PopulationVariance('four').run(self.table))
 
     def test_stdev(self):
         with warnings.catch_warnings():
@@ -430,6 +452,9 @@ class TestNumberAggregation(unittest.TestCase):
             Decimal('0.7958')
         )
 
+    def test_stdev_all_nulls(self):
+        self.assertIsNone(StDev('four').run(self.table))
+
     def test_population_stdev(self):
         with warnings.catch_warnings():
             warnings.simplefilter('error')
@@ -453,6 +478,9 @@ class TestNumberAggregation(unittest.TestCase):
             Decimal('0.6891')
         )
 
+    def test_population_stdev_all_nulls(self):
+        self.assertIsNone(PopulationStDev('four').run(self.table))
+
     def test_mad(self):
         with warnings.catch_warnings():
             warnings.simplefilter('error')
@@ -472,6 +500,9 @@ class TestNumberAggregation(unittest.TestCase):
 
         self.assertIsInstance(MAD('two').get_aggregate_data_type(self.table), Number)
         self.assertAlmostEqual(MAD('two').run(self.table), Decimal('0'))
+
+    def test_mad_all_nulls(self):
+        self.assertIsNone(MAD('four').run(self.table))
 
     def test_percentiles(self):
         with warnings.catch_warnings():
@@ -502,6 +533,9 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(percentiles[75], Decimal('750.5'))
         self.assertEqual(percentiles[99], Decimal('990.5'))
         self.assertEqual(percentiles[100], Decimal('1000'))
+
+    def test_percentiles_all_nulls(self):
+        self.assertEqual(Percentiles('four').run(self.table), Quantiles([None] * 101))
 
     def test_percentiles_locate(self):
         rows = [(n,) for n in range(1, 1001)]
@@ -621,6 +655,9 @@ class TestNumberAggregation(unittest.TestCase):
         for i, v in enumerate(['1', '2', '4', '6', '7']):
             self.assertEqual(quartiles[i], Decimal(v))
 
+    def test_quartiles_all_nulls(self):
+        self.assertEqual(Quartiles('four').run(self.table), Quantiles([None] * 5))
+
     def test_quartiles_locate(self):
         """
         CDF quartile tests from:
@@ -661,11 +698,16 @@ class TestNumberAggregation(unittest.TestCase):
         finally:
             warnings.resetwarnings()
 
-        rows = [(n,) for n in range(1, 1001)]
+        rows = [(n,) for n in range(1, 1000)]
 
         table = Table(rows, ['ints'], [self.number_type])
 
-        quintiles = Quintiles('ints').run(table)  # noqa
+        quintiles = Quintiles('ints').run(table)
+        for i, v in enumerate(['1', '200', '400', '600', '800', '999']):
+            self.assertEqual(quintiles[i], Decimal(v))
+
+    def test_quintiles_all_nulls(self):
+        self.assertEqual(Quintiles('four').run(self.table), Quantiles([None] * 6))
 
     def test_deciles(self):
         with warnings.catch_warnings():
@@ -684,25 +726,35 @@ class TestNumberAggregation(unittest.TestCase):
         finally:
             warnings.resetwarnings()
 
-        rows = [(n,) for n in range(1, 1001)]
+        rows = [(n,) for n in range(1, 1000)]
 
         table = Table(rows, ['ints'], [self.number_type])
 
-        deciles = Deciles('ints').run(table)  # noqa
+        deciles = Deciles('ints').run(table)
+        for i, v in enumerate(['1', '100', '200', '300', '400', '500', '600', '700', '800', '900', '999']):
+            self.assertEqual(deciles[i], Decimal(v))
+
+    def test_deciles_all_nulls(self):
+        self.assertEqual(Deciles('four').run(self.table), Quantiles([None] * 11))
 
 
 class TestTextAggregation(unittest.TestCase):
-    def test_max_length(self):
-        rows = [
-            ['a'],
-            ['gobble'],
-            ['w']
+    def setUp(self):
+        self.rows = [
+            ['a', None],
+            ['gobble', None],
+            ['w', None]
         ]
 
-        table = Table(rows, ['test'], [Text()])
-        MaxLength('test').validate(table)
-        self.assertEqual(MaxLength('test').run(table), 6)
-        self.assertIsInstance(MaxLength('test').run(table), Decimal)
+        self.table = Table(self.rows, ['test', 'null'], [Text(), Text()])
+
+    def test_max_length(self):
+        MaxLength('test').validate(self.table)
+        self.assertEqual(MaxLength('test').run(self.table), 6)
+        self.assertIsInstance(MaxLength('test').run(self.table), Decimal)
+
+    def test_max_length_all_nulls(self):
+        self.assertEqual(MaxLength('null').run(self.table), 0)
 
     def test_max_length_unicode(self):
         """

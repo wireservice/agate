@@ -39,9 +39,9 @@ class Variance(Aggregation):
         column = table.columns[self._column_name]
 
         data = column.values_without_nulls()
-        mean = self._mean.run(table)
-
-        return sum((n - mean) ** 2 for n in data) / (len(data) - 1)
+        if data:
+            mean = self._mean.run(table)
+            return sum((n - mean) ** 2 for n in data) / (len(data) - 1)
 
 
 class PopulationVariance(Variance):
@@ -75,6 +75,6 @@ class PopulationVariance(Variance):
         column = table.columns[self._column_name]
 
         data = column.values_without_nulls()
-        mean = self._mean.run(table)
-
-        return sum((n - mean) ** 2 for n in data) / len(data)
+        if data:
+            mean = self._mean.run(table)
+            return sum((n - mean) ** 2 for n in data) / len(data)

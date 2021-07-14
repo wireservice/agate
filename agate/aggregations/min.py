@@ -33,4 +33,6 @@ class Min(Aggregation):
     def run(self, table):
         column = table.columns[self._column_name]
 
-        return min(column.values_without_nulls())
+        data = column.values_without_nulls()
+        if data:
+            return min(data)
