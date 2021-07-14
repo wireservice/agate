@@ -52,6 +52,7 @@ setup(
             'PyICU>=2.4.2;sys_platform=="linux"',
             'pytz>=2015.4',
             'mock>=1.3.0;python_version<"3"',
+            'unittest2>=1.1.0;python_version<"3"',
         ],
         'docs': [
             'Sphinx>=1.2.2',

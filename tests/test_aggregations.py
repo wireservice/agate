@@ -3,9 +3,13 @@
 
 import datetime
 import sys
-import unittest
 import warnings
 from decimal import Decimal
+
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 from agate import Table
 from agate.aggregations import (IQR, MAD, All, Any, Count, Deciles, First, HasNulls, Max, MaxLength, MaxPrecision,

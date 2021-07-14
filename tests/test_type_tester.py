@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-import unittest
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.type_tester import TypeTester

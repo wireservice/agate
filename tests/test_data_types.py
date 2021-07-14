@@ -3,8 +3,12 @@
 
 import datetime
 import pickle
-import unittest
 from decimal import Decimal
+
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 import parsedatetime
 import pytz

@@ -3,7 +3,11 @@
 
 import csv
 import os
-import unittest
+
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 import six
 
