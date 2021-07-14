@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+import platform
 from random import shuffle
 from timeit import Timer
 
@@ -15,6 +16,7 @@ from six.moves import range
 import agate
 
 
+@unittest.skipIf(platform.system() != "Linux")
 class TestTableJoin(unittest.TestCase):
     def test_join(self):
         left_rows = [(six.text_type(i), i) for i in range(100000)]
