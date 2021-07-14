@@ -94,4 +94,4 @@ def normalize(self, key, properties, property_column='property', value_column='v
     else:
         new_column_types = key_column_types + list(column_types)
 
-    return Table(new_rows, new_column_names, new_column_types, row_names=row_names)
+    return Table(new_rows, new_column_names, new_column_types)
