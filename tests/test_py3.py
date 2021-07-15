@@ -4,7 +4,6 @@
 import csv
 import os
 import platform
-import sys
 
 try:
     import unittest2 as unittest
@@ -245,7 +244,7 @@ class TestDictWriter(unittest.TestCase):
         self.assertEqual(result, 'line_number,a,b,c\n1,1,2,☃\n')
 
 
-@unittest.skipIf(six.PY2 or platform.system() == 'Linux' and sys.version_info > (3,),
+@unittest.skipIf(six.PY2 or platform.system() == 'Linux' and six.PY3,
                  "Not supported in Python 2. Test inexplicably fails intermittently on Linux and Python 3.")
 class TestSniffer(unittest.TestCase):
     def test_sniffer(self):
