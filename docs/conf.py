@@ -28,7 +28,7 @@ master_doc = 'index'
 # Metadata
 project = u'agate'
 copyright = u'2017, Christopher Groskopf'
-version = '1.6.2'
+version = '1.6.3'
 release = version
 
 exclude_patterns = ['_build']

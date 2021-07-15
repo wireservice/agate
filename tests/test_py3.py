@@ -251,7 +251,9 @@ class TestSniffer(unittest.TestCase):
     def test_sniffer(self):
         with open('examples/test.csv', encoding='utf-8') as f:
             contents = f.read()
-            # Inexplicably, `direct` succeeds but `actual` succeeds. Observed on Python 3.6 and 3.8.
+            # Failure observed on Python 3.6 and 3.8. The left-hand side in these cases is an empty dictionary.
+            # 3.6 https://github.com/wireservice/agate/runs/3078380985
+            # 3.8 https://github.com/wireservice/agate/runs/3078633299
             direct = csv.Sniffer().sniff(contents, csv_py3.POSSIBLE_DELIMITERS).__dict__
             actual = csv_py3.Sniffer().sniff(contents).__dict__
             expected = csv.Sniffer().sniff(contents).__dict__
