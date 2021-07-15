@@ -245,13 +245,13 @@ class TestDictWriter(unittest.TestCase):
         self.assertEqual(result, 'line_number,a,b,c\n1,1,2,☃\n')
 
 
-@unittest.skipIf(six.PY2 or platform.system() == 'Linux' and sys.version_info[:2] == (3, 6),
-                 "Not supported in Python 2. Test fails inexplicably on Linux in Python 3.6.")
+@unittest.skipIf(six.PY2 or platform.system() == 'Linux' and sys.version_info > (3,),
+                 "Not supported in Python 2. Test inexplicably fails intermittently on Linux and Python 3.")
 class TestSniffer(unittest.TestCase):
     def test_sniffer(self):
         with open('examples/test.csv', encoding='utf-8') as f:
             contents = f.read()
-            # Inexplicably, `direct` succeeds but `actual` succeeds.
+            # Inexplicably, `direct` succeeds but `actual` succeeds. Observed on Python 3.6 and 3.8.
             direct = csv.Sniffer().sniff(contents, csv_py3.POSSIBLE_DELIMITERS).__dict__
             actual = csv_py3.Sniffer().sniff(contents).__dict__
             expected = csv.Sniffer().sniff(contents).__dict__
