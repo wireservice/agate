@@ -16,7 +16,8 @@ from agate.rows import Row
 from agate.type_tester import TypeTester
 
 
-def denormalize(self, key=None, property_column='property', value_column='value', default_value=utils.default, column_types=None):
+def denormalize(self, key=None, property_column='property', value_column='value', default_value=utils.default,
+                column_types=None):
     """
     Create a new table with row values converted into columns.
 

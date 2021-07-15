@@ -49,7 +49,8 @@ class Change(Computation):
 
                 return
 
-        raise DataTypeError('Change before and after columns must both contain data that is one of: Number, Date, DateTime or TimeDelta.')
+        raise DataTypeError('Change before and after columns must both contain data that is one of: '
+                            'Number, Date, DateTime or TimeDelta.')
 
     def run(self, table):
         new_column = []

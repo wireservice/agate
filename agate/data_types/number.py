@@ -15,7 +15,8 @@ from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
 #: A list of currency symbols sourced from `Xe <http://www.xe.com/symbols.php>`_.
-DEFAULT_CURRENCY_SYMBOLS = [u'؋', u'$', u'ƒ', u'៛', u'¥', u'₡', u'₱', u'£', u'€', u'¢', u'﷼', u'₪', u'₩', u'₭', u'₮', u'₦', u'฿', u'₤', u'₫']
+DEFAULT_CURRENCY_SYMBOLS = [u'؋', u'$', u'ƒ', u'៛', u'¥', u'₡', u'₱', u'£', u'€', u'¢', u'﷼', u'₪', u'₩', u'₭', u'₮',
+                            u'₦', u'฿', u'₤', u'₫']
 
 POSITIVE = Decimal('1')
 NEGATIVE = Decimal('-1')
@@ -37,7 +38,8 @@ class Number(DataType):
     :param currency_symbols:
         A sequence of currency symbols to strip from numbers.
     """
-    def __init__(self, locale='en_US', group_symbol=None, decimal_symbol=None, currency_symbols=DEFAULT_CURRENCY_SYMBOLS, **kwargs):
+    def __init__(self, locale='en_US', group_symbol=None, decimal_symbol=None,
+                 currency_symbols=DEFAULT_CURRENCY_SYMBOLS, **kwargs):
         super(Number, self).__init__(**kwargs)
 
         self.locale = Locale.parse(locale)

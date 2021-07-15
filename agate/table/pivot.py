@@ -124,7 +124,8 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
 
         column_types = [column_type] * pivot_count
 
-        table = table.denormalize(key, pivot, computation_name or aggregation_name, default_value=default_value, column_types=column_types)
+        table = table.denormalize(key, pivot, computation_name or aggregation_name, default_value=default_value,
+                                  column_types=column_types)
     else:
         table = groups.aggregate([
             (aggregation_name, aggregation)

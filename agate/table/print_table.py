@@ -11,7 +11,8 @@ from agate import config, utils
 from agate.data_types import Number, Text
 
 
-def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_width=20, locale=None, max_precision=3):
+def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_width=20, locale=None,
+                max_precision=3):
     """
     Print a text-based view of the data in this table.
 

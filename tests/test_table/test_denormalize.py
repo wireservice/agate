@@ -98,7 +98,8 @@ class TestDenormalize(AgateTestCase):
     def test_denormalize_column_type_tester(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        normalized_table = table.denormalize(None, 'property', 'value', column_types=TypeTester(force={'gender': Text()}))
+        type_tester = TypeTester(force={'gender': Text()})
+        normalized_table = table.denormalize(None, 'property', 'value', column_types=type_tester)
 
         # NB: value has been overwritten
         normal_rows = (

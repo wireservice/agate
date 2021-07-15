@@ -112,9 +112,18 @@ class TestBins(AgateTestCase):
         self.assertColumnNames(new_table, ['number', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
-        self.assertSequenceEqual(new_table.rows[0], [u'[0' + get_decimal_symbol() + u'0 - 0' + get_decimal_symbol() + u'1)', 10])
-        self.assertSequenceEqual(new_table.rows[3], [u'[0' + get_decimal_symbol() + u'3 - 0' + get_decimal_symbol() + u'4)', 10])
-        self.assertSequenceEqual(new_table.rows[9], [u'[0' + get_decimal_symbol() + u'9 - 1' + get_decimal_symbol() + u'0]', 10])
+        self.assertSequenceEqual(
+            new_table.rows[0],
+            [u'[0' + get_decimal_symbol() + u'0 - 0' + get_decimal_symbol() + u'1)', 10]
+        )
+        self.assertSequenceEqual(
+            new_table.rows[3],
+            [u'[0' + get_decimal_symbol() + u'3 - 0' + get_decimal_symbol() + u'4)', 10]
+        )
+        self.assertSequenceEqual(
+            new_table.rows[9],
+            [u'[0' + get_decimal_symbol() + u'9 - 1' + get_decimal_symbol() + u'0]', 10]
+        )
 
     def test_bins_nulls(self):
         rows = []
@@ -129,7 +138,16 @@ class TestBins(AgateTestCase):
         self.assertColumnNames(new_table, ['number', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
-        self.assertSequenceEqual(new_table.rows[0], [u'[0' + get_decimal_symbol() + u'0 - 0' + get_decimal_symbol() + u'1)', 10])
-        self.assertSequenceEqual(new_table.rows[3], [u'[0' + get_decimal_symbol() + u'3 - 0' + get_decimal_symbol() + u'4)', 10])
-        self.assertSequenceEqual(new_table.rows[9], [u'[0' + get_decimal_symbol() + u'9 - 1' + get_decimal_symbol() + u'0]', 10])
+        self.assertSequenceEqual(
+            new_table.rows[0],
+            [u'[0' + get_decimal_symbol() + u'0 - 0' + get_decimal_symbol() + u'1)', 10]
+        )
+        self.assertSequenceEqual(
+            new_table.rows[3],
+            [u'[0' + get_decimal_symbol() + u'3 - 0' + get_decimal_symbol() + u'4)', 10]
+        )
+        self.assertSequenceEqual(
+            new_table.rows[9],
+            [u'[0' + get_decimal_symbol() + u'9 - 1' + get_decimal_symbol() + u'0]', 10]
+        )
         self.assertSequenceEqual(new_table.rows[10], [None, 1])

@@ -6,7 +6,8 @@ from agate import fixed, utils
 
 
 @classmethod
-def from_fixed(cls, path, schema_path, column_names=utils.default, column_types=None, row_names=None, encoding='utf-8', schema_encoding='utf-8'):
+def from_fixed(cls, path, schema_path, column_names=utils.default, column_types=None, row_names=None, encoding='utf-8',
+               schema_encoding='utf-8'):
     """
     Create a new table from a fixed-width file and a CSV schema.
 

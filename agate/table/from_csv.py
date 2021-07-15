@@ -7,7 +7,8 @@ import six
 
 
 @classmethod
-def from_csv(cls, path, column_names=None, column_types=None, row_names=None, skip_lines=0, header=True, sniff_limit=0, encoding='utf-8', row_limit=None, **kwargs):
+def from_csv(cls, path, column_names=None, column_types=None, row_names=None, skip_lines=0, header=True, sniff_limit=0,
+             encoding='utf-8', row_limit=None, **kwargs):
     """
     Create a new table from a CSV.
 

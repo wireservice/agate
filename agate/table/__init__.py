@@ -77,14 +77,16 @@ class Table(object):
     """
     def __init__(self, rows, column_names=None, column_types=None, row_names=None, _is_fork=False):
         if isinstance(rows, six.string_types):
-            raise ValueError('When created directly, the first argument to Table must be a sequence of rows. Did you want agate.Table.from_csv?')
+            raise ValueError('When created directly, the first argument to Table must be a sequence of rows. '
+                             'Did you want agate.Table.from_csv?')
 
         # Validate column names
         if column_names:
             self._column_names = utils.deduplicate(column_names, column_names=True)
         elif rows:
             self._column_names = tuple(utils.letter_name(i) for i in range(len(rows[0])))
-            warnings.warn('Column names not specified. "%s" will be used as names.' % str(self._column_names), RuntimeWarning, stacklevel=2)
+            warnings.warn('Column names not specified. "%s" will be used as names.' % str(self._column_names),
+                          RuntimeWarning, stacklevel=2)
         else:
             self._column_names = tuple()
 
@@ -120,7 +122,9 @@ class Table(object):
                 len_row = len(row)
 
                 if len_row > len_column_names:
-                    raise ValueError('Row %i has %i values, but Table only has %i columns.' % (i, len_row, len_column_names))
+                    raise ValueError(
+                        'Row %i has %i values, but Table only has %i columns.' % (i, len_row, len_column_names)
+                    )
                 elif len(row) < len_column_names:
                     row = chain(row, [None] * (len_column_names - len_row))
 

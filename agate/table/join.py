@@ -5,7 +5,8 @@ from agate import utils
 from agate.rows import Row
 
 
-def join(self, right_table, left_key=None, right_key=None, inner=False, full_outer=False, require_match=False, columns=None):
+def join(self, right_table, left_key=None, right_key=None, inner=False, full_outer=False, require_match=False,
+         columns=None):
     """
     Create a new table by joining two table's on common values. This method
     implements most varieties of SQL join, in addition to some unique features.

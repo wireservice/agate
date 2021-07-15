@@ -20,7 +20,8 @@ from agate.data_types import Number
 from agate.exceptions import DataTypeError
 
 
-def print_bars(self, label_column_name='group', value_column_name='Count', domain=None, width=120, output=sys.stdout, printable=False):
+def print_bars(self, label_column_name='group', value_column_name='Count', domain=None, width=120, output=sys.stdout,
+               printable=False):
     """
     Print a text-based bar chart based on this table.
 

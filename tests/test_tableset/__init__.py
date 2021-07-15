@@ -147,7 +147,11 @@ class TestTableSet(AgateTestCase):
         tableset3 = TableSet.from_json(filelike)
 
         self.assertSequenceEqual(tableset1.column_names, tableset2.column_names, tableset3.column_names)
-        self.assertSequenceEqual([type(t) for t in tableset1.column_types], [type(t) for t in tableset2.column_types], [type(t) for t in tableset3.column_types])
+        self.assertSequenceEqual(
+            [type(t) for t in tableset1.column_types],
+            [type(t) for t in tableset2.column_types],
+            [type(t) for t in tableset3.column_types]
+        )
 
         self.assertEqual(len(tableset1), len(tableset2), len(tableset3))
 

@@ -29,7 +29,8 @@ class Boolean(DataType):
     :param false_values: A sequence of values which should be cast to
         :code:`False` when encountered with this type.
     """
-    def __init__(self, true_values=DEFAULT_TRUE_VALUES, false_values=DEFAULT_FALSE_VALUES, null_values=DEFAULT_NULL_VALUES):
+    def __init__(self, true_values=DEFAULT_TRUE_VALUES, false_values=DEFAULT_FALSE_VALUES,
+                 null_values=DEFAULT_NULL_VALUES):
         super(Boolean, self).__init__(null_values=null_values)
 
         self.true_values = true_values

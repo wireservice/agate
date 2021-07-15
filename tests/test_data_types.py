@@ -149,7 +149,10 @@ class TestNumber(unittest.TestCase):
     def test_cast(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a', '2.7', '200,000,000')
         casted = tuple(self.type.cast(v) for v in values)
-        self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000')))
+        self.assertSequenceEqual(
+            casted,
+            (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000'))
+        )
 
     @unittest.skipIf(six.PY3, 'Not supported in Python 3.')
     def test_cast_long(self):
@@ -164,12 +167,18 @@ class TestNumber(unittest.TestCase):
     def test_currency_cast(self):
         values = ('$2.70', '-$0.70', u'€14', u'50¢', u'-75¢', u'-$1,287')
         casted = tuple(self.type.cast(v) for v in values)
-        self.assertSequenceEqual(casted, (Decimal('2.7'), Decimal('-0.7'), Decimal('14'), Decimal('50'), Decimal('-75'), Decimal('-1287')))
+        self.assertSequenceEqual(
+            casted,
+            (Decimal('2.7'), Decimal('-0.7'), Decimal('14'), Decimal('50'), Decimal('-75'), Decimal('-1287'))
+        )
 
     def test_cast_locale(self):
         values = (2, 1, None, Decimal('2.7'), 'n/a', '2,7', '200.000.000')
         casted = tuple(Number(locale='de_DE.UTF-8').cast(v) for v in values)
-        self.assertSequenceEqual(casted, (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000')))
+        self.assertSequenceEqual(
+            casted,
+            (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000'))
+        )
 
     def test_cast_text(self):
         with self.assertRaises(CastError):

@@ -33,8 +33,8 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
     :param encoding:
         According to RFC4627, JSON text shall be encoded in Unicode; the default encoding is
         UTF-8. You can override this by using any encoding supported by your Python's open() function
-        if :code:`path` is a filepath. If passing in a file handle, it is assumed you have already opened it with the correct
-        encoding specified.
+        if :code:`path` is a filepath. If passing in a file handle, it is assumed you have already opened it with the
+        correct encoding specified.
     """
     from agate.table import Table
 
@@ -67,7 +67,9 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
 
         if isinstance(js, dict):
             if not key:
-                raise TypeError('When converting a JSON document with a top-level dictionary element, a key must be specified.')
+                raise TypeError(
+                    'When converting a JSON document with a top-level dictionary element, a key must be specified.'
+                )
 
             js = js[key]
 
