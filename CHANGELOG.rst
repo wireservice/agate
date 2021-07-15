@@ -7,6 +7,7 @@
 * feat: :class:`.TypeTester` accepts a ``null_values`` keyword argument. (#745)
 * feat: :class:`.Min`, :class:`.Max` and :class:`.Sum` (#735) work with :class:`.TimeDelta`.
 * feat: :class:`.FieldSizeLimitError` includes the line number in the error message. (#681)
+* feat: :class:`.csv.Sniffer` warns on error while sniffing CSV dialect.
 * fix: :meth:`.Table.normalize` works with basic processing methods. (#691)
 * fix: :meth:`.Table.homogenize` casts ``compare_values`` and ``default_row``. (#700)
 * fix: :meth:`.Table.homogenize` works with basic processing methods. (#756)
