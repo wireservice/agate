@@ -4,6 +4,7 @@
 import csv
 import platform
 import os
+import sys
 
 try:
     import unittest2 as unittest
@@ -255,5 +256,5 @@ class TestSniffer(unittest.TestCase):
             actual = csv_py3.Sniffer().sniff(contents).__dict__
             expected = csv.Sniffer().sniff(contents).__dict__
 
-            self.assertEqual(direct, expected, '%r != %r (%r)' % (direct, expected))
-            self.assertEqual(actual, expected, '%r != %r (%r)' % (actual, expected))
+            self.assertEqual(direct, expected, '%r != %r' % (direct, expected))
+            self.assertEqual(actual, expected, '%r != %r' % (actual, expected))
