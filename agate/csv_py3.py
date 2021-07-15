@@ -5,6 +5,7 @@ This module contains the Python 3 replacement for :mod:`csv`.
 """
 
 import csv
+import warnings
 
 import six
 
@@ -151,7 +152,8 @@ class Sniffer(object):
         """
         try:
             dialect = csv.Sniffer().sniff(sample, POSSIBLE_DELIMITERS)
-        except csv.Error:
+        except csv.Error as e:
+            warnings.warn('Error sniffing CSV dialect: %s' % e, RuntimeWarning, stacklevel=2)
             dialect = None
 
         return dialect

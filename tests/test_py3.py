@@ -250,5 +250,6 @@ class TestSniffer(unittest.TestCase):
     def test_sniffer(self):
         with open('examples/test.csv', encoding='utf-8') as f:
             contents = f.read()
-            self.assertEqual(csv_py3.Sniffer().sniff(contents).__dict__, csv.Sniffer().sniff(contents).__dict__,
-                             repr(csv.Sniffer().sniff(contents).__dict__))
+            actual = csv_py3.Sniffer().sniff(contents).__dict__
+            expected = csv.Sniffer().sniff(contents).__dict__
+            self.assertEqual(actual, expected, '%r != %r' % (actual, expected))
