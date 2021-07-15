@@ -244,7 +244,7 @@ class TestDictWriter(unittest.TestCase):
         self.assertEqual(result, 'line_number,a,b,c\n1,1,2,☃\n')
 
 
-@unittest.skipIf(six.PY2 or platform.system() == 'Linux' and sys.version_info == (3, 6),
+@unittest.skipIf(six.PY2 or platform.system() == 'Linux' and sys.version_info[:2] == (3, 6),
                  "Not supported in Python 2. Test fails inexplicably on Linux in Python 3.6.")
 class TestSniffer(unittest.TestCase):
     def test_sniffer(self):
