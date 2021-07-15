@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import csv
-import platform
 import os
+import platform
 import sys
 
 try:
