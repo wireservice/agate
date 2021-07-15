@@ -1,6 +1,7 @@
 include *.ipynb
 include *.py
 include *.rst
+include *.yaml
 include COPYING
 recursive-include benchmarks *.py
 recursive-include docs *.py
@@ -11,3 +12,4 @@ recursive-include examples *.csv
 recursive-include examples *.json
 recursive-include examples testfixed
 recursive-include tests *.py
+global-exclude *.pyc
