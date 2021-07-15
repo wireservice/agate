@@ -6,6 +6,7 @@ This module contains the Python 2 replacement for :mod:`csv`.
 
 import codecs
 import csv
+import warnings
 
 import six
 
