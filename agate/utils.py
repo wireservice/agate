@@ -8,10 +8,7 @@ agate.
 
 from collections import OrderedDict
 
-try:
-    from collections.abc import Sequence
-except ImportError:
-    from collections import Sequence
+from collections.abc import Sequence
 
 import math
 import string
