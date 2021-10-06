@@ -29,7 +29,7 @@ class Mean(Aggregation):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, (Number, TimeDelta)):
-            raise DataTypeError('Sum can only be applied to columns containing Number or TimeDelta data.')
+            raise DataTypeError('Mean can only be applied to columns containing Number or TimeDelta data.')
 
         has_nulls = HasNulls(self._column_name).run(table)
 
