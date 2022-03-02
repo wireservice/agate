@@ -12,6 +12,9 @@ setup(
     author='Christopher Groskopf',
     author_email='chrisgroskopf@gmail.com',
     url='http://agate.readthedocs.org/',
+    project_urls={
+        'Source': 'https://github.com/wireservice/agate',
+    },
     license='MIT',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
