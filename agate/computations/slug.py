@@ -6,6 +6,11 @@ from agate.data_types import Text
 from agate.exceptions import DataTypeError
 from agate.utils import issequence, slugify
 
+def denonify(v):
+    if v == None:
+        return ''
+    return v
+
 
 class Slug(Computation):
     """
@@ -40,8 +45,9 @@ class Slug(Computation):
             if not isinstance(column.data_type, Text):
                 raise DataTypeError('Slug column must contain Text data.')
 
-            if HasNulls(column_name).run(table):
-                raise ValueError('Slug column cannot contain `None`.')
+            # JOSH CHANGE: Sure a slug can have None. We'll just replace it with an empty string.
+            # if HasNulls(column_name).run(table):
+            #     raise ValueError('Slug column cannot contain `None`.')
 
     def run(self, table):
         """
@@ -54,10 +60,10 @@ class Slug(Computation):
             if issequence(self._column_name):
                 column_value = ''
                 for column_name in self._column_name:
-                    column_value = column_value + ' ' + row[column_name]
+                    column_value = column_value + ' ' + denonify(row[column_name])
 
                 new_column.append(column_value)
             else:
-                new_column.append(row[self._column_name])
+                new_column.append(denonify(row[self._column_name]))
 
         return slugify(new_column, ensure_unique=self._ensure_unique, **self._slug_args)
