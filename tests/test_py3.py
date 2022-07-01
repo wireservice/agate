@@ -4,12 +4,7 @@
 import csv
 import os
 import platform
-
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
+import unittest
 import six
 
 from agate import csv_py3

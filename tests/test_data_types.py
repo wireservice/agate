@@ -4,11 +4,7 @@
 import datetime
 import pickle
 from decimal import Decimal
-
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 import parsedatetime
 import pytz

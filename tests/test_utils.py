@@ -5,10 +5,7 @@ try:
 except ImportError:  # pragma: no cover
     from decimal import Decimal
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 from agate.utils import Quantiles, letter_name, round_limits
 
