@@ -26,9 +26,9 @@ Or, get several at once:
 .. code-block:: python
 
     table.aggregate([
-        agate.Min('salary'),
-        agate.Mean('salary'),
-        agate.Max('salary')
+        ('salary_min', agate.Min('salary')),
+        ('salary_ave', agate.Mean('salary')),
+        ('salary_max', agate.Max('salary')),
     ])
 
 Aggregate statistics
