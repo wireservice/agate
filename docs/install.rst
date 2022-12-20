@@ -26,11 +26,7 @@ If you are a developer that also wants to hack on agate, install it from git::
     cd agate
     mkvirtualenv agate
 
-    # If running Python 3 (strongly recommended for development)
-    pip install -r requirements-py3.txt
-
-    # If running Python 2
-    pip install -r requirements-py2.txt
+    pip install -e .[test]
 
     python setup.py develop
 
