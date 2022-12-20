@@ -2,16 +2,10 @@
 # -*- coding: utf8 -*-
 # pylint: disable=W0212
 
-from collections import OrderedDict
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
-
 import sys
+from collections import OrderedDict
+from decimal import Decimal
 
-import six
 from babel.numbers import format_decimal
 
 from agate import config, utils
@@ -76,7 +70,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
     formatted_labels = []
 
     for label in label_column:
-        formatted_labels.append(six.text_type(label))
+        formatted_labels.append(str(label))
 
     formatted_values = []
     for value in value_column:
@@ -132,8 +126,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
     def project(value):
         if value >= 0:
             return plot_negative_width + int((plot_positive_width * (value / x_max)).to_integral_value())
-        else:
-            return plot_negative_width - int((plot_negative_width * (value / x_min)).to_integral_value())
+        return plot_negative_width - int((plot_negative_width * (value / x_min)).to_integral_value())
 
     # Calculate ticks
     ticks = OrderedDict()
@@ -183,7 +176,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
         output.write(line + '\n')
 
     # Chart top
-    top_line = u'%s %s' % (y_label.ljust(max_label_width), x_label.rjust(max_value_width))
+    top_line = '%s %s' % (y_label.ljust(max_label_width), x_label.rjust(max_value_width))
     write(top_line)
 
     # Bars
@@ -202,7 +195,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
         bar = bar_mark * bar_width
 
         if value is not None and value >= 0:
-            gap = (u' ' * plot_negative_width)
+            gap = (' ' * plot_negative_width)
 
             # All positive
             if x_min <= 0:
@@ -210,7 +203,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
             else:
                 bar = bar + gap + zero_mark
         else:
-            bar = u' ' * (plot_negative_width - bar_width) + bar
+            bar = ' ' * (plot_negative_width - bar_width) + bar
 
             # All negative or mixed signs
             if value is None or x_max > value:
@@ -222,7 +215,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
 
     # Axis & ticks
     axis = horizontal_line * plot_width
-    tick_text = u' ' * width
+    tick_text = ' ' * width
 
     for i, (tick, label) in enumerate(ticks_formatted.items()):
         # First tick

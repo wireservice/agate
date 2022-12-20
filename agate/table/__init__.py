@@ -21,10 +21,8 @@ rows, row names are optional.)
 
 import sys
 import warnings
+from io import StringIO
 from itertools import chain
-
-import six
-from six.moves import range  # pylint: disable=W0622
 
 from agate import utils
 from agate.columns import Column
@@ -35,8 +33,7 @@ from agate.rows import Row
 from agate.type_tester import TypeTester
 
 
-@six.python_2_unicode_compatible
-class Table(object):
+class Table:
     """
     A dataset consisting of rows and columns. Columns refer to "vertical" slices
     of data that must all be of the same type. Rows refer to "horizontal" slices
@@ -76,7 +73,7 @@ class Table(object):
         assumed to be :class:`.Row` instances, rather than raw data.
     """
     def __init__(self, rows, column_names=None, column_types=None, row_names=None, _is_fork=False):
-        if isinstance(rows, six.string_types):
+        if isinstance(rows, str):
             raise ValueError('When created directly, the first argument to Table must be a sequence of rows. '
                              'Did you want agate.Table.from_csv?')
 
@@ -142,7 +139,7 @@ class Table(object):
         if row_names:
             computed_row_names = []
 
-            if isinstance(row_names, six.string_types):
+            if isinstance(row_names, str):
                 for row in new_rows:
                     name = row[row_names]
                     computed_row_names.append(name)
@@ -182,7 +179,7 @@ class Table(object):
         """
         Print the table's structure using :meth:`.Table.print_structure`.
         """
-        structure = six.StringIO()
+        structure = StringIO()
 
         self.print_structure(output=structure)
 

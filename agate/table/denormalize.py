@@ -2,13 +2,7 @@
 # pylint: disable=W0212
 
 from collections import OrderedDict
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
-
-import six
+from decimal import Decimal
 
 from agate import utils
 from agate.data_types import Number
@@ -91,7 +85,7 @@ def denormalize(self, key=None, property_column='property', value_column='value'
         if row_key not in row_data:
             row_data[row_key] = OrderedDict()
 
-        f = six.text_type(row[property_column])
+        f = str(row[property_column])
         v = row[value_column]
 
         if f not in field_names:

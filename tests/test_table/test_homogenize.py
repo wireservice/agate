@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-from six.moves import range
-
 from agate import Table
 from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase

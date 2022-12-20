@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.type_tester import TypeTester
@@ -72,8 +69,8 @@ class TestTypeTester(unittest.TestCase):
 
     def test_number_currency_locale(self):
         rows = [
-            (u'£1.7',),
-            (u'£200000000',),
+            ('£1.7',),
+            ('£200000000',),
             ('',)
         ]
 

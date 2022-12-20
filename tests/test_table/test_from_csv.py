@@ -4,8 +4,6 @@
 import io
 import warnings
 
-import six
-
 from agate import Table
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.testcase import AgateTestCase
@@ -16,7 +14,7 @@ class TestFromCSV(AgateTestCase):
     def setUp(self):
         self.rows = (
             (1, 'a', True, '11/4/2015', '11/4/2015 12:22 PM', '4:15'),
-            (2, u'👍', False, '11/5/2015', '11/4/2015 12:45 PM', '6:18'),
+            (2, '👍', False, '11/5/2015', '11/4/2015 12:45 PM', '6:18'),
             (None, 'b', None, None, None, None)
         )
 
@@ -58,10 +56,7 @@ class TestFromCSV(AgateTestCase):
     def test_from_csv_file_like_object(self):
         table1 = Table(self.rows, self.column_names, self.column_types)
 
-        if six.PY2:
-            f = open('examples/test.csv', 'rb')
-        else:
-            f = io.open('examples/test.csv', encoding='utf-8')
+        f = io.open('examples/test.csv', encoding='utf-8')
 
         table2 = Table.from_csv(f)
         f.close()

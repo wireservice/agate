@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-import six
 
 from agate import Table
 from agate.computations import Formula
@@ -45,7 +44,7 @@ class TestCompute(AgateTestCase):
     def test_compute_multiple(self):
         new_table = self.table.compute([
             ('number', Formula(self.number_type, lambda r: r['two'] + r['three'])),
-            ('text', Formula(self.text_type, lambda r: (r['one'] or '-') + six.text_type(r['three'])))
+            ('text', Formula(self.text_type, lambda r: (r['one'] or '-') + str(r['three'])))
         ])
 
         self.assertIsNot(new_table, self.table)
@@ -61,7 +60,7 @@ class TestCompute(AgateTestCase):
 
         new_table = table.compute([
             ('number', Formula(self.number_type, lambda r: r['two'] + r['three'])),
-            ('text', Formula(self.text_type, lambda r: (r['one'] or '-') + six.text_type(r['three'])))
+            ('text', Formula(self.text_type, lambda r: (r['one'] or '-') + str(r['three'])))
         ])
 
         self.assertRowNames(new_table, [3, 5, 4, 6])

@@ -29,7 +29,7 @@ class Change(Computation):
 
         if isinstance(before_column.data_type, (Date, DateTime, TimeDelta)):
             return TimeDelta()
-        elif isinstance(before_column.data_type, Number):
+        if isinstance(before_column.data_type, Number):
             return Number()
 
     def validate(self, table):

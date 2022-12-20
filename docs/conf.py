@@ -26,8 +26,8 @@ templates_path = ['_templates']
 master_doc = 'index'
 
 # Metadata
-project = u'agate'
-copyright = u'2017, Christopher Groskopf'
+project = 'agate'
+copyright = '2017, Christopher Groskopf'
 version = '1.6.3'
 release = version
 

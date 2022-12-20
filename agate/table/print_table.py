@@ -4,7 +4,6 @@
 import math
 import sys
 
-import six
 from babel.numbers import format_decimal
 
 from agate import config, utils
@@ -103,7 +102,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
                     locale=locale
                 )
             else:
-                v = six.text_type(v)
+                v = str(v)
 
             if max_column_width is not None and len(v) > max_column_width:
                 v = '%s...' % v[:max_column_width - 3]

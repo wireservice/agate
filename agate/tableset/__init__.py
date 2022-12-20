@@ -24,8 +24,8 @@ and end up with data grouped across multiple dimensions.
 dimensions.
 """
 
-import six
-from six.moves import zip_longest
+from io import StringIO
+from itertools import zip_longest
 
 from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
@@ -86,7 +86,7 @@ class TableSet(MappedSequence):
         """
         Print the tableset's structure via :meth:`TableSet.print_structure`.
         """
-        structure = six.StringIO()
+        structure = StringIO()
 
         self.print_structure(output=structure)
 

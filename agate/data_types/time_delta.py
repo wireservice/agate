@@ -3,7 +3,6 @@
 import datetime
 
 import pytimeparse
-import six
 
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
@@ -24,7 +23,7 @@ class TimeDelta(DataType):
         """
         if isinstance(d, datetime.timedelta) or d is None:
             return d
-        elif isinstance(d, six.string_types):
+        if isinstance(d, str):
             d = d.strip()
 
             if d.lower() in self.null_values:

@@ -4,8 +4,7 @@
 import json
 import os
 import sys
-
-import six
+from io import StringIO
 
 from agate import Table
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
@@ -16,7 +15,7 @@ class TestJSON(AgateTestCase):
     def setUp(self):
         self.rows = (
             (1, 'a', True, '11/4/2015', '11/4/2015 12:22 PM', '4:15'),
-            (2, u'👍', False, '11/5/2015', '11/4/2015 12:45 PM', '6:18'),
+            (2, '👍', False, '11/5/2015', '11/4/2015 12:45 PM', '6:18'),
             (None, 'b', None, None, None, None)
         )
 
@@ -31,7 +30,7 @@ class TestJSON(AgateTestCase):
     def test_to_json(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.to_json(output, indent=4)
 
         js1 = json.loads(output.getvalue())
@@ -44,7 +43,7 @@ class TestJSON(AgateTestCase):
     def test_to_json_key(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.to_json(output, key='text', indent=4)
 
         js1 = json.loads(output.getvalue())
@@ -57,7 +56,7 @@ class TestJSON(AgateTestCase):
     def test_to_json_non_string_key(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.to_json(output, key='number', indent=4)
 
         js1 = json.loads(output.getvalue())
@@ -70,7 +69,7 @@ class TestJSON(AgateTestCase):
     def test_to_json_key_func(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.to_json(output, key=lambda r: r['text'], indent=4)
 
         js1 = json.loads(output.getvalue())
@@ -83,7 +82,7 @@ class TestJSON(AgateTestCase):
     def test_to_json_newline_delimited(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.to_json(output, newline=True)
 
         js1 = json.loads(output.getvalue().split('\n')[0])
@@ -96,7 +95,7 @@ class TestJSON(AgateTestCase):
     def test_to_json_error_newline_indent(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
 
         with self.assertRaises(ValueError):
             table.to_json(output, newline=True, indent=4)
@@ -104,7 +103,7 @@ class TestJSON(AgateTestCase):
     def test_to_json_error_newline_key(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
 
         with self.assertRaises(ValueError):
             table.to_json(output, key='three', newline=True)
@@ -144,7 +143,7 @@ class TestJSON(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types)
 
         old = sys.stdout
-        sys.stdout = six.StringIO()
+        sys.stdout = StringIO()
 
         try:
             table.print_json()

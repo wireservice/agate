@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
-import six
+import unittest
 
 from agate.mapped_sequence import MappedSequence
 
@@ -13,7 +8,7 @@ from agate.mapped_sequence import MappedSequence
 class TestMappedSequence(unittest.TestCase):
     def setUp(self):
         self.column_names = ('one', 'two', 'three')
-        self.data = (u'a', u'b', u'c')
+        self.data = ('a', 'b', 'c')
         self.row = MappedSequence(self.data, self.column_names)
 
     def test_is_immutable(self):
@@ -24,20 +19,14 @@ class TestMappedSequence(unittest.TestCase):
             self.row['one'] = 100
 
     def test_stringify(self):
-        if six.PY2:
-            self.assertEqual(str(self.row), "<agate.MappedSequence: (u'a', u'b', u'c')>")
-        else:
-            self.assertEqual(str(self.row), "<agate.MappedSequence: ('a', 'b', 'c')>")
+        self.assertEqual(str(self.row), "<agate.MappedSequence: ('a', 'b', 'c')>")
 
     def test_stringify_long(self):
         column_names = ('one', 'two', 'three', 'four', 'five', 'six')
-        data = (u'a', u'b', u'c', u'd', u'e', u'f')
+        data = ('a', 'b', 'c', 'd', 'e', 'f')
         row = MappedSequence(data, column_names)
 
-        if six.PY2:
-            self.assertEqual(str(row), "<agate.MappedSequence: (u'a', u'b', u'c', u'd', u'e', ...)>")
-        else:
-            self.assertEqual(str(row), "<agate.MappedSequence: ('a', 'b', 'c', 'd', 'e', ...)>")
+        self.assertEqual(str(row), "<agate.MappedSequence: ('a', 'b', 'c', 'd', 'e', ...)>")
 
     def test_length(self):
         self.assertEqual(len(self.row), 3)
@@ -45,19 +34,19 @@ class TestMappedSequence(unittest.TestCase):
     def test_eq(self):
         row2 = MappedSequence(self.data, self.column_names)
 
-        self.assertTrue(self.row == (u'a', u'b', u'c'))
-        self.assertTrue(self.row == [u'a', u'b', u'c'])
+        self.assertTrue(self.row == ('a', 'b', 'c'))
+        self.assertTrue(self.row == ['a', 'b', 'c'])
         self.assertTrue(self.row == row2)
-        self.assertFalse(self.row == (u'a', u'b', u'c', u'd'))
+        self.assertFalse(self.row == ('a', 'b', 'c', 'd'))
         self.assertFalse(self.row == 1)
 
     def test_ne(self):
         row2 = MappedSequence(self.data, self.column_names)
 
-        self.assertFalse(self.row != (u'a', u'b', u'c'))
-        self.assertFalse(self.row != [u'a', u'b', u'c'])
+        self.assertFalse(self.row != ('a', 'b', 'c'))
+        self.assertFalse(self.row != ['a', 'b', 'c'])
         self.assertFalse(self.row != row2)
-        self.assertTrue(self.row != (u'a', u'b', u'c', u'd'))
+        self.assertTrue(self.row != ('a', 'b', 'c', 'd'))
         self.assertTrue(self.row != 1)
 
     def test_contains(self):
@@ -66,10 +55,10 @@ class TestMappedSequence(unittest.TestCase):
 
     def test_set_item(self):
         with self.assertRaises(TypeError):
-            self.row['one'] = u't'
+            self.row['one'] = 't'
 
         with self.assertRaises(TypeError):
-            self.row['five'] = u'g'
+            self.row['five'] = 'g'
 
     def test_get_item(self):
         self.assertEqual(self.row['one'], 'a')

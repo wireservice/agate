@@ -6,8 +6,6 @@ from collections import OrderedDict
 from decimal import Decimal
 from glob import glob
 
-import six
-
 from agate.table import Table
 
 
@@ -31,12 +29,12 @@ def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwar
     """
     from agate.tableset import TableSet
 
-    if isinstance(path, six.string_types) and not os.path.isdir(path) and not os.path.isfile(path):
+    if isinstance(path, str) and not os.path.isdir(path) and not os.path.isfile(path):
         raise IOError('Specified path doesn\'t exist.')
 
     tables = OrderedDict()
 
-    if isinstance(path, six.string_types) and os.path.isdir(path):
+    if isinstance(path, str) and os.path.isdir(path):
         filepaths = glob(os.path.join(path, '*.json'))
 
         if keys is not None and len(keys) != len(filepaths):

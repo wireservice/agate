@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-import six
 
 from agate import Table
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
@@ -13,7 +12,7 @@ class TestJSON(AgateTestCase):
     def setUp(self):
         self.rows = (
             (1, 'a', True, '11/4/2015', '11/4/2015 12:22 PM', '4:15'),
-            (2, u'👍', False, '11/5/2015', '11/4/2015 12:45 PM', '6:18'),
+            (2, '👍', False, '11/5/2015', '11/4/2015 12:45 PM', '6:18'),
             (None, 'b', None, None, None, None)
         )
 
@@ -36,12 +35,8 @@ class TestJSON(AgateTestCase):
     def test_from_json_file_like_object(self):
         table1 = Table(self.rows, self.column_names, self.column_types)
 
-        if six.PY2:
-            with open('examples/test.json') as f:
-                table2 = Table.from_json(f)
-        else:
-            with open('examples/test.json', encoding='utf-8') as f:
-                table2 = Table.from_json(f)
+        with open('examples/test.json', encoding='utf-8') as f:
+            table2 = Table.from_json(f)
 
         self.assertColumnNames(table2, self.column_names)
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
@@ -63,7 +58,7 @@ class TestJSON(AgateTestCase):
         self.assertRows(table, [
             [1, 4, 'a', None, None],
             [2, 3, 'b', 'd', None],
-            [None, 2, u'👍', None, 5]
+            [None, 2, '👍', None, 5]
         ])
 
     def test_from_json_nested(self):

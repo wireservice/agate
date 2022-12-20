@@ -1,14 +1,9 @@
 #!/usr/bin/env python
 
-from collections import OrderedDict
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-
 import json
 import shutil
+from collections import OrderedDict
+from io import StringIO
 
 from agate import Table, TableSet
 from agate.computations import Formula

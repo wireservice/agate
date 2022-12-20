@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import six
 
 from agate.exceptions import CastError
 
@@ -8,7 +7,7 @@ from agate.exceptions import CastError
 DEFAULT_NULL_VALUES = ('', 'na', 'n/a', 'none', 'null', '.')
 
 
-class DataType(object):  # pragma: no cover
+class DataType:  # pragma: no cover
     """
     Specifies how values should be parsed when creating a :class:`.Table`.
 
@@ -45,7 +44,7 @@ class DataType(object):  # pragma: no cover
         if d is None:
             return None
 
-        return six.text_type(d)
+        return str(d)
 
     def jsonify(self, d):
         """
@@ -54,4 +53,4 @@ class DataType(object):  # pragma: no cover
         if d is None:
             return None
 
-        return six.text_type(d)
+        return str(d)

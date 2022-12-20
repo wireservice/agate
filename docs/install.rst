@@ -11,12 +11,6 @@ To use agate install it with pip::
 
 For non-English locale support, `install PyICU <https://gitlab.pyicu.org/main/pyicu#installing-pyicu>`__.
 
-.. note::
-
-    Need more speed? Upgrade to Python 3. It's 3-5x faster than Python 2.
-
-    If you must use Python 2 you can you can :code:`pip install cdecimal` for a performance boost.
-
 Developers
 ----------
 
@@ -26,11 +20,7 @@ If you are a developer that also wants to hack on agate, install it from git::
     cd agate
     mkvirtualenv agate
 
-    # If running Python 3 (strongly recommended for development)
-    pip install -r requirements-py3.txt
-
-    # If running Python 2
-    pip install -r requirements-py2.txt
+    pip install -e .[test]
 
     python setup.py develop
 
@@ -38,7 +28,7 @@ If you are a developer that also wants to hack on agate, install it from git::
 
     To run the agate tests with coverage::
 
-        nosetests --with-coverage tests
+        pytest --cov agate
 
 Supported platforms
 -------------------

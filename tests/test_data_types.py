@@ -3,16 +3,11 @@
 
 import datetime
 import pickle
+import unittest
 from decimal import Decimal
-
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
 
 import parsedatetime
 import pytz
-import six
 
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.exceptions import CastError
@@ -40,7 +35,7 @@ class TestText(unittest.TestCase):
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), True)
         self.assertEqual(self.type.test('a'), True)
         self.assertEqual(self.type.test('A\nB'), True)
-        self.assertEqual(self.type.test(u'👍'), True)
+        self.assertEqual(self.type.test('👍'), True)
         self.assertEqual(self.type.test('05_leslie3d_base'), True)
         self.assertEqual(self.type.test('2016-12-29'), True)
         self.assertEqual(self.type.test('2016-12-29T11:43:30Z'), True)
@@ -48,9 +43,9 @@ class TestText(unittest.TestCase):
         self.assertEqual(self.type.test('2016-12-29T11:43:30-06:00'), True)
 
     def test_cast(self):
-        values = ('a', 1, None, Decimal('2.7'), 'n/a', u'👍', ' foo', 'foo ')
+        values = ('a', 1, None, Decimal('2.7'), 'n/a', '👍', ' foo', 'foo ')
         casted = tuple(self.type.cast(v) for v in values)
-        self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None, u'👍', ' foo', 'foo '))
+        self.assertSequenceEqual(casted, ('a', '1', None, '2.7', None, '👍', ' foo', 'foo '))
 
     def test_no_cast_nulls(self):
         values = ('', 'N/A', None)
@@ -90,7 +85,7 @@ class TestBoolean(unittest.TestCase):
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
         self.assertEqual(self.type.test('a'), False)
         self.assertEqual(self.type.test('A\nB'), False)
-        self.assertEqual(self.type.test(u'👍'), False)
+        self.assertEqual(self.type.test('👍'), False)
         self.assertEqual(self.type.test('05_leslie3d_base'), False)
         self.assertEqual(self.type.test('2016-12-29'), False)
         self.assertEqual(self.type.test('2016-12-29T11:43:30Z'), False)
@@ -139,7 +134,7 @@ class TestNumber(unittest.TestCase):
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
         self.assertEqual(self.type.test('a'), False)
         self.assertEqual(self.type.test('A\nB'), False)
-        self.assertEqual(self.type.test(u'👍'), False)
+        self.assertEqual(self.type.test('👍'), False)
         self.assertEqual(self.type.test('05_leslie3d_base'), False)
         self.assertEqual(self.type.test('2016-12-29'), False)
         self.assertEqual(self.type.test('2016-12-29T11:43:30Z'), False)
@@ -154,18 +149,13 @@ class TestNumber(unittest.TestCase):
             (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000'))
         )
 
-    @unittest.skipIf(six.PY3, 'Not supported in Python 3.')
-    def test_cast_long(self):
-        self.assertEqual(self.type.test(long('141414')), True)  # noqa: F821
-        self.assertEqual(self.type.cast(long('141414')), Decimal('141414'))  # noqa: F821
-
     def test_boolean_cast(self):
         values = (True, False)
         casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (Decimal('1'), Decimal('0')))
 
     def test_currency_cast(self):
-        values = ('$2.70', '-$0.70', u'€14', u'50¢', u'-75¢', u'-$1,287')
+        values = ('$2.70', '-$0.70', '€14', '50¢', '-75¢', '-$1,287')
         casted = tuple(self.type.cast(v) for v in values)
         self.assertSequenceEqual(
             casted,
@@ -215,7 +205,7 @@ class TestDate(unittest.TestCase):
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
         self.assertEqual(self.type.test('a'), False)
         self.assertEqual(self.type.test('A\nB'), False)
-        self.assertEqual(self.type.test(u'👍'), False)
+        self.assertEqual(self.type.test('👍'), False)
         self.assertEqual(self.type.test('05_leslie3d_base'), False)
         self.assertEqual(self.type.test('2016-12-29'), True)
         self.assertEqual(self.type.test('2016-12-29T11:43:30Z'), False)
@@ -281,7 +271,7 @@ class TestDate(unittest.TestCase):
     def test_cast_locale(self):
         date_type = Date(locale='fr_FR')
 
-        values = ('01 mars 1994', u'jeudi 17 février 2011', None, '5 janvier 1984', 'n/a')
+        values = ('01 mars 1994', 'jeudi 17 février 2011', None, '5 janvier 1984', 'n/a')
         casted = tuple(date_type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
             datetime.date(1994, 3, 1),
@@ -325,7 +315,7 @@ class TestDateTime(unittest.TestCase):
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), False)
         self.assertEqual(self.type.test('a'), False)
         self.assertEqual(self.type.test('A\nB'), False)
-        self.assertEqual(self.type.test(u'👍'), False)
+        self.assertEqual(self.type.test('👍'), False)
         self.assertEqual(self.type.test('05_leslie3d_base'), False)
         self.assertEqual(self.type.test('2016-12-29'), True)
         self.assertEqual(self.type.test('2016-12-29T11:43:30Z'), True)
@@ -465,7 +455,7 @@ class TestTimeDelta(unittest.TestCase):
         self.assertEqual(self.type.test(datetime.timedelta(hours=4, minutes=10)), True)
         self.assertEqual(self.type.test('a'), False)
         self.assertEqual(self.type.test('A\nB'), False)
-        self.assertEqual(self.type.test(u'👍'), False)
+        self.assertEqual(self.type.test('👍'), False)
         self.assertEqual(self.type.test('05_leslie3d_base'), False)
         self.assertEqual(self.type.test('2016-12-29'), False)
         self.assertEqual(self.type.test('2016-12-29T11:43:30Z'), False)

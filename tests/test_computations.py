@@ -1,13 +1,9 @@
 #!/usr/bin/env Python
 
 import datetime
+import unittest
 import warnings
 from decimal import Decimal
-
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
 
 from agate import Table
 from agate.computations import Change, Formula, Percent, PercentChange, PercentileRank, Rank, Slug

@@ -1,22 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-try:
-    from cdecimal import Decimal, InvalidOperation
-except ImportError:  # pragma: no cover
-    from decimal import Decimal, InvalidOperation
-
 import warnings
+from decimal import Decimal, InvalidOperation
 
-import six
 from babel.core import Locale
 
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
 #: A list of currency symbols sourced from `Xe <http://www.xe.com/symbols.php>`_.
-DEFAULT_CURRENCY_SYMBOLS = [u'؋', u'$', u'ƒ', u'៛', u'¥', u'₡', u'₱', u'£', u'€', u'¢', u'﷼', u'₪', u'₩', u'₭', u'₮',
-                            u'₦', u'฿', u'₤', u'₫']
+DEFAULT_CURRENCY_SYMBOLS = ['؋', '$', 'ƒ', '៛', '¥', '₡', '₱', '£', '€', '¢', '﷼', '₪', '₩', '₭', '₮',
+                            '₦', '฿', '₤', '₫']
 
 POSITIVE = Decimal('1')
 NEGATIVE = Decimal('-1')
@@ -40,7 +35,7 @@ class Number(DataType):
     """
     def __init__(self, locale='en_US', group_symbol=None, decimal_symbol=None,
                  currency_symbols=DEFAULT_CURRENCY_SYMBOLS, **kwargs):
-        super(Number, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.locale = Locale.parse(locale)
 
@@ -68,15 +63,13 @@ class Number(DataType):
 
         if t is int:
             return Decimal(d)
-        elif six.PY2 and t is long:  # noqa: F821
-            return Decimal(d)
-        elif t is float:
+        if t is float:
             return Decimal(repr(d))
-        elif d is False:
+        if d is False:
             return Decimal(0)
-        elif d is True:
+        if d is True:
             return Decimal(1)
-        elif not isinstance(d, six.string_types):
+        if not isinstance(d, str):
             raise CastError('Can not parse value "%s" as Decimal.' % d)
 
         d = d.strip()
