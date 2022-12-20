@@ -69,7 +69,7 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         elif sniff_limit > 0:
             kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue()[:sniff_limit])
 
-        reader = csv.reader(contents, header=header, encoding=encoding, **kwargs)
+        reader = csv.reader(contents, header=header, **kwargs)
 
         if header:
             if column_names is None:
