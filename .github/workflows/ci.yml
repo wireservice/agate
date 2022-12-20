@@ -48,7 +48,7 @@ jobs:
       - run: flake8 .
       - run: isort . --check-only
       - run: pip install .[test]
-      - run: nosetests --with-coverage --cover-package=agate
+      - run: pytest --cov agate
       # UnicodeDecodeError on print_bars
       - if: matrix.os != 'windows-latest' && matrix.python-version != '2.7' && matrix.python-version != 'pypy-2.7'
         run: python example.py

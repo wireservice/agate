@@ -38,7 +38,7 @@ If you are a developer that also wants to hack on agate, install it from git::
 
     To run the agate tests with coverage::
 
-        nosetests --with-coverage tests
+        pytest --cov agate
 
 Supported platforms
 -------------------
