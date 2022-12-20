@@ -6,27 +6,16 @@ This module contains a collection of utility classes and functions used in
 agate.
 """
 
-from collections import OrderedDict
-
-try:
-    from collections.abc import Sequence
-except ImportError:
-    from collections import Sequence
-
 import math
 import string
+from collections import OrderedDict
+from collections.abc import Sequence
+from decimal import ROUND_CEILING, ROUND_FLOOR, Decimal, getcontext
 from functools import wraps
 
 from slugify import slugify as pslugify
 
 from agate.warns import warn_duplicate_column, warn_unnamed_column
-
-try:
-    from cdecimal import ROUND_CEILING, ROUND_FLOOR, Decimal, getcontext
-except ImportError:  # pragma: no cover
-    from decimal import Decimal, ROUND_FLOOR, ROUND_CEILING, getcontext
-
-import six
 
 #: Sentinal for use when `None` is an valid argument value
 default = object()
@@ -50,7 +39,7 @@ def memoize(func):
     return wrapper
 
 
-class NullOrder(object):
+class NullOrder:
     """
     Dummy object used for sorting in place of None.
 
@@ -249,7 +238,7 @@ def parse_object(obj, path=''):
     d = OrderedDict()
 
     for key, value in iterator:
-        key = six.text_type(key)
+        key = str(key)
         d.update(parse_object(value, path + key + '/'))
 
     return d
@@ -260,7 +249,7 @@ def issequence(obj):
     Returns :code:`True` if the given object is an instance of
     :class:`.Sequence` that is not also a string.
     """
-    return isinstance(obj, Sequence) and not isinstance(obj, six.string_types)
+    return isinstance(obj, Sequence) and not isinstance(obj, str)
 
 
 def deduplicate(values, column_names=False, separator='_'):
@@ -283,7 +272,7 @@ def deduplicate(values, column_names=False, separator='_'):
             if not value:
                 new_value = letter_name(i)
                 warn_unnamed_column(i, new_value)
-            elif isinstance(value, six.string_types):
+            elif isinstance(value, str):
                 new_value = value
             else:
                 raise ValueError('Column names must be strings or None.')

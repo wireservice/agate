@@ -6,14 +6,9 @@ array of tabular data. Whereas :class:`.Row` instances are independent of their
 parent :class:`.Table`, columns depend on knowledge of both their position in
 the parent (column name, data type) as well as the rows that contain their data.
 """
-import six
 
 from agate.mapped_sequence import MappedSequence
 from agate.utils import NullOrder, memoize
-
-if six.PY3:  # pragma: no cover
-    # pylint: disable=W0622
-    xrange = range
 
 
 def null_handler(k):

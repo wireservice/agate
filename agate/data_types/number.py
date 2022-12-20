@@ -1,14 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-try:
-    from cdecimal import Decimal, InvalidOperation
-except ImportError:  # pragma: no cover
-    from decimal import Decimal, InvalidOperation
-
 import warnings
+from decimal import Decimal, InvalidOperation
 
-import six
 from babel.core import Locale
 
 from agate.data_types.base import DataType
@@ -68,15 +63,13 @@ class Number(DataType):
 
         if t is int:
             return Decimal(d)
-        elif six.PY2 and t is long:  # noqa: F821
-            return Decimal(d)
         elif t is float:
             return Decimal(repr(d))
         elif d is False:
             return Decimal(0)
         elif d is True:
             return Decimal(1)
-        elif not isinstance(d, six.string_types):
+        elif not isinstance(d, str):
             raise CastError('Can not parse value "%s" as Decimal.' % d)
 
         d = d.strip()

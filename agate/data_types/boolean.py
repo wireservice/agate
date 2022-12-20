@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
-
-import six
+from decimal import Decimal
 
 from agate.data_types.base import DEFAULT_NULL_VALUES, DataType
 from agate.exceptions import CastError
@@ -52,7 +47,7 @@ class Boolean(DataType):
                 return True
             elif d == 0:
                 return False
-        elif isinstance(d, six.string_types):
+        elif isinstance(d, str):
             d = d.replace(',', '').strip()
 
             d_lower = d.lower()

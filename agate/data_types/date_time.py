@@ -5,7 +5,6 @@ import locale
 
 import isodate
 import parsedatetime
-import six
 
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
@@ -73,7 +72,7 @@ class DateTime(DataType):
             return d
         elif isinstance(d, datetime.date):
             return datetime.datetime.combine(d, datetime.time(0, 0, 0))
-        elif isinstance(d, six.string_types):
+        elif isinstance(d, str):
             d = d.strip()
 
             if d.lower() in self.null_values:

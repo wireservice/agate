@@ -42,7 +42,6 @@ setup(
         'parsedatetime>=2.1,!=2.5,!=2.6',
         'python-slugify>=1.2.1',
         'pytimeparse>=1.1.5',
-        'six>=1.9.0',
     ],
     extras_require={
         'test': [
@@ -54,8 +53,6 @@ setup(
             'pytest',
             'pytest-cov',
             'pytz>=2015.4',
-            'mock>=1.3.0;python_version<"3"',
-            'unittest2>=1.1.0;python_version<"3"',
         ],
         'docs': [
             'Sphinx>=1.2.2',

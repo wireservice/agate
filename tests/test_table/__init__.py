@@ -1,14 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
-
 import warnings
-
-import six
+from decimal import Decimal
 
 from agate import Table
 from agate.computations import Formula
@@ -303,24 +297,11 @@ class TestBasic(AgateTestCase):
 
         table = Table(self.rows, column_names)
 
-        if six.PY2:
-            u = unicode(table)  # noqa: F821
+        u = str(table)
 
-            self.assertIn('foo', u)
-            self.assertIn('bar', u)
-            self.assertIn(u'👍', u)
-
-            s = str(table)
-
-            self.assertIn('foo', s)
-            self.assertIn('bar', s)
-            self.assertIn(u'👍'.encode('utf-8'), s)
-        else:
-            u = str(table)
-
-            self.assertIn('foo', u)
-            self.assertIn('bar', u)
-            self.assertIn(u'👍', u)
+        self.assertIn('foo', u)
+        self.assertIn('bar', u)
+        self.assertIn(u'👍', u)
 
     def test_str(self):
         warnings.simplefilter('ignore')

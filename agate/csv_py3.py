@@ -7,14 +7,12 @@ This module contains the Python 3 replacement for :mod:`csv`.
 import csv
 import warnings
 
-import six
-
 from agate.exceptions import FieldSizeLimitError
 
 POSSIBLE_DELIMITERS = [',', '\t', ';', ' ', ':', '|']
 
 
-class Reader(six.Iterator):
+class Reader:
     """
     A wrapper around Python 3's builtin :func:`csv.reader`.
     """
@@ -60,7 +58,7 @@ class Reader(six.Iterator):
         return self.reader.line_num
 
 
-class Writer(object):
+class Writer:
     """
     A wrapper around Python 3's builtin :func:`csv.writer`.
     """
@@ -87,7 +85,7 @@ class Writer(object):
             self._append_line_number(row)
 
         # Convert embedded Mac line endings to unix style line endings so they get quoted
-        row = [i.replace('\r', '\n') if isinstance(i, six.string_types) else i for i in row]
+        row = [i.replace('\r', '\n') if isinstance(i, str) else i for i in row]
 
         self.writer.writerow(row)
 
@@ -129,7 +127,7 @@ class DictWriter(csv.DictWriter):
 
     def writerow(self, row):
         # Convert embedded Mac line endings to unix style line endings so they get quoted
-        row = dict([(k, v.replace('\r', '\n')) if isinstance(v, six.string_types) else (k, v) for k, v in row.items()])
+        row = dict([(k, v.replace('\r', '\n')) if isinstance(v, str) else (k, v) for k, v in row.items()])
 
         if self.line_numbers:
             self._append_line_number(row)
@@ -141,7 +139,7 @@ class DictWriter(csv.DictWriter):
             self.writerow(row)
 
 
-class Sniffer(object):
+class Sniffer:
     """
     A functional wrapper of ``csv.Sniffer()``.
     """

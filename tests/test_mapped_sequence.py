@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
-import six
+import unittest
 
 from agate.mapped_sequence import MappedSequence
 
@@ -24,20 +19,14 @@ class TestMappedSequence(unittest.TestCase):
             self.row['one'] = 100
 
     def test_stringify(self):
-        if six.PY2:
-            self.assertEqual(str(self.row), "<agate.MappedSequence: (u'a', u'b', u'c')>")
-        else:
-            self.assertEqual(str(self.row), "<agate.MappedSequence: ('a', 'b', 'c')>")
+        self.assertEqual(str(self.row), "<agate.MappedSequence: ('a', 'b', 'c')>")
 
     def test_stringify_long(self):
         column_names = ('one', 'two', 'three', 'four', 'five', 'six')
         data = (u'a', u'b', u'c', u'd', u'e', u'f')
         row = MappedSequence(data, column_names)
 
-        if six.PY2:
-            self.assertEqual(str(row), "<agate.MappedSequence: (u'a', u'b', u'c', u'd', u'e', ...)>")
-        else:
-            self.assertEqual(str(row), "<agate.MappedSequence: ('a', 'b', 'c', 'd', 'e', ...)>")
+        self.assertEqual(str(row), "<agate.MappedSequence: ('a', 'b', 'c', 'd', 'e', ...)>")
 
     def test_length(self):
         self.assertEqual(len(self.row), 3)

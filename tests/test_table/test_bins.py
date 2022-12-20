@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-from babel.numbers import get_decimal_symbol
+from decimal import Decimal
 
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
+from babel.numbers import get_decimal_symbol
 
 from agate import Table
 from agate.data_types import Number, Text

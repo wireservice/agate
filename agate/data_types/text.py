@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import six
 
 from agate.data_types.base import DataType
 
@@ -29,8 +28,8 @@ class Text(DataType):
         """
         if d is None:
             return d
-        elif isinstance(d, six.string_types):
+        elif isinstance(d, str):
             if self.cast_nulls and d.strip().lower() in self.null_values:
                 return None
 
-        return six.text_type(d)
+        return str(d)

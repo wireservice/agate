@@ -2,11 +2,7 @@
 # -*- coding: utf8 -*-
 
 import sys
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
+from decimal import Decimal
 
 from agate import Table
 from agate.aggregations import Sum

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-import six
+from io import StringIO
+
 from babel.numbers import get_decimal_symbol
 
 from agate import Table
@@ -33,7 +34,7 @@ class TestPrintTable(AgateTestCase):
     def test_print_table(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_table(output=output)
         lines = output.getvalue().split('\n')
 
@@ -43,7 +44,7 @@ class TestPrintTable(AgateTestCase):
     def test_print_table_max_rows(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_table(max_rows=2, output=output)
         lines = output.getvalue().split('\n')
 
@@ -53,7 +54,7 @@ class TestPrintTable(AgateTestCase):
     def test_print_table_max_columns(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_table(max_columns=2, output=output)
         lines = output.getvalue().split('\n')
 
@@ -75,7 +76,7 @@ class TestPrintTable(AgateTestCase):
         ]
         table = Table(rows, column_names, column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_table(output=output, max_precision=2)
         lines = output.getvalue().split('\n')
 
@@ -102,7 +103,7 @@ class TestPrintTable(AgateTestCase):
         column_names = ['one', 'two', 'three', 'also, this is long']
         table = Table(rows, column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_table(output=output, max_column_width=7)
         lines = output.getvalue().split('\n')
 
@@ -117,7 +118,7 @@ class TestPrintTable(AgateTestCase):
         """
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_table(max_columns=2, output=output, locale='en_US')
         # If it's working, 2000 should appear as the english '2,000'
         self.assertTrue("2,000" in output.getvalue())
@@ -129,7 +130,7 @@ class TestPrintTable(AgateTestCase):
         """
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_table(max_columns=2, output=output, locale='de_DE.UTF-8')
         # If it's working, the english '2,000' should appear as '2.000'
         self.assertTrue("2.000" in output.getvalue())

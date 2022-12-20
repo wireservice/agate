@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-import six
 
 from agate import Table
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
@@ -36,12 +35,8 @@ class TestJSON(AgateTestCase):
     def test_from_json_file_like_object(self):
         table1 = Table(self.rows, self.column_names, self.column_types)
 
-        if six.PY2:
-            with open('examples/test.json') as f:
-                table2 = Table.from_json(f)
-        else:
-            with open('examples/test.json', encoding='utf-8') as f:
-                table2 = Table.from_json(f)
+        with open('examples/test.json', encoding='utf-8') as f:
+            table2 = Table.from_json(f)
 
         self.assertColumnNames(table2, self.column_names)
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])

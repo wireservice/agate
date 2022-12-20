@@ -7,14 +7,7 @@ rows and columns.
 """
 
 from collections import OrderedDict
-
-try:
-    from collections.abc import Sequence
-except ImportError:
-    from collections import Sequence
-
-import six
-from six.moves import range  # pylint: disable=W0622
+from collections.abc import Sequence
 
 from agate.utils import memoize
 
@@ -78,9 +71,6 @@ class MappedSequence(Sequence):
         """
         Print an ascii sample of the contents of this sequence.
         """
-        if six.PY2:  # pragma: no cover
-            return str(self.__unicode__().encode('utf8'))
-
         return str(self.__unicode__())
 
     def __repr__(self):

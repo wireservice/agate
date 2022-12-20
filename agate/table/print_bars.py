@@ -2,16 +2,10 @@
 # -*- coding: utf8 -*-
 # pylint: disable=W0212
 
-from collections import OrderedDict
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
-
 import sys
+from collections import OrderedDict
+from decimal import Decimal
 
-import six
 from babel.numbers import format_decimal
 
 from agate import config, utils
@@ -76,7 +70,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
     formatted_labels = []
 
     for label in label_column:
-        formatted_labels.append(six.text_type(label))
+        formatted_labels.append(str(label))
 
     formatted_values = []
     for value in value_column:

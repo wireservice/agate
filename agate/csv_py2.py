@@ -7,8 +7,7 @@ This module contains the Python 2 replacement for :mod:`csv`.
 import codecs
 import csv
 import warnings
-
-import six
+from io import StringIO
 
 from agate.exceptions import FieldSizeLimitError
 
@@ -20,7 +19,7 @@ EIGHT_BIT_ENCODINGS = [
 POSSIBLE_DELIMITERS = [',', '\t', ';', ' ', ':', '|']
 
 
-class UTF8Recoder(six.Iterator):
+class UTF8Recoder:
     """
     Iterator that reads an encoded stream and reencodes the input to UTF-8.
     """
@@ -34,7 +33,7 @@ class UTF8Recoder(six.Iterator):
         return next(self.reader).encode('utf-8')
 
 
-class UnicodeReader(object):
+class UnicodeReader:
     """
     A CSV reader which will read rows from a file in a given encoding.
     """
@@ -65,7 +64,7 @@ class UnicodeReader(object):
             else:
                 row.insert(0, str(self.line_num - 1 if self.header else self.line_num))
 
-        return [six.text_type(s, 'utf-8') for s in row]
+        return [str(s, 'utf-8') for s in row]
 
     def __iter__(self):
         return self
@@ -79,7 +78,7 @@ class UnicodeReader(object):
         return self.reader.line_num
 
 
-class UnicodeWriter(object):
+class UnicodeWriter:
     """
     A CSV writer which will write rows to a file in the specified encoding.
 
@@ -94,16 +93,16 @@ class UnicodeWriter(object):
             self.writer = csv.writer(f, **kwargs)
         else:
             # Redirect output to a queue for reencoding
-            self.queue = six.StringIO()
+            self.queue = StringIO()
             self.writer = csv.writer(self.queue, **kwargs)
             self.stream = f
             self.encoder = codecs.getincrementalencoder(encoding)()
 
     def writerow(self, row):
         if self._eight_bit:
-            self.writer.writerow([six.text_type(s if s is not None else '').encode(self.encoding) for s in row])
+            self.writer.writerow([str(s if s is not None else '').encode(self.encoding) for s in row])
         else:
-            self.writer.writerow([six.text_type(s if s is not None else '').encode('utf-8') for s in row])
+            self.writer.writerow([str(s if s is not None else '').encode('utf-8') for s in row])
             # Fetch UTF-8 output from the queue...
             data = self.queue.getvalue()
             data = data.decode('utf-8')
@@ -186,7 +185,7 @@ class Writer(UnicodeWriter):
             self._append_line_number(row)
 
         # Convert embedded Mac line endings to unix style line endings so they get quoted
-        row = [i.replace('\r', '\n') if isinstance(i, six.string_types) else i for i in row]
+        row = [i.replace('\r', '\n') if isinstance(i, str) else i for i in row]
 
         UnicodeWriter.writerow(self, row)
 
@@ -240,7 +239,7 @@ class DictWriter(UnicodeDictWriter):
             self.writerow(row)
 
 
-class Sniffer(object):
+class Sniffer:
     """
     A functional wrapper of ``csv.Sniffer()``.
     """

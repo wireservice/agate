@@ -145,8 +145,7 @@ Implementing Levenshtein requires writing a custom :class:`.Computation`. To sav
 
     import agate
     from Levenshtein import distance
-    import six
-
+    
     class LevenshteinDistance(agate.Computation):
         """
         Computes Levenshtein edit distance between the column and a given string.

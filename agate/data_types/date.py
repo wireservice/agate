@@ -4,7 +4,6 @@ import locale
 from datetime import date, datetime, time
 
 import parsedatetime
-import six
 
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
@@ -64,7 +63,7 @@ class Date(DataType):
         """
         if type(d) is date or d is None:
             return d
-        elif isinstance(d, six.string_types):
+        elif isinstance(d, str):
             d = d.strip()
 
             if d.lower() in self.null_values:

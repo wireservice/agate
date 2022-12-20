@@ -3,16 +3,11 @@
 
 import datetime
 import pickle
+import unittest
 from decimal import Decimal
-
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
 
 import parsedatetime
 import pytz
-import six
 
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.exceptions import CastError
@@ -153,11 +148,6 @@ class TestNumber(unittest.TestCase):
             casted,
             (Decimal('2'), Decimal('1'), None, Decimal('2.7'), None, Decimal('2.7'), Decimal('200000000'))
         )
-
-    @unittest.skipIf(six.PY3, 'Not supported in Python 3.')
-    def test_cast_long(self):
-        self.assertEqual(self.type.test(long('141414')), True)  # noqa: F821
-        self.assertEqual(self.type.cast(long('141414')), Decimal('141414'))  # noqa: F821
 
     def test_boolean_cast(self):
         values = (True, False)

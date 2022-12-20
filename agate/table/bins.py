@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # pylint: disable=W0212
 
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
+from decimal import Decimal
 
 from babel.numbers import format_decimal
 

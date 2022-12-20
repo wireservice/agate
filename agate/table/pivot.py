@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # pylint: disable=W0212
 
-import six
 
 from agate import utils
 from agate.aggregations import Count
@@ -95,8 +94,8 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
     for k in key:
         groups = groups.group_by(k, key_name=key_name)
 
-    aggregation_name = six.text_type(aggregation)
-    computation_name = six.text_type(computation) if computation else None
+    aggregation_name = str(aggregation)
+    computation_name = str(computation) if computation else None
 
     def apply_computation(table):
         computed = table.compute([

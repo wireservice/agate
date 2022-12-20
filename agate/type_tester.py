@@ -12,7 +12,7 @@ from agate.data_types.text import Text
 from agate.data_types.time_delta import TimeDelta
 
 
-class TypeTester(object):
+class TypeTester:
     """
     Control how data types are inferred for columns in a given set of data.
 

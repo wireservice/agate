@@ -7,12 +7,10 @@ similar to Python's built-in CSV reader.
 
 from collections import OrderedDict, namedtuple
 
-import six
-
 Field = namedtuple('Field', ['name', 'start', 'length'])
 
 
-class Reader(six.Iterator):
+class Reader:
     """
     Reads a fixed-width file using a column schema in CSV format.
 

@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 # -*- coding: utf8 -*-
 
-import six
+from io import StringIO
 
 from agate import Table
 from agate.data_types import Number, Text
@@ -30,7 +30,7 @@ class TestPrintStructure(AgateTestCase):
     def test_print_structure(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_structure(output=output)
         lines = output.getvalue().strip().split('\n')
 

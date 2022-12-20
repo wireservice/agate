@@ -3,8 +3,7 @@
 
 import os
 import sys
-
-import six
+from io import StringIO
 
 from agate import Table
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
@@ -64,7 +63,7 @@ class TestToCSV(AgateTestCase):
     def test_to_csv_to_stdout(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.to_csv(output)
 
         contents1 = output.getvalue()
@@ -94,7 +93,7 @@ class TestToCSV(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types)
 
         old = sys.stdout
-        sys.stdout = six.StringIO()
+        sys.stdout = StringIO()
 
         try:
             table.print_csv()

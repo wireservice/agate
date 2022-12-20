@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-import six
+from io import StringIO
+
 from babel.numbers import format_decimal
 
 from agate import Table
@@ -32,14 +33,14 @@ class TestPrintBars(AgateTestCase):
     def test_print_bars(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_bars('three', 'one', output=output)
         lines = output.getvalue().split('\n')  # noqa
 
     def test_print_bars_width(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_bars('three', 'one', width=40, output=output)
         lines = output.getvalue().split('\n')
 
@@ -48,7 +49,7 @@ class TestPrintBars(AgateTestCase):
     def test_print_bars_width_overlap(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_bars('three', 'one', width=20, output=output)
         lines = output.getvalue().split('\n')
 
@@ -94,7 +95,7 @@ class TestPrintBars(AgateTestCase):
     def test_print_bars_with_nulls(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_bars('three', 'two', width=20, printable=True,
                          output=output)
 

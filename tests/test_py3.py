@@ -4,19 +4,13 @@
 import csv
 import os
 import platform
-
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
-import six
+import unittest
+from io import StringIO
 
 from agate import csv_py3
 from agate.exceptions import FieldSizeLimitError
 
 
-@unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestReader(unittest.TestCase):
     def setUp(self):
         self.rows = [
@@ -66,7 +60,6 @@ class TestReader(unittest.TestCase):
             self.assertEqual(a, b)
 
 
-@unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestFieldSizeLimit(unittest.TestCase):
     def setUp(self):
         self.lim = csv.field_size_limit()
@@ -96,16 +89,15 @@ class TestFieldSizeLimit(unittest.TestCase):
             self.assertEqual(['a' * 10], c.__next__())
 
 
-@unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestWriter(unittest.TestCase):
     def test_utf8(self):
-        output = six.StringIO()
+        output = StringIO()
         writer = csv_py3.Writer(output)
         writer.writerow(['a', 'b', 'c'])
         writer.writerow(['1', '2', '3'])
         writer.writerow(['4', '5', u'ʤ'])
 
-        written = six.StringIO(output.getvalue())
+        written = StringIO(output.getvalue())
 
         reader = csv_py3.Reader(written)
         self.assertEqual(next(reader), ['a', 'b', 'c'])
@@ -113,13 +105,13 @@ class TestWriter(unittest.TestCase):
         self.assertEqual(next(reader), ['4', '5', u'ʤ'])
 
     def test_writer_alias(self):
-        output = six.StringIO()
+        output = StringIO()
         writer = csv_py3.writer(output)
         writer.writerow(['a', 'b', 'c'])
         writer.writerow(['1', '2', '3'])
         writer.writerow(['4', '5', u'ʤ'])
 
-        written = six.StringIO(output.getvalue())
+        written = StringIO(output.getvalue())
 
         reader = csv_py3.reader(written)
         self.assertEqual(next(reader), ['a', 'b', 'c'])
@@ -127,13 +119,13 @@ class TestWriter(unittest.TestCase):
         self.assertEqual(next(reader), ['4', '5', u'ʤ'])
 
     def test_line_numbers(self):
-        output = six.StringIO()
+        output = StringIO()
         writer = csv_py3.Writer(output, line_numbers=True)
         writer.writerow(['a', 'b', 'c'])
         writer.writerow(['1', '2', '3'])
         writer.writerow(['4', '5', u'ʤ'])
 
-        written = six.StringIO(output.getvalue())
+        written = StringIO(output.getvalue())
 
         reader = csv_py3.Reader(written)
         self.assertEqual(next(reader), ['line_number', 'a', 'b', 'c'])
@@ -141,7 +133,7 @@ class TestWriter(unittest.TestCase):
         self.assertEqual(next(reader), ['2', '4', '5', u'ʤ'])
 
     def test_writerows(self):
-        output = six.StringIO()
+        output = StringIO()
         writer = csv_py3.Writer(output)
         writer.writerows([
             ['a', 'b', 'c'],
@@ -149,7 +141,7 @@ class TestWriter(unittest.TestCase):
             ['4', '5', u'ʤ']
         ])
 
-        written = six.StringIO(output.getvalue())
+        written = StringIO(output.getvalue())
 
         reader = csv_py3.Reader(written)
         self.assertEqual(next(reader), ['a', 'b', 'c'])
@@ -157,7 +149,6 @@ class TestWriter(unittest.TestCase):
         self.assertEqual(next(reader), ['4', '5', u'ʤ'])
 
 
-@unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestDictReader(unittest.TestCase):
     def setUp(self):
         self.rows = [
@@ -183,10 +174,9 @@ class TestDictReader(unittest.TestCase):
         self.assertEqual(next(reader), dict(zip(self.rows[0], self.rows[1])))
 
 
-@unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestDictWriter(unittest.TestCase):
     def setUp(self):
-        self.output = six.StringIO()
+        self.output = StringIO()
 
     def tearDown(self):
         self.output.close()
@@ -244,8 +234,8 @@ class TestDictWriter(unittest.TestCase):
         self.assertEqual(result, 'line_number,a,b,c\n1,1,2,☃\n')
 
 
-@unittest.skipIf(six.PY2 or platform.system() == 'Linux' and six.PY3,
-                 "Not supported in Python 2. Test inexplicably fails intermittently on Linux and Python 3.")
+@unittest.skipIf(platform.system() == 'Linux',
+                 "Test inexplicably fails intermittently on Linux.")
 class TestSniffer(unittest.TestCase):
     def test_sniffer(self):
         with open('examples/test.csv', encoding='utf-8') as f:
