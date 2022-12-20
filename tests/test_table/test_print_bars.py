@@ -100,8 +100,8 @@ class TestPrintBars(AgateTestCase):
                          output=output)
 
         self.assertEqual(output.getvalue(), "three   two\n"
-                                            "a     " + format_decimal(2000, format=u'#,##0') + " |:::::::\n"
+                                            "a     " + format_decimal(2000, format='#,##0') + " |:::::::\n"
                                             "None      - |       \n"
                                             "c         1 |       \n"
                                             "            +------+\n"
-                                            "            0  " + format_decimal(2000, format=u'#,##0') + "\n")
+                                            "            0  " + format_decimal(2000, format='#,##0') + "\n")

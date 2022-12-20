@@ -10,8 +10,8 @@ from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
 #: A list of currency symbols sourced from `Xe <http://www.xe.com/symbols.php>`_.
-DEFAULT_CURRENCY_SYMBOLS = [u'؋', u'$', u'ƒ', u'៛', u'¥', u'₡', u'₱', u'£', u'€', u'¢', u'﷼', u'₪', u'₩', u'₭', u'₮',
-                            u'₦', u'฿', u'₤', u'₫']
+DEFAULT_CURRENCY_SYMBOLS = ['؋', '$', 'ƒ', '៛', '¥', '₡', '₱', '£', '€', '¢', '﷼', '₪', '₩', '₭', '₮',
+                            '₦', '฿', '₤', '₫']
 
 POSITIVE = Decimal('1')
 NEGATIVE = Decimal('-1')

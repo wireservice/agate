@@ -163,9 +163,9 @@ def make_number_formatter(decimal_places, add_ellipsis=False):
     :param add_ellipsis:
         Optionally add an ellipsis symbol at the end of a number
     """
-    fraction = u'0' * decimal_places
-    ellipsis = u'…' if add_ellipsis else u''
-    return u''.join([u'#,##0.', fraction, ellipsis, u';-#,##0.', fraction, ellipsis])
+    fraction = '0' * decimal_places
+    ellipsis = '…' if add_ellipsis else ''
+    return ''.join(['#,##0.', fraction, ellipsis, ';-#,##0.', fraction, ellipsis])
 
 
 def round_limits(minimum, maximum):

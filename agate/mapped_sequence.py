@@ -60,12 +60,12 @@ class MappedSequence(Sequence):
         """
         Print a unicode sample of the contents of this sequence.
         """
-        sample = u', '.join(repr(d) for d in self.values()[:5])
+        sample = ', '.join(repr(d) for d in self.values()[:5])
 
         if len(self) > 5:
-            sample = u'%s, ...' % sample
+            sample = '%s, ...' % sample
 
-        return u'<agate.%s: (%s)>' % (type(self).__name__, sample)
+        return '<agate.%s: (%s)>' % (type(self).__name__, sample)
 
     def __str__(self):
         """
@@ -153,8 +153,7 @@ class MappedSequence(Sequence):
         except KeyError:
             if default:
                 return default
-            else:
-                return None
+            return None
 
     @memoize
     def dict(self):

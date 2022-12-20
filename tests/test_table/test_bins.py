@@ -111,15 +111,15 @@ class TestBins(AgateTestCase):
 
         self.assertSequenceEqual(
             new_table.rows[0],
-            [u'[0' + get_decimal_symbol() + u'0 - 0' + get_decimal_symbol() + u'1)', 10]
+            ['[0' + get_decimal_symbol() + '0 - 0' + get_decimal_symbol() + '1)', 10]
         )
         self.assertSequenceEqual(
             new_table.rows[3],
-            [u'[0' + get_decimal_symbol() + u'3 - 0' + get_decimal_symbol() + u'4)', 10]
+            ['[0' + get_decimal_symbol() + '3 - 0' + get_decimal_symbol() + '4)', 10]
         )
         self.assertSequenceEqual(
             new_table.rows[9],
-            [u'[0' + get_decimal_symbol() + u'9 - 1' + get_decimal_symbol() + u'0]', 10]
+            ['[0' + get_decimal_symbol() + '9 - 1' + get_decimal_symbol() + '0]', 10]
         )
 
     def test_bins_nulls(self):
@@ -137,14 +137,14 @@ class TestBins(AgateTestCase):
 
         self.assertSequenceEqual(
             new_table.rows[0],
-            [u'[0' + get_decimal_symbol() + u'0 - 0' + get_decimal_symbol() + u'1)', 10]
+            ['[0' + get_decimal_symbol() + '0 - 0' + get_decimal_symbol() + '1)', 10]
         )
         self.assertSequenceEqual(
             new_table.rows[3],
-            [u'[0' + get_decimal_symbol() + u'3 - 0' + get_decimal_symbol() + u'4)', 10]
+            ['[0' + get_decimal_symbol() + '3 - 0' + get_decimal_symbol() + '4)', 10]
         )
         self.assertSequenceEqual(
             new_table.rows[9],
-            [u'[0' + get_decimal_symbol() + u'9 - 1' + get_decimal_symbol() + u'0]', 10]
+            ['[0' + get_decimal_symbol() + '9 - 1' + get_decimal_symbol() + '0]', 10]
         )
         self.assertSequenceEqual(new_table.rows[10], [None, 1])

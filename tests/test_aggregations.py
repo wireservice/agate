@@ -773,7 +773,7 @@ class TestTextAggregation(unittest.TestCase):
         """
         rows = [
             ['a'],
-            [u'👍'],
+            ['👍'],
             ['w']
         ]
 

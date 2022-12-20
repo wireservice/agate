@@ -52,7 +52,7 @@ class TestReader(unittest.TestCase):
         sample_rows = [
             ['line_numbers', 'number', 'text', 'boolean', 'date', 'datetime', 'timedelta'],
             ['1', '1', 'a', 'True', '2015-11-04', '2015-11-04T12:22:00', '0:04:15'],
-            ['2', '2', u'👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
+            ['2', '2', '👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
             ['3', '', 'b', '', '', '', '']
         ]
 
@@ -95,42 +95,42 @@ class TestWriter(unittest.TestCase):
         writer = csv_py3.Writer(output)
         writer.writerow(['a', 'b', 'c'])
         writer.writerow(['1', '2', '3'])
-        writer.writerow(['4', '5', u'ʤ'])
+        writer.writerow(['4', '5', 'ʤ'])
 
         written = StringIO(output.getvalue())
 
         reader = csv_py3.Reader(written)
         self.assertEqual(next(reader), ['a', 'b', 'c'])
         self.assertEqual(next(reader), ['1', '2', '3'])
-        self.assertEqual(next(reader), ['4', '5', u'ʤ'])
+        self.assertEqual(next(reader), ['4', '5', 'ʤ'])
 
     def test_writer_alias(self):
         output = StringIO()
         writer = csv_py3.writer(output)
         writer.writerow(['a', 'b', 'c'])
         writer.writerow(['1', '2', '3'])
-        writer.writerow(['4', '5', u'ʤ'])
+        writer.writerow(['4', '5', 'ʤ'])
 
         written = StringIO(output.getvalue())
 
         reader = csv_py3.reader(written)
         self.assertEqual(next(reader), ['a', 'b', 'c'])
         self.assertEqual(next(reader), ['1', '2', '3'])
-        self.assertEqual(next(reader), ['4', '5', u'ʤ'])
+        self.assertEqual(next(reader), ['4', '5', 'ʤ'])
 
     def test_line_numbers(self):
         output = StringIO()
         writer = csv_py3.Writer(output, line_numbers=True)
         writer.writerow(['a', 'b', 'c'])
         writer.writerow(['1', '2', '3'])
-        writer.writerow(['4', '5', u'ʤ'])
+        writer.writerow(['4', '5', 'ʤ'])
 
         written = StringIO(output.getvalue())
 
         reader = csv_py3.Reader(written)
         self.assertEqual(next(reader), ['line_number', 'a', 'b', 'c'])
         self.assertEqual(next(reader), ['1', '1', '2', '3'])
-        self.assertEqual(next(reader), ['2', '4', '5', u'ʤ'])
+        self.assertEqual(next(reader), ['2', '4', '5', 'ʤ'])
 
     def test_writerows(self):
         output = StringIO()
@@ -138,7 +138,7 @@ class TestWriter(unittest.TestCase):
         writer.writerows([
             ['a', 'b', 'c'],
             ['1', '2', '3'],
-            ['4', '5', u'ʤ']
+            ['4', '5', 'ʤ']
         ])
 
         written = StringIO(output.getvalue())
@@ -146,7 +146,7 @@ class TestWriter(unittest.TestCase):
         reader = csv_py3.Reader(written)
         self.assertEqual(next(reader), ['a', 'b', 'c'])
         self.assertEqual(next(reader), ['1', '2', '3'])
-        self.assertEqual(next(reader), ['4', '5', u'ʤ'])
+        self.assertEqual(next(reader), ['4', '5', 'ʤ'])
 
 
 class TestDictReader(unittest.TestCase):
@@ -185,9 +185,9 @@ class TestDictWriter(unittest.TestCase):
         writer = csv_py3.DictWriter(self.output, ['a', 'b', 'c'])
         writer.writeheader()
         writer.writerow({
-            u'a': u'1',
-            u'b': u'2',
-            u'c': u'☃'
+            'a': '1',
+            'b': '2',
+            'c': '☃'
         })
 
         result = self.output.getvalue()
@@ -198,9 +198,9 @@ class TestDictWriter(unittest.TestCase):
         writer = csv_py3.DictWriter(self.output, ['a', 'b', 'c'])
         writer.writeheader()
         writer.writerow({
-            u'a': u'1',
-            u'b': u'2',
-            u'c': u'☃'
+            'a': '1',
+            'b': '2',
+            'c': '☃'
         })
 
         result = self.output.getvalue()
@@ -211,9 +211,9 @@ class TestDictWriter(unittest.TestCase):
         writer = csv_py3.DictWriter(self.output, ['a', 'b', 'c'], line_numbers=True)
         writer.writeheader()
         writer.writerow({
-            u'a': u'1',
-            u'b': u'2',
-            u'c': u'☃'
+            'a': '1',
+            'b': '2',
+            'c': '☃'
         })
 
         result = self.output.getvalue()
@@ -224,9 +224,9 @@ class TestDictWriter(unittest.TestCase):
         writer = csv_py3.DictWriter(self.output, ['a', 'b', 'c'], line_numbers=True)
         writer.writeheader()
         writer.writerows([{
-            u'a': u'1',
-            u'b': u'2',
-            u'c': u'☃'
+            'a': '1',
+            'b': '2',
+            'c': '☃'
         }])
 
         result = self.output.getvalue()

@@ -12,7 +12,7 @@ class TestJSON(AgateTestCase):
     def setUp(self):
         self.rows = (
             (1, 'a', True, '11/4/2015', '11/4/2015 12:22 PM', '4:15'),
-            (2, u'👍', False, '11/5/2015', '11/4/2015 12:45 PM', '6:18'),
+            (2, '👍', False, '11/5/2015', '11/4/2015 12:45 PM', '6:18'),
             (None, 'b', None, None, None, None)
         )
 
@@ -58,7 +58,7 @@ class TestJSON(AgateTestCase):
         self.assertRows(table, [
             [1, 4, 'a', None, None],
             [2, 3, 'b', 'd', None],
-            [None, 2, u'👍', None, 5]
+            [None, 2, '👍', None, 5]
         ])
 
     def test_from_json_nested(self):

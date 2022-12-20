@@ -69,8 +69,8 @@ class TestTypeTester(unittest.TestCase):
 
     def test_number_currency_locale(self):
         rows = [
-            (u'£1.7',),
-            (u'£200000000',),
+            ('£1.7',),
+            ('£200000000',),
             ('',)
         ]
 
