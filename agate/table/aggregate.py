@@ -29,7 +29,7 @@ def aggregate(self, aggregations):
             results[name] = agg.run(self)
 
         return results
-    else:
-        aggregations.validate(self)
 
-        return aggregations.run(self)
+    aggregations.validate(self)
+
+    return aggregations.run(self)

@@ -83,13 +83,11 @@ class MappedSequence(Sequence):
         if isinstance(key, slice):
             indices = range(*key.indices(len(self)))
             values = self.values()
-
             return tuple(values[i] for i in indices)
         # Note: can't use isinstance because bool is a subclass of int
         elif type(key) is int:
             return self.values()[key]
-        else:
-            return self.dict()[key]
+        return self.dict()[key]
 
     def __setitem__(self, key, value):
         """

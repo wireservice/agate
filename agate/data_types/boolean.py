@@ -26,7 +26,7 @@ class Boolean(DataType):
     """
     def __init__(self, true_values=DEFAULT_TRUE_VALUES, false_values=DEFAULT_FALSE_VALUES,
                  null_values=DEFAULT_NULL_VALUES):
-        super(Boolean, self).__init__(null_values=null_values)
+        super().__init__(null_values=null_values)
 
         self.true_values = true_values
         self.false_values = false_values
@@ -40,23 +40,23 @@ class Boolean(DataType):
         """
         if d is None:
             return d
-        elif type(d) is bool and type(d) is not int:
+        if type(d) is bool and type(d) is not int:
             return d
-        elif type(d) is int or isinstance(d, Decimal):
+        if type(d) is int or isinstance(d, Decimal):
             if d == 1:
                 return True
-            elif d == 0:
+            if d == 0:
                 return False
-        elif isinstance(d, str):
+        if isinstance(d, str):
             d = d.replace(',', '').strip()
 
             d_lower = d.lower()
 
             if d_lower in self.null_values:
                 return None
-            elif d_lower in self.true_values:
+            if d_lower in self.true_values:
                 return True
-            elif d_lower in self.false_values:
+            if d_lower in self.false_values:
                 return False
 
         raise CastError('Can not convert value %s to bool.' % d)

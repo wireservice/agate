@@ -126,8 +126,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
     def project(value):
         if value >= 0:
             return plot_negative_width + int((plot_positive_width * (value / x_max)).to_integral_value())
-        else:
-            return plot_negative_width - int((plot_negative_width * (value / x_min)).to_integral_value())
+        return plot_negative_width - int((plot_negative_width * (value / x_min)).to_integral_value())
 
     # Calculate ticks
     ticks = OrderedDict()

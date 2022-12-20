@@ -25,7 +25,7 @@ class DateTime(DataType):
         for parsing formatted datetimes.
     """
     def __init__(self, datetime_format=None, timezone=None, locale=None, **kwargs):
-        super(DateTime, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.datetime_format = datetime_format
         self.timezone = timezone
@@ -70,9 +70,9 @@ class DateTime(DataType):
         """
         if isinstance(d, datetime.datetime) or d is None:
             return d
-        elif isinstance(d, datetime.date):
+        if isinstance(d, datetime.date):
             return datetime.datetime.combine(d, datetime.time(0, 0, 0))
-        elif isinstance(d, str):
+        if isinstance(d, str):
             d = d.strip()
 
             if d.lower() in self.null_values:
@@ -109,7 +109,7 @@ class DateTime(DataType):
 
             if matched_text == d and ctx.hasDate and ctx.hasTime:
                 return value
-            elif matched_text == d and ctx.hasDate and not ctx.hasTime:
+            if matched_text == d and ctx.hasDate and not ctx.hasTime:
                 return datetime.datetime.combine(value.date(), datetime.time.min)
 
         try:

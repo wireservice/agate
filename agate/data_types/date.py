@@ -23,7 +23,7 @@ class Date(DataType):
         for parsing formatted dates.
     """
     def __init__(self, date_format=None, locale=None, **kwargs):
-        super(Date, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.date_format = date_format
         self.locale = locale
@@ -63,7 +63,8 @@ class Date(DataType):
         """
         if type(d) is date or d is None:
             return d
-        elif isinstance(d, str):
+
+        if isinstance(d, str):
             d = d.strip()
 
             if d.lower() in self.null_values:

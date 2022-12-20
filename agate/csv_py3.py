@@ -40,14 +40,14 @@ class Reader:
 
         if not self.line_numbers:
             return row
-        else:
-            if self.line_numbers:
-                if self.header and self.line_num == 1:
-                    row.insert(0, 'line_numbers')
-                else:
-                    row.insert(0, str(self.line_num - 1 if self.header else self.line_num))
 
-            return row
+        if self.line_numbers:
+            if self.header and self.line_num == 1:
+                row.insert(0, 'line_numbers')
+            else:
+                row.insert(0, str(self.line_num - 1 if self.header else self.line_num))
+
+        return row
 
     @property
     def dialect(self):

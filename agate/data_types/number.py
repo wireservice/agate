@@ -35,7 +35,7 @@ class Number(DataType):
     """
     def __init__(self, locale='en_US', group_symbol=None, decimal_symbol=None,
                  currency_symbols=DEFAULT_CURRENCY_SYMBOLS, **kwargs):
-        super(Number, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.locale = Locale.parse(locale)
 
@@ -63,13 +63,13 @@ class Number(DataType):
 
         if t is int:
             return Decimal(d)
-        elif t is float:
+        if t is float:
             return Decimal(repr(d))
-        elif d is False:
+        if d is False:
             return Decimal(0)
-        elif d is True:
+        if d is True:
             return Decimal(1)
-        elif not isinstance(d, str):
+        if not isinstance(d, str):
             raise CastError('Can not parse value "%s" as Decimal.' % d)
 
         d = d.strip()

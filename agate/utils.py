@@ -312,5 +312,5 @@ def slugify(values, ensure_unique=False, **kwargs):
     if ensure_unique:
         new_values = tuple(pslugify(value, **slug_args) for value in values)
         return deduplicate(new_values, separator=slug_args['separator'])
-    else:
-        return tuple(pslugify(value, **slug_args) for value in values)
+
+    return tuple(pslugify(value, **slug_args) for value in values)
