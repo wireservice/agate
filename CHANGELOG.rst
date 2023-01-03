@@ -1,7 +1,10 @@
 1.7.0 - Jan 3, 2023
 -------------------
 
-- Drop support for Python 2.7 (no longer works) and 3.6 (no longer tested).
+* Add Python 3.11 support.
+* Add Python 3.10 support.
+* Drop Python 3.6 support (end-of-life was December 23, 2021).
+* Drop Python 2.7 support (end-of-life was January 1, 2020).
 
 1.6.3 - July 15, 2021
 ---------------------
@@ -22,6 +25,8 @@
 * fix: Aggregations return ``None`` if all values are ``None``, instead of raising an error. Note that ``Sum``, ``MaxLength`` and ``MaxPrecision`` continue to return ``0`` if all values are ``None``. (#706)
 * fix: Ensure files are closed when errors occur. (#734)
 * build: Make PyICU an optional dependency.
+* Drop Python 3.5 support (end-of-life was September 13, 2020).
+* Drop Python 3.4 support (end-of-life was March 18, 2019).
 
 1.6.2 - March 10, 2021
 ----------------------
