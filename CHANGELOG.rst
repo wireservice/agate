@@ -1,3 +1,8 @@
+1.7.0 - Jan 3, 2023
+-------------------
+
+- Drop support for Python 2.7 (no longer works) and 3.6 (no longer tested).
+
 1.6.3 - July 15, 2021
 ---------------------
 
