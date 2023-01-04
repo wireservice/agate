@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name='agate',
-    version='1.7.0',
+    version='1.7.1',
     description='A data analysis library that is optimized for humans instead of machines.',
     long_description=long_description,
     long_description_content_type='text/x-rst',
@@ -41,8 +41,7 @@ setup(
         'isodate>=0.5.4',
         'leather>=0.3.2',
         # KeyError: 's' https://github.com/bear/parsedatetime/pull/233 https://github.com/wireservice/agate/issues/743
-        # AttributeError: 'module' object has no attribute 'Locale' https://github.com/bear/parsedatetime/pull/247
-        'parsedatetime>=2.1,!=2.5,!=2.6',
+        'parsedatetime>=2.1,!=2.5',
         'python-slugify>=1.2.1',
         'pytimeparse>=1.1.5',
     ],
