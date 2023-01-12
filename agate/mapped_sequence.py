@@ -65,7 +65,7 @@ class MappedSequence(Sequence):
         if len(self) > 5:
             sample = '%s, ...' % sample
 
-        return '<agate.%s: (%s)>' % (type(self).__name__, sample)
+        return '<agate.{}: ({})>'.format(type(self).__name__, sample)
 
     def __str__(self):
         """

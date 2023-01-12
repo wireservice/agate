@@ -30,7 +30,7 @@ def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwar
     from agate.tableset import TableSet
 
     if isinstance(path, str) and not os.path.isdir(path) and not os.path.isfile(path):
-        raise IOError('Specified path doesn\'t exist.')
+        raise OSError('Specified path doesn\'t exist.')
 
     tables = OrderedDict()
 
@@ -52,7 +52,7 @@ def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwar
         if hasattr(path, 'read'):
             js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
         else:
-            with open(path, 'r') as f:
+            with open(path) as f:
                 js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
 
         for key, value in js.items():

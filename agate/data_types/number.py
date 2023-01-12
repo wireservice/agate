@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
 
 import warnings
 from decimal import Decimal, InvalidOperation

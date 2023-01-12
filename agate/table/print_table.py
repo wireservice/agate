@@ -137,12 +137,12 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
 
         text = v_line.join(row_output)
 
-        write('%s%s%s' % (v_line, text, v_line))
+        write('{}{}{}'.format(v_line, text, v_line))
 
-    divider = '%(v_line)s %(columns)s %(v_line)s' % {
-        'v_line': v_line,
-        'columns': ' | '.join(h_line * w for w in widths)
-    }
+    divider = '{v_line} {columns} {v_line}'.format(
+        v_line=v_line,
+        columns=' | '.join(h_line * w for w in widths)
+    )
 
     # Headers
     write_row(column_names)

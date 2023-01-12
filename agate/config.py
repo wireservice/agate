@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
 
 """
 This module contains the global configuration for agate. Users should use

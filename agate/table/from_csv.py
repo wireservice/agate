@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import io
 import itertools
 from io import StringIO
 
@@ -51,7 +50,7 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         if hasattr(path, 'read'):
             f = path
         else:
-            f = io.open(path, encoding=encoding)
+            f = open(path, encoding=encoding)
 
             close = True
 

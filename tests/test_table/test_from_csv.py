@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
 
-import io
 import warnings
 
 from agate import Table
@@ -56,7 +54,7 @@ class TestFromCSV(AgateTestCase):
     def test_from_csv_file_like_object(self):
         table1 = Table(self.rows, self.column_names, self.column_types)
 
-        f = io.open('examples/test.csv', encoding='utf-8')
+        f = open('examples/test.csv', encoding='utf-8')
 
         table2 = Table.from_csv(f)
         f.close()

@@ -29,7 +29,7 @@ def from_csv(cls, dir_path, column_names=None, column_types=None, row_names=None
     from agate.tableset import TableSet
 
     if not os.path.isdir(dir_path):
-        raise IOError('Specified path doesn\'t exist or isn\'t a directory.')
+        raise OSError('Specified path doesn\'t exist or isn\'t a directory.')
 
     tables = OrderedDict()
 

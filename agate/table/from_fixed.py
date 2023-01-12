@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import io
-
 from agate import fixed, utils
 
 
@@ -42,13 +40,13 @@ def from_fixed(cls, path, schema_path, column_names=utils.default, column_types=
 
     try:
         if not hasattr(path, 'read'):
-            f = io.open(path, encoding=encoding)
+            f = open(path, encoding=encoding)
             close_f = True
         else:
             f = path
 
         if not hasattr(schema_path, 'read'):
-            schema_f = io.open(schema_path, encoding=schema_encoding)
+            schema_f = open(schema_path, encoding=schema_encoding)
             close_schema_f = True
         else:
             schema_f = path

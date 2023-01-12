@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
 
 """
 This module contains a collection of utility classes and functions used in

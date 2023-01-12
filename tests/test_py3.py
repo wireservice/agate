@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import csv
 import os
@@ -74,7 +73,7 @@ class TestFieldSizeLimit(unittest.TestCase):
 
     def test_field_size_limit(self):
         # Testing field_size_limit for failure. Creating data using str * int.
-        with open('.test.csv', 'r', encoding='utf-8') as f:
+        with open('.test.csv', encoding='utf-8') as f:
             c = csv_py3.Reader(f, field_size_limit=9)
             try:
                 c.__next__()
@@ -84,7 +83,7 @@ class TestFieldSizeLimit(unittest.TestCase):
                 raise AssertionError('Expected FieldSizeLimitError')
 
         # Now testing higher field_size_limit.
-        with open('.test.csv', 'r', encoding='utf-8') as f:
+        with open('.test.csv', encoding='utf-8') as f:
             c = csv_py3.Reader(f, field_size_limit=11)
             self.assertEqual(['a' * 10], c.__next__())
 
@@ -247,5 +246,5 @@ class TestSniffer(unittest.TestCase):
             actual = csv_py3.Sniffer().sniff(contents).__dict__
             expected = csv.Sniffer().sniff(contents).__dict__
 
-            self.assertEqual(direct, expected, '%r != %r' % (direct, expected))
-            self.assertEqual(actual, expected, '%r != %r' % (actual, expected))
+            self.assertEqual(direct, expected, '{!r} != {!r}'.format(direct, expected))
+            self.assertEqual(actual, expected, '{!r} != {!r}'.format(actual, expected))

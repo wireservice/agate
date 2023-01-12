@@ -38,4 +38,4 @@ class First(Aggregation):
         if self._test is None:
             return data[0]
 
-        return next((d for d in data if self._test(d)))
+        return next(d for d in data if self._test(d))

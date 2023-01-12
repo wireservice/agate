@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
 # pylint: disable=W0212
 
 import sys
@@ -176,7 +175,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
         output.write(line + '\n')
 
     # Chart top
-    top_line = '%s %s' % (y_label.ljust(max_label_width), x_label.rjust(max_value_width))
+    top_line = '{} {}'.format(y_label.ljust(max_label_width), x_label.rjust(max_value_width))
     write(top_line)
 
     # Bars
@@ -211,7 +210,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
 
         bar = bar.ljust(plot_width)
 
-        write('%s %s %s' % (label_text, value_text, bar))
+        write('{} {} {}'.format(label_text, value_text, bar))
 
     # Axis & ticks
     axis = horizontal_line * plot_width
