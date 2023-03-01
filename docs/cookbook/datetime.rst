@@ -34,9 +34,13 @@ The second way is to specify a timezone as an argument to the type constructor:
 
 .. code-block:: python
 
-    import pytz
+    try:
+        from zoneinfo import ZoneInfo
+    except ImportError:
+        # Fallback for Python < 3.9
+        from backports.zoneinfo import ZoneInfo
 
-    eastern = pytz.timezone('US/Eastern')
+    eastern = ZoneInfo('US/Eastern')
     datetime_type = agate.DateTime(timezone=eastern)
 
 In this case all timezones that are processed will be set to have the Eastern timezone. Note, the timezone will be **set**, not converted. You cannot use this method to convert your timezones from UTC to another timezone. To do that see :ref:`convert_timezones`.
@@ -60,9 +64,13 @@ If you load data from a spreadsheet in one timezone and you need to convert it t
 
 .. code-block:: python
 
-    import pytz
+    try:
+        from zoneinfo import ZoneInfo
+    except ImportError:
+        # Fallback for Python < 3.9
+        from backports.zoneinfo import ZoneInfo
 
-    us_eastern = pytz.timezone('US/Eastern')
+    us_eastern = ZoneInfo('US/Eastern')
     datetime_type = agate.DateTime(timezone=us_eastern)
 
     column_names = ['what', 'when']
@@ -70,7 +78,7 @@ If you load data from a spreadsheet in one timezone and you need to convert it t
 
     table = agate.Table.from_csv('events.csv', columns)
 
-    rome = timezone('Europe/Rome')
+    rome = ZoneInfo('Europe/Rome')
     timezone_shifter = agate.Formula(lambda r: r['when'].astimezone(rome))
 
     table = agate.Table.compute([
