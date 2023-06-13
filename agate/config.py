@@ -12,21 +12,21 @@ configuration.
 +=========================+==========================================+=========================================+
 | default_locale          | Default locale for number formatting     | default_locale('LC_NUMERIC') or 'en_US' |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| horizontal_line_char    | Character to render for horizontal lines | '-'                                    |
+| horizontal_line_char    | Character to render for horizontal lines | '-'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| vertical_line_char      | Character to render for vertical lines   | '|'                                    |
+| vertical_line_char      | Character to render for vertical lines   | '|'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| bar_char                | Character to render for bar chart units  | '░'                                    |
+| bar_char                | Character to render for bar chart units  | '░'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| printable_bar_char      | Printable character for bar chart units  | ':'                                    |
+| printable_bar_char      | Printable character for bar chart units  | ':'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| zero_line_char          | Character to render for zero line units  | '▓'                                    |
+| zero_line_char          | Character to render for zero line units  | '▓'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| printable_zero_line_char| Printable character for zero line units  | '|'                                    |
+| printable_zero_line_char| Printable character for zero line units  | '|'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| tick_char               | Character to render for axis ticks       | '+'                                    |
+| tick_char               | Character to render for axis ticks       | '+'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| ellipsis_chars          | Characters to render for ellipsis        | '...'                                  |
+| ellipsis_chars          | Characters to render for ellipsis        | '...'                                   |
 +-------------------------+------------------------------------------+-----------------------------------------+
 
 """
