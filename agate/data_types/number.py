@@ -8,7 +8,7 @@ from babel.core import Locale
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
-#: A list of currency symbols sourced from `Xe <http://www.xe.com/symbols.php>`_.
+#: A list of currency symbols sourced from `Xe <https://www.xe.com/symbols/>`_.
 DEFAULT_CURRENCY_SYMBOLS = ['؋', '$', 'ƒ', '៛', '¥', '₡', '₱', '£', '€', '¢', '﷼', '₪', '₩', '₭', '₮',
                             '₦', '฿', '₤', '₫']
 

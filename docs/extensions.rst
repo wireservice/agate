@@ -7,7 +7,7 @@ The core agate library is designed rely on as few dependencies as possible. Howe
 Using extensions
 ================
 
-agate support's plugin-style extensions using a monkey-patching pattern. Libraries can be created that add new methods onto :class:`.Table` and :class:`.TableSet`. For example, `agate-sql <http://agate-sql.rtfd.org/>`_ adds the ability to read and write tables from a SQL database:
+agate support's plugin-style extensions using a monkey-patching pattern. Libraries can be created that add new methods onto :class:`.Table` and :class:`.TableSet`. For example, `agate-sql <https://agate-sql.rtfd.org/>`_ adds the ability to read and write tables from a SQL database:
 
 .. code-block:: python
 
@@ -23,12 +23,12 @@ List of extensions
 
 Here is a list of agate extensions that are known to be actively maintained:
 
-* `agate-sql <http://agate-sql.rtfd.org/>`_: Read and write tables in SQL databases
-* `agate-stats <http://agate-stats.rtfd.org/>`_: Additional statistical methods
-* `agate-excel <http://agate-excel.rtfd.org/>`_: Read excel tables (xls and xlsx)
-* `agate-dbf <http://agate-dbf.rtfd.org/>`_: Read dbf tables (from shapefiles)
-* `agate-remote <http://agate-remote.rtfd.org/>`_: Read from remote files
-* `agate-lookup <http://agate-lookup.rtfd.org/>`_: Instantly join to hosted `lookup <https://github.com/wireservice/lookup>`_ tables.
+* `agate-sql <https://agate-sql.rtfd.org/>`_: Read and write tables in SQL databases
+* `agate-stats <https://agate-stats.rtfd.org/>`_: Additional statistical methods
+* `agate-excel <https://agate-excel.rtfd.org/>`_: Read excel tables (xls and xlsx)
+* `agate-dbf <https://agate-dbf.rtfd.org/>`_: Read dbf tables (from shapefiles)
+* `agate-remote <https://agate-remote.rtfd.org/>`_: Read from remote files
+* `agate-lookup <https://agate-lookup.rtfd.org/>`_: Instantly join to hosted `lookup <https://github.com/wireservice/lookup>`_ tables.
 
 Writing your own extensions
 ===========================

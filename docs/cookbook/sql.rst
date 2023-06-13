@@ -6,7 +6,7 @@ agate's command structure is very similar to SQL. The primary difference between
 
 .. note::
 
-    All examples in this section use the `PostgreSQL <http://www.postgresql.org/>`_ dialect for comparison.
+    All examples in this section use the `PostgreSQL <https://www.postgresql.org/>`_ dialect for comparison.
 
 If you want to read and write data from SQL, see :ref:`load_a_table_from_a_sql_database`.
 

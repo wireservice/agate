@@ -103,7 +103,7 @@ This is a minor release fixing several small bugs that were blocking a downstrea
 1.5.0 - November 16, 2016
 -------------------------
 
-This release adds SVG charting via the `leather <http://leather.rtfd.io>`_ charting library. Charts methods have been added for both :class:`.Table` and :class:`.TableSet`. (The latter create lattice plots.) See the revised tutorial and new cookbook entries for examples. Leather is still an early library. Please `report any bugs <https://github.com/wireservice/agate/issues>`_.
+This release adds SVG charting via the `leather <https://leather.rtfd.io>`_ charting library. Charts methods have been added for both :class:`.Table` and :class:`.TableSet`. (The latter create lattice plots.) See the revised tutorial and new cookbook entries for examples. Leather is still an early library. Please `report any bugs <https://github.com/wireservice/agate/issues>`_.
 
 Also in this release are a :class:`.Slugify` computation and a variety of small fixes and improvements.
 
@@ -117,7 +117,7 @@ The complete list of changes is as follows:
 * Tables rendered by :meth:`.Table.print_table` are now GitHub Flavored Markdown (GFM) compatible. (#626)
 * The agate tutorial has been converted to a Jupyter Notebook.
 * :class:`.Table` now supports ``len`` as a proxy for ``len(table.rows)``.
-* Simple SVG charting is now integrated via `leather <http://leather.rtfd.io>`_.
+* Simple SVG charting is now integrated via `leather <https://leather.rtfd.io>`_.
 * Added :class:`.First` computation. (#634)
 * :meth:`.Table.print_table` now has a `max_precision` argument to limit Number precision. (#544)
 * Slug computation now accepts an array of column names to merge. (#617)
@@ -366,7 +366,7 @@ This version of agate introduces three major changes.
 * :const:`.DEFAULT_NULL_VALUES` (the list of strings that mean null) is now importable from ``agate``.
 * :meth:`.Table.from_csv` and :meth:`.Table.to_csv` are now unicode-safe without separately importing csvkit.
 * ``agate`` can now be used as a drop-in replacement for Python's ``csv`` module.
-* Migrated `csvkit <http://csvkit.readthedocs.org>`_'s unicode CSV reading/writing support into agate. (#354)
+* Migrated `csvkit <https://csvkit.readthedocs.org>`_'s unicode CSV reading/writing support into agate. (#354)
 
 1.0.1 - October 29, 2015
 ------------------------

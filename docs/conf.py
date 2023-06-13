@@ -38,5 +38,5 @@ autodoc_default_flags = ['members', 'show-inheritance']
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'leather': ('http://leather.readthedocs.io/en/latest/', None)
+    'leather': ('https://leather.readthedocs.io/en/latest/', None)
 }

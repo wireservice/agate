@@ -35,8 +35,8 @@ Legalese
 
 To the extent that they care, contributors should keep in mind that the source of agate and therefore of any contributions are licensed under the permissive [MIT license]. By submitting a patch or pull request you are agreeing to release your code under this license. You will be acknowledged in the AUTHORS list, the commit history and the hearts and minds of jo
 
-  [numpy]: http://www.numpy.org/
-  [pandas]: http://pandas.pydata.org/
+  [numpy]: https://numpy.org/
+  [pandas]: https://pandas.pydata.org/
   [GitHub]: https://github.com/wireservice/agate
   [issue tracker]: https://github.com/wireservice/agate/issues
-  [MIT license]: http://www.opensource.org/licenses/mit-license.php
+  [MIT license]: https://opensource.org/license/mit/

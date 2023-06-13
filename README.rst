@@ -24,6 +24,6 @@ agate was previously known as journalism.
 
 Important links:
 
-* Documentation:    http://agate.rtfd.org
+* Documentation:    https://agate.rtfd.org
 * Repository:       https://github.com/wireservice/agate
 * Issues:           https://github.com/wireservice/agate/issues

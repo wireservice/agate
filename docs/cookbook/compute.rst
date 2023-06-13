@@ -198,7 +198,7 @@ The resulting column will contain an integer measuring the edit distance between
 USA Today Diversity Index
 =========================
 
-The `USA Today Diversity Index <http://www.usatoday.com/story/news/nation/2014/10/21/diversity-index-data-how-we-did-report/17432103/>`_ is a widely cited method for evaluating the racial diversity of a given area. Using a custom :class:`.Computation` makes it simple to calculate.
+The `USA Today Diversity Index <https://www.usatoday.com/story/news/nation/2014/10/21/diversity-index-data-how-we-did-report/17432103/>`_ is a widely cited method for evaluating the racial diversity of a given area. Using a custom :class:`.Computation` makes it simple to calculate.
 
 Assuming that your data has a column for the total population, another for the population of each race and a final column for the hispanic population, you can implement the diversity index like this:
 

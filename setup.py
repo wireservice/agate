@@ -11,7 +11,7 @@ setup(
     long_description_content_type='text/x-rst',
     author='Christopher Groskopf',
     author_email='chrisgroskopf@gmail.com',
-    url='http://agate.readthedocs.org/',
+    url='https://agate.readthedocs.org/',
     project_urls={
         'Source': 'https://github.com/wireservice/agate',
     },

@@ -11,7 +11,7 @@ from agate.warns import warn_null_calculation
 
 class MAD(Aggregation):
     """
-    Calculate the `median absolute deviation <http://en.wikipedia.org/wiki/Median_absolute_deviation>`_
+    Calculate the `median absolute deviation <https://en.wikipedia.org/wiki/Median_absolute_deviation>`_
     of a column.
 
     :param column_name:
