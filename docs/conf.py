@@ -1,40 +1,42 @@
-#!/usr/bin/env python
-
+# Configuration file for the Sphinx documentation builder.
+#
+# For the full list of built-in configuration values, see the documentation:
+# https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os
 import sys
 
-# Path munging
 sys.path.insert(0, os.path.abspath('..'))
 
-# Extensions
-extensions = [
-    'sphinx.ext.autosummary',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.intersphinx'
-]
-# autodoc_member_order = 'bysource'
-autodoc_default_flags = ['members', 'show-inheritance']
+# -- Project information -----------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.11', None),
-    'leather': ('http://leather.readthedocs.io/en/latest/', None)
-}
-
-# Templates
-templates_path = ['_templates']
-master_doc = 'index'
-
-# Metadata
 project = 'agate'
 copyright = '2017, Christopher Groskopf'
 version = '1.7.1'
 release = version
 
-exclude_patterns = ['_build']
-pygments_style = 'sphinx'
+# -- General configuration ---------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-# HTMl theming
+extensions = [
+    'sphinx.ext.autosummary',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.intersphinx'
+]
+
+templates_path = ['_templates']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+
+# -- Options for HTML output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
+
 html_theme = 'furo'
 
-html_static_path = ['_static']
 htmlhelp_basename = 'agatedoc'
+
+autodoc_default_flags = ['members', 'show-inheritance']
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'leather': ('http://leather.readthedocs.io/en/latest/', None)
+}
