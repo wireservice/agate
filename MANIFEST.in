@@ -6,10 +6,12 @@ recursive-include benchmarks *.py
 recursive-include docs *.py
 recursive-include docs *.rst
 recursive-include docs *.svg
+recursive-include docs *.txt
 recursive-include docs Makefile
 recursive-include examples *.csv
 recursive-include examples *.json
 recursive-include examples testfixed
 recursive-include tests *.py
 exclude .pre-commit-config.yaml
+exclude .readthedocs.yaml
 global-exclude *.pyc
