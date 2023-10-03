@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 from decimal import Decimal
 
 from babel.numbers import format_decimal

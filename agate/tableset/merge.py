@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 from agate.rows import Row
 from agate.table import Table
 

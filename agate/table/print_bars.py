@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 import sys
 from collections import OrderedDict
 from decimal import Decimal
