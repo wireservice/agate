@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This module contains a generic parser for fixed-width files. It operates
 similar to Python's built-in CSV reader.

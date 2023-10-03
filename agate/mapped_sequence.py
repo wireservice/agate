@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This module contains the :class:`MappedSequence` class that forms the foundation
 for agate's :class:`.Row` and :class:`.Column` as well as for named sequences of

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 The :class:`.TableSet` class collects a set of related tables in a single data
 structure. The most common way of creating a :class:`.TableSet` is using the

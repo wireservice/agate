@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This module contains various exceptions raised by agate.
 """

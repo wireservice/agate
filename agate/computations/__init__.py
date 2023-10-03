@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Computations create a new value for each :class:`.Row` in a :class:`.Table`.
 When used with :meth:`.Table.compute` these new values become a new column.

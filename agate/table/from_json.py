@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import json
 from collections import OrderedDict
 from decimal import Decimal

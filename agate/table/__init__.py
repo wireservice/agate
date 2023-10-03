@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 The :class:`.Table` object is the most important class in agate. Tables are
 created by supplying row data, column names and subclasses of :class:`.DataType`

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This module contains agate's :class:`Row` implementation. Rows are independent
 of both the :class:`.Table` that contains them as well as the :class:`.Columns`

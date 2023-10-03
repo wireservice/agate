@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from collections import defaultdict
 
 from agate.aggregations.base import Aggregation

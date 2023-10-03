@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import locale
 from datetime import date, datetime, time
 

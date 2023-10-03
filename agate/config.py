@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This module contains the global configuration for agate. Users should use
 :meth:`get_option` and :meth:`set_option` to modify the global

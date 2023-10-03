@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This module contains a collection of utility classes and functions used in
 agate.

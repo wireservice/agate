@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 
 class Computation:  # pragma: no cover
     """

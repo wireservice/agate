@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Data types define how data should be imported during the creation of a
 :class:`.Table`.

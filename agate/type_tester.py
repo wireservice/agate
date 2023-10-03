@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import warnings
 from copy import copy
 

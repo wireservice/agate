@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 
 import agate.csv_py3 as csv
 from agate.aggregations import *

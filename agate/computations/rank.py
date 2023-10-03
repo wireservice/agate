@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from decimal import Decimal
 from functools import cmp_to_key
 

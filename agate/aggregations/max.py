@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from agate.aggregations.base import Aggregation
 from agate.data_types import Date, DateTime, Number, TimeDelta
 from agate.exceptions import DataTypeError

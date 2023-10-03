@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 
 from agate.exceptions import UnsupportedAggregationError
 

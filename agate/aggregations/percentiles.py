@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import math
 
 from agate.aggregations.base import Aggregation

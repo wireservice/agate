@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Aggregations create a new value by summarizing a :class:`.Column`. For
 example, :class:`.Mean`, when applied to a column containing :class:`.Number`

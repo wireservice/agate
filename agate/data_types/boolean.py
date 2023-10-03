@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from decimal import Decimal
 
 from agate.data_types.base import DEFAULT_NULL_VALUES, DataType

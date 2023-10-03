@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This module contains the Python 3 replacement for :mod:`csv`.
 """

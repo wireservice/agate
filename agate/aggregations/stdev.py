@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from agate.aggregations import Aggregation
 from agate.aggregations.has_nulls import HasNulls
 from agate.aggregations.variance import PopulationVariance, Variance

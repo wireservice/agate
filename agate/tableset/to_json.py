@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import json
 import os
 from collections import OrderedDict

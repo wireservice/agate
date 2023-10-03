@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This module contains the :class:`Column` class, which defines a "vertical"
 array of tabular data. Whereas :class:`.Row` instances are independent of their
