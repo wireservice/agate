@@ -32,7 +32,7 @@ class TestPrintBars(AgateTestCase):
 
         output = StringIO()
         table.print_bars('three', 'one', output=output)
-        lines = output.getvalue().split('\n')  # noqa
+        output.getvalue().split('\n')
 
     def test_print_bars_width(self):
         table = Table(self.rows, self.column_names, self.column_types)

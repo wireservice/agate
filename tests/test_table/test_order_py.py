@@ -143,5 +143,4 @@ class TestOrderBy(AgateTestCase):
 
     def test_order_by_empty_table(self):
         table = Table([], self.column_names)
-
-        new_table = table.order_by('three')  # noqa
+        table.order_by('three')

@@ -215,7 +215,7 @@ class TestJoin(AgateTestCase):
         with self.assertRaises(ValueError):
             self.left.join(self.right, 'one', 'five', require_match=True)
 
-        new_table = self.left.join(self.right, 'one', 'four', require_match=True)  # noqa
+        self.left.join(self.right, 'one', 'four', require_match=True)
 
     def test_join_columns_kwarg(self):
         new_table = self.left.join(self.right, 'one', 'four', columns=['six'])
