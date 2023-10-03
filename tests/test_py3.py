@@ -240,5 +240,5 @@ class TestSniffer(unittest.TestCase):
             actual = csv_py3.Sniffer().sniff(contents).__dict__
             expected = csv.Sniffer().sniff(contents).__dict__
 
-            self.assertEqual(direct, expected, '{!r} != {!r}'.format(direct, expected))
-            self.assertEqual(actual, expected, '{!r} != {!r}'.format(actual, expected))
+            self.assertEqual(direct, expected, f'{direct!r} != {expected!r}')
+            self.assertEqual(actual, expected, f'{actual!r} != {expected!r}')

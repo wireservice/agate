@@ -130,7 +130,7 @@ class Table:
                     try:
                         row_values.append(cast_funcs[j](d))
                     except CastError as e:
-                        raise CastError(str(e) + ' Error at row {} column {}.'.format(i, self._column_names[j]))
+                        raise CastError(str(e) + f' Error at row {i} column {self._column_names[j]}.')
 
                 new_rows.append(Row(row_values, self._column_names))
         else:

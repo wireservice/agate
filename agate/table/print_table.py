@@ -137,7 +137,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
 
         text = v_line.join(row_output)
 
-        write('{}{}{}'.format(v_line, text, v_line))
+        write(f'{v_line}{text}{v_line}')
 
     divider = '{v_line} {columns} {v_line}'.format(
         v_line=v_line,

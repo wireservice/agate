@@ -63,7 +63,7 @@ def bins(self, column_name, count=10, start=None, end=None):
         exclusive = format_decimal(j, format=break_formatter)
 
         output = '[' if first_exclusive else '('
-        output += '{} - {}'.format(inclusive, exclusive)
+        output += f'{inclusive} - {exclusive}'
         output += ']' if last_exclusive else ')'
 
         return output
