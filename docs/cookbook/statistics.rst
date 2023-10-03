@@ -92,8 +92,6 @@ The `agate-stats <https://agate-stats.rtfd.org/>`_ extension adds methods for fi
 
     import agatestats
 
-    agatestats.patch()
-
     outliers = table.stdev_outliers('salary', deviations=3, reject=False)
 
 By specifying :code:`reject=True` you can instead return a table including only those values **not** identified as outliers.

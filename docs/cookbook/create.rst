@@ -145,8 +145,6 @@ Use the `agate-sql <https://agate-sql.readthedocs.org/>`_ extension.
 
     import agatesql
 
-    agatesql.patch()
-
     table = agate.Table.from_sql('postgresql:///database', 'input_table')
 
 From an Excel spreadsheet
@@ -157,8 +155,6 @@ Use the `agate-excel <https://agate-excel.readthedocs.org/>`_ extension. It supp
 .. code-block:: python
 
     import agateexcel
-
-    agateexcel.patch()
 
     table = agate.Table.from_xls('test.xls', sheet='data')
 
@@ -173,8 +169,6 @@ DBF is the file format used to hold tabular data for ArcGIS shapefiles. `agate-d
 
     import agatedbf
 
-    agatedbf.patch()
-
     table = agate.Table.from_dbf('test.dbf')
 
 From a remote file
@@ -186,8 +180,6 @@ Use the `agate-remote <https://agate-remote.readthedocs.org/>`_ extension.
 .. code-block:: python
 
     import agateremote
-
-    agateremote.patch()
 
     table = agate.Table.from_url('https://raw.githubusercontent.com/wireservice/agate/master/examples/test.csv')
 

@@ -33,8 +33,6 @@ We can map the ``year`` column to its annual CPI index in one lookup call.
 
     import agatelookup
 
-    agatelookup.patch()
-
     join_year_cpi = table.lookup('year', 'cpi')
 
 The return table will have now have a new column:
