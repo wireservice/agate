@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import warnings
 from html.parser import HTMLParser
 from io import StringIO

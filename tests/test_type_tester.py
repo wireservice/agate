@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import unittest
 
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta

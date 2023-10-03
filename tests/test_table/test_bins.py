@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from decimal import Decimal
 
 from babel.numbers import get_decimal_symbol

@@ -56,8 +56,5 @@ setup(
             'pytest-cov',
             'pytz>=2015.4',
         ],
-        'docs': [
-            'Sphinx>=1.2.2',
-        ],
     }
 )

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import unittest
 
 from agate import csv, fixed

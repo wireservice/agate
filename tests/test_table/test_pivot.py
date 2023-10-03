@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import sys
 from decimal import Decimal
 

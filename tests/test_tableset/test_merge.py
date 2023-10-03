@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from collections import OrderedDict
 
 from agate import Table, TableSet

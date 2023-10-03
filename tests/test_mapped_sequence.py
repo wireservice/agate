@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import unittest
 
 from agate.mapped_sequence import MappedSequence

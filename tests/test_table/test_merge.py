@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from agate import Table
 from agate.data_types import Number, Text
 from agate.exceptions import DataTypeError
