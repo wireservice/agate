@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import unittest
 from random import shuffle
 from timeit import Timer

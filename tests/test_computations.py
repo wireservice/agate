@@ -1,5 +1,3 @@
-#!/usr/bin/env Python
-
 import datetime
 import unittest
 import warnings
