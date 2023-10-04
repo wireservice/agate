@@ -34,7 +34,10 @@ html_theme = 'furo'
 
 htmlhelp_basename = 'agatedoc'
 
-autodoc_default_flags = ['members', 'show-inheritance']
+autodoc_default_options = {
+    'members': None,
+    'show-inheritance': True,
+}
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),

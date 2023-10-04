@@ -63,8 +63,7 @@ class DateTime(DataType):
         If both `date_format` and `locale` have been specified
         in the `agate.DateTime` instance, the `cast()` function
         is not thread-safe.
-        :returns:
-            :class:`datetime.datetime` or :code:`None`.
+        :returns: :class:`datetime.datetime` or :code:`None`.
         """
         if isinstance(d, datetime.datetime) or d is None:
             return d
