@@ -184,11 +184,13 @@ class TestDateTimeAggregation(unittest.TestCase):
         self.table = Table(self.rows, ['test', 'null'], [DateTime(), DateTime()])
 
         self.time_delta_rows = [
-            [datetime.timedelta(seconds=10), None],
-            [datetime.timedelta(seconds=20), None],
+            [datetime.timedelta(seconds=10), datetime.timedelta(seconds=15), None],
+            [datetime.timedelta(seconds=20), None, None],
         ]
 
-        self.time_delta_table = Table(self.time_delta_rows, ['test', 'null'], [TimeDelta(), TimeDelta()])
+        self.time_delta_table = Table(
+            self.time_delta_rows, ['test', 'mixed', 'null'], [TimeDelta(), TimeDelta(), TimeDelta()]
+        )
 
     def test_min(self):
         self.assertIsInstance(Min('test').get_aggregate_data_type(self.table), DateTime)
@@ -215,6 +217,27 @@ class TestDateTimeAggregation(unittest.TestCase):
         self.assertIsInstance(Max('test').get_aggregate_data_type(self.time_delta_table), TimeDelta)
         Max('test').validate(self.time_delta_table)
         self.assertEqual(Max('test').run(self.time_delta_table), datetime.timedelta(0, 20))
+
+    def test_mean(self):
+        with self.assertWarns(NullCalculationWarning):
+            Mean('mixed').validate(self.time_delta_table)
+
+        Mean('test').validate(self.time_delta_table)
+
+        self.assertEqual(Mean('test').run(self.time_delta_table), datetime.timedelta(seconds=15))
+
+    def test_mean_all_nulls(self):
+        self.assertIsNone(Mean('null').run(self.time_delta_table))
+
+    def test_mean_with_nulls(self):
+        warnings.simplefilter('ignore')
+
+        try:
+            Mean('mixed').validate(self.time_delta_table)
+        finally:
+            warnings.resetwarnings()
+
+        self.assertAlmostEqual(Mean('mixed').run(self.time_delta_table), datetime.timedelta(seconds=15))
 
     def test_sum(self):
         self.assertIsInstance(Sum('test').get_aggregate_data_type(self.time_delta_table), TimeDelta)
