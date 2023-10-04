@@ -36,6 +36,7 @@ htmlhelp_basename = 'agatedoc'
 
 autodoc_default_options = {
     'members': None,
+    'member-order': 'bysource',
     'show-inheritance': True,
 }
 

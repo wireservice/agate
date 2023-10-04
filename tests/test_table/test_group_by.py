@@ -108,3 +108,8 @@ class TestGroupBy(AgateTestCase):
 
         with self.assertRaises(KeyError):
             table.group_by('bad')
+
+    def test_group_by_twice(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        repr(table.group_by('one').group_by('two'))
