@@ -3,7 +3,6 @@ Unreleased
 
 * feat: Lowercase the ``null_values`` provided to individual data types, since all comparisons to ``null_values`` are case-insensitive. (#770)
 * feat: :class:`.Mean` works with :class:`.TimeDelta`. (#761)
-* fix: Allow consecutive calls to :meth:`.Table.group_by`. (#765)
 
 1.7.1 - Jan 4, 2023
 -------------------

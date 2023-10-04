@@ -148,12 +148,7 @@ class TableSet(MappedSequence):
         tables = []
 
         for key, table in self.items():
-            result = getattr(table, method_name)(*args, **kwargs)
-            if isinstance(result, TableSet):
-                for table in result.values():
-                    tables.append(table)
-            else:
-                tables.append(result)
+            tables.append(getattr(table, method_name)(*args, **kwargs))
 
         return self._fork(
             tables,
