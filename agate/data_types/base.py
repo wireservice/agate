@@ -13,7 +13,7 @@ class DataType:  # pragma: no cover
         :code:`None` when encountered by this data type.
     """
     def __init__(self, null_values=DEFAULT_NULL_VALUES):
-        self.null_values = null_values
+        self.null_values = [v.lower() for v in null_values]
 
     def test(self, d):
         """
