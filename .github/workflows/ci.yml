@@ -35,3 +35,6 @@ jobs:
           PYTHONUTF8: 1
         run: pytest --cov agate
       - run: python charts.py
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: coveralls --service=github
