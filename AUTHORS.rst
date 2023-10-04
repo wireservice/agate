@@ -45,3 +45,4 @@ agate is made by a community. The following individuals have contributed code, d
 * `brian-from-quantrocket <https://github.com/brian-from-quantrocket>`_
 * `mathdesc <https://github.com/mathdesc>`_
 * `Tim Gates <https://github.com/timgates42>`_
+* `castorf <https://github.com/castorf>`_

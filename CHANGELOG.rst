@@ -1,7 +1,8 @@
-1.7.2
+1.8.0
 -----
 
-* Fix consecutive calls to :meth:`.Table.group_by`. (#765)
+* feat: Lowercase the ``null_values`` provided to individual data types, since all comparisons to ``null_values`` are case-insensitive. (#770)
+* fix: Allow consecutive calls to :meth:`.Table.group_by`. (#765)
 
 1.7.1 - Jan 4, 2023
 -------------------
