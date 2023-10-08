@@ -44,6 +44,7 @@ setup(
         'parsedatetime>=2.1,!=2.5',
         'python-slugify>=1.2.1',
         'pytimeparse>=1.1.5',
+        'tzdata>=2023.3;platform_system=="Windows"',
     ],
     extras_require={
         'test': [
@@ -54,7 +55,7 @@ setup(
             'PyICU>=2.4.2;sys_platform=="linux"',
             'pytest',
             'pytest-cov',
-            'pytz>=2015.4',
+            'backports.zoneinfo;python_version<"3.9"',
         ],
     }
 )

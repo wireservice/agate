@@ -16,8 +16,7 @@ class DateTime(DataType):
         A formatting string for :meth:`datetime.datetime.strptime` to use
         instead of using regex-based parsing.
     :param timezone:
-        A `pytz <https://pytz.sourceforge.net/>`_ timezone to apply to each
-        parsed date.
+        A ``ZoneInfo`` timezone to apply to each parsed date.
     :param locale:
         A locale specification such as :code:`en_US` or :code:`de_DE` to use
         for parsing formatted datetimes.
