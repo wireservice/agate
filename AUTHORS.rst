@@ -46,3 +46,5 @@ agate is made by a community. The following individuals have contributed code, d
 * `mathdesc <https://github.com/mathdesc>`_
 * `Tim Gates <https://github.com/timgates42>`_
 * `castorf <https://github.com/castorf>`_
+* `Julien Enselme <https://github.com/Jenselme>`__
+

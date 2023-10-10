@@ -4,6 +4,8 @@ Unreleased
 * feat: Lowercase the ``null_values`` provided to individual data types, since all comparisons to ``null_values`` are case-insensitive. (#770)
 * feat: :class:`.Mean` works with :class:`.TimeDelta`. (#761)
 * Switch from ``pytz`` to ``ZoneInfo``.
+* Add Python 3.12 support.
+* Drop Python 3.7 support (end-of-life was June 27, 2023).
 
 1.7.1 - Jan 4, 2023
 -------------------
