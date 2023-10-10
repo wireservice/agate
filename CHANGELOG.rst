@@ -1,5 +1,5 @@
-Unreleased
-----------
+1.8.0 - October 10, 2023
+------------------------
 
 * feat: Lowercase the ``null_values`` provided to individual data types, since all comparisons to ``null_values`` are case-insensitive. (#770)
 * feat: :class:`.Mean` works with :class:`.TimeDelta`. (#761)
@@ -7,13 +7,13 @@ Unreleased
 * Add Python 3.12 support.
 * Drop Python 3.7 support (end-of-life was June 27, 2023).
 
-1.7.1 - Jan 4, 2023
--------------------
+1.7.1 - January 4, 2023
+-----------------------
 
 * Allow parsedatetime 2.6.
 
-1.7.0 - Jan 3, 2023
--------------------
+1.7.0 - January 3, 2023
+-----------------------
 
 * Add Python 3.10 and 3.11 support.
 * Drop support for Python 2.7 (EOL 2020-01-01), 3.6 (2021-12-23).
