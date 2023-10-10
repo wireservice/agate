@@ -1,4 +1,3 @@
-
 from agate import Table
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.testcase import AgateTestCase

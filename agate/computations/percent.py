@@ -1,4 +1,3 @@
-
 from agate.aggregations.has_nulls import HasNulls
 from agate.aggregations.sum import Sum
 from agate.computations.base import Computation

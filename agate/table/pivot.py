@@ -1,4 +1,3 @@
-
 from agate import utils
 from agate.aggregations import Count
 

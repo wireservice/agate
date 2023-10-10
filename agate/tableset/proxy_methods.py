@@ -1,4 +1,3 @@
-
 def bins(self, *args, **kwargs):
     """
     Calls :meth:`.Table.bins` on each table in the TableSet.

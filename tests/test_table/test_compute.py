@@ -1,4 +1,3 @@
-
 from agate import Table
 from agate.computations import Formula
 from agate.data_types import Number, Text

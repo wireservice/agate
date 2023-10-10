@@ -1,4 +1,3 @@
-
 from agate.exceptions import CastError
 
 #: Default values which will be automatically cast to :code:`None`
