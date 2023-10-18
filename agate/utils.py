@@ -12,6 +12,7 @@ from functools import wraps
 
 from slugify import slugify as pslugify
 
+from agate import config
 from agate.warns import warn_duplicate_column, warn_unnamed_column
 
 #: Sentinal for use when `None` is an valid argument value
@@ -161,7 +162,7 @@ def make_number_formatter(decimal_places, add_ellipsis=False):
         Optionally add an ellipsis symbol at the end of a number
     """
     fraction = '0' * decimal_places
-    ellipsis = '…' if add_ellipsis else ''
+    ellipsis = config.get_option('number_truncation_chars') if add_ellipsis else ''
     return ''.join(['#,##0.', fraction, ellipsis, ';-#,##0.', fraction, ellipsis])
 
 

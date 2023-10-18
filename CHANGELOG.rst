@@ -1,3 +1,9 @@
+1.9.0 - October 17, 2023
+------------------------
+
+* feat: Add a ``text_truncation_chars`` configuration for values that exceed ``max_column_width`` in :meth:`.Table.print_table` and :meth:`.Table.print_html`.
+* feat: Add a ``number_truncation_chars`` configuration for values that exceed ``max_precision`` in :meth:`.Table.print_table` and :meth:`.Table.print_html`.
+
 1.8.0 - October 10, 2023
 ------------------------
 
