@@ -70,7 +70,7 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
             # return to the start of the file
             f.seek(0)
 
-        reader = csv.reader(f, header=header, **kwargs)
+        reader = csv.reader(handle, header=header, **kwargs)
 
         if header:
             if column_names is None:
@@ -83,8 +83,10 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         else:
             rows = itertools.islice(reader, row_limit)
 
+        return Table(rows, column_names, column_types, row_names=row_names)
+
     finally:
         if close:
             f.close()
 
-    return Table(rows, column_names, column_types, row_names=row_names)
+    
