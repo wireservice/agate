@@ -88,5 +88,3 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
     finally:
         if close:
             f.close()
-
-    
