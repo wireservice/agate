@@ -43,8 +43,11 @@ class Number(DataType):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
 
-            self.group_symbol = group_symbol or self.locale.number_symbols.get('group', ',')
-            self.decimal_symbol = decimal_symbol or self.locale.number_symbols.get('decimal', '.')
+            # Babel 2.14 support.
+            # https://babel.pocoo.org/en/latest/changelog.html#possibly-backwards-incompatible-changes
+            number_symbols = self.locale.number_symbols.get('latn', self.locale.number_symbols)
+            self.group_symbol = group_symbol or number_symbols.get('group', ',')
+            self.decimal_symbol = decimal_symbol or number_symbols.get('decimal', '.')
 
     def cast(self, d):
         """
