@@ -26,7 +26,7 @@ To newline-delimited JSON
 To a SQL database
 =================
 
-Use the `agate-sql <http://agate-sql.readthedocs.org/>`_ extension.
+Use the `agate-sql <https://agate-sql.readthedocs.org/>`_ extension.
 
 .. code-block:: python
 

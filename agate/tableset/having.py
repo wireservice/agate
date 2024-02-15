@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
-
 def having(self, aggregations, test):
     """
     Create a new :class:`.TableSet` with only those tables that pass a test.

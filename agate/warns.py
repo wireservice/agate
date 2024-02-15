@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import warnings
 
 
@@ -13,7 +11,7 @@ class NullCalculationWarning(RuntimeWarning):  # pragma: no cover
 
 
 def warn_null_calculation(operation, column):
-    warnings.warn('Column "%s" contains nulls. These will be excluded from %s calculation.' % (
+    warnings.warn('Column "{}" contains nulls. These will be excluded from {} calculation.'.format(
         column.name,
         operation.__class__.__name__
     ), NullCalculationWarning, stacklevel=2)
@@ -28,7 +26,7 @@ class DuplicateColumnWarning(RuntimeWarning):  # pragma: no cover
 
 
 def warn_duplicate_column(column_name, column_rename):
-    warnings.warn('Column name "%s" already exists in Table. Column will be renamed to "%s".' % (
+    warnings.warn('Column name "{}" already exists in Table. Column will be renamed to "{}".'.format(
         column_name,
         column_rename
     ), DuplicateColumnWarning, stacklevel=2)

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from agate.aggregations.base import Aggregation
 from agate.aggregations.has_nulls import HasNulls
 from agate.aggregations.median import Median
@@ -11,7 +9,7 @@ from agate.warns import warn_null_calculation
 
 class MAD(Aggregation):
     """
-    Calculate the `median absolute deviation <http://en.wikipedia.org/wiki/Median_absolute_deviation>`_
+    Calculate the `median absolute deviation <https://en.wikipedia.org/wiki/Median_absolute_deviation>`_
     of a column.
 
     :param column_name:
@@ -39,6 +37,6 @@ class MAD(Aggregation):
         column = table.columns[self._column_name]
 
         data = column.values_without_nulls_sorted()
-        m = self._median.run(table)
-
-        return median(tuple(abs(n - m) for n in data))
+        if data:
+            m = self._median.run(table)
+            return median(tuple(abs(n - m) for n in data))

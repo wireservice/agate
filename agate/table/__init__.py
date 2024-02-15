@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 The :class:`.Table` object is the most important class in agate. Tables are
 created by supplying row data, column names and subclasses of :class:`.DataType`
@@ -19,25 +17,21 @@ sequences can be accessed either by numeric index or by name. (In the case of
 rows, row names are optional.)
 """
 
-from itertools import chain
 import sys
 import warnings
+from io import StringIO
+from itertools import chain
 
-import six
-from six.moves import range  # pylint: disable=W0622
-
+from agate import utils
 from agate.columns import Column
 from agate.data_types import DataType
+from agate.exceptions import CastError
 from agate.mapped_sequence import MappedSequence
 from agate.rows import Row
 from agate.type_tester import TypeTester
-from agate import utils
-from agate.exceptions import CastError
-from agate.warns import warn_duplicate_column, warn_unnamed_column
 
 
-@six.python_2_unicode_compatible
-class Table(object):
+class Table:
     """
     A dataset consisting of rows and columns. Columns refer to "vertical" slices
     of data that must all be of the same type. Rows refer to "horizontal" slices
@@ -77,15 +71,17 @@ class Table(object):
         assumed to be :class:`.Row` instances, rather than raw data.
     """
     def __init__(self, rows, column_names=None, column_types=None, row_names=None, _is_fork=False):
-        if isinstance(rows, six.string_types):
-            raise ValueError('When created directly, the first argument to Table must be a sequence of rows. Did you want agate.Table.from_csv?')
+        if isinstance(rows, str):
+            raise ValueError('When created directly, the first argument to Table must be a sequence of rows. '
+                             'Did you want agate.Table.from_csv?')
 
         # Validate column names
         if column_names:
             self._column_names = utils.deduplicate(column_names, column_names=True)
         elif rows:
             self._column_names = tuple(utils.letter_name(i) for i in range(len(rows[0])))
-            warnings.warn('Column names not specified. "%s" will be used as names.' % str(self._column_names), RuntimeWarning, stacklevel=2)
+            warnings.warn('Column names not specified. "%s" will be used as names.' % str(self._column_names),
+                          RuntimeWarning, stacklevel=2)
         else:
             self._column_names = tuple()
 
@@ -121,7 +117,9 @@ class Table(object):
                 len_row = len(row)
 
                 if len_row > len_column_names:
-                    raise ValueError('Row %i has %i values, but Table only has %i columns.' % (i, len_row, len_column_names))
+                    raise ValueError(
+                        'Row %i has %i values, but Table only has %i columns.' % (i, len_row, len_column_names)
+                    )
                 elif len(row) < len_column_names:
                     row = chain(row, [None] * (len_column_names - len_row))
 
@@ -130,7 +128,7 @@ class Table(object):
                     try:
                         row_values.append(cast_funcs[j](d))
                     except CastError as e:
-                        raise CastError(str(e) + ' Error at row %s column %s.' % (i, self._column_names[j]))
+                        raise CastError(str(e) + f' Error at row {i} column {self._column_names[j]}.')
 
                 new_rows.append(Row(row_values, self._column_names))
         else:
@@ -139,7 +137,7 @@ class Table(object):
         if row_names:
             computed_row_names = []
 
-            if isinstance(row_names, six.string_types):
+            if isinstance(row_names, str):
                 for row in new_rows:
                     name = row[row_names]
                     computed_row_names.append(name)
@@ -179,7 +177,7 @@ class Table(object):
         """
         Print the table's structure using :meth:`.Table.print_structure`.
         """
-        structure = six.StringIO()
+        structure = StringIO()
 
         self.print_structure(output=structure)
 

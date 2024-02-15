@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from agate import utils
 
 
@@ -41,6 +39,25 @@ def from_object(cls, obj, row_names=None, column_types=None):
 
     Not all rows are required to have the same keys. Missing elements will
     be filled in with null values.
+
+    Keys containing a slash (``/``) can collide with other keys. For example:
+
+    .. code-block:: python
+
+        {
+            'a/b': 2,
+            'a': {
+                'b': False
+            }
+        }
+
+    Would generate:
+
+    .. code-block:: python
+
+        {
+            'a/b': false
+        }
 
     :param obj:
         Filepath or file-like object from which to read JSON data.

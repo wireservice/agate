@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 from collections import OrderedDict
 
 from agate.data_types import Text
@@ -54,6 +51,9 @@ def group_by(self, key, key_name=None, key_type=None):
             groups[group_name] = []
 
         groups[group_name].append(row)
+
+    if not groups:
+        return TableSet([self._fork([])], [], key_name=key_name, key_type=key_type)
 
     output = OrderedDict()
 

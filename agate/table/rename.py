@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 from agate import utils
 
 
@@ -57,5 +54,5 @@ def rename(self, column_names=None, row_names=None, slug_columns=False, slug_row
             row_names = self._row_names
 
         return Table(self._rows, column_names, self._column_types, row_names=row_names, _is_fork=False)
-    else:
-        return self._fork(self._rows, column_names, self._column_types, row_names=row_names)
+
+    return self._fork(self._rows, column_names, self._column_types, row_names=row_names)

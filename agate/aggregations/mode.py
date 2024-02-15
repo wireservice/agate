@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from collections import defaultdict
 
 from agate.aggregations.base import Aggregation
@@ -37,9 +35,10 @@ class Mode(Aggregation):
         column = table.columns[self._column_name]
 
         data = column.values_without_nulls()
-        state = defaultdict(int)
+        if data:
+            state = defaultdict(int)
 
-        for n in data:
-            state[n] += 1
+            for n in data:
+                state[n] += 1
 
-        return max(state.keys(), key=lambda x: state[x])
+            return max(state.keys(), key=lambda x: state[x])

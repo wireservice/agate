@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from agate.aggregations.base import Aggregation
 from agate.data_types import Number
 from agate.utils import default
@@ -31,7 +29,5 @@ class Count(Aggregation):
         if self._column_name is not None:
             if self._value is not default:
                 return table.columns[self._column_name].values().count(self._value)
-            else:
-                return len(table.columns[self._column_name].values_without_nulls())
-        else:
-            return len(table.rows)
+            return len(table.columns[self._column_name].values_without_nulls())
+        return len(table.rows)

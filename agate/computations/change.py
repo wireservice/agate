@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from agate.aggregations.has_nulls import HasNulls
 from agate.computations.base import Computation
 from agate.data_types import Date, DateTime, Number, TimeDelta
@@ -29,7 +27,7 @@ class Change(Computation):
 
         if isinstance(before_column.data_type, (Date, DateTime, TimeDelta)):
             return TimeDelta()
-        elif isinstance(before_column.data_type, Number):
+        if isinstance(before_column.data_type, Number):
             return Number()
 
     def validate(self, table):
@@ -49,7 +47,8 @@ class Change(Computation):
 
                 return
 
-        raise DataTypeError('Change before and after columns must both contain data that is one of: Number, Date, DateTime or TimeDelta.')
+        raise DataTypeError('Change before and after columns must both contain data that is one of: '
+                            'Number, Date, DateTime or TimeDelta.')
 
     def run(self, table):
         new_column = []

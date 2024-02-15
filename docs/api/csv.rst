@@ -25,19 +25,6 @@ Python 3
     agate.csv_py3.DictReader
     agate.csv_py3.DictWriter
 
-Python 2
---------
-
-.. autosummary::
-    :nosignatures:
-
-    agate.csv_py2.reader
-    agate.csv_py2.writer
-    agate.csv_py2.Reader
-    agate.csv_py2.Writer
-    agate.csv_py2.DictReader
-    agate.csv_py2.DictWriter
-
 Python 3 details
 ----------------
 
@@ -47,13 +34,3 @@ Python 3 details
 .. autoclass:: agate.csv_py3.Writer
 .. autoclass:: agate.csv_py3.DictReader
 .. autoclass:: agate.csv_py3.DictWriter
-
-Python 2 details
-----------------
-
-.. autofunction:: agate.csv_py2.reader
-.. autofunction:: agate.csv_py2.writer
-.. autoclass:: agate.csv_py2.Reader
-.. autoclass:: agate.csv_py2.Writer
-.. autoclass:: agate.csv_py2.DictReader
-.. autoclass:: agate.csv_py2.DictWriter

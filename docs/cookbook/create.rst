@@ -139,26 +139,22 @@ From newline-delimited JSON
 From a SQL database
 ===================
 
-Use the `agate-sql <http://agate-sql.readthedocs.org/>`_ extension.
+Use the `agate-sql <https://agate-sql.readthedocs.org/>`_ extension.
 
 .. code-block:: python
 
     import agatesql
-
-    agatesql.patch()
 
     table = agate.Table.from_sql('postgresql:///database', 'input_table')
 
 From an Excel spreadsheet
 =========================
 
-Use the `agate-excel <http://agate-excel.readthedocs.org/>`_ extension. It supports both .xls and .xlsx files.
+Use the `agate-excel <https://agate-excel.readthedocs.org/>`_ extension. It supports both .xls and .xlsx files.
 
 .. code-block:: python
 
     import agateexcel
-
-    agateexcel.patch()
 
     table = agate.Table.from_xls('test.xls', sheet='data')
 
@@ -167,27 +163,23 @@ Use the `agate-excel <http://agate-excel.readthedocs.org/>`_ extension. It suppo
 From a DBF table
 ================
 
-DBF is the file format used to hold tabular data for ArcGIS shapefiles. `agate-dbf <http://agate-dbf.readthedocs.org/>`_ extension.
+DBF is the file format used to hold tabular data for ArcGIS shapefiles. `agate-dbf <https://agate-dbf.readthedocs.org/>`_ extension.
 
 .. code-block:: python
 
     import agatedbf
-
-    agatedbf.patch()
 
     table = agate.Table.from_dbf('test.dbf')
 
 From a remote file
 ==================
 
-Use the `agate-remote <http://agate-remote.readthedocs.org/>`_ extension.
+Use the `agate-remote <https://agate-remote.readthedocs.org/>`_ extension.
 
 
 .. code-block:: python
 
     import agateremote
-
-    agateremote.patch()
 
     table = agate.Table.from_url('https://raw.githubusercontent.com/wireservice/agate/master/examples/test.csv')
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from agate.aggregations.base import Aggregation
 from agate.data_types import Boolean
 
@@ -27,7 +25,7 @@ class All(Aggregation):
         return Boolean()
 
     def validate(self, table):
-        column = table.columns[self._column_name]
+        table.columns[self._column_name]
 
     def run(self, table):
         """

@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-
-import six
-
 from agate.data_types.base import DataType
 
 
@@ -14,7 +10,7 @@ class Text(DataType):
         converted to `None`. Disable to retain them as strings.
     """
     def __init__(self, cast_nulls=True, **kwargs):
-        super(Text, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.cast_nulls = cast_nulls
 
@@ -29,8 +25,8 @@ class Text(DataType):
         """
         if d is None:
             return d
-        elif isinstance(d, six.string_types):
+        if isinstance(d, str):
             if self.cast_nulls and d.strip().lower() in self.null_values:
                 return None
 
-        return six.text_type(d)
+        return str(d)

@@ -1,18 +1,14 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 import math
 import sys
 
 from babel.numbers import format_decimal
-import six
 
-from agate import config
+from agate import config, utils
 from agate.data_types import Number, Text
-from agate import utils
 
 
-def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_width=20, locale=None, max_precision=3):
+def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_width=20, locale=None,
+                max_precision=3):
     """
     Print a text-based view of the data in this table.
 
@@ -49,6 +45,8 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
         max_precision = float('inf')
 
     ellipsis = config.get_option('ellipsis_chars')
+    truncation = config.get_option('text_truncation_chars')
+    len_truncation = len(truncation)
     h_line = config.get_option('horizontal_line_char')
     v_line = config.get_option('vertical_line_char')
     locale = locale or config.get_option('default_locale')
@@ -58,7 +56,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
     column_names = []
     for column_name in self.column_names[:max_columns]:
         if max_column_width is not None and len(column_name) > max_column_width:
-            column_names.append('%s...' % column_name[:max_column_width - 3])
+            column_names.append('%s%s' % (column_name[:max_column_width - len_truncation], truncation))
         else:
             column_names.append(column_name)
 
@@ -104,7 +102,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
                     locale=locale
                 )
             else:
-                v = six.text_type(v)
+                v = str(v)
                 vs = v.splitlines()
                 if len(vs) > 1:
                     multi_line_rows = True
@@ -126,7 +124,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
                         formatted_row[k][j] = xv
 
             if max_column_width is not None and len(v) > max_column_width:
-                v = '%s...' % v[:max_column_width - 3]
+                v = '%s%s' % (v[:max_column_width - len_truncation], truncation)
 
             if len(v) > widths[j]:
                 widths[j] = len(v)
@@ -158,14 +156,13 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
 
         text = v_line.join(row_output)
 
-        write('%s%s%s' % (v_line, text, v_line))
+        write(f'{v_line}{text}{v_line}')
 
     # horizontal and vertical dividers.
-    divider = '%(v_line)s %(columns)s %(v_line)s' % {
-        'h_line': h_line,
-        'v_line': v_line,
-        'columns': ' | '.join(h_line * w for w in widths)
-    }
+    divider = '{v_line} {columns} {v_line}'.format(
+        v_line=v_line,
+        columns=' | '.join(h_line * w for w in widths)
+    )
 
     # Headers
     write_row(column_names)

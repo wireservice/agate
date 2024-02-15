@@ -1,10 +1,4 @@
-#!/usr/bin/env python
-
-import six
-
-
-@six.python_2_unicode_compatible
-class Computation(object):  # pragma: no cover
+class Computation:  # pragma: no cover
     """
     Computations produce a new column by performing a calculation on each row.
 

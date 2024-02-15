@@ -1,21 +1,70 @@
-1.6.2 - Unreleased
-------------------
+1.9.1 - December 21, 2023
+-------------------------
 
-* :meth:`.Date.__init__` and :meth:`.DateTime.__init__` accepts a ``locale`` keyword argument (e.g. :code:`en_US`) for parsing formatted dates. (#730)
-* :meth:`.utils.max_precision` ignores infinity when calculating precision. (#726)
-* :meth:`.Date.cast` catches ``OverflowError`` when type testing. (#720)
-* :meth:`.Number.cast` casts ``True`` to ``1`` and ``False`` to ``0``. (#733)
+* Add Babel 2.14 support.
+
+1.9.0 - October 17, 2023
+------------------------
+
+* feat: Add a ``text_truncation_chars`` configuration for values that exceed ``max_column_width`` in :meth:`.Table.print_table` and :meth:`.Table.print_html`.
+* feat: Add a ``number_truncation_chars`` configuration for values that exceed ``max_precision`` in :meth:`.Table.print_table` and :meth:`.Table.print_html`.
+
+1.8.0 - October 10, 2023
+------------------------
+
+* feat: Lowercase the ``null_values`` provided to individual data types, since all comparisons to ``null_values`` are case-insensitive. (#770)
+* feat: :class:`.Mean` works with :class:`.TimeDelta`. (#761)
+* Switch from ``pytz`` to ``ZoneInfo``.
+* Add Python 3.12 support.
+* Drop Python 3.7 support (end-of-life was June 27, 2023).
+
+1.7.1 - January 4, 2023
+-----------------------
+
+* Allow parsedatetime 2.6.
+
+1.7.0 - January 3, 2023
+-----------------------
+
+* Add Python 3.10 and 3.11 support.
+* Drop support for Python 2.7 (EOL 2020-01-01), 3.6 (2021-12-23).
+
+1.6.3 - July 15, 2021
+---------------------
+
+* feat: :meth:`.Table.from_csv` accepts a ``row_limit`` keyword argument. (#740)
+* feat: :meth:`.Table.from_json` accepts an ``encoding`` keyword argument. (#734)
+* feat: :meth:`.Table.print_html` accepts a ``max_precision`` keyword argument, like :meth:`.Table.print_table`. (#753)
+* feat: :class:`.TypeTester` accepts a ``null_values`` keyword argument, like individual data types. (#745)
+* feat: :class:`.Min`, :class:`.Max` and :class:`.Sum` (#735) work with :class:`.TimeDelta`.
+* feat: :class:`.FieldSizeLimitError` includes the line number in the error message. (#681)
+* feat: :class:`.csv.Sniffer` warns on error while sniffing CSV dialect.
+* fix: :meth:`.Table.normalize` works with basic processing methods. (#691)
+* fix: :meth:`.Table.homogenize` works with basic processing methods. (#756)
+* fix: :meth:`.Table.homogenize` casts ``compare_values`` and ``default_row``. (#700)
+* fix: :meth:`.Table.homogenize` accepts tuples. (#710)
+* fix: :meth:`.TableSet.group_by` accepts input with no rows. (#703)
+* fix: :class:`.TypeTester` warns if a column specified by the ``force`` argument is not in the table, instead of raising an error. (#747)
+* fix: Aggregations return ``None`` if all values are ``None``, instead of raising an error. Note that ``Sum``, ``MaxLength`` and ``MaxPrecision`` continue to return ``0`` if all values are ``None``. (#706)
+* fix: Ensure files are closed when errors occur. (#734)
+* build: Make PyICU an optional dependency.
+* Drop support for Python 3.4 (2019-03-18), 3.5 (2020-09-13).
+
+1.6.2 - March 10, 2021
+----------------------
+
+* feat: :meth:`.Date.__init__` and :meth:`.DateTime.__init__` accepts a ``locale`` keyword argument (e.g. :code:`en_US`) for parsing formatted dates. (#730)
+* feat: :meth:`.Number.cast` casts ``True`` to ``1`` and ``False`` to ``0``. (#733)
+* fix: :meth:`.utils.max_precision` ignores infinity when calculating precision. (#726)
+* fix: :meth:`.Date.cast` catches ``OverflowError`` when type testing. (#720)
 * Included examples in Python package. (#716)
 
 1.6.1 - March 11, 2018
 ----------------------
 
-* :meth:`.Date.cast` and :meth:`.DateTime.cast` will no longer parse strings that contain dates as dates. (#705)
-* Added Forest Gregg to Authors.
-* :meth:`.Table.to_json` can now use Decimal as keys. (#696)
-* Link to tutorial now uses version through sphinx to avoid bad links on future releases. (#682)
-* lxml limited to >= 3.6 and < 4 for pypy compatibility.
-
+* feat: :meth:`.Table.to_json` can use Decimal as keys. (#696)
+* fix: :meth:`.Date.cast` and :meth:`.DateTime.cast` no longer parse non-date strings that contain date sub-strings as dates. (#705)
+* docs: Link to tutorial now uses version through Sphinx to avoid bad links on future releases. (#682)
 
 1.6.0 - February 28, 2017
 -------------------------
@@ -71,7 +120,7 @@ This is a minor release fixing several small bugs that were blocking a downstrea
 1.5.0 - November 16, 2016
 -------------------------
 
-This release adds SVG charting via the `leather <http://leather.rtfd.io>`_ charting library. Charts methods have been added for both :class:`.Table` and :class:`.TableSet`. (The latter create lattice plots.) See the revised tutorial and new cookbook entries for examples. Leather is still an early library. Please `report any bugs <https://github.com/wireservice/agate/issues>`_.
+This release adds SVG charting via the `leather <https://leather.rtfd.io>`_ charting library. Charts methods have been added for both :class:`.Table` and :class:`.TableSet`. (The latter create lattice plots.) See the revised tutorial and new cookbook entries for examples. Leather is still an early library. Please `report any bugs <https://github.com/wireservice/agate/issues>`_.
 
 Also in this release are a :class:`.Slugify` computation and a variety of small fixes and improvements.
 
@@ -85,7 +134,7 @@ The complete list of changes is as follows:
 * Tables rendered by :meth:`.Table.print_table` are now GitHub Flavored Markdown (GFM) compatible. (#626)
 * The agate tutorial has been converted to a Jupyter Notebook.
 * :class:`.Table` now supports ``len`` as a proxy for ``len(table.rows)``.
-* Simple SVG charting is now integrated via `leather <http://leather.rtfd.io>`_.
+* Simple SVG charting is now integrated via `leather <https://leather.rtfd.io>`_.
 * Added :class:`.First` computation. (#634)
 * :meth:`.Table.print_table` now has a `max_precision` argument to limit Number precision. (#544)
 * Slug computation now accepts an array of column names to merge. (#617)
@@ -334,7 +383,7 @@ This version of agate introduces three major changes.
 * :const:`.DEFAULT_NULL_VALUES` (the list of strings that mean null) is now importable from ``agate``.
 * :meth:`.Table.from_csv` and :meth:`.Table.to_csv` are now unicode-safe without separately importing csvkit.
 * ``agate`` can now be used as a drop-in replacement for Python's ``csv`` module.
-* Migrated `csvkit <http://csvkit.readthedocs.org>`_'s unicode CSV reading/writing support into agate. (#354)
+* Migrated `csvkit <https://csvkit.readthedocs.org>`_'s unicode CSV reading/writing support into agate. (#354)
 
 1.0.1 - October 29, 2015
 ------------------------

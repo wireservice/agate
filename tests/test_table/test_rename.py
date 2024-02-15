@@ -1,11 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
 import warnings
 
 from agate import Table
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
-from agate.data_types import *
 
 
 class TestRename(AgateTestCase):
@@ -93,7 +90,7 @@ class TestRename(AgateTestCase):
         self.assertRowNames(table3, ['test.koz', 'test.2', 'test.2.2'])
 
     def test_rename_slugify_columns_in_place(self):
-        column_names = [u'Test kož', 'test 2', 'test 2']
+        column_names = ['Test kož', 'test 2', 'test 2']
 
         warnings.simplefilter('ignore')
 
@@ -105,7 +102,7 @@ class TestRename(AgateTestCase):
         table2 = table.rename(slug_columns=True)
         table3 = table.rename(slug_columns=True, separator='.')
 
-        self.assertColumnNames(table, [u'Test kož', 'test 2', 'test 2_2'])
+        self.assertColumnNames(table, ['Test kož', 'test 2', 'test 2_2'])
         self.assertColumnNames(table2, ['test_koz', 'test_2', 'test_2_2'])
         self.assertColumnNames(table3, ['test.koz', 'test.2', 'test.2.2'])
 

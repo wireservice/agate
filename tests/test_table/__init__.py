@@ -1,19 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
-
-import platform
 import warnings
-
-import six
+from decimal import Decimal
 
 from agate import Table
-from agate.data_types import *
 from agate.computations import Formula
+from agate.data_types import Number, Text
+from agate.exceptions import CastError
 from agate.testcase import AgateTestCase
 from agate.warns import DuplicateColumnWarning
 
@@ -23,7 +14,7 @@ class TestBasic(AgateTestCase):
         self.rows = (
             (1, 4, 'a'),
             (2, 3, 'b'),
-            (None, 2, u'👍')
+            (None, 2, '👍')
         )
 
         self.number_type = Number()
@@ -46,7 +37,7 @@ class TestBasic(AgateTestCase):
 
     def test_create_filename(self):
         with self.assertRaises(ValueError):
-            table = Table('foo.csv')  # noqa
+            Table('foo.csv')
 
     def test_create_empty_table(self):
         table = Table([])
@@ -75,7 +66,7 @@ class TestBasic(AgateTestCase):
         self.assertRows(table, [
             (1, '4', 'a'),
             (2, '3', 'b'),
-            (None, '2', u'👍')
+            (None, '2', '👍')
         ])
 
     def test_create_table_column_types_dict(self):
@@ -118,7 +109,7 @@ class TestBasic(AgateTestCase):
         column_types = [self.number_type, self.number_type, self.number_type]
 
         with self.assertRaises(CastError) as e:
-            table = Table(self.rows, self.column_names, column_types)  # noqa
+            Table(self.rows, self.column_names, column_types)
 
         self.assertIn('Error at row 0 column three.', str(e.exception))
 
@@ -126,31 +117,31 @@ class TestBasic(AgateTestCase):
         column_names = ['one', None, 'three']
 
         with self.assertWarns(RuntimeWarning):
-            table2 = Table(self.rows, column_names, self.column_types)  # noqa
+            Table(self.rows, column_names, self.column_types)
 
         warnings.simplefilter('ignore')
 
         try:
-            table3 = Table(self.rows, column_names, self.column_types)
+            table = Table(self.rows, column_names, self.column_types)
         finally:
             warnings.resetwarnings()
 
-        self.assertColumnNames(table3, ['one', 'b', 'three'])
+        self.assertColumnNames(table, ['one', 'b', 'three'])
 
     def test_create_table_empty_column_names(self):
         column_names = ['one', '', 'three']
 
         with self.assertWarns(RuntimeWarning):
-            table2 = Table(self.rows, column_names, self.column_types)  # noqa
+            Table(self.rows, column_names, self.column_types)
 
         warnings.simplefilter('ignore')
 
         try:
-            table3 = Table(self.rows, column_names, self.column_types)
+            table = Table(self.rows, column_names, self.column_types)
         finally:
             warnings.resetwarnings()
 
-        self.assertColumnNames(table3, ['one', 'b', 'three'])
+        self.assertColumnNames(table, ['one', 'b', 'three'])
 
     def test_create_table_non_datatype_columns(self):
         column_types = [self.number_type, self.number_type, 'foo']
@@ -232,8 +223,8 @@ class TestBasic(AgateTestCase):
         with self.assertRaises(KeyError):
             table.columns['one']
 
-        self.assertSequenceEqual(table.columns[2], ('a', 'b', u'👍'))
-        self.assertSequenceEqual(table.columns['c'], ('a', 'b', u'👍'))
+        self.assertSequenceEqual(table.columns[2], ('a', 'b', '👍'))
+        self.assertSequenceEqual(table.columns['c'], ('a', 'b', '👍'))
 
         with self.assertRaises(KeyError):
             table.columns['']
@@ -253,12 +244,12 @@ class TestBasic(AgateTestCase):
         )
 
         with self.assertRaises(ValueError):
-            table = Table(rows, self.column_names, self.column_types)  # noqa
+            Table(rows, self.column_names, self.column_types)
 
     def test_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
 
-        self.assertRowNames(table, ['a', 'b', u'👍'])
+        self.assertRowNames(table, ['a', 'b', '👍'])
 
     def test_row_names_non_string(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names=[Decimal('2'), True, None])
@@ -270,11 +261,11 @@ class TestBasic(AgateTestCase):
         ])
         self.assertSequenceEqual(table.rows[Decimal('2')], (1, 4, 'a'))
         self.assertSequenceEqual(table.rows[True], (2, 3, 'b'))
-        self.assertSequenceEqual(table.rows[None], (None, 2, u'👍'))
+        self.assertSequenceEqual(table.rows[None], (None, 2, '👍'))
 
     def test_row_names_int(self):
         with self.assertRaises(ValueError):
-            table = Table(self.rows, self.column_names, self.column_types, row_names=['a', 'b', 3])  # noqa
+            Table(self.rows, self.column_names, self.column_types, row_names=['a', 'b', 3])
 
     def test_row_names_func(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names=lambda r: (r['one'], r['three']))
@@ -282,16 +273,16 @@ class TestBasic(AgateTestCase):
         self.assertSequenceEqual(table.row_names, [
             (Decimal('1'), 'a'),
             (Decimal('2'), 'b'),
-            (None, u'👍')
+            (None, '👍')
         ])
         self.assertSequenceEqual(table.rows[(Decimal('1'), 'a')], (1, 4, 'a'))
         self.assertSequenceEqual(table.rows[(Decimal('2'), 'b')], (2, 3, 'b'))
-        self.assertSequenceEqual(table.rows[(None, u'👍')], (None, 2, u'👍'))
+        self.assertSequenceEqual(table.rows[(None, '👍')], (None, 2, '👍'))
 
     def test_row_names_invalid(self):
 
         with self.assertRaises(ValueError):
-            table = Table(  # noqa
+            Table(
                 self.rows,
                 self.column_names,
                 self.column_types,
@@ -299,28 +290,15 @@ class TestBasic(AgateTestCase):
             )
 
     def test_stringify(self):
-        column_names = ['foo', 'bar', u'👍']
+        column_names = ['foo', 'bar', '👍']
 
         table = Table(self.rows, column_names)
 
-        if six.PY2:
-            u = unicode(table)
+        u = str(table)
 
-            self.assertIn('foo', u)
-            self.assertIn('bar', u)
-            self.assertIn(u'👍', u)
-
-            s = str(table)
-
-            self.assertIn('foo', s)
-            self.assertIn('bar', s)
-            self.assertIn(u'👍'.encode('utf-8'), s)
-        else:
-            u = str(table)
-
-            self.assertIn('foo', u)
-            self.assertIn('bar', u)
-            self.assertIn(u'👍', u)
+        self.assertIn('foo', u)
+        self.assertIn('bar', u)
+        self.assertIn('👍', u)
 
     def test_str(self):
         warnings.simplefilter('ignore')
@@ -379,7 +357,7 @@ class TestBasic(AgateTestCase):
         self.assertRows(new_table, [
             [4, 'a'],
             [3, 'b'],
-            [2, u'👍']
+            [2, '👍']
         ])
 
     def test_select_single(self):
@@ -391,14 +369,14 @@ class TestBasic(AgateTestCase):
         self.assertRows(new_table, [
             ['a'],
             ['b'],
-            [u'👍']
+            ['👍']
         ])
 
     def test_select_with_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
         new_table = table.select(('three',))
 
-        self.assertRowNames(new_table, ['a', 'b', u'👍'])
+        self.assertRowNames(new_table, ['a', 'b', '👍'])
 
     def test_select_does_not_exist(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -418,7 +396,7 @@ class TestBasic(AgateTestCase):
         self.assertRows(new_table, [
             ['a'],
             ['b'],
-            [u'👍']
+            ['👍']
         ])
 
     def test_exclude_single(self):
@@ -433,14 +411,14 @@ class TestBasic(AgateTestCase):
         self.assertRows(new_table, [
             [4, 'a'],
             [3, 'b'],
-            [2, u'👍']
+            [2, '👍']
         ])
 
     def test_exclude_with_row_names(self):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
         new_table = table.exclude(('one', 'two'))
 
-        self.assertRowNames(new_table, ['a', 'b', u'👍'])
+        self.assertRowNames(new_table, ['a', 'b', '👍'])
 
     def test_where(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -460,7 +438,7 @@ class TestBasic(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
         new_table = table.where(lambda r: r['one'] in (2, None))
 
-        self.assertRowNames(new_table, ['b', u'👍'])
+        self.assertRowNames(new_table, ['b', '👍'])
 
     def test_find(self):
         table = Table(self.rows, self.column_names, self.column_types)

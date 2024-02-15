@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
 from agate import Table
 from agate.aggregations import Count, Sum
 from agate.data_types import Number, Text
@@ -12,7 +9,7 @@ class TestAggregate(AgateTestCase):
         self.rows = (
             (1, 4, 'a'),
             (2, 3, 'b'),
-            (None, 2, u'👍')
+            (None, 2, '👍')
         )
 
         self.number_type = Number()

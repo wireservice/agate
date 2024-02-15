@@ -1,10 +1,9 @@
 # !/usr/bin/env python
-# -*- coding: utf8 -*-
 
-import six
+from io import StringIO
 
 from agate import Table
-from agate.data_types import *
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 
@@ -17,7 +16,7 @@ class TestPrintStructure(AgateTestCase):
         )
 
         self.number_type = Number()
-        self.international_number_type = Number(locale='de_DE')
+        self.international_number_type = Number(locale='de_DE.UTF-8')
         self.text_type = Text()
 
         self.column_names = ['one', 'two', 'three']
@@ -30,7 +29,7 @@ class TestPrintStructure(AgateTestCase):
     def test_print_structure(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_structure(output=output)
         lines = output.getvalue().strip().split('\n')
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 The :class:`.TableSet` class collects a set of related tables in a single data
 structure. The most common way of creating a :class:`.TableSet` is using the
@@ -24,12 +22,11 @@ and end up with data grouped across multiple dimensions.
 dimensions.
 """
 
-import six
-from six.moves import zip_longest
+from io import StringIO
+from itertools import zip_longest
 
 from agate.data_types import Text
 from agate.mapped_sequence import MappedSequence
-from agate.table import Table
 
 
 class TableSet(MappedSequence):
@@ -87,7 +84,7 @@ class TableSet(MappedSequence):
         """
         Print the tableset's structure via :meth:`TableSet.print_structure`.
         """
-        structure = six.StringIO()
+        structure = StringIO()
 
         self.print_structure(output=structure)
 
@@ -168,9 +165,8 @@ from agate.tableset.having import having
 from agate.tableset.line_chart import line_chart
 from agate.tableset.merge import merge
 from agate.tableset.print_structure import print_structure
-from agate.tableset.proxy_methods import bins, compute, denormalize, distinct, \
-    exclude, find, group_by, homogenize, join, limit, normalize, order_by, \
-    pivot, select, where
+from agate.tableset.proxy_methods import (bins, compute, denormalize, distinct, exclude, find, group_by, homogenize,
+                                          join, limit, normalize, order_by, pivot, select, where)
 from agate.tableset.scatterplot import scatterplot
 from agate.tableset.to_csv import to_csv
 from agate.tableset.to_json import to_json

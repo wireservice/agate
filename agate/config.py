@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
 """
 This module contains the global configuration for agate. Users should use
 :meth:`get_option` and :meth:`set_option` to modify the global
@@ -13,47 +10,54 @@ configuration.
 +=========================+==========================================+=========================================+
 | default_locale          | Default locale for number formatting     | default_locale('LC_NUMERIC') or 'en_US' |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| horizontal_line_char    | Character to render for horizontal lines | u'-'                                    |
+| horizontal_line_char    | Character to render for horizontal lines | '-'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| vertical_line_char      | Character to render for vertical lines   | u'|'                                    |
+| vertical_line_char      | Character to render for vertical lines   | '|'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| bar_char                | Character to render for bar chart units  | u'░'                                    |
+| bar_char                | Character to render for bar chart units  | '░'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| printable_bar_char      | Printable character for bar chart units  | u':'                                    |
+| printable_bar_char      | Printable character for bar chart units  | ':'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| zero_line_char          | Character to render for zero line units  | u'▓'                                    |
+| zero_line_char          | Character to render for zero line units  | '▓'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| printable_zero_line_char| Printable character for zero line units  | u'|'                                    |
+| printable_zero_line_char| Printable character for zero line units  | '|'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| tick_char               | Character to render for axis ticks       | u'+'                                    |
+| tick_char               | Character to render for axis ticks       | '+'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
-| ellipsis_chars          | Characters to render for ellipsis        | u'...'                                  |
+| ellipsis_chars          | Characters to render for ellipsis        | '...'                                   |
++-------------------------+------------------------------------------+-----------------------------------------+
+| text_truncation_chars   | Characters for truncated text values     | '...'                                   |
++-------------------------+------------------------------------------+-----------------------------------------+
+| number_truncation_chars | Characters for truncated number values   | '…'                                     |
 +-------------------------+------------------------------------------+-----------------------------------------+
 
 """
 
 from babel.core import default_locale
 
-
 _options = {
     #: Default locale for number formatting
     'default_locale': default_locale('LC_NUMERIC') or 'en_US',
     #: Character to render for horizontal lines
-    'horizontal_line_char': u'-',
+    'horizontal_line_char': '-',
     #: Character to render for vertical lines
-    'vertical_line_char': u'|',
+    'vertical_line_char': '|',
     #: Character to render for bar chart units
-    'bar_char': u'░',
+    'bar_char': '░',
     #: Printable character to render for bar chart units
-    'printable_bar_char': u':',
+    'printable_bar_char': ':',
     #: Character to render for zero line units
-    'zero_line_char': u'▓',
+    'zero_line_char': '▓',
     #: Printable character to render for zero line units
-    'printable_zero_line_char': u'|',
+    'printable_zero_line_char': '|',
     #: Character to render for axis ticks
-    'tick_char': u'+',
+    'tick_char': '+',
     #: Characters to render for ellipsis
-    'ellipsis_chars': u'...',
+    'ellipsis_chars': '...',
+    #: Characters for truncated text values
+    'text_truncation_chars': '...',
+    #: Characters for truncated number values
+    'number_truncation_chars': '…',
 }
 
 

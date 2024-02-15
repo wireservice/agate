@@ -1,10 +1,6 @@
-#!/usr/bin/env python
-
+import json
 from collections import OrderedDict
 from decimal import Decimal
-import io
-import json
-import six
 
 
 @classmethod
@@ -34,8 +30,8 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
     :param encoding:
         According to RFC4627, JSON text shall be encoded in Unicode; the default encoding is
         UTF-8. You can override this by using any encoding supported by your Python's open() function
-        if :code:`path` is a filepath. If passing in a file handle, it is assumed you have already opened it with the correct
-        encoding specified.
+        if :code:`path` is a filepath. If passing in a file handle, it is assumed you have already opened it with the
+        correct encoding specified.
     """
     from agate.table import Table
 
@@ -52,7 +48,7 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
                 for line in path:
                     js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
             else:
-                f = io.open(path, encoding=encoding)
+                f = open(path, encoding=encoding)
                 close = True
 
                 for line in f:
@@ -61,14 +57,16 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
             if hasattr(path, 'read'):
                 js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
             else:
-                f = io.open(path, encoding=encoding)
+                f = open(path, encoding=encoding)
                 close = True
 
                 js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
 
         if isinstance(js, dict):
             if not key:
-                raise TypeError('When converting a JSON document with a top-level dictionary element, a key must be specified.')
+                raise TypeError(
+                    'When converting a JSON document with a top-level dictionary element, a key must be specified.'
+                )
 
             js = js[key]
 

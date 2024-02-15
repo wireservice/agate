@@ -1,15 +1,10 @@
-#!/usr/bin/env python
-
+import locale
 from datetime import date, datetime, time
 
-import isodate
-import locale
 import parsedatetime
-import six
 
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
-
 
 ZERO_DT = datetime.combine(date.min, time.min)
 
@@ -26,12 +21,12 @@ class Date(DataType):
         for parsing formatted dates.
     """
     def __init__(self, date_format=None, locale=None, **kwargs):
-        super(Date, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.date_format = date_format
         self.locale = locale
 
-        self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=True)
+        self._constants = parsedatetime.Constants(localeID=self.locale)
         self._parser = parsedatetime.Calendar(constants=self._constants, version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def __getstate__(self):
@@ -51,7 +46,7 @@ class Date(DataType):
         of the parsedatetime Calendar class.
         """
         self.__dict__.update(ndict)
-        self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=True)
+        self._constants = parsedatetime.Constants(localeID=self.locale)
         self._parser = parsedatetime.Calendar(constants=self._constants, version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def cast(self, d):
@@ -61,12 +56,12 @@ class Date(DataType):
         If both `date_format` and `locale` have been specified
         in the `agate.Date` instance, the `cast()` function
         is not thread-safe.
-        :returns:
-            :class:`datetime.date` or :code:`None`.
+        :returns: :class:`datetime.date` or :code:`None`.
         """
         if type(d) is date or d is None:
             return d
-        elif isinstance(d, six.string_types):
+
+        if isinstance(d, str):
             d = d.strip()
 
             if d.lower() in self.null_values:
@@ -82,7 +77,7 @@ class Date(DataType):
 
             try:
                 dt = datetime.strptime(d, self.date_format)
-            except:
+            except (ValueError, TypeError):
                 raise CastError('Value "%s" does not match date format.' % d)
             finally:
                 if orig_locale:

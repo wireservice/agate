@@ -1,12 +1,8 @@
-#!/usr/bin/env python
-
+import json
+import os
 from collections import OrderedDict
 from decimal import Decimal
 from glob import glob
-import json
-import os
-
-import six
 
 from agate.table import Table
 
@@ -31,12 +27,12 @@ def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwar
     """
     from agate.tableset import TableSet
 
-    if isinstance(path, six.string_types) and not os.path.isdir(path) and not os.path.isfile(path):
-        raise IOError('Specified path doesn\'t exist.')
+    if isinstance(path, str) and not os.path.isdir(path) and not os.path.isfile(path):
+        raise OSError('Specified path doesn\'t exist.')
 
     tables = OrderedDict()
 
-    if isinstance(path, six.string_types) and os.path.isdir(path):
+    if isinstance(path, str) and os.path.isdir(path):
         filepaths = glob(os.path.join(path, '*.json'))
 
         if keys is not None and len(keys) != len(filepaths):
@@ -54,7 +50,7 @@ def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwar
         if hasattr(path, 'read'):
             js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
         else:
-            with open(path, 'r') as f:
+            with open(path) as f:
                 js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
 
         for key, value in js.items():

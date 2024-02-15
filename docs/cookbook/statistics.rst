@@ -2,7 +2,7 @@
 Statistics
 ==========
 
-Common descriptive and aggregate statistics are included with the core agate library. For additional statistical methods beyond the scope of agate consider using the `agate-stats <http://agate-stats.rtfd.org/>`_ extension or integrating with `scipy <http://www.scipy.org/>`_.
+Common descriptive and aggregate statistics are included with the core agate library. For additional statistical methods beyond the scope of agate consider using the `agate-stats <https://agate-stats.rtfd.org/>`_ extension or integrating with `scipy <https://scipy.org/>`_.
 
 Descriptive statistics
 ======================
@@ -26,9 +26,9 @@ Or, get several at once:
 .. code-block:: python
 
     table.aggregate([
-        agate.Min('salary'),
-        agate.Mean('salary'),
-        agate.Max('salary')
+        ('salary_min', agate.Min('salary')),
+        ('salary_ave', agate.Mean('salary')),
+        ('salary_max', agate.Max('salary')),
     ])
 
 Aggregate statistics
@@ -86,13 +86,11 @@ The output table will be the same format as the previous example, except the val
 Identify outliers
 =================
 
-The `agate-stats <http://agate-stats.rtfd.org/>`_ extension adds methods for finding outliers.
+The `agate-stats <https://agate-stats.rtfd.org/>`_ extension adds methods for finding outliers.
 
 .. code-block:: python
 
     import agatestats
-
-    agatestats.patch()
 
     outliers = table.stdev_outliers('salary', deviations=3, reject=False)
 

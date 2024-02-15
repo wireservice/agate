@@ -1,13 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
+from io import StringIO
 
 from babel.numbers import format_decimal
-import six
 
 from agate import Table
-from agate.data_types import *
-from agate.testcase import AgateTestCase
+from agate.data_types import Number, Text
 from agate.exceptions import DataTypeError
+from agate.testcase import AgateTestCase
 
 
 class TestPrintBars(AgateTestCase):
@@ -19,7 +17,7 @@ class TestPrintBars(AgateTestCase):
         )
 
         self.number_type = Number()
-        self.international_number_type = Number(locale='de_DE')
+        self.international_number_type = Number(locale='de_DE.UTF-8')
         self.text_type = Text()
 
         self.column_names = ['one', 'two', 'three']
@@ -32,27 +30,27 @@ class TestPrintBars(AgateTestCase):
     def test_print_bars(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_bars('three', 'one', output=output)
-        lines = output.getvalue().split('\n')  # noqa
+        output.getvalue().split('\n')
 
     def test_print_bars_width(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_bars('three', 'one', width=40, output=output)
         lines = output.getvalue().split('\n')
 
-        self.assertEqual(max([len(l) for l in lines]), 40)
+        self.assertEqual(max([len(line) for line in lines]), 40)
 
     def test_print_bars_width_overlap(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_bars('three', 'one', width=20, output=output)
         lines = output.getvalue().split('\n')
 
-        self.assertEqual(max([len(l) for l in lines]), 20)
+        self.assertEqual(max([len(line) for line in lines]), 20)
 
     def test_print_bars_domain(self):
         table = Table(self.rows, self.column_names, self.column_types)
@@ -94,13 +92,13 @@ class TestPrintBars(AgateTestCase):
     def test_print_bars_with_nulls(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_bars('three', 'two', width=20, printable=True,
                          output=output)
 
         self.assertEqual(output.getvalue(), "three   two\n"
-                                            "a     " + format_decimal(2000, format=u'#,##0') + " |:::::::\n"
+                                            "a     " + format_decimal(2000, format='#,##0') + " |:::::::\n"
                                             "None      - |       \n"
                                             "c         1 |       \n"
                                             "            +------+\n"
-                                            "            0  " + format_decimal(2000, format=u'#,##0') + "\n")
+                                            "            0  " + format_decimal(2000, format='#,##0') + "\n")

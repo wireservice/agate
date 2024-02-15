@@ -1,14 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
-import io
 import warnings
 
-import six
-
 from agate import Table
+from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.testcase import AgateTestCase
-from agate.data_types import *
 from agate.type_tester import TypeTester
 
 
@@ -16,7 +10,7 @@ class TestFromCSV(AgateTestCase):
     def setUp(self):
         self.rows = (
             (1, 'a', True, '11/4/2015', '11/4/2015 12:22 PM', '4:15'),
-            (2, u'👍', False, '11/5/2015', '11/4/2015 12:45 PM', '6:18'),
+            (2, '👍', False, '11/5/2015', '11/4/2015 12:45 PM', '6:18'),
             (None, 'b', None, None, None, None)
         )
 
@@ -58,10 +52,7 @@ class TestFromCSV(AgateTestCase):
     def test_from_csv_file_like_object(self):
         table1 = Table(self.rows, self.column_names, self.column_types)
 
-        if six.PY2:
-            f = open('examples/test.csv', 'rb')
-        else:
-            f = io.open('examples/test.csv', encoding='utf-8')
+        f = open('examples/test.csv', encoding='utf-8')
 
         table2 = Table.from_csv(f)
         f.close()
@@ -105,7 +96,6 @@ class TestFromCSV(AgateTestCase):
         self.assertColumnTypes(table, [Number, Text, Boolean, Date, DateTime, TimeDelta])
 
     def test_from_csv_sniff_limit_0(self):
-        table1 = Table(self.rows, self.column_names, self.column_types)
         table2 = Table.from_csv('examples/test_csv_sniff.csv', sniff_limit=0)
 
         self.assertColumnNames(table2, ['number|text|boolean|date|datetime|timedelta'])
@@ -165,6 +155,33 @@ class TestFromCSV(AgateTestCase):
             table2 = Table.from_csv('examples/test_cr.csv', header=False, skip_lines=2)
         finally:
             warnings.resetwarnings()
+
+        self.assertColumnNames(table2, table1.column_names)
+        self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
+
+        self.assertRows(table2, table1.rows)
+
+    def test_from_csv_row_limit(self):
+        table1 = Table(self.rows[:2], self.column_names, self.column_types)
+        table2 = Table.from_csv('examples/test.csv', row_limit=2)
+
+        self.assertColumnNames(table2, table1.column_names)
+        self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
+
+        self.assertRows(table2, table1.rows)
+
+    def test_from_csv_row_limit_no_header_columns(self):
+        table1 = Table(self.rows[:2], self.column_names, self.column_types)
+        table2 = Table.from_csv('examples/test_no_header.csv', self.column_names, header=False, row_limit=2)
+
+        self.assertColumnNames(table2, table1.column_names)
+        self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
+
+        self.assertRows(table2, table1.rows)
+
+    def test_from_csv_row_limit_too_high(self):
+        table1 = Table(self.rows, self.column_names, self.column_types)
+        table2 = Table.from_csv('examples/test.csv', row_limit=200)
 
         self.assertColumnNames(table2, table1.column_names)
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])

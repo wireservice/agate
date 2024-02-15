@@ -1,22 +1,14 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 from collections import OrderedDict
+from decimal import Decimal
 
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
-
-import six
-
-from agate.data_types import Number
-from agate.type_tester import TypeTester
-from agate.rows import Row
 from agate import utils
+from agate.data_types import Number
+from agate.rows import Row
+from agate.type_tester import TypeTester
 
 
-def denormalize(self, key=None, property_column='property', value_column='value', default_value=utils.default, column_types=None):
+def denormalize(self, key=None, property_column='property', value_column='value', default_value=utils.default,
+                column_types=None):
     """
     Create a new table with row values converted into columns.
 
@@ -90,7 +82,7 @@ def denormalize(self, key=None, property_column='property', value_column='value'
         if row_key not in row_data:
             row_data[row_key] = OrderedDict()
 
-        f = six.text_type(row[property_column])
+        f = str(row[property_column])
         v = row[value_column]
 
         if f not in field_names:

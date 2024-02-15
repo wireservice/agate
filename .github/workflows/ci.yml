@@ -1,0 +1,35 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        python-version: [3.8, 3.9, '3.10', '3.11', '3.12', pypy-3.9]
+    steps:
+      - if: matrix.os == 'ubuntu-latest'
+        name: Install UTF-8 locales and lxml requirements
+        run: |
+          sudo apt install libxml2-dev libxslt-dev
+          sudo locale-gen de_DE.UTF-8
+          sudo locale-gen en_US.UTF-8
+          sudo locale-gen ko_KR.UTF-8
+          sudo update-locale
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: setup.py
+      - run: pip install .[test] coveralls
+      - env:
+          LANG: en_US.UTF-8
+          PYTHONIOENCODING: utf-8
+          PYTHONUTF8: 1
+        run: pytest --cov agate
+      - run: python charts.py
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: coveralls --service=github

@@ -1,19 +1,16 @@
-#!/usr/bin/env python
-
 """
 This module contains the Python 3 replacement for :mod:`csv`.
 """
 
 import csv
-
-import six
+import warnings
 
 from agate.exceptions import FieldSizeLimitError
 
 POSSIBLE_DELIMITERS = [',', '\t', ';', ' ', ':', '|']
 
 
-class Reader(six.Iterator):
+class Reader:
     """
     A wrapper around Python 3's builtin :func:`csv.reader`.
     """
@@ -35,20 +32,20 @@ class Reader(six.Iterator):
         except csv.Error as e:
             # Terrible way to test for this exception, but there is no subclass
             if 'field larger than field limit' in str(e):
-                raise FieldSizeLimitError(csv.field_size_limit())
+                raise FieldSizeLimitError(csv.field_size_limit(), self.line_num)
             else:
                 raise e
 
         if not self.line_numbers:
             return row
-        else:
-            if self.line_numbers:
-                if self.header and self.line_num == 1:
-                    row.insert(0, 'line_numbers')
-                else:
-                    row.insert(0, str(self.line_num - 1 if self.header else self.line_num))
 
-            return row
+        if self.line_numbers:
+            if self.header and self.line_num == 1:
+                row.insert(0, 'line_numbers')
+            else:
+                row.insert(0, str(self.line_num - 1 if self.header else self.line_num))
+
+        return row
 
     @property
     def dialect(self):
@@ -59,7 +56,7 @@ class Reader(six.Iterator):
         return self.reader.line_num
 
 
-class Writer(object):
+class Writer:
     """
     A wrapper around Python 3's builtin :func:`csv.writer`.
     """
@@ -86,7 +83,7 @@ class Writer(object):
             self._append_line_number(row)
 
         # Convert embedded Mac line endings to unix style line endings so they get quoted
-        row = [i.replace('\r', '\n') if isinstance(i, six.string_types) else i for i in row]
+        row = [i.replace('\r', '\n') if isinstance(i, str) else i for i in row]
 
         self.writer.writerow(row)
 
@@ -128,7 +125,7 @@ class DictWriter(csv.DictWriter):
 
     def writerow(self, row):
         # Convert embedded Mac line endings to unix style line endings so they get quoted
-        row = dict([(k, v.replace('\r', '\n')) if isinstance(v, six.string_types) else (k, v) for k, v in row.items()])
+        row = dict([(k, v.replace('\r', '\n')) if isinstance(v, str) else (k, v) for k, v in row.items()])
 
         if self.line_numbers:
             self._append_line_number(row)
@@ -140,7 +137,7 @@ class DictWriter(csv.DictWriter):
             self.writerow(row)
 
 
-class Sniffer(object):
+class Sniffer:
     """
     A functional wrapper of ``csv.Sniffer()``.
     """
@@ -151,7 +148,8 @@ class Sniffer(object):
         """
         try:
             dialect = csv.Sniffer().sniff(sample, POSSIBLE_DELIMITERS)
-        except:
+        except csv.Error as e:
+            warnings.warn('Error sniffing CSV dialect: %s' % e, RuntimeWarning, stacklevel=2)
             dialect = None
 
         return dialect

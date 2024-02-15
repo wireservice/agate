@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This module contains the :class:`MappedSequence` class that forms the foundation
 for agate's :class:`.Row` and :class:`.Column` as well as for named sequences of
@@ -7,13 +5,7 @@ rows and columns.
 """
 
 from collections import OrderedDict
-try:
-    from collections.abc import Sequence
-except ImportError:
-    from collections import Sequence
-
-import six
-from six.moves import range  # pylint: disable=W0622
+from collections.abc import Sequence
 
 from agate.utils import memoize
 
@@ -66,21 +58,21 @@ class MappedSequence(Sequence):
         """
         Print a unicode sample of the contents of this sequence.
         """
-        sample = u', '.join(repr(d) for d in self.values()[:5])
+        sample = ', '.join(repr(d) for d in self.values()[:5])
 
         if len(self) > 5:
-            sample = u'%s, ...' % sample
+            sample = '%s, ...' % sample
 
-        return u'<agate.%s: (%s)>' % (type(self).__name__, sample)
+        return f'<agate.{type(self).__name__}: ({sample})>'
 
     def __str__(self):
         """
         Print an ascii sample of the contents of this sequence.
         """
-        if six.PY2:  # pragma: no cover
-            return str(self.__unicode__().encode('utf8'))
-
         return str(self.__unicode__())
+
+    def __repr__(self):
+        return self.__str__()
 
     def __getitem__(self, key):
         """
@@ -89,13 +81,11 @@ class MappedSequence(Sequence):
         if isinstance(key, slice):
             indices = range(*key.indices(len(self)))
             values = self.values()
-
             return tuple(values[i] for i in indices)
         # Note: can't use isinstance because bool is a subclass of int
         elif type(key) is int:
             return self.values()[key]
-        else:
-            return self.dict()[key]
+        return self.dict()[key]
 
     def __setitem__(self, key, value):
         """
@@ -159,8 +149,7 @@ class MappedSequence(Sequence):
         except KeyError:
             if default:
                 return default
-            else:
-                return None
+            return None
 
     @memoize
     def dict(self):

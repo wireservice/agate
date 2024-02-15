@@ -1,8 +1,5 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
-from agate.rows import Row
 from agate import utils
+from agate.rows import Row
 
 
 def homogenize(self, key, compare_values, default_row=None):
@@ -56,12 +53,14 @@ def homogenize(self, key, compare_values, default_row=None):
     column_values = [self._columns.get(name) for name in key]
     column_indexes = [self._column_names.index(name) for name in key]
 
+    compare_values = [[column_values[i].data_type.cast(v) for i, v in enumerate(values)] for values in compare_values]
+
     column_values = zip(*column_values)
     differences = list(set(map(tuple, compare_values)) - set(column_values))
 
     for difference in differences:
         if callable(default_row):
-            rows.append(Row(default_row(difference), self._column_names))
+            new_row = default_row(difference)
         else:
             if default_row is not None:
                 new_row = list(default_row)
@@ -71,6 +70,8 @@ def homogenize(self, key, compare_values, default_row=None):
             for i, d in zip(column_indexes, difference):
                 new_row.insert(i, d)
 
-            rows.append(Row(new_row, self._column_names))
+        new_row = [self._columns[i].data_type.cast(v) for i, v in enumerate(new_row)]
+        rows.append(Row(new_row, self._column_names))
 
-    return self._fork(rows)
+    # Do not copy the row_names, since this function adds rows.
+    return self._fork(rows, row_names=[])

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 from collections import OrderedDict
 
 from agate import utils
@@ -29,7 +26,7 @@ def aggregate(self, aggregations):
             results[name] = agg.run(self)
 
         return results
-    else:
-        aggregations.validate(self)
 
-        return aggregations.run(self)
+    aggregations.validate(self)
+
+    return aggregations.run(self)

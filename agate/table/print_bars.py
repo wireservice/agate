@@ -1,28 +1,17 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-# pylint: disable=W0212
-
-from collections import OrderedDict
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
-
 import sys
-
+from collections import OrderedDict
+from decimal import Decimal
 
 from babel.numbers import format_decimal
-import six
 
-from agate.aggregations import Min, Max
-from agate import config
+from agate import config, utils
+from agate.aggregations import Max, Min
 from agate.data_types import Number
 from agate.exceptions import DataTypeError
-from agate import utils
 
 
-def print_bars(self, label_column_name='group', value_column_name='Count', domain=None, width=120, output=sys.stdout, printable=False):
+def print_bars(self, label_column_name='group', value_column_name='Count', domain=None, width=120, output=sys.stdout,
+               printable=False):
     """
     Print a text-based bar chart based on this table.
 
@@ -77,7 +66,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
     formatted_labels = []
 
     for label in label_column:
-        formatted_labels.append(six.text_type(label))
+        formatted_labels.append(str(label))
 
     formatted_values = []
     for value in value_column:
@@ -90,8 +79,8 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
                 locale=locale
             ))
 
-    max_label_width = max(max([len(l) for l in formatted_labels]), len(y_label))
-    max_value_width = max(max([len(v) for v in formatted_values]), len(x_label))
+    max_label_width = max(max([len(label) for label in formatted_labels]), len(y_label))
+    max_value_width = max(max([len(value) for value in formatted_values]), len(x_label))
 
     plot_width = width - (max_label_width + max_value_width + 2)
 
@@ -133,8 +122,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
     def project(value):
         if value >= 0:
             return plot_negative_width + int((plot_positive_width * (value / x_max)).to_integral_value())
-        else:
-            return plot_negative_width - int((plot_negative_width * (value / x_min)).to_integral_value())
+        return plot_negative_width - int((plot_negative_width * (value / x_min)).to_integral_value())
 
     # Calculate ticks
     ticks = OrderedDict()
@@ -184,7 +172,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
         output.write(line + '\n')
 
     # Chart top
-    top_line = u'%s %s' % (y_label.ljust(max_label_width), x_label.rjust(max_value_width))
+    top_line = f'{y_label.ljust(max_label_width)} {x_label.rjust(max_value_width)}'
     write(top_line)
 
     # Bars
@@ -203,7 +191,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
         bar = bar_mark * bar_width
 
         if value is not None and value >= 0:
-            gap = (u' ' * plot_negative_width)
+            gap = (' ' * plot_negative_width)
 
             # All positive
             if x_min <= 0:
@@ -211,7 +199,7 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
             else:
                 bar = bar + gap + zero_mark
         else:
-            bar = u' ' * (plot_negative_width - bar_width) + bar
+            bar = ' ' * (plot_negative_width - bar_width) + bar
 
             # All negative or mixed signs
             if value is None or x_max > value:
@@ -219,11 +207,11 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
 
         bar = bar.ljust(plot_width)
 
-        write('%s %s %s' % (label_text, value_text, bar))
+        write(f'{label_text} {value_text} {bar}')
 
     # Axis & ticks
     axis = horizontal_line * plot_width
-    tick_text = u' ' * width
+    tick_text = ' ' * width
 
     for i, (tick, label) in enumerate(ticks_formatted.items()):
         # First tick

@@ -1,21 +1,17 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
-import six
-
 import os
 import sys
+from io import StringIO
 
 from agate import Table
+from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.testcase import AgateTestCase
-from agate.data_types import *
 
 
 class TestToCSV(AgateTestCase):
     def setUp(self):
         self.rows = (
             (1, 'a', True, '11/4/2015', '11/4/2015 12:22 PM', '4:15'),
-            (2, u'👍', False, '11/5/2015', '11/4/2015 12:45 PM', '6:18'),
+            (2, '👍', False, '11/5/2015', '11/4/2015 12:45 PM', '6:18'),
             (None, 'b', None, None, None, None)
         )
 
@@ -64,7 +60,7 @@ class TestToCSV(AgateTestCase):
     def test_to_csv_to_stdout(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.to_csv(output)
 
         contents1 = output.getvalue()
@@ -94,7 +90,7 @@ class TestToCSV(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types)
 
         old = sys.stdout
-        sys.stdout = six.StringIO()
+        sys.stdout = StringIO()
 
         try:
             table.print_csv()

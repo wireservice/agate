@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from agate import Table
 from agate.testcase import AgateTestCase
 

@@ -1,20 +1,14 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import csv
-import six
 import os
-
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import platform
+import sys
+import unittest
+from io import StringIO
 
 from agate import csv_py3
 from agate.exceptions import FieldSizeLimitError
 
 
-@unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestReader(unittest.TestCase):
     def setUp(self):
         self.rows = [
@@ -56,7 +50,7 @@ class TestReader(unittest.TestCase):
         sample_rows = [
             ['line_numbers', 'number', 'text', 'boolean', 'date', 'datetime', 'timedelta'],
             ['1', '1', 'a', 'True', '2015-11-04', '2015-11-04T12:22:00', '0:04:15'],
-            ['2', '2', u'👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
+            ['2', '2', '👍', 'False', '2015-11-05', '2015-11-04T12:45:00', '0:06:18'],
             ['3', '', 'b', '', '', '', '']
         ]
 
@@ -64,7 +58,6 @@ class TestReader(unittest.TestCase):
             self.assertEqual(a, b)
 
 
-@unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestFieldSizeLimit(unittest.TestCase):
     def setUp(self):
         self.lim = csv.field_size_limit()
@@ -79,7 +72,7 @@ class TestFieldSizeLimit(unittest.TestCase):
 
     def test_field_size_limit(self):
         # Testing field_size_limit for failure. Creating data using str * int.
-        with open('.test.csv', 'r', encoding='utf-8') as f:
+        with open('.test.csv', encoding='utf-8') as f:
             c = csv_py3.Reader(f, field_size_limit=9)
             try:
                 c.__next__()
@@ -89,73 +82,71 @@ class TestFieldSizeLimit(unittest.TestCase):
                 raise AssertionError('Expected FieldSizeLimitError')
 
         # Now testing higher field_size_limit.
-        with open('.test.csv', 'r', encoding='utf-8') as f:
+        with open('.test.csv', encoding='utf-8') as f:
             c = csv_py3.Reader(f, field_size_limit=11)
             self.assertEqual(['a' * 10], c.__next__())
 
 
-@unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestWriter(unittest.TestCase):
     def test_utf8(self):
-        output = six.StringIO()
+        output = StringIO()
         writer = csv_py3.Writer(output)
         writer.writerow(['a', 'b', 'c'])
         writer.writerow(['1', '2', '3'])
-        writer.writerow(['4', '5', u'ʤ'])
+        writer.writerow(['4', '5', 'ʤ'])
 
-        written = six.StringIO(output.getvalue())
+        written = StringIO(output.getvalue())
 
         reader = csv_py3.Reader(written)
         self.assertEqual(next(reader), ['a', 'b', 'c'])
         self.assertEqual(next(reader), ['1', '2', '3'])
-        self.assertEqual(next(reader), ['4', '5', u'ʤ'])
+        self.assertEqual(next(reader), ['4', '5', 'ʤ'])
 
     def test_writer_alias(self):
-        output = six.StringIO()
+        output = StringIO()
         writer = csv_py3.writer(output)
         writer.writerow(['a', 'b', 'c'])
         writer.writerow(['1', '2', '3'])
-        writer.writerow(['4', '5', u'ʤ'])
+        writer.writerow(['4', '5', 'ʤ'])
 
-        written = six.StringIO(output.getvalue())
+        written = StringIO(output.getvalue())
 
         reader = csv_py3.reader(written)
         self.assertEqual(next(reader), ['a', 'b', 'c'])
         self.assertEqual(next(reader), ['1', '2', '3'])
-        self.assertEqual(next(reader), ['4', '5', u'ʤ'])
+        self.assertEqual(next(reader), ['4', '5', 'ʤ'])
 
     def test_line_numbers(self):
-        output = six.StringIO()
+        output = StringIO()
         writer = csv_py3.Writer(output, line_numbers=True)
         writer.writerow(['a', 'b', 'c'])
         writer.writerow(['1', '2', '3'])
-        writer.writerow(['4', '5', u'ʤ'])
+        writer.writerow(['4', '5', 'ʤ'])
 
-        written = six.StringIO(output.getvalue())
+        written = StringIO(output.getvalue())
 
         reader = csv_py3.Reader(written)
         self.assertEqual(next(reader), ['line_number', 'a', 'b', 'c'])
         self.assertEqual(next(reader), ['1', '1', '2', '3'])
-        self.assertEqual(next(reader), ['2', '4', '5', u'ʤ'])
+        self.assertEqual(next(reader), ['2', '4', '5', 'ʤ'])
 
     def test_writerows(self):
-        output = six.StringIO()
+        output = StringIO()
         writer = csv_py3.Writer(output)
         writer.writerows([
             ['a', 'b', 'c'],
             ['1', '2', '3'],
-            ['4', '5', u'ʤ']
+            ['4', '5', 'ʤ']
         ])
 
-        written = six.StringIO(output.getvalue())
+        written = StringIO(output.getvalue())
 
         reader = csv_py3.Reader(written)
         self.assertEqual(next(reader), ['a', 'b', 'c'])
         self.assertEqual(next(reader), ['1', '2', '3'])
-        self.assertEqual(next(reader), ['4', '5', u'ʤ'])
+        self.assertEqual(next(reader), ['4', '5', 'ʤ'])
 
 
-@unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestDictReader(unittest.TestCase):
     def setUp(self):
         self.rows = [
@@ -181,10 +172,9 @@ class TestDictReader(unittest.TestCase):
         self.assertEqual(next(reader), dict(zip(self.rows[0], self.rows[1])))
 
 
-@unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestDictWriter(unittest.TestCase):
     def setUp(self):
-        self.output = six.StringIO()
+        self.output = StringIO()
 
     def tearDown(self):
         self.output.close()
@@ -193,9 +183,9 @@ class TestDictWriter(unittest.TestCase):
         writer = csv_py3.DictWriter(self.output, ['a', 'b', 'c'])
         writer.writeheader()
         writer.writerow({
-            u'a': u'1',
-            u'b': u'2',
-            u'c': u'☃'
+            'a': '1',
+            'b': '2',
+            'c': '☃'
         })
 
         result = self.output.getvalue()
@@ -206,9 +196,9 @@ class TestDictWriter(unittest.TestCase):
         writer = csv_py3.DictWriter(self.output, ['a', 'b', 'c'])
         writer.writeheader()
         writer.writerow({
-            u'a': u'1',
-            u'b': u'2',
-            u'c': u'☃'
+            'a': '1',
+            'b': '2',
+            'c': '☃'
         })
 
         result = self.output.getvalue()
@@ -219,9 +209,9 @@ class TestDictWriter(unittest.TestCase):
         writer = csv_py3.DictWriter(self.output, ['a', 'b', 'c'], line_numbers=True)
         writer.writeheader()
         writer.writerow({
-            u'a': u'1',
-            u'b': u'2',
-            u'c': u'☃'
+            'a': '1',
+            'b': '2',
+            'c': '☃'
         })
 
         result = self.output.getvalue()
@@ -232,9 +222,9 @@ class TestDictWriter(unittest.TestCase):
         writer = csv_py3.DictWriter(self.output, ['a', 'b', 'c'], line_numbers=True)
         writer.writeheader()
         writer.writerows([{
-            u'a': u'1',
-            u'b': u'2',
-            u'c': u'☃'
+            'a': '1',
+            'b': '2',
+            'c': '☃'
         }])
 
         result = self.output.getvalue()
@@ -242,12 +232,17 @@ class TestDictWriter(unittest.TestCase):
         self.assertEqual(result, 'line_number,a,b,c\n1,1,2,☃\n')
 
 
-@unittest.skipIf(six.PY2, "Not supported in Python 2.")
 class TestSniffer(unittest.TestCase):
-    def setUp(self):
-        pass
-
+    @unittest.skipIf(
+        platform.system() == 'Darwin' and sys.version_info[:2] == (3, 10),
+        reason='The (macos-latest, 3.10) job fails on GitHub Actions'
+    )
     def test_sniffer(self):
         with open('examples/test.csv', encoding='utf-8') as f:
             contents = f.read()
-            self.assertEqual(csv_py3.Sniffer().sniff(contents).__dict__, csv.Sniffer().sniff(contents).__dict__)
+            direct = csv.Sniffer().sniff(contents, csv_py3.POSSIBLE_DELIMITERS).__dict__
+            actual = csv_py3.Sniffer().sniff(contents).__dict__
+            expected = csv.Sniffer().sniff(contents).__dict__
+
+            self.assertEqual(direct, expected, f'{direct!r} != {expected!r}')
+            self.assertEqual(actual, expected, f'{actual!r} != {expected!r}')

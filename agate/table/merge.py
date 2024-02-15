@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 from collections import OrderedDict
 
 from agate.exceptions import DataTypeError

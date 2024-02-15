@@ -1,12 +1,7 @@
-#!/usr/bin/env python
-
-import six
-
 from agate.exceptions import UnsupportedAggregationError
 
 
-@six.python_2_unicode_compatible
-class Aggregation(object):  # pragma: no cover
+class Aggregation:  # pragma: no cover
     """
     Aggregations create a new value by summarizing a :class:`.Column`.
 

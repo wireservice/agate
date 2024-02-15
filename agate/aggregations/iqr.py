@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from agate.aggregations.base import Aggregation
 from agate.aggregations.has_nulls import HasNulls
 from agate.aggregations.percentiles import Percentiles
@@ -36,4 +34,5 @@ class IQR(Aggregation):
     def run(self, table):
         percentiles = self._percentiles.run(table)
 
-        return percentiles[75] - percentiles[25]
+        if percentiles[75] is not None and percentiles[25] is not None:
+            return percentiles[75] - percentiles[25]

@@ -1,14 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
+from decimal import Decimal
 
 from babel.numbers import get_decimal_symbol
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
 
 from agate import Table
-from agate.data_types import *
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 
@@ -111,9 +106,18 @@ class TestBins(AgateTestCase):
         self.assertColumnNames(new_table, ['number', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
-        self.assertSequenceEqual(new_table.rows[0], [u'[0' + get_decimal_symbol() + u'0 - 0' + get_decimal_symbol() + u'1)', 10])
-        self.assertSequenceEqual(new_table.rows[3], [u'[0' + get_decimal_symbol() + u'3 - 0' + get_decimal_symbol() + u'4)', 10])
-        self.assertSequenceEqual(new_table.rows[9], [u'[0' + get_decimal_symbol() + u'9 - 1' + get_decimal_symbol() + u'0]', 10])
+        self.assertSequenceEqual(
+            new_table.rows[0],
+            ['[0' + get_decimal_symbol() + '0 - 0' + get_decimal_symbol() + '1)', 10]
+        )
+        self.assertSequenceEqual(
+            new_table.rows[3],
+            ['[0' + get_decimal_symbol() + '3 - 0' + get_decimal_symbol() + '4)', 10]
+        )
+        self.assertSequenceEqual(
+            new_table.rows[9],
+            ['[0' + get_decimal_symbol() + '9 - 1' + get_decimal_symbol() + '0]', 10]
+        )
 
     def test_bins_nulls(self):
         rows = []
@@ -128,7 +132,16 @@ class TestBins(AgateTestCase):
         self.assertColumnNames(new_table, ['number', 'Count'])
         self.assertColumnTypes(new_table, [Text, Number])
 
-        self.assertSequenceEqual(new_table.rows[0], [u'[0' + get_decimal_symbol() + u'0 - 0' + get_decimal_symbol() + u'1)', 10])
-        self.assertSequenceEqual(new_table.rows[3], [u'[0' + get_decimal_symbol() + u'3 - 0' + get_decimal_symbol() + u'4)', 10])
-        self.assertSequenceEqual(new_table.rows[9], [u'[0' + get_decimal_symbol() + u'9 - 1' + get_decimal_symbol() + u'0]', 10])
+        self.assertSequenceEqual(
+            new_table.rows[0],
+            ['[0' + get_decimal_symbol() + '0 - 0' + get_decimal_symbol() + '1)', 10]
+        )
+        self.assertSequenceEqual(
+            new_table.rows[3],
+            ['[0' + get_decimal_symbol() + '3 - 0' + get_decimal_symbol() + '4)', 10]
+        )
+        self.assertSequenceEqual(
+            new_table.rows[9],
+            ['[0' + get_decimal_symbol() + '9 - 1' + get_decimal_symbol() + '0]', 10]
+        )
         self.assertSequenceEqual(new_table.rows[10], [None, 1])

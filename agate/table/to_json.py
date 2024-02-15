@@ -1,12 +1,6 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
-import codecs
-from collections import OrderedDict
 import json
 import os
-
-import six
+from collections import OrderedDict
 
 
 def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
@@ -41,9 +35,6 @@ def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
         'indent': indent
     }
 
-    if six.PY2:
-        json_kwargs['encoding'] = 'utf-8'
-
     # Pass remaining kwargs through to JSON encoder
     json_kwargs.update(kwargs)
 
@@ -61,9 +52,6 @@ def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
                 os.makedirs(os.path.dirname(path))
             f = open(path, 'w')
 
-        if six.PY2:
-            f = codecs.getwriter('utf-8')(f)
-
         def dump_json(data):
             json.dump(data, f, **json_kwargs)
 
@@ -78,10 +66,10 @@ def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
                 if key_is_row_function:
                     k = key(row)
                 else:
-                    k = str(row[key]) if six.PY3 else unicode(row[key])
+                    k = str(row[key])
 
                 if k in output:
-                    raise ValueError('Value %s is not unique in the key column.' % six.text_type(k))
+                    raise ValueError('Value %s is not unique in the key column.' % str(k))
 
                 values = tuple(json_funcs[i](d) for i, d in enumerate(row))
                 output[k] = OrderedDict(zip(row.keys(), values))

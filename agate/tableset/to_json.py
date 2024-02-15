@@ -1,10 +1,7 @@
-#!/usr/bin/env python
-
-from collections import OrderedDict
 import json
 import os
-
-import six
+from collections import OrderedDict
+from io import StringIO
 
 
 def to_json(self, path, nested=False, indent=None, **kwargs):
@@ -37,7 +34,7 @@ def to_json(self, path, nested=False, indent=None, **kwargs):
         tableset_dict = OrderedDict()
 
         for name, table in self.items():
-            output = six.StringIO()
+            output = StringIO()
             table.to_json(output, **kwargs)
             tableset_dict[name] = json.loads(output.getvalue(), object_pairs_hook=OrderedDict)
 
@@ -53,9 +50,6 @@ def to_json(self, path, nested=False, indent=None, **kwargs):
             f = open(path, 'w')
 
         json_kwargs = {'ensure_ascii': False, 'indent': indent}
-
-        if six.PY2:
-            json_kwargs['encoding'] = 'utf-8'
 
         json_kwargs.update(kwargs)
         json.dump(tableset_dict, f, **json_kwargs)

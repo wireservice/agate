@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
-
 def where(self, test):
     """
     Create a new :class:`.Table` with only those rows that pass a test.

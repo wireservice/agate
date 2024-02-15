@@ -1,8 +1,5 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 from agate.rows import Row
-from agate.tableset import Table
+from agate.table import Table
 
 
 def merge(self, groups=None, group_name=None, group_type=None):

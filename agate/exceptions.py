@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This module contains various exceptions raised by agate.
 """
@@ -34,7 +32,8 @@ class FieldSizeLimitError(Exception):  # pragma: no cover
 
     This length may be the default or one set by the user.
     """
-    def __init__(self, limit):
-        super(FieldSizeLimitError, self).__init__(
-            'CSV contains fields longer than maximum length of %i characters. Try raising the maximum with the field_size_limit parameter, or try setting quoting=csv.QUOTE_NONE.' % limit
+    def __init__(self, limit, line_number):
+        super().__init__(
+            'CSV contains a field longer than the maximum length of %i characters on line %i. Try raising the maximum '
+            'with the field_size_limit parameter, or try setting quoting=csv.QUOTE_NONE.' % (limit, line_number)
         )

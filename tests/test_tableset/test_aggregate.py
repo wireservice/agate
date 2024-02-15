@@ -1,15 +1,9 @@
-#!/usr/bin/env python
-
 from collections import OrderedDict
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
+from decimal import Decimal
 
 from agate import Table, TableSet
-from agate.aggregations import *
-from agate.data_types import *
+from agate.aggregations import Count, MaxLength, Mean, Min, Sum
+from agate.data_types import Number, Text
 from agate.exceptions import DataTypeError
 from agate.testcase import AgateTestCase
 

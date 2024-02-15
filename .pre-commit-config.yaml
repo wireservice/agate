@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/pycqa/flake8
+    rev: 3.9.2
+    hooks:
+      - id: flake8
+  - repo: https://github.com/pycqa/isort
+    rev: 5.8.0
+    hooks:
+      - id: isort
+  - repo: https://github.com/mgedmin/check-manifest
+    rev: "0.46"
+    hooks:
+      - id: check-manifest

@@ -1,11 +1,10 @@
-#!/usr/bin/env python
-
-import io
-import six
+import itertools
+from io import StringIO
 
 
 @classmethod
-def from_csv(cls, path, column_names=None, column_types=None, row_names=None, skip_lines=0, header=True, sniff_limit=0, encoding='utf-8', **kwargs):
+def from_csv(cls, path, column_names=None, column_types=None, row_names=None, skip_lines=0, header=True, sniff_limit=0,
+             encoding='utf-8', row_limit=None, **kwargs):
     """
     Create a new table from a CSV.
 
@@ -25,8 +24,7 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
     :param row_names:
         See :meth:`.Table.__init__`.
     :param skip_lines:
-        The number of lines to skip from the top of the file. Note that skip
-        lines will not work with
+        The number of lines to skip from the top of the file.
     :param header:
         If :code:`True`, the first row of the CSV is assumed to contain column
         names. If :code:`header` and :code:`column_names` are both specified
@@ -38,6 +36,8 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         Character encoding of the CSV file. Note: if passing in a file
         handle it is assumed you have already opened it with the correct
         encoding specified.
+    :param row_limit:
+        Limit how many rows of data will be read.
     """
     from agate import csv
     from agate.table import Table
@@ -48,10 +48,7 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         if hasattr(path, 'read'):
             f = path
         else:
-            if six.PY2:
-                f = open(path, 'Urb')
-            else:
-                f = io.open(path, encoding=encoding)
+            f = open(path, encoding=encoding)
 
             close = True
 
@@ -62,15 +59,12 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         else:
             raise ValueError('skip_lines argument must be an int')
 
-        contents = six.StringIO(f.read())
+        contents = StringIO(f.read())
 
         if sniff_limit is None:
             kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue())
         elif sniff_limit > 0:
             kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue()[:sniff_limit])
-
-        if six.PY2:
-            kwargs['encoding'] = encoding
 
         reader = csv.reader(contents, header=header, **kwargs)
 
@@ -80,7 +74,10 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
             else:
                 next(reader)
 
-        rows = tuple(reader)
+        if row_limit is None:
+            rows = tuple(reader)
+        else:
+            rows = tuple(itertools.islice(reader, row_limit))
 
     finally:
         if close:

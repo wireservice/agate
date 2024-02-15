@@ -11,7 +11,7 @@ Why agate?
 * Decimal precision everywhere.
 * Exhaustive user documentation.
 * Pluggable `extensions <extensions>`_ that add SQL integration, Excel support, and more.
-* Designed with `iPython <http://ipython.org/>`_, `Jupyter <https://jupyter.org/>`_ and `atom/hydrogen <https://atom.io/packages/hydrogen>`_ in mind.
+* Designed with `iPython <https://ipython.org/>`_, `Jupyter <https://jupyter.org/>`_ and `atom/hydrogen <https://atom.io/packages/hydrogen>`_ in mind.
 * Pure Python. No C dependencies to compile.
 * Exhaustive test coverage.
 * MIT licensed and free for all purposes.
@@ -21,7 +21,7 @@ Why agate?
 Principles
 ==========
 
-agate is a intended to fill a very particular programming niche. It should not be allowed to become as complex as `numpy <http://www.numpy.org/>`_ or `pandas <http://pandas.pydata.org/>`_. Please bear in mind the following principles when considering a new feature:
+agate is a intended to fill a very particular programming niche. It should not be allowed to become as complex as `numpy <https://numpy.org/>`_ or `pandas <https://pandas.pydata.org/>`_. Please bear in mind the following principles when considering a new feature:
 
 * Humans have less time than computers. Optimize for humans.
 * Most datasets are small. Don't optimize for "big data".

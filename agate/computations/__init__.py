@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Computations create a new value for each :class:`.Row` in a :class:`.Table`.
 When used with :meth:`.Table.compute` these new values become a new column.
@@ -13,12 +11,11 @@ If this still isn't flexible enough, it's simple to create a custom computation
 class by inheriting from :class:`Computation`.
 """
 
-from agate.computations.base import Computation  # noqa
-
-from agate.computations.formula import Formula  # noqa
-from agate.computations.change import Change  # noqa
-from agate.computations.percent import Percent  # noqa
-from agate.computations.percent_change import PercentChange  # noqa
-from agate.computations.rank import Rank  # noqa
-from agate.computations.percentile_rank import PercentileRank  # noqa
-from agate.computations.slug import Slug  # noqa
+from agate.computations.base import Computation
+from agate.computations.change import Change
+from agate.computations.formula import Formula
+from agate.computations.percent import Percent
+from agate.computations.percent_change import PercentChange
+from agate.computations.percentile_rank import PercentileRank
+from agate.computations.rank import Rank
+from agate.computations.slug import Slug

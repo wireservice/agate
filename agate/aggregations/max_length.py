@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from decimal import Decimal
 
 from agate.aggregations.base import Aggregation
@@ -13,7 +11,7 @@ class MaxLength(Aggregation):
 
     Note: On Python 2.7 this function may miscalcuate the length of unicode
     strings that contain "wide characters". For details see this StackOverflow
-    answer: http://stackoverflow.com/a/35462951
+    answer: https://stackoverflow.com/a/35462951
 
     :param column_name:
         The name of a column containing :class:`.Text` data.

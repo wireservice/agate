@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
-
 def find(self, test):
     """
     Find the first row that passes a test.

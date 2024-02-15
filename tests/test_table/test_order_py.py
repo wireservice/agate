@@ -1,9 +1,6 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
 from agate import Table
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
-from agate.data_types import *
 
 
 class TestOrderBy(AgateTestCase):
@@ -11,7 +8,7 @@ class TestOrderBy(AgateTestCase):
         self.rows = (
             (1, 4, 'a'),
             (2, 3, 'b'),
-            (None, 2, u'👍')
+            (None, 2, '👍')
         )
 
         self.number_type = Number()
@@ -142,9 +139,8 @@ class TestOrderBy(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types, row_names='three')
         new_table = table.order_by('two')
 
-        self.assertRowNames(new_table, [u'👍', 'b', 'a'])
+        self.assertRowNames(new_table, ['👍', 'b', 'a'])
 
     def test_order_by_empty_table(self):
         table = Table([], self.column_names)
-
-        new_table = table.order_by('three')  # noqa
+        table.order_by('three')

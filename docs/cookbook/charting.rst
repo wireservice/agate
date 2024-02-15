@@ -2,7 +2,7 @@
 Charts
 ======
 
-Agate offers two kinds of built in charting: very simple text bar charts and SVG charting via `leather <http://leather.rtfd.io/>`_. Both are intended for efficiently exploring data, rather than producing publication-ready charts.
+Agate offers two kinds of built in charting: very simple text bar charts and SVG charting via `leather <https://leather.rtfd.io/>`_. Both are intended for efficiently exploring data, rather than producing publication-ready charts.
 
 Text-based bar chart
 ====================
@@ -119,7 +119,7 @@ SVG lattice chart
 Using matplotlib
 ================
 
-If you need to make more complex charts, you can always use agate with `matplotlib <http://matplotlib.org/>`_.
+If you need to make more complex charts, you can always use agate with `matplotlib <https://matplotlib.org/>`_.
 
 Here is an example of how you might generate a line chart:
 

@@ -1,11 +1,5 @@
-#!/usr/bin/env python
-
 from decimal import Decimal
-
-import six
-
-if six.PY3:
-    from functools import cmp_to_key
+from functools import cmp_to_key
 
 from agate.computations.base import Computation
 from agate.data_types import Number
@@ -44,10 +38,7 @@ class Rank(Computation):
         column = table.columns[self._column_name]
 
         if self._comparer:
-            if six.PY3:
-                data_sorted = sorted(column.values(), key=cmp_to_key(self._comparer))
-            else:  # pragma: no cover
-                data_sorted = sorted(column.values(), cmp=self._comparer)
+            data_sorted = sorted(column.values(), key=cmp_to_key(self._comparer))
         else:
             data_sorted = column.values_sorted()
 

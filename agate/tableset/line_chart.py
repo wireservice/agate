@@ -1,9 +1,4 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 import leather
-
-from agate import utils
 
 
 def line_chart(self, x=0, y=1, path=None, width=None, height=None):

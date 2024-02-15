@@ -1,8 +1,6 @@
-#!/usr/bin/env python
-
 from agate.aggregations import Aggregation
 from agate.aggregations.has_nulls import HasNulls
-from agate.aggregations.variance import Variance, PopulationVariance
+from agate.aggregations.variance import PopulationVariance, Variance
 from agate.data_types import Number
 from agate.exceptions import DataTypeError
 from agate.warns import warn_null_calculation
@@ -36,7 +34,9 @@ class StDev(Aggregation):
             warn_null_calculation(self, column)
 
     def run(self, table):
-        return self._variance.run(table).sqrt()
+        variance = self._variance.run(table)
+        if variance is not None:
+            return variance.sqrt()
 
 
 class PopulationStDev(StDev):
@@ -67,4 +67,6 @@ class PopulationStDev(StDev):
             warn_null_calculation(self, column)
 
     def run(self, table):
-        return self._population_variance.run(table).sqrt()
+        variance = self._population_variance.run(table)
+        if variance is not None:
+            return variance.sqrt()

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 import os
 
 
@@ -9,7 +6,9 @@ def to_csv(self, path, **kwargs):
     Write this table to a CSV. This method uses agate's builtin CSV writer,
     which supports unicode on both Python 2 and Python 3.
 
-    `kwargs` will be passed through to the CSV writer.
+    ``kwargs`` will be passed through to the CSV writer.
+
+    The ``lineterminator`` defaults to the newline character (LF, ``\\n``).
 
     :param path:
         Filepath or file-like object to write to.

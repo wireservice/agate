@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import sys
 
 from agate.data_types import Text

@@ -1,13 +1,7 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
+from decimal import Decimal
 
 from agate import Table, TableSet
-from agate.data_types import *
+from agate.data_types import Boolean, Number, Text
 from agate.testcase import AgateTestCase
 
 

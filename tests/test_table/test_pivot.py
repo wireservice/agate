@@ -1,17 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
 import sys
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
+from decimal import Decimal
 
 from agate import Table
 from agate.aggregations import Sum
 from agate.computations import Percent
-from agate.data_types import *
+from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 
@@ -83,7 +76,7 @@ class TestPivot(AgateTestCase):
         table = Table(self.rows, self.column_names, self.column_types)
 
         with self.assertRaises(ValueError):
-            pivot_table = table.pivot(['race', 'gender'], key_name='foo')  # noqa
+            table.pivot(['race', 'gender'], key_name='foo')
 
     def test_pivot_no_key(self):
         table = Table(self.rows, self.column_names, self.column_types)

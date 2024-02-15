@@ -1,20 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
 import pickle
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
-
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
+from decimal import Decimal
 
 from agate import Table
-from agate.data_types import *
+from agate.data_types import Number, Text
 
 
 class TestColumn(unittest.TestCase):

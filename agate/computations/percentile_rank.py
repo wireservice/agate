@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from agate.aggregations.percentiles import Percentiles
 from agate.computations.rank import Rank
 from agate.data_types import Number

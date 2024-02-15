@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-
 from agate.aggregations.base import Aggregation
-from agate.data_types import Boolean
 
 
 class First(Aggregation):
@@ -39,4 +36,4 @@ class First(Aggregation):
         if self._test is None:
             return data[0]
 
-        return next((d for d in data if self._test(d)))
+        return next(d for d in data if self._test(d))

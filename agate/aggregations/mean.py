@@ -1,9 +1,7 @@
-#!/usr/bin/env python
-
 from agate.aggregations.base import Aggregation
 from agate.aggregations.has_nulls import HasNulls
 from agate.aggregations.sum import Sum
-from agate.data_types import Number
+from agate.data_types import Number, TimeDelta
 from agate.exceptions import DataTypeError
 from agate.warns import warn_null_calculation
 
@@ -20,13 +18,16 @@ class Mean(Aggregation):
         self._sum = Sum(column_name)
 
     def get_aggregate_data_type(self, table):
-        return Number()
+        column = table.columns[self._column_name]
+
+        if isinstance(column.data_type, (Number, TimeDelta)):
+            return column.data_type
 
     def validate(self, table):
         column = table.columns[self._column_name]
 
-        if not isinstance(column.data_type, Number):
-            raise DataTypeError('Mean can only be applied to columns containing Number data.')
+        if not isinstance(column.data_type, (Number, TimeDelta)):
+            raise DataTypeError('Mean can only be applied to columns containing Number or TimeDelta data.')
 
         has_nulls = HasNulls(self._column_name).run(table)
 
@@ -35,10 +36,7 @@ class Mean(Aggregation):
 
     def run(self, table):
         column = table.columns[self._column_name]
-        num_of_values = len(column.values_without_nulls())
-        # If there are no non-null columns then return null.
-        if num_of_values == 0:
-            return None
-
-        sum_total = self._sum.run(table)
-        return sum_total / num_of_values
+        data = column.values_without_nulls()
+        if data:
+            sum_total = self._sum.run(table)
+            return sum_total / len(data)

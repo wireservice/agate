@@ -1,11 +1,8 @@
-#!/usr/bin/env python
-
 import datetime
+import locale
 
 import isodate
-import locale
 import parsedatetime
-import six
 
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
@@ -19,14 +16,13 @@ class DateTime(DataType):
         A formatting string for :meth:`datetime.datetime.strptime` to use
         instead of using regex-based parsing.
     :param timezone:
-        A `pytz <http://pytz.sourceforge.net/>`_ timezone to apply to each
-        parsed date.
+        A ``ZoneInfo`` timezone to apply to each parsed date.
     :param locale:
         A locale specification such as :code:`en_US` or :code:`de_DE` to use
         for parsing formatted datetimes.
     """
     def __init__(self, datetime_format=None, timezone=None, locale=None, **kwargs):
-        super(DateTime, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.datetime_format = datetime_format
         self.timezone = timezone
@@ -36,7 +32,7 @@ class DateTime(DataType):
         self._source_time = datetime.datetime(
             now.year, now.month, now.day, 0, 0, 0, 0, None
         )
-        self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=True)
+        self._constants = parsedatetime.Constants(localeID=self.locale)
         self._parser = parsedatetime.Calendar(constants=self._constants, version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def __getstate__(self):
@@ -56,7 +52,7 @@ class DateTime(DataType):
         of the parsedatetime Calendar class.
         """
         self.__dict__.update(ndict)
-        self._constants = parsedatetime.Constants(localeID=self.locale, usePyICU=True)
+        self._constants = parsedatetime.Constants(localeID=self.locale)
         self._parser = parsedatetime.Calendar(constants=self._constants, version=parsedatetime.VERSION_CONTEXT_STYLE)
 
     def cast(self, d):
@@ -66,14 +62,13 @@ class DateTime(DataType):
         If both `date_format` and `locale` have been specified
         in the `agate.DateTime` instance, the `cast()` function
         is not thread-safe.
-        :returns:
-            :class:`datetime.datetime` or :code:`None`.
+        :returns: :class:`datetime.datetime` or :code:`None`.
         """
         if isinstance(d, datetime.datetime) or d is None:
             return d
-        elif isinstance(d, datetime.date):
+        if isinstance(d, datetime.date):
             return datetime.datetime.combine(d, datetime.time(0, 0, 0))
-        elif isinstance(d, six.string_types):
+        if isinstance(d, str):
             d = d.strip()
 
             if d.lower() in self.null_values:
@@ -89,7 +84,7 @@ class DateTime(DataType):
 
             try:
                 dt = datetime.datetime.strptime(d, self.datetime_format)
-            except:
+            except (ValueError, TypeError):
                 raise CastError('Value "%s" does not match date format.' % d)
             finally:
                 if orig_locale:
@@ -99,7 +94,7 @@ class DateTime(DataType):
 
         try:
             (_, _, _, _, matched_text), = self._parser.nlp(d, sourceTime=self._source_time)
-        except:
+        except Exception:
             matched_text = None
         else:
             value, ctx = self._parser.parseDT(
@@ -110,14 +105,14 @@ class DateTime(DataType):
 
             if matched_text == d and ctx.hasDate and ctx.hasTime:
                 return value
-            elif matched_text == d and ctx.hasDate and not ctx.hasTime:
+            if matched_text == d and ctx.hasDate and not ctx.hasTime:
                 return datetime.datetime.combine(value.date(), datetime.time.min)
 
         try:
             dt = isodate.parse_datetime(d)
 
             return dt
-        except:
+        except Exception:
             pass
 
         raise CastError('Can not parse value "%s" as datetime.' % d)

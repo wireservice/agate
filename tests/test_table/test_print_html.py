@@ -1,25 +1,22 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
 import warnings
-
-import six
-from six.moves import html_parser
+from html.parser import HTMLParser
+from io import StringIO
 
 from agate import Table
 from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
 
-class TableHTMLParser(html_parser.HTMLParser):
+class TableHTMLParser(HTMLParser):
     """
     Parser for use in testing HTML rendering of tables.
     """
+
     def __init__(self):
         warnings.simplefilter('ignore')
 
         try:
-            html_parser.HTMLParser.__init__(self)
+            HTMLParser.__init__(self)
         finally:
             warnings.resetwarnings()
 
@@ -99,7 +96,7 @@ class TestPrintHTML(AgateTestCase):
         self.rows = (
             (1, 4, 'a'),
             (2, 3, 'b'),
-            (None, 2, u'👍')
+            (None, 2, '👍')
         )
 
         self.number_type = Number()
@@ -110,7 +107,7 @@ class TestPrintHTML(AgateTestCase):
 
     def test_print_html(self):
         table = Table(self.rows, self.column_names, self.column_types)
-        table_html = six.StringIO()
+        table_html = StringIO()
         table.print_html(output=table_html)
         table_html = table_html.getvalue()
 
@@ -138,7 +135,7 @@ class TestPrintHTML(AgateTestCase):
     def test_print_html_tags(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_html(output=output)
         html = output.getvalue()
 
@@ -149,7 +146,7 @@ class TestPrintHTML(AgateTestCase):
     def test_print_html_max_rows(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_html(max_rows=2, output=output)
         html = output.getvalue()
 
@@ -160,7 +157,7 @@ class TestPrintHTML(AgateTestCase):
     def test_print_html_max_columns(self):
         table = Table(self.rows, self.column_names, self.column_types)
 
-        output = six.StringIO()
+        output = StringIO()
         table.print_html(max_columns=2, output=output)
         html = output.getvalue()
 

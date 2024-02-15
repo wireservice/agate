@@ -1,8 +1,5 @@
-#!/usr/bin/env python
-
 from agate.aggregations.has_nulls import HasNulls
 from agate.computations.base import Computation
-
 from agate.data_types import Number
 from agate.exceptions import DataTypeError
 from agate.warns import warn_null_calculation

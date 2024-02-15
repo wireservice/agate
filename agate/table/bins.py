@@ -1,15 +1,9 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
-try:
-    from cdecimal import Decimal
-except ImportError:  # pragma: no cover
-    from decimal import Decimal
+from decimal import Decimal
 
 from babel.numbers import format_decimal
 
-from agate.aggregations import Min, Max
 from agate import utils
+from agate.aggregations import Max, Min
 
 
 def bins(self, column_name, count=10, start=None, end=None):
@@ -65,9 +59,9 @@ def bins(self, column_name, count=10, start=None, end=None):
         inclusive = format_decimal(i, format=break_formatter)
         exclusive = format_decimal(j, format=break_formatter)
 
-        output = u'[' if first_exclusive else u'('
-        output += u'%s - %s' % (inclusive, exclusive)
-        output += u']' if last_exclusive else u')'
+        output = '[' if first_exclusive else '('
+        output += f'{inclusive} - {exclusive}'
+        output += ']' if last_exclusive else ')'
 
         return output
 

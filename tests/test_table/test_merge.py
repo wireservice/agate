@@ -1,10 +1,7 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
 from agate import Table
-from agate.data_types import *
-from agate.testcase import AgateTestCase
+from agate.data_types import Number, Text
 from agate.exceptions import DataTypeError
+from agate.testcase import AgateTestCase
 
 
 class TestMerge(AgateTestCase):
@@ -76,7 +73,7 @@ class TestMerge(AgateTestCase):
         table_b = Table(self.rows, self.column_names, column_types)
 
         with self.assertRaises(DataTypeError):
-            table_c = Table.merge([table_a, table_b])  # noqa
+            Table.merge([table_a, table_b])
 
     def test_merge_with_row_names(self):
         table_a = Table(self.rows, self.column_names, self.column_types, row_names='three')

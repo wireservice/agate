@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=W0212
-
 from agate import utils
 
 
@@ -19,32 +16,32 @@ def order_by(self, key, reverse=False):
     """
     if len(self._rows) == 0:
         return self._fork(self._rows)
-    else:
-        key_is_row_function = hasattr(key, '__call__')
-        key_is_sequence = utils.issequence(key)
 
-        def sort_key(data):
-            row = data[1]
+    key_is_row_function = hasattr(key, '__call__')
+    key_is_sequence = utils.issequence(key)
 
-            if key_is_row_function:
-                k = key(row)
-            elif key_is_sequence:
-                k = tuple(utils.NullOrder() if row[n] is None else row[n] for n in key)
-            else:
-                k = row[key]
+    def sort_key(data):
+        row = data[1]
 
-            if k is None:
-                return utils.NullOrder()
-
-            return k
-
-        results = sorted(enumerate(self._rows), key=sort_key, reverse=reverse)
-
-        indices, rows = zip(*results)
-
-        if self._row_names is not None:
-            row_names = [self._row_names[i] for i in indices]
+        if key_is_row_function:
+            k = key(row)
+        elif key_is_sequence:
+            k = tuple(utils.NullOrder() if row[n] is None else row[n] for n in key)
         else:
-            row_names = None
+            k = row[key]
 
-        return self._fork(rows, row_names=row_names)
+        if k is None:
+            return utils.NullOrder()
+
+        return k
+
+    results = sorted(enumerate(self._rows), key=sort_key, reverse=reverse)
+
+    indices, rows = zip(*results)
+
+    if self._row_names is not None:
+        row_names = [self._row_names[i] for i in indices]
+    else:
+        row_names = None
+
+    return self._fork(rows, row_names=row_names)
