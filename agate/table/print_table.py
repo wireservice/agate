@@ -66,6 +66,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
     widths = [len(n) for n in column_names]
     number_formatters = []
     formatted_data = []
+    multi_line_rows = False
 
     # Determine correct number of decimal places for each Number column
     for i, c in enumerate(self._columns):
@@ -87,7 +88,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
         if i >= max_rows:
             break
 
-        formatted_row = []
+        formatted_row = [[]]
 
         for j, v in enumerate(row):
             if j >= max_columns:
@@ -102,6 +103,25 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
                 )
             else:
                 v = str(v)
+                vs = v.splitlines()
+                if len(vs) > 1:
+                    multi_line_rows = True
+
+                    v = vs[0]
+                    for k, xv in enumerate(vs):
+                        if k == 0:
+                            v = xv
+                            continue
+
+                        if max_column_width is not None and len(xv) > max_column_width:
+                            xv = '%s...' % xv[:max_column_width - 3]
+
+                        if len(xv) > widths[j]:
+                            widths[j] = len(xv)
+
+                        if k == len(formatted_row):
+                            formatted_row.append([''] * max_columns)
+                        formatted_row[k][j] = xv
 
             if max_column_width is not None and len(v) > max_column_width:
                 v = '%s%s' % (v[:max_column_width - len_truncation], truncation)
@@ -109,7 +129,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
             if len(v) > widths[j]:
                 widths[j] = len(v)
 
-            formatted_row.append(v)
+            formatted_row[0].append(v)
 
             if j >= max_columns:
                 break
@@ -138,6 +158,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
 
         write(f'{v_line}{text}{v_line}')
 
+    # horizontal and vertical dividers.
     divider = '{v_line} {columns} {v_line}'.format(
         v_line=v_line,
         columns=' | '.join(h_line * w for w in widths)
@@ -149,7 +170,10 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
 
     # Rows
     for formatted_row in formatted_data:
-        write_row(formatted_row)
+        for row_line in formatted_row:
+            write_row(row_line)
+        if multi_line_rows:
+            write(divider)
 
     # Row indicating data was truncated
     if rows_truncated:
