@@ -59,14 +59,18 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         else:
             raise ValueError('skip_lines argument must be an int')
 
-        contents = StringIO(f.read())
+        handle = f
 
         if sniff_limit is None:
-            kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue())
+            # avoid reading the file twice
+            handle = StringIO(f.read())
+            kwargs['dialect'] = csv.Sniffer().sniff(handle.getvalue())
         elif sniff_limit > 0:
-            kwargs['dialect'] = csv.Sniffer().sniff(contents.getvalue()[:sniff_limit])
+            kwargs['dialect'] = csv.Sniffer().sniff(f.read(sniff_limit))
+            # return to the start of the file
+            f.seek(0)
 
-        reader = csv.reader(contents, header=header, **kwargs)
+        reader = csv.reader(handle, header=header, **kwargs)
 
         if header:
             if column_names is None:
@@ -75,12 +79,12 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
                 next(reader)
 
         if row_limit is None:
-            rows = tuple(reader)
+            rows = reader
         else:
-            rows = tuple(itertools.islice(reader, row_limit))
+            rows = itertools.islice(reader, row_limit)
+
+        return Table(rows, column_names, column_types, row_names=row_names)
 
     finally:
         if close:
             f.close()
-
-    return Table(rows, column_names, column_types, row_names=row_names)
