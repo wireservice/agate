@@ -13,8 +13,25 @@ Then:
 #. All tests pass on continuous integration
 #. The changelog is up-to-date and dated
 #. The version number is correct in:
-    * setup.py
-    * docs/conf.py
-#. Check for new authors: ``git log --invert-grep --author='James McKinney'``
-#. Run ``python charts.py`` to update images in the documentation
-#. Tag the release: ``git tag -a x.y.z -m 'x.y.z release.'; git push --follow-tags``
+
+   -  setup.py
+   -  docs/conf.py
+
+#. Check for new authors:
+
+   .. code-block:: bash
+
+      git log --perl-regexp --author='^((?!James McKinney).*)$'
+
+#. Update images in the documentation:
+
+   .. code-block:: bash
+
+      python charts.py
+
+#. Tag the release:
+
+   .. code-block:: bash
+
+      git tag -a x.y.z -m 'x.y.z release.'
+      git push --follow-tags
