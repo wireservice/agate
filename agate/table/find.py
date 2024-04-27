@@ -1,4 +1,3 @@
-
 def find(self, test):
     """
     Find the first row that passes a test.

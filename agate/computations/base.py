@@ -1,4 +1,3 @@
-
 class Computation:  # pragma: no cover
     """
     Computations produce a new column by performing a calculation on each row.

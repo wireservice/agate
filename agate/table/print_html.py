@@ -43,6 +43,8 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
         max_precision = float('inf')
 
     ellipsis = config.get_option('ellipsis_chars')
+    truncation = config.get_option('text_truncation_chars')
+    len_truncation = len(truncation)
     locale = locale or config.get_option('default_locale')
 
     rows_truncated = max_rows < len(self._rows)
@@ -93,7 +95,7 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
                 v = str(v)
 
             if max_column_width is not None and len(v) > max_column_width:
-                v = '%s...' % v[:max_column_width - 3]
+                v = '%s%s' % (v[:max_column_width - len_truncation], truncation)
 
             formatted_row.append(v)
 

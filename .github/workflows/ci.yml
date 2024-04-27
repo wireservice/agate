@@ -7,12 +7,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
-        python-version: [3.7, 3.8, 3.9, '3.10', '3.11', pypy-3.7]
-        exclude:
-          - os: windows-latest
-            python-version: 3.7
-          - os: windows-latest
-            python-version: pypy-3.7
+        python-version: [3.8, 3.9, '3.10', '3.11', '3.12', pypy-3.9]
     steps:
       - if: matrix.os == 'ubuntu-latest'
         name: Install UTF-8 locales and lxml requirements
@@ -22,8 +17,8 @@ jobs:
           sudo locale-gen en_US.UTF-8
           sudo locale-gen ko_KR.UTF-8
           sudo update-locale
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip

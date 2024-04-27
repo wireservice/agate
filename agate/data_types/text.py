@@ -1,4 +1,3 @@
-
 from agate.data_types.base import DataType
 
 

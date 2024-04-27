@@ -1,4 +1,3 @@
-
 def limit(self, start_or_stop=None, stop=None, step=None):
     """
     Create a new table with fewer rows.

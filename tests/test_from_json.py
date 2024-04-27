@@ -1,6 +1,6 @@
-
 from agate import Table
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
+from agate.rows import Row
 from agate.testcase import AgateTestCase
 from agate.type_tester import TypeTester
 
@@ -86,3 +86,10 @@ class TestJSON(AgateTestCase):
     def test_from_json_error_newline_key(self):
         with self.assertRaises(ValueError):
             Table.from_json('examples/test.json', newline=True, key='test')
+
+    def test_from_json_ambiguous(self):
+        table = Table.from_json('examples/test_from_json_ambiguous.json')
+
+        self.assertColumnNames(table, ('a/b',))
+        self.assertColumnTypes(table, [Boolean])
+        self.assertRows(table, [Row([False])])

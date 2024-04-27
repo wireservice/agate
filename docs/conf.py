@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 project = 'agate'
 copyright = '2017, Christopher Groskopf'
-version = '1.7.1'
+version = '1.9.1'
 release = version
 
 # -- General configuration ---------------------------------------------------

@@ -4,7 +4,12 @@ import unittest
 from decimal import Decimal
 
 import parsedatetime
-import pytz
+
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    # Fallback for Python < 3.9
+    from backports.zoneinfo import ZoneInfo
 
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.exceptions import CastError
@@ -352,16 +357,16 @@ class TestDateTime(unittest.TestCase):
         ))
 
     def test_cast_parser_timezone(self):
-        tzinfo = pytz.timezone('US/Pacific')
+        tzinfo = ZoneInfo('US/Pacific')
         datetime_type = DateTime(timezone=tzinfo)
 
         values = ('3/1/1994 12:30 PM', '2/17/2011 06:30', None, 'January 5th, 1984 22:37', 'n/a')
         casted = tuple(datetime_type.cast(v) for v in values)
         self.assertSequenceEqual(casted, (
-            tzinfo.localize(datetime.datetime(1994, 3, 1, 12, 30, 0, 0)),
-            tzinfo.localize(datetime.datetime(2011, 2, 17, 6, 30, 0, 0)),
+            datetime.datetime(1994, 3, 1, 12, 30, 0, 0, tzinfo=tzinfo),
+            datetime.datetime(2011, 2, 17, 6, 30, 0, 0, tzinfo=tzinfo),
             None,
-            tzinfo.localize(datetime.datetime(1984, 1, 5, 22, 37, 0, 0)),
+            datetime.datetime(1984, 1, 5, 22, 37, 0, 0, tzinfo=tzinfo),
             None
         ))
 

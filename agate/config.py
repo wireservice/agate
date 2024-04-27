@@ -26,6 +26,10 @@ configuration.
 +-------------------------+------------------------------------------+-----------------------------------------+
 | ellipsis_chars          | Characters to render for ellipsis        | '...'                                   |
 +-------------------------+------------------------------------------+-----------------------------------------+
+| text_truncation_chars   | Characters for truncated text values     | '...'                                   |
++-------------------------+------------------------------------------+-----------------------------------------+
+| number_truncation_chars | Characters for truncated number values   | '…'                                     |
++-------------------------+------------------------------------------+-----------------------------------------+
 
 """
 
@@ -50,6 +54,10 @@ _options = {
     'tick_char': '+',
     #: Characters to render for ellipsis
     'ellipsis_chars': '...',
+    #: Characters for truncated text values
+    'text_truncation_chars': '...',
+    #: Characters for truncated number values
+    'number_truncation_chars': '…',
 }
 
 

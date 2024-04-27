@@ -1,4 +1,3 @@
-
 def having(self, aggregations, test):
     """
     Create a new :class:`.TableSet` with only those tables that pass a test.

@@ -1,4 +1,3 @@
-
 from agate.exceptions import UnsupportedAggregationError
 
 

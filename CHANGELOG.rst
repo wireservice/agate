@@ -1,22 +1,38 @@
-Unreleased
-----------
+1.11.0 - April 27. 2024
+-----------------------
+
+* fix: Fix :meth:`.TableSet.print_structure` for nested tablesets. (#765)
+
+1.9.1 - December 21, 2023
+-------------------------
+
+* Add Babel 2.14 support.
+
+1.9.0 - October 17, 2023
+------------------------
+
+* feat: Add a ``text_truncation_chars`` configuration for values that exceed ``max_column_width`` in :meth:`.Table.print_table` and :meth:`.Table.print_html`.
+* feat: Add a ``number_truncation_chars`` configuration for values that exceed ``max_precision`` in :meth:`.Table.print_table` and :meth:`.Table.print_html`.
+
+1.8.0 - October 10, 2023
+------------------------
 
 * feat: Lowercase the ``null_values`` provided to individual data types, since all comparisons to ``null_values`` are case-insensitive. (#770)
 * feat: :class:`.Mean` works with :class:`.TimeDelta`. (#761)
-* fix: Fix :meth:`.TableSet.print_structure` for nested tablesets. (#765)
+* Switch from ``pytz`` to ``ZoneInfo``.
+* Add Python 3.12 support.
+* Drop Python 3.7 support (end-of-life was June 27, 2023).
 
-1.7.1 - Jan 4, 2023
--------------------
+1.7.1 - January 4, 2023
+-----------------------
 
 * Allow parsedatetime 2.6.
 
-1.7.0 - Jan 3, 2023
--------------------
+1.7.0 - January 3, 2023
+-----------------------
 
-* Add Python 3.11 support.
-* Add Python 3.10 support.
-* Drop Python 3.6 support (end-of-life was December 23, 2021).
-* Drop Python 2.7 support (end-of-life was January 1, 2020).
+* Add Python 3.10 and 3.11 support.
+* Drop support for Python 2.7 (EOL 2020-01-01), 3.6 (2021-12-23).
 
 1.6.3 - July 15, 2021
 ---------------------
@@ -37,8 +53,7 @@ Unreleased
 * fix: Aggregations return ``None`` if all values are ``None``, instead of raising an error. Note that ``Sum``, ``MaxLength`` and ``MaxPrecision`` continue to return ``0`` if all values are ``None``. (#706)
 * fix: Ensure files are closed when errors occur. (#734)
 * build: Make PyICU an optional dependency.
-* Drop Python 3.5 support (end-of-life was September 13, 2020).
-* Drop Python 3.4 support (end-of-life was March 18, 2019).
+* Drop support for Python 3.4 (2019-03-18), 3.5 (2020-09-13).
 
 1.6.2 - March 10, 2021
 ----------------------

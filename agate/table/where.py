@@ -1,4 +1,3 @@
-
 def where(self, test):
     """
     Create a new :class:`.Table` with only those rows that pass a test.
