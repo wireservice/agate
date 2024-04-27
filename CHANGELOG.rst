@@ -1,3 +1,8 @@
+1.11.0 - April 27. 2024
+-----------------------
+
+* fix: Fix :meth:`.TableSet.print_structure` for nested tablesets. (#765)
+
 1.9.1 - December 21, 2023
 -------------------------
 
