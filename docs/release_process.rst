@@ -18,5 +18,3 @@ Then:
 #. Check for new authors: ``git log --invert-grep --author='James McKinney'``
 #. Run ``python charts.py`` to update images in the documentation
 #. Tag the release: ``git tag -a x.y.z -m 'x.y.z release.'; git push --follow-tags``
-#. Upload to PyPI: ``rm -rf dist; python setup.py sdist bdist_wheel; twine upload dist/*``
-#. Build the documentation on ReadTheDocs manually
