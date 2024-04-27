@@ -82,7 +82,7 @@ class Table:
             try:
                 first_row = rows[0]
             except TypeError:
-                # it's an iterator
+                # rows is an iterator.
                 first_row = next(rows)
                 rows = chain([first_row], rows)
             self._column_names = tuple(utils.letter_name(i) for i in range(len(first_row)))
@@ -108,8 +108,7 @@ class Table:
                     raise ValueError('Column types must be instances of DataType.')
 
         if isinstance(column_types, TypeTester):
-            # if rows is streaming, we must bring it in-memory
-            # note: we could do better here.
+            # In case rows is an iterator, in which case need to read it all into memory.
             rows = tuple(rows)
             self._column_types = column_types.run(rows, self._column_names)
         else:

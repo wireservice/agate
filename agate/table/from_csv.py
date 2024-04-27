@@ -62,12 +62,12 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         handle = f
 
         if sniff_limit is None:
-            # avoid reading the file twice
+            # Reads to the end of the tile, but avoid reading the file twice.
             handle = StringIO(f.read())
             kwargs['dialect'] = csv.Sniffer().sniff(handle.getvalue())
         elif sniff_limit > 0:
+            # Reads only the start of the file.
             kwargs['dialect'] = csv.Sniffer().sniff(f.read(sniff_limit))
-            # return to the start of the file
             f.seek(0)
 
         reader = csv.reader(handle, header=header, **kwargs)
@@ -84,7 +84,6 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
             rows = itertools.islice(reader, row_limit)
 
         return Table(rows, column_names, column_types, row_names=row_names)
-
     finally:
         if close:
             f.close()
