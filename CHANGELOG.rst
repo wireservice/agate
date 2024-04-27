@@ -1,7 +1,37 @@
-1.11.0 - April 27. 2024
+1.10.0 - April 27. 2024
 -----------------------
 
-* fix: Fix :meth:`.TableSet.print_structure` for nested tablesets. (#765)
+-  fix: Fix :meth:`.TableSet.print_structure` for nested tablesets. (#765)
+
+   .. code-block:: python
+
+      import agate
+      mytable = agate.Table([
+          ('foo', 'FOO', 1),
+          ('foo', 'FOO', 2),
+          ('bar', 'BOZ', 1),
+          ('bar', 'BAZ', 2),
+          ('bar', 'BIZ'),
+      ])
+
+   Instead of:
+
+   .. code-block:: none
+
+      >>> mytable.group_by('a').group_by('b')
+      AttributeError: 'TableSet' object has no attribute 'rows'
+
+   Now:
+
+   .. code-block:: none
+
+      >>> mytable.group_by('a').group_by('b')
+      | table   | rows |
+      | ------- | ---- |
+      | foo.FOO | 2    |
+      | bar.BOZ | 1    |
+      | bar.BAZ | 1    |
+      | bar.BIZ | 1    |
 
 1.9.1 - December 21, 2023
 -------------------------
