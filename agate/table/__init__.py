@@ -79,7 +79,13 @@ class Table:
         if column_names:
             self._column_names = utils.deduplicate(column_names, column_names=True)
         elif rows:
-            self._column_names = tuple(utils.letter_name(i) for i in range(len(rows[0])))
+            try:
+                first_row = rows[0]
+            except TypeError:
+                # it's an iterator
+                first_row = next(rows)
+                rows = chain([first_row], rows)
+            self._column_names = tuple(utils.letter_name(i) for i in range(len(first_row)))
             warnings.warn('Column names not specified. "%s" will be used as names.' % str(self._column_names),
                           RuntimeWarning, stacklevel=2)
         else:
@@ -102,6 +108,9 @@ class Table:
                     raise ValueError('Column types must be instances of DataType.')
 
         if isinstance(column_types, TypeTester):
+            # if rows is streaming, we must bring it in-memory
+            # note: we could do better here.
+            rows = tuple(rows)
             self._column_types = column_types.run(rows, self._column_names)
         else:
             self._column_types = tuple(column_types)
