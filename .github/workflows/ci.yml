@@ -24,6 +24,8 @@ jobs:
           cache: pip
           cache-dependency-path: setup.py
       - run: pip install .[test] coveralls
+      - if: matrix.python-version == '3.8'
+        run: pip install 'lxml<5'
       - env:
           LANG: en_US.UTF-8
           PYTHONIOENCODING: utf-8
