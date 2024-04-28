@@ -1,4 +1,4 @@
-1.10.1 - April 27, 2024
+1.10.1 - April 28, 2024
 -----------------------
 
 -  fix: Version 1.10.0 errors on empty tables and seeks to the file's beginning, instead of to the original offset.
