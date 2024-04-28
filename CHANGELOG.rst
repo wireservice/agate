@@ -1,7 +1,7 @@
 1.10.1 - April 27, 2024
 -----------------------
 
--  fix: Version 1.10.0 seeks to the file's beginning, instead of to the original offset.
+-  fix: Version 1.10.0 errors on empty tables and seeks to the file's beginning, instead of to the original offset.
 -  fix: :meth:`.Number.csvify` returns a ``Decimal`` (or ``None``), instead of ``str``. :meth:`.Table.to_csv` with ``quoting=csv.QUOTE_NONNUMERIC`` now works.
 
 1.10.0 - April 27, 2024

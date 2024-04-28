@@ -78,18 +78,17 @@ class Table:
         # Validate column names
         if column_names:
             self._column_names = utils.deduplicate(column_names, column_names=True)
-        elif rows:
-            try:
-                first_row = rows[0]
-            except TypeError:
-                # rows is an iterator.
-                first_row = next(rows)
-                rows = chain([first_row], rows)
-            self._column_names = tuple(utils.letter_name(i) for i in range(len(first_row)))
-            warnings.warn('Column names not specified. "%s" will be used as names.' % str(self._column_names),
-                          RuntimeWarning, stacklevel=2)
         else:
-            self._column_names = tuple()
+            rows = iter(rows)
+            try:
+                first_row = next(rows)
+            except StopIteration:
+                self._column_names = tuple()
+            else:
+                rows = chain([first_row], rows)
+                self._column_names = tuple(utils.letter_name(i) for i in range(len(first_row)))
+                warnings.warn('Column names not specified. "%s" will be used as names.' % str(self._column_names),
+                              RuntimeWarning, stacklevel=2)
 
         len_column_names = len(self._column_names)
 
@@ -108,7 +107,7 @@ class Table:
                     raise ValueError('Column types must be instances of DataType.')
 
         if isinstance(column_types, TypeTester):
-            # In case rows is an iterator, in which case need to read it all into memory.
+            # Need to read all rows into memory.
             rows = tuple(rows)
             self._column_types = column_types.run(rows, self._column_names)
         else:
