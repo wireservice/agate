@@ -63,7 +63,7 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
         handle = f
 
         if sniff_limit is None:
-            # Reads to the end of the file, but avoid reading the file twice.
+            # Overwrite `handle` to not read the file a second time in `csv.reader`.
             handle = io.StringIO(f.read())
             sample = handle.getvalue()
         elif sniff_limit > 0:
