@@ -73,7 +73,7 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
                 # more than the sniff_limit. On my machine, the buffer_size of sys.stdin.buffer is the length of the
                 # input, up to 65536. This assumes that users don't sniff more than 64 KiB.
                 # https://docs.python.org/3/library/io.html#io.BufferedReader.peek
-                sample = sys.stdin.buffer.peek(sniff_limit).decode(encoding, 'ignore')[:sniff_limit]  # reads *bytes*
+                sample = f.buffer.peek(sniff_limit).decode(encoding, 'ignore')[:sniff_limit]  # reads *bytes*
             else:
                 offset = f.tell()
                 sample = f.read(sniff_limit)  # reads *characters*
