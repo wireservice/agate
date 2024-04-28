@@ -100,6 +100,9 @@ class Number(DataType):
 
         raise CastError('Can not parse value "%s" as Decimal.' % d)
 
+    def csvify(self, d):
+        return d
+
     def jsonify(self, d):
         if d is None:
             return d

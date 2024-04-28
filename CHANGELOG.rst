@@ -1,4 +1,9 @@
-1.10.0 - April 27. 2024
+1.10.1 - April 27, 2024
+-----------------------
+
+-  fix: :meth:`.Number.csvify` returns a ``Decimal`` (or ``None``), instead of ``str``. :meth:`.Table.to_csv` with ``quoting=csv.QUOTE_NONNUMERIC`` now works.
+
+1.10.0 - April 27, 2024
 -----------------------
 
 -  feat: :meth:`.Table.from_csv` reads the file line by line. If ``sniff_limit=None``, it reads the file into memory once, instead of twice. If ``column_types`` is a :class:`.TypeTester`, it reads the file into memory. (#778)

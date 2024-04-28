@@ -1,3 +1,4 @@
+import csv
 import os
 import sys
 from io import StringIO
@@ -22,6 +23,21 @@ class TestToCSV(AgateTestCase):
         self.column_types = [
             Number(), Text(), Boolean(), Date(), DateTime(), TimeDelta()
         ]
+
+    def test_to_csv_quote_nonnumeric(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        table.to_csv('.test.csv', quoting=csv.QUOTE_NONNUMERIC)
+
+        with open('.test.csv') as f:
+            contents1 = f.read()
+
+        with open('examples/test_quote_nonnumeric.csv') as f:
+            contents2 = f.read()
+
+        self.assertEqual(contents1, contents2)
+
+        os.remove('.test.csv')
 
     def test_to_csv(self):
         table = Table(self.rows, self.column_names, self.column_types)
