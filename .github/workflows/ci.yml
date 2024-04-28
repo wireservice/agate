@@ -31,6 +31,11 @@ jobs:
           PYTHONIOENCODING: utf-8
           PYTHONUTF8: 1
         run: pytest --cov agate
+      - name: Read from stdin
+        if: matrix.os != 'windows-latest'
+        run: python -c 'import sys; import agate; agate.Table.from_csv(sys.stdin, sniff_limit=1)' < examples/test.csv
+      - name: Read from pipe
+        run: printf 'a,b,c\n1,2,3' | python -c 'import sys; import agate; agate.Table.from_csv(sys.stdin, sniff_limit=1)'
       - run: python charts.py
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

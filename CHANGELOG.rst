@@ -1,3 +1,8 @@
+Unreleased
+----------
+
+-  fix: Version 1.10.0 errors on piped data.
+
 1.10.1 - April 28, 2024
 -----------------------
 

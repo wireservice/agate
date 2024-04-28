@@ -1,5 +1,6 @@
+import io
 import itertools
-from io import StringIO
+import sys
 
 
 @classmethod
@@ -63,14 +64,23 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
 
         if sniff_limit is None:
             # Reads to the end of the tile, but avoid reading the file twice.
-            handle = StringIO(f.read())
-            kwargs['dialect'] = csv.Sniffer().sniff(handle.getvalue())
+            handle = io.StringIO(f.read())
+            sample = handle.getvalue()
         elif sniff_limit > 0:
-            offset = f.tell()
+            if f == sys.stdin:
+                # "At most one single read on the raw stream is done to satisfy the call. The number of bytes returned
+                # may be less or more than requested." In other words, it reads the buffer_size, which might be less or
+                # more than the sniff_limit. On my machine, the buffer_size of sys.stdin.buffer is the length of the
+                # input, up to 65536. This assumes that users don't sniff more than 64 KiB.
+                # https://docs.python.org/3/library/io.html#io.BufferedReader.peek
+                sample = sys.stdin.buffer.peek(sniff_limit).decode(encoding, 'ignore')[:sniff_limit]  # reads *bytes*
+            else:
+                offset = f.tell()
+                sample = f.read(sniff_limit)  # reads *characters*
+                f.seek(offset)  # can't do f.seek(-sniff_limit, os.SEEK_CUR) on file opened in text mode
 
-            # Reads only the start of the file.
-            kwargs['dialect'] = csv.Sniffer().sniff(f.read(sniff_limit))
-            f.seek(offset)
+        if sniff_limit is None or sniff_limit > 0:
+            kwargs['dialect'] = csv.Sniffer().sniff(sample)
 
         reader = csv.reader(handle, header=header, **kwargs)
 
