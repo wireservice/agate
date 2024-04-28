@@ -187,3 +187,11 @@ class TestFromCSV(AgateTestCase):
         self.assertColumnTypes(table2, [Number, Text, Boolean, Date, DateTime, TimeDelta])
 
         self.assertRows(table2, table1.rows)
+
+    def test_from_csv_empty(self):
+        table = Table.from_csv('examples/empty.csv')
+
+        self.assertColumnNames(table, [])
+        self.assertColumnTypes(table, [])
+
+        self.assertRows(table, [])
