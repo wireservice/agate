@@ -66,9 +66,11 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
             handle = StringIO(f.read())
             kwargs['dialect'] = csv.Sniffer().sniff(handle.getvalue())
         elif sniff_limit > 0:
+            offset = f.tell()
+
             # Reads only the start of the file.
             kwargs['dialect'] = csv.Sniffer().sniff(f.read(sniff_limit))
-            f.seek(0)
+            f.seek(offset)
 
         reader = csv.reader(handle, header=header, **kwargs)
 
