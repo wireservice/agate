@@ -263,9 +263,15 @@ class TestDate(unittest.TestCase):
         date_type = Date(date_format='%d-%b-%Y', locale='de_DE.UTF-8')
 
         # March can be abbreviated to Mrz or Mär depending on the locale version,
-        # so we use December in the first value to ensure the test passes everywhere
-        values = ('01-Dez-1994', '17-Feb-2011', None, '05-Jan-1984', 'n/a')
-        casted = tuple(date_type.cast(v) for v in values)
+        # so we use December in the first value to ensure the test passes everywhere.
+        # NetBSD has a different locale database than glibc.
+        try:
+            values = ('01-Dez-1994', '17-Feb-2011', None, '05-Jan-1984', 'n/a')
+            casted = tuple(date_type.cast(v) for v in values)
+        except CastError:
+            values = ('01-Dez.-1994', '17-Feb.-2011', None, '05-Jan.-1984', 'n/a')
+            casted = tuple(date_type.cast(v) for v in values)
+
         self.assertSequenceEqual(casted, (
             datetime.date(1994, 12, 1),
             datetime.date(2011, 2, 17),
