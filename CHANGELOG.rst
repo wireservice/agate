@@ -1,3 +1,8 @@
+1.11.0 - May 27, 2024
+---------------------
+
+-  fix: The `key` argument to :meth:`.Table.to_json` errors if two values are equal, even if their CSV representation is different: for example, "1/1/2020" and "01/01/2020". However, until now, this was not the case for numbers: for example, "3.0" was treated as unequal to "3.00".
+
 1.10.2 - April 28, 2024
 -----------------------
 

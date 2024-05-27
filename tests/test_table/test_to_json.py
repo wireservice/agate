@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+from decimal import Decimal
 from io import StringIO
 
 from agate import Table
@@ -62,6 +63,16 @@ class TestJSON(AgateTestCase):
             js2 = json.load(f)
 
         self.assertEqual(js1, js2)
+
+    def test_to_json_key_decimal(self):
+        table = Table([[Decimal('3')], [Decimal('3.0')], [Decimal('3.00')]], ['a'], [Number()])
+
+        output = StringIO()
+
+        with self.assertRaises(ValueError) as exc:
+            table.to_json(output, key='a', indent=4)
+
+        assert str(exc.exception) == 'Value 3 is not unique in the key column.'
 
     def test_to_json_key_func(self):
         table = Table(self.rows, self.column_names, self.column_types)

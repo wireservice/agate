@@ -1,6 +1,7 @@
 import json
 import os
 from collections import OrderedDict
+from decimal import Decimal
 
 
 def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
@@ -65,6 +66,8 @@ def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
             for row in self._rows:
                 if key_is_row_function:
                     k = key(row)
+                elif isinstance(row[key], Decimal):
+                    k = str(row[key].normalize())
                 else:
                     k = str(row[key])
 

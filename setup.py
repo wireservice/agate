@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name='agate',
-    version='1.10.2',
+    version='1.11.0',
     description='A data analysis library that is optimized for humans instead of machines.',
     long_description=long_description,
     long_description_content_type='text/x-rst',
