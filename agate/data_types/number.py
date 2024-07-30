@@ -29,14 +29,16 @@ class Number(DataType):
         provided by the specified :code:`locale`.
     :param currency_symbols:
         A sequence of currency symbols to strip from numbers.
+    :param no_leading_zeroes:
+        Whether to disallow leading zeroes.
     """
     def __init__(self, locale='en_US', group_symbol=None, decimal_symbol=None,
-                 currency_symbols=DEFAULT_CURRENCY_SYMBOLS, **kwargs):
+                 currency_symbols=DEFAULT_CURRENCY_SYMBOLS, no_leading_zeroes=None, **kwargs):
         super().__init__(**kwargs)
 
         self.locale = Locale.parse(locale)
-
         self.currency_symbols = currency_symbols
+        self.no_leading_zeroes = no_leading_zeroes
 
         # Suppress Babel warning on Python 3.6
         # See #665
@@ -90,6 +92,9 @@ class Number(DataType):
 
         d = d.replace(self.group_symbol, '')
         d = d.replace(self.decimal_symbol, '.')
+
+        if self.no_leading_zeroes and len(d) > 1 and d[0] == '0' and d[1] != '.':
+            raise CastError('Can not parse value "%s" as Decimal without leading zeroes' % d)
 
         try:
             return Decimal(d) * sign

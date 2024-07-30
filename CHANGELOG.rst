@@ -1,3 +1,8 @@
+1.12.0 - July 29, 2024
+----------------------
+
+-  feat: :class:`.Number` accepts a ``no_leading_zeroes`` keyword argument, to indicate whether to disallow numbers with leading zeroes (not including a single zero, or a single zero before a decimal).
+
 1.11.0 - May 27, 2024
 ---------------------
 

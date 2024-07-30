@@ -188,6 +188,19 @@ class TestNumber(unittest.TestCase):
         with self.assertRaises(CastError):
             self.type.cast('quack')
 
+    def test_cast_error_leading_zeroes(self):
+        data_type = Number(no_leading_zeroes=True)
+
+        self.assertEqual(data_type.cast('0'), Decimal('0'))
+        self.assertEqual(data_type.cast('0.123'), Decimal('0.123'))
+        self.assertEqual(data_type.cast('123'), Decimal('123'))
+
+        with self.assertRaises(CastError):
+            data_type.cast('01')
+
+        with self.assertRaises(CastError):
+            data_type.cast('00.11')
+
 
 class TestDate(unittest.TestCase):
     def setUp(self):
