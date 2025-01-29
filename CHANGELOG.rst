@@ -1,3 +1,8 @@
+1.13.0 - Jan 29, 2025
+---------------------
+
+- fix: :meth:`.Table.order_by` sorts None as equal to None.
+
 1.12.0 - July 29, 2024
 ----------------------
 

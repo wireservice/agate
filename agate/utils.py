@@ -46,11 +46,11 @@ class NullOrder:
     def __lt__(self, other):
         return False
 
-    def __gt__(self, other):
-        if other is None:
-            return False
+    def __eq__(self, other):
+        return isinstance(other, NullOrder)
 
-        return True
+    def __gt__(self, other):
+        return not isinstance(other, NullOrder)
 
 
 class Quantiles(Sequence):

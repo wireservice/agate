@@ -131,8 +131,8 @@ class TestOrderBy(AgateTestCase):
         self.assertRows(new_table, [
             rows[2],
             rows[0],
-            rows[1],
-            rows[3]
+            rows[3],
+            rows[1]
         ])
 
     def test_order_by_with_row_names(self):
