@@ -1,10 +1,10 @@
 repos:
   - repo: https://github.com/pycqa/flake8
-    rev: 3.9.2
+    rev: 7.1.2
     hooks:
       - id: flake8
   - repo: https://github.com/pycqa/isort
-    rev: 5.8.0
+    rev: 6.0.1
     hooks:
       - id: isort
   - repo: https://github.com/mgedmin/check-manifest
