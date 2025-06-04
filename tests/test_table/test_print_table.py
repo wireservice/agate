@@ -131,3 +131,22 @@ class TestPrintTable(AgateTestCase):
         table.print_table(max_columns=2, output=output, locale='de_DE.UTF-8')
         # If it's working, the english '2,000' should appear as '2.000'
         self.assertTrue("2.000" in output.getvalue())
+
+    def test_print_table_replace_newlines(self):
+        """
+        Verify that \n characters are replaced with the '↵' symbol. 
+        """
+        rows = (
+            ('1.7', 2000, 2000, 'a\nvalue with one newline'),
+            ('11.18', None, None, None),
+            ('0', 1, 1, 'a\n\nvalue with two newlines')
+        )
+
+        table = Table(rows, self.column_names, self.column_types)
+
+        output = StringIO()
+        table.print_table(output=output, max_column_width=30)
+        lines = output.getvalue().split('\n')
+
+        self.assertIn('a↵value with one newline', lines[2])
+        self.assertIn('a↵↵value with two newlines', lines[4])
