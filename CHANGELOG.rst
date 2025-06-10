@@ -1,3 +1,8 @@
+Unreleased
+----------
+
+- fix: :meth:`.Table.print_table` replaces newlines with ``↵`` to avoid broken output.
+
 1.13.0 - Jan 29, 2025
 ---------------------
 
