@@ -101,7 +101,7 @@ def print_table(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_
                     locale=locale
                 )
             else:
-                v = str(v)
+                v = str(v).replace('\n', '↵')
 
             if max_column_width is not None and len(v) > max_column_width:
                 v = '%s%s' % (v[:max_column_width - len_truncation], truncation)
