@@ -410,7 +410,7 @@ class TestDateTime(unittest.TestCase):
         # so we will catch any CastError that may arise from the conversion
         possible_values = (
             ('1994-03-01 12:30 오후', '2011-02-17 06:30 오전', None, '1984-01-05 06:30 오후', 'n/a'),
-            ('1994-03-01 12:30 PM', '2011-02-17 06:30 AM', None, '1984-01-05 06:30 PM', 'n/a'),
+            ('1994-03-01 12:30 AM', '2011-02-17 06:30 #오전', None, '1984-01-05 06:30 AM', 'n/a'),
         )
         valid = False
         exceptions = []
