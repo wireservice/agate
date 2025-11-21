@@ -17,7 +17,7 @@ jobs:
           sudo locale-gen en_US.UTF-8
           sudo locale-gen ko_KR.UTF-8
           sudo update-locale
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
