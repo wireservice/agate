@@ -95,7 +95,7 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
                 v = str(v)
 
             if max_column_width is not None and len(v) > max_column_width:
-                v = '%s%s' % (v[:max_column_width - len_truncation], truncation)
+                v = '{}{}'.format(v[:max_column_width - len_truncation], truncation)
 
             formatted_row.append(v)
 
