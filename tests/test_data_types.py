@@ -2,14 +2,9 @@ import datetime
 import pickle
 import unittest
 from decimal import Decimal
+from zoneinfo import ZoneInfo
 
 import parsedatetime
-
-try:
-    from zoneinfo import ZoneInfo
-except ImportError:
-    # Fallback for Python < 3.9
-    from backports.zoneinfo import ZoneInfo
 
 from agate.data_types import Boolean, Date, DateTime, Number, Text, TimeDelta
 from agate.exceptions import CastError

@@ -1,7 +1,8 @@
-Unreleased
-----------
+1.14.0 - Dec 15, 2025
+---------------------
 
 - fix: :meth:`.Table.print_table` replaces newlines with ``↵`` to avoid broken output.
+* Add Python 3.13 and 3.14 support. Drop support for end-of-life versions 3.8 and 3.9.
 
 1.13.0 - Jan 29, 2025
 ---------------------

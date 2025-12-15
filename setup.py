@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name='agate',
-    version='1.13.0',
+    version='1.14.0',
     description='A data analysis library that is optimized for humans instead of machines.',
     long_description=long_description,
     long_description_content_type='text/x-rst',
@@ -25,11 +25,11 @@ setup(
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Scientific/Engineering :: Information Analysis',
@@ -55,7 +55,6 @@ setup(
             'PyICU>=2.4.2;sys_platform=="linux"',
             'pytest',
             'pytest-cov',
-            'backports.zoneinfo;python_version<"3.9"',
         ],
     }
 )

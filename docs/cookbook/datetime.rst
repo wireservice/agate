@@ -34,11 +34,7 @@ The second way is to specify a timezone as an argument to the type constructor:
 
 .. code-block:: python
 
-    try:
-        from zoneinfo import ZoneInfo
-    except ImportError:
-        # Fallback for Python < 3.9
-        from backports.zoneinfo import ZoneInfo
+    from zoneinfo import ZoneInfo
 
     eastern = ZoneInfo('US/Eastern')
     datetime_type = agate.DateTime(timezone=eastern)
@@ -64,11 +60,7 @@ If you load data from a spreadsheet in one timezone and you need to convert it t
 
 .. code-block:: python
 
-    try:
-        from zoneinfo import ZoneInfo
-    except ImportError:
-        # Fallback for Python < 3.9
-        from backports.zoneinfo import ZoneInfo
+    from zoneinfo import ZoneInfo
 
     us_eastern = ZoneInfo('US/Eastern')
     datetime_type = agate.DateTime(timezone=us_eastern)
