@@ -22,8 +22,6 @@ If you are a developer that also wants to hack on agate, install it from git::
 
     pip install -e .[test]
 
-    python setup.py develop
-
 .. note::
 
     To run the agate tests with coverage::
