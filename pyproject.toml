@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agate"
+version = "1.14.0"
+authors = [{name = "Christopher Groskopf", email = "chrisgroskopf@gmail.com"}]
+description = "A data analysis library that is optimized for humans instead of machines."
+readme = "README.rst"
+license = {text = "MIT"}
+urls = {Homepage = "https://agate.readthedocs.org/", Source = "https://github.com/wireservice/agate"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: IPython",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "Babel>=2.0",
+    "isodate>=0.5.4",
+    "leather>=0.3.2",
+    # KeyError: 's' https://github.com/bear/parsedatetime/pull/233 https://github.com/wireservice/agate/issues/743
+    "parsedatetime>=2.1,!=2.5",
+    "python-slugify>=1.2.1",
+    "pytimeparse>=1.1.5",
+    "tzdata>=2023.3;platform_system=='Windows'",
+]
+
+[project.optional-dependencies]
+test = [
+    "coverage>=3.7.1",
+    "cssselect>=0.9.1",
+    "lxml>=3.6.0",
+    # CI is not configured to install PyICU on macOS and Windows.
+    "PyICU>=2.4.2;sys_platform=='linux'",
+    "pytest",
+    "pytest-cov",
+]
+
+[tool.setuptools.packages.find]
+exclude = ["benchmarks", "tests", "tests.*"]
+
+[tool.isort]
+line_length = 119
