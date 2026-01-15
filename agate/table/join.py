@@ -94,7 +94,7 @@ def join(self, right_table, left_key=None, right_key=None, inner=False, full_out
     # Left key is a sequence
     elif left_key_is_sequence:
         left_columns = [self._columns[key] for key in left_key]
-        left_data = zip(*[column.values() for column in left_columns])
+        left_data = list(zip(*[column.values() for column in left_columns]))
     # Left key is a column name/index
     else:
         left_data = self._columns[left_key].values()
@@ -111,7 +111,7 @@ def join(self, right_table, left_key=None, right_key=None, inner=False, full_out
     # Right key is a sequence
     elif right_key_is_sequence:
         right_columns = [right_table._columns[key] for key in right_key]
-        right_data = zip(*[column.values() for column in right_columns])
+        right_data = list(zip(*[column.values() for column in right_columns]))
         right_key_indices = [right_table._columns._keys.index(key) for key in right_key]
     # Right key is a column name/index
     else:

@@ -277,6 +277,35 @@ class TestJoin(AgateTestCase):
             (None, None, None, 4, 2, 'c')
         ])
 
+    def test_full_outer_key_list(self):
+        left_rows = (
+            (1, 4, 'a'),
+            (2, 3, 'b'),
+            (3, 2, 'c')
+        )
+
+        right_rows = (
+            (1, 4, 'a'),
+            (2, 3, 'b'),
+            (4, 2, 'c')
+        )
+
+        left = Table(left_rows, self.left_column_names, self.column_types)
+        right = Table(right_rows, self.right_column_names, self.column_types)
+
+        new_table = left.join(right, ['one'], ['four'], full_outer=True)
+
+        self.assertIsNot(new_table, left)
+        self.assertIsNot(new_table, right)
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'five', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 1, 4, 'a'),
+            (2, 3, 'b', 2, 3, 'b'),
+            (3, 2, 'c', None, None, None),
+            (None, None, None, 4, 2, 'c')
+        ])
+
     def test_join_by_row_number(self):
         new_table = self.left.join(self.right, full_outer=True)
 

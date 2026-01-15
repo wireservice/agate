@@ -1,3 +1,8 @@
+1.14.1 - January 15, 2026
+-------------------------
+
+- fix: :meth:`.Table.join` was joining incorrectly when ``full_outer=True`` and ``left_key`` and ``right_key`` were sequences.
+
 1.14.0 - December 15, 2025
 --------------------------
 
