@@ -51,8 +51,5 @@ test = [
     "pytest-cov",
 ]
 
-[tool.setuptools.packages.find]
-exclude = ["benchmarks", "tests", "tests.*"]
-
 [tool.isort]
 line_length = 119
