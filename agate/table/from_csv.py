@@ -86,9 +86,15 @@ def from_csv(cls, path, column_names=None, column_types=None, row_names=None, sk
 
         if header:
             if column_names is None:
-                column_names = next(reader)
+                try:
+                    column_names = next(reader)
+                except StopIteration:
+                    column_names = []
             else:
-                next(reader)
+                try:
+                    next(reader)
+                except StopIteration:
+                    pass
 
         if row_limit is None:
             rows = reader

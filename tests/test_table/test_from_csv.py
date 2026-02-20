@@ -195,3 +195,20 @@ class TestFromCSV(AgateTestCase):
         self.assertColumnTypes(table, [])
 
         self.assertRows(table, [])
+
+    def test_from_csv_empty_input(self):
+        import io
+
+        table = Table.from_csv(io.StringIO(''))
+
+        self.assertColumnNames(table, [])
+        self.assertColumnTypes(table, [])
+        self.assertRows(table, [])
+
+    def test_from_csv_empty_input_with_column_names(self):
+        import io
+
+        table = Table.from_csv(io.StringIO(''), column_names=['a', 'b'])
+
+        self.assertColumnNames(table, ['a', 'b'])
+        self.assertRows(table, [])
