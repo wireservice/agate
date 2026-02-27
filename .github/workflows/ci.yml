@@ -24,7 +24,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
           cache-dependency-path: pyproject.toml
-      - run: pip install .[test] coveralls
+      - run: pip install .[test]
       - env:
           LANG: en_US.UTF-8
           PYTHONIOENCODING: utf-8
@@ -36,6 +36,6 @@ jobs:
       - name: Read from pipe
         run: printf 'a,b,c\n1,2,3' | python -c 'import sys; import agate; agate.Table.from_csv(sys.stdin, sniff_limit=1)'
       - run: python charts.py
-      - env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: coveralls --service=github
+      - uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        with:
+          fail_ci_if_error: true
