@@ -39,11 +39,14 @@ class Rank(Computation):
 
         if self._comparer:
             data_sorted = sorted(column.values(), key=cmp_to_key(self._comparer))
+            if self._reverse:
+                data_sorted.reverse()
         else:
-            data_sorted = column.values_sorted()
-
-        if self._reverse:
-            data_sorted.reverse()
+            non_nulls = sorted(v for v in column.values() if v is not None)
+            if self._reverse:
+                non_nulls.reverse()
+            null_count = sum(1 for v in column.values() if v is None)
+            data_sorted = non_nulls + [None] * null_count
 
         ranks = {}
         rank = 0
