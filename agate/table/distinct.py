@@ -28,7 +28,7 @@ def distinct(self, key=None):
         if key_is_row_function:
             k = key(row)
         elif key_is_sequence:
-            k = (row[j] for j in key)
+            k = tuple(row[j] for j in key)
         elif key is None:
             k = tuple(row)
         else:
