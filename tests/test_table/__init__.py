@@ -535,6 +535,7 @@ class TestBasic(AgateTestCase):
         self.assertIsNot(new_table, table)
         self.assertColumnNames(new_table, self.column_names)
         self.assertColumnTypes(new_table, [Number, Number, Text])
+        self.assertEqual(len(new_table.rows), 3)
         self.assertRows(new_table, [
             rows[0],
             rows[1],

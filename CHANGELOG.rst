@@ -1,3 +1,8 @@
+1.14.3 - Unreleased
+-------------------
+
+- fix: :meth:`.Table.distinct` now deduplicates rows when ``key`` is a sequence of column names.
+
 1.14.2 - February 27, 2026
 --------------------------
 
