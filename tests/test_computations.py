@@ -305,6 +305,15 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(len(new_table.columns), 5)
         self.assertSequenceEqual(new_table.columns['rank'], (3, 1, 3, 1))
 
+    def test_rank_number_reverse_nulls_ranked_last(self):
+        """Null values must remain ranked last even when reverse=True."""
+        rows = [(1,), (2,), (None,), (3,)]
+        table = Table(rows, ['n'], [self.number_type])
+        new_table = table.compute([('rank', Rank('n', reverse=True))])
+
+        # 3 is highest -> rank 1; 2 -> rank 2; 1 -> rank 3; None -> rank 4 (last)
+        self.assertSequenceEqual(new_table.columns['rank'], (3, 2, 4, 1))
+
     def test_rank_number_key(self):
         new_table = self.table.compute([
             ('rank', Rank('two', comparer=lambda x, y: int(y - x)))
