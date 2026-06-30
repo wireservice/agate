@@ -42,11 +42,10 @@ class Rank(Computation):
             if self._reverse:
                 data_sorted.reverse()
         else:
-            non_nulls = sorted(v for v in column.values() if v is not None)
+            non_nulls = list(column.values_without_nulls_sorted())
             if self._reverse:
                 non_nulls.reverse()
-            null_count = sum(1 for v in column.values() if v is None)
-            data_sorted = non_nulls + [None] * null_count
+            data_sorted = non_nulls + [None] * (len(column.values()) - len(non_nulls))
 
         ranks = {}
         rank = 0
