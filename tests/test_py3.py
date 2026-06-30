@@ -238,11 +238,23 @@ class TestSniffer(unittest.TestCase):
         reason='The (macos-latest, 3.10) job fails on GitHub Actions'
     )
     def test_sniffer(self):
+        # The sniffed dialect is a dynamically-created class. Comparing its raw ``__dict__`` is
+        # fragile: it carries version-specific dunders (e.g. ``__firstlineno__``,
+        # ``__static_attributes__``), and the ``mappingproxy`` returned by ``__dict__`` does not
+        # keep the class alive, so once it is garbage-collected the proxy reports an empty dict.
+        # Instead, hold references to the dialects and compare their meaningful attributes.
+        attributes = ('delimiter', 'doublequote', 'escapechar', 'lineterminator',
+                      'quotechar', 'quoting', 'skipinitialspace')
+
+        def dialect_attributes(dialect):
+            return {attribute: getattr(dialect, attribute) for attribute in attributes}
+
         with open('examples/test.csv', encoding='utf-8') as f:
             contents = f.read()
-            direct = csv.Sniffer().sniff(contents, csv_py3.POSSIBLE_DELIMITERS).__dict__
-            actual = csv_py3.Sniffer().sniff(contents).__dict__
-            expected = csv.Sniffer().sniff(contents).__dict__
 
-            self.assertEqual(direct, expected, f'{direct!r} != {expected!r}')
-            self.assertEqual(actual, expected, f'{actual!r} != {expected!r}')
+        direct = dialect_attributes(csv.Sniffer().sniff(contents, csv_py3.POSSIBLE_DELIMITERS))
+        actual = dialect_attributes(csv_py3.Sniffer().sniff(contents))
+        expected = dialect_attributes(csv.Sniffer().sniff(contents))
+
+        self.assertEqual(direct, expected, f'{direct!r} != {expected!r}')
+        self.assertEqual(actual, expected, f'{actual!r} != {expected!r}')
