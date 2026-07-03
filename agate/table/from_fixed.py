@@ -47,7 +47,7 @@ def from_fixed(cls, path, schema_path, column_names=utils.default, column_types=
             schema_f = open(schema_path, encoding=schema_encoding)
             close_schema_f = True
         else:
-            schema_f = path
+            schema_f = schema_path
 
         reader = fixed.reader(f, schema_f)
         rows = list(reader)

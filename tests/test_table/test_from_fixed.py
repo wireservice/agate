@@ -11,3 +11,15 @@ class TestFromFixed(AgateTestCase):
         self.assertColumnTypes(table2, [type(c) for c in table1.column_types])
 
         self.assertRows(table2, table1.rows)
+
+    def test_from_fixed_file_like_objects(self):
+        table1 = Table.from_csv('examples/testfixed_converted.csv')
+
+        with open('examples/testfixed', encoding='utf-8') as f, \
+                open('examples/testfixed_schema.csv', encoding='utf-8') as schema_f:
+            table2 = Table.from_fixed(f, schema_f)
+
+        self.assertColumnNames(table2, table1.column_names)
+        self.assertColumnTypes(table2, [type(c) for c in table1.column_types])
+
+        self.assertRows(table2, table1.rows)
