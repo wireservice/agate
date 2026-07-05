@@ -1,7 +1,6 @@
 import datetime
 
-import pytimeparse
-
+from agate.data_types._timeparse import timeparse
 from agate.data_types.base import DataType
 from agate.exceptions import CastError
 
@@ -30,7 +29,7 @@ class TimeDelta(DataType):
             raise CastError('Can not parse value "%s" as timedelta.' % d)
 
         try:
-            seconds = pytimeparse.parse(d)
+            seconds = timeparse(d)
         except AttributeError:
             seconds = None
 

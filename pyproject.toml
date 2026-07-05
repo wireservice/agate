@@ -36,7 +36,6 @@ dependencies = [
     # KeyError: 's' https://github.com/bear/parsedatetime/pull/233 https://github.com/wireservice/agate/issues/743
     "parsedatetime>=2.1,!=2.5",
     "python-slugify>=1.2.1",
-    "pytimeparse>=1.1.5",
     "tzdata>=2023.3;platform_system=='Windows'",
 ]
 
