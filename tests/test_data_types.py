@@ -496,3 +496,10 @@ class TestTimeDelta(unittest.TestCase):
     def test_cast_error(self):
         with self.assertRaises(CastError):
             self.type.cast('quack')
+
+    def test_cast_malformed_number(self):
+        # Malformed number strings must not leak a ValueError out of the parser.
+        for value in ('1.2.3s', '.s', '1.2.3 seconds'):
+            self.assertEqual(self.type.test(value), False)
+            with self.assertRaises(CastError):
+                self.type.cast(value)

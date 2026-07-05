@@ -8,8 +8,11 @@ timeparse.py
 Implements a single function, `timeparse`, which can parse various
 kinds of time expressions.
 
-Vendored from pytimeparse 1.1.8 (https://github.com/wroberts/pytimeparse),
-which is unmaintained. See https://github.com/wireservice/agate/issues/788.
+Vendored from pytimeparse (https://github.com/wroberts/pytimeparse), which is
+effectively unmaintained (last release 1.1.8 in 2018). This copy is release
+1.1.8 plus the upstream master fix guarding against malformed number strings
+and bare-seconds ``:22`` (wroberts/pytimeparse#30, 2026-06-24), which is not
+yet released on PyPI. See https://github.com/wireservice/agate/issues/788.
 The module is distributed under the MIT License, reproduced below.
 '''
 
@@ -110,6 +113,7 @@ def _interpret_as_minutes(sval, mdict):
         and (('hours' not in mdict) or (mdict['hours'] is None))
         and (('days' not in mdict) or (mdict['days'] is None))
         and (('weeks' not in mdict) or (mdict['weeks'] is None))
+        and (('mins' in mdict and mdict['mins'] is not None))
         #and (('months' not in mdict) or (mdict['months'] is None))
         #and (('years' not in mdict) or (mdict['years'] is None))
         ):   
@@ -166,20 +170,25 @@ def timeparse(sval, granularity='seconds'):
             mdict = match.groupdict()
             if granularity == 'minutes':
                 mdict = _interpret_as_minutes(sval, mdict)
-            # if all of the fields are integer numbers
-            if all(v.isdigit() for v in list(mdict.values()) if v):
-                return sign * sum([MULTIPLIERS[k] * int(v, 10) for (k, v) in
-                            list(mdict.items()) if v is not None])
-            # if SECS is an integer number
-            elif ('secs' not in mdict or
-                  mdict['secs'] is None or
-                  mdict['secs'].isdigit()):
-                # we will return an integer
-                return (
-                    sign * int(sum([MULTIPLIERS[k] * float(v) for (k, v) in
-                             list(mdict.items()) if k != 'secs' and v is not None])) +
-                    (int(mdict['secs'], 10) if mdict['secs'] else 0))
-            else:
-                # SECS is a float, we will return a float
-                return sign * sum([MULTIPLIERS[k] * float(v) for (k, v) in
-                            list(mdict.items()) if v is not None])
+            try:
+                # if all of the fields are integer numbers
+                if all(v.isdigit() for v in list(mdict.values()) if v):
+                    return sign * sum([MULTIPLIERS[k] * int(v, 10) for (k, v) in
+                                list(mdict.items()) if v is not None])
+                # if SECS is an integer number
+                elif ('secs' not in mdict or
+                      mdict['secs'] is None or
+                      mdict['secs'].isdigit()):
+                    # we will return an integer
+                    return (
+                        sign * int(sum([MULTIPLIERS[k] * float(v) for (k, v) in
+                                 list(mdict.items()) if k != 'secs' and v is not None])) +
+                        (int(mdict['secs'], 10) if mdict['secs'] else 0))
+                else:
+                    # SECS is a float, we will return a float
+                    return sign * sum([MULTIPLIERS[k] * float(v) for (k, v) in
+                                list(mdict.items()) if v is not None])
+            except ValueError:
+                # Malformed number string (e.g. '1.2.3', '.') — skip to
+                # the next time format pattern per documented behavior.
+                pass
