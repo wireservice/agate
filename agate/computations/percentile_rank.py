@@ -29,6 +29,12 @@ class PercentileRank(Rank):
         new_column = []
 
         for row in table.rows:
-            new_column.append(percentiles.locate(row[self._column_name]))
+            value = row[self._column_name]
+
+            if value is None:
+                new_column.append(None)
+                continue
+
+            new_column.append(percentiles.locate(value))
 
         return new_column

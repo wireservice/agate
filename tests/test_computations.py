@@ -361,6 +361,45 @@ class TestTableComputation(unittest.TestCase):
         self.assertIsInstance(new_table.columns['percentiles'][0], Decimal)
         self.assertIsInstance(new_table.columns['percentiles'][-1], Decimal)
 
+    def test_percentile_rank_null(self):
+        """Null values must not crash PercentileRank; they yield a null rank.
+
+        ``Percentiles`` tolerates nulls (it computes over the non-null values),
+        and every other computation (:class:`.Change`, :class:`.Percent`,
+        :class:`.PercentChange`) maps a null input to a null output. Before this
+        fix ``PercentileRank`` instead raised a bare ``TypeError`` from
+        ``None < Decimal(...)`` inside ``Quantiles.locate`` as soon as a null
+        row was encountered.
+        """
+        rows = [(n,) for n in range(1, 101)]
+        rows.append((None,))
+
+        table = Table(rows, ['ints'], [self.number_type])
+        new_table = table.compute([
+            ('percentiles', PercentileRank('ints'))
+        ])
+
+        self.assertEqual(len(new_table.rows), 101)
+
+        # The null input row produces a null rank rather than crashing.
+        self.assertIsNone(new_table.columns['percentiles'][-1])
+
+        # The non-null values are still ranked exactly as they would be
+        # without the null present (the null is excluded from the percentiles).
+        self.assertEqual(new_table.rows[0][1], 0)
+        self.assertEqual(new_table.rows[99][1], 100)
+        self.assertIsInstance(new_table.columns['percentiles'][0], Decimal)
+        self.assertIsInstance(new_table.columns['percentiles'][99], Decimal)
+
+        without_null = Table(
+            [(n,) for n in range(1, 101)], ['ints'], [self.number_type]
+        ).compute([('percentiles', PercentileRank('ints'))])
+
+        self.assertSequenceEqual(
+            [r[1] for r in new_table.rows[:100]],
+            [r[1] for r in without_null.rows]
+        )
+
     def test_percentile_rank_invalid_types(self):
         with self.assertRaises(DataTypeError):
             self.table.compute([
