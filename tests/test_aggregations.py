@@ -301,6 +301,22 @@ class TestNumberAggregation(unittest.TestCase):
     def test_min_all_nulls(self):
         self.assertIsNone(Min('four').run(self.table))
 
+    def test_min_with_nan(self):
+        table = Table(
+            [(Decimal('NaN'),), (Decimal('2'),), (Decimal('1'),), (None,)],
+            ['n'],
+            [Number()],
+        )
+        self.assertEqual(Min('n').run(table), Decimal('1'))
+
+    def test_max_with_nan(self):
+        table = Table(
+            [(Decimal('NaN'),), (Decimal('2'),), (Decimal('1'),), (None,)],
+            ['n'],
+            [Number()],
+        )
+        self.assertEqual(Max('n').run(table), Decimal('2'))
+
     def test_max(self):
         with self.assertRaises(DataTypeError):
             Max('three').validate(self.table)

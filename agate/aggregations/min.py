@@ -1,6 +1,7 @@
 from agate.aggregations.base import Aggregation
 from agate.data_types import Date, DateTime, Number, TimeDelta
 from agate.exceptions import DataTypeError
+from agate.utils import is_nan
 
 
 class Min(Aggregation):
@@ -31,6 +32,6 @@ class Min(Aggregation):
     def run(self, table):
         column = table.columns[self._column_name]
 
-        data = column.values_without_nulls()
+        data = tuple(d for d in column.values_without_nulls() if not is_nan(d))
         if data:
             return min(data)

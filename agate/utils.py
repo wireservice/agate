@@ -53,6 +53,14 @@ class NullOrder:
         return not isinstance(other, NullOrder)
 
 
+def is_nan(value):
+    """Return True when value is a float/Decimal NaN."""
+    try:
+        return math.isnan(value)
+    except TypeError:
+        return False
+
+
 class Quantiles(Sequence):
     """
     A class representing quantiles (percentiles, quartiles, etc.) for a given
