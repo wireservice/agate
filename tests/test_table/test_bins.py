@@ -4,6 +4,7 @@ from babel.numbers import get_decimal_symbol
 
 from agate import Table
 from agate.data_types import Number, Text
+from agate.exceptions import DataTypeError
 from agate.testcase import AgateTestCase
 
 
@@ -145,3 +146,17 @@ class TestBins(AgateTestCase):
             ['[0' + get_decimal_symbol() + '9 - 1' + get_decimal_symbol() + '0]', 10]
         )
         self.assertSequenceEqual(new_table.rows[10], [None, 1])
+
+    def test_bins_all_nulls(self):
+        rows = [[None], [None], [None]]
+        new_table = Table(rows, self.column_names, self.column_types).bins('number')
+
+        self.assertColumnNames(new_table, ['number', 'Count'])
+        self.assertColumnTypes(new_table, [Text, Number])
+        self.assertSequenceEqual(new_table.rows[0], [None, 3])
+
+    def test_bins_rejects_non_number_column(self):
+        rows = [['a'], ['b']]
+        table = Table(rows, ['text'], [Text()])
+        with self.assertRaises(DataTypeError):
+            table.bins('text')
