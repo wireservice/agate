@@ -42,9 +42,7 @@ def bins(self, column_name, count=10, start=None, end=None):
 
     # All-null / empty Number columns have no limits to round.
     if minimum is None or maximum is None:
-        bin_names = [None]
-        table = self.pivot(lambda row: None, key_name=column_name)
-        return table.order_by(lambda r: bin_names.index(r[column_name]))
+        return self.pivot(lambda row: None, key_name=column_name)
 
     minimum, maximum = utils.round_limits(minimum, maximum)
     # Infer bin start/end positions
