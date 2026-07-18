@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from agate import Table
 from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
@@ -144,3 +146,21 @@ class TestOrderBy(AgateTestCase):
     def test_order_by_empty_table(self):
         table = Table([], self.column_names)
         table.order_by('three')
+
+    def test_order_by_nan(self):
+        rows = (
+            (Decimal('NaN'),),
+            (Decimal('2'),),
+            (Decimal('1'),),
+            (None,),
+        )
+        table = Table(rows, ['n'], [Number()])
+
+        new_table = table.order_by('n')
+
+        self.assertRows(new_table, [
+            rows[2],
+            rows[1],
+            rows[0],
+            rows[3],
+        ])

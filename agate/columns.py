@@ -5,6 +5,8 @@ parent :class:`.Table`, columns depend on knowledge of both their position in
 the parent (column name, data type) as well as the rows that contain their data.
 """
 
+import math
+
 from agate.mapped_sequence import MappedSequence
 from agate.utils import NullOrder, memoize
 
@@ -15,6 +17,13 @@ def null_handler(k):
     """
     if k is None:
         return NullOrder()
+
+    # NaN is unordered; sort it with nulls.
+    try:
+        if math.isnan(k):
+            return NullOrder()
+    except TypeError:
+        pass
 
     return k
 

@@ -1,4 +1,5 @@
 from agate import utils
+from agate.columns import null_handler
 
 
 def order_by(self, key, reverse=False):
@@ -26,14 +27,11 @@ def order_by(self, key, reverse=False):
         if key_is_row_function:
             k = key(row)
         elif key_is_sequence:
-            k = tuple(utils.NullOrder() if row[n] is None else row[n] for n in key)
+            k = tuple(null_handler(row[n]) for n in key)
         else:
             k = row[key]
 
-        if k is None:
-            return utils.NullOrder()
-
-        return k
+        return null_handler(k)
 
     results = sorted(enumerate(self._rows), key=sort_key, reverse=reverse)
 
