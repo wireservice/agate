@@ -24,7 +24,7 @@ class Mode(Aggregation):
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
-            raise DataTypeError('Sum can only be applied to columns containing Number data.')
+            raise DataTypeError('Mode can only be applied to columns containing Number data.')
 
         has_nulls = HasNulls(self._column_name).run(table)
 
