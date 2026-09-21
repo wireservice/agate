@@ -39,4 +39,6 @@ class MAD(Aggregation):
         data = column.values_without_nulls_sorted()
         if data:
             m = self._median.run(table)
-            return median(tuple(abs(n - m) for n in data))
+            # ``median`` requires its input to be sorted; the deviations
+            # ``abs(n - m)`` are not monotonic even though ``data`` is sorted.
+            return median(sorted(abs(n - m) for n in data))
