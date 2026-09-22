@@ -247,6 +247,21 @@ class TestDateTimeAggregation(unittest.TestCase):
     def test_sum_all_nulls(self):
         self.assertEqual(Sum('null').run(self.time_delta_table), datetime.timedelta(0))
 
+    def test_median(self):
+        self.assertIsInstance(Median('test').get_aggregate_data_type(self.time_delta_table), TimeDelta)
+        Median('test').validate(self.time_delta_table)
+        self.assertEqual(Median('test').run(self.time_delta_table), datetime.timedelta(seconds=15))
+
+    def test_median_all_nulls(self):
+        self.assertIsNone(Median('null').run(self.time_delta_table))
+
+    def test_percentiles(self):
+        Percentiles('test').validate(self.time_delta_table)
+        percentiles = Percentiles('test').run(self.time_delta_table)
+        self.assertEqual(percentiles[0], datetime.timedelta(seconds=10))
+        self.assertEqual(percentiles[50], datetime.timedelta(seconds=15))
+        self.assertEqual(percentiles[100], datetime.timedelta(seconds=20))
+
 
 class TestNumberAggregation(unittest.TestCase):
     def setUp(self):
