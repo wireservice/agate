@@ -5,7 +5,7 @@
 - fix: :class:`.Rank` ranks null values last when ``reverse=True``.
 - fix: :meth:`.Table.from_fixed` reads the schema instead of the data file when ``schema_path`` is a file-like object.
 - fix: :class:`.PercentileRank` returns a null rank for null values instead of raising a ``TypeError``.
-- fix: :meth:`.Table.pivot` preserves the output data type of its computation.
+- fix: :meth:`.Table.pivot` uses the data type of the ``computation``, not of the ``aggregation``, for the pivoted columns. For example, a :class:`.Formula` that returns text no longer raises a ``CastError``.
 
 1.14.2 - February 27, 2026
 --------------------------
