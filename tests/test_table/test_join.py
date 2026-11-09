@@ -126,6 +126,29 @@ class TestJoin(AgateTestCase):
             (None, 2, 'c', None)
         ])
 
+    def test_join_multiple_column_indices(self):
+        new_table = self.left.join(self.right, [1, 2], [1, 2])
+
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 1),
+            (2, 3, 'b', 2),
+            (None, 2, 'c', None)
+        ])
+
+    def test_join_identical_columns(self):
+        right = Table([(1, 1, 'a'), (2, 2, 'b')], self.right_column_names, self.column_types)
+        new_table = self.left.join(right, 'one', 'five')
+
+        self.assertColumnNames(new_table, ['one', 'two', 'three', 'four', 'six'])
+        self.assertColumnTypes(new_table, [Number, Number, Text, Number, Text])
+        self.assertRows(new_table, [
+            (1, 4, 'a', 1, 'a'),
+            (2, 3, 'b', 2, 'b'),
+            (None, 2, 'c', None, None)
+        ])
+
     def test_join_func(self):
         new_table = self.left.join(
             self.right,
@@ -216,6 +239,12 @@ class TestJoin(AgateTestCase):
             self.left.join(self.right, 'one', 'five', require_match=True)
 
         self.left.join(self.right, 'one', 'four', require_match=True)
+
+    def test_join_multiple_columns_require_match(self):
+        right = Table([(1, 4, 'a')], self.right_column_names, self.column_types)
+
+        with self.assertRaises(ValueError):
+            self.left.join(right, ['two', 'three'], ['five', 'six'], require_match=True)
 
     def test_join_columns_kwarg(self):
         new_table = self.left.join(self.right, 'one', 'four', columns=['six'])

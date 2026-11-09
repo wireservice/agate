@@ -112,12 +112,12 @@ def join(self, right_table, left_key=None, right_key=None, inner=False, full_out
     elif right_key_is_sequence:
         right_columns = [right_table._columns[key] for key in right_key]
         right_data = list(zip(*[column.values() for column in right_columns]))
-        right_key_indices = [right_table._columns._keys.index(key) for key in right_key]
+        right_key_indices = [column.index for column in right_columns]
     # Right key is a column name/index
     else:
         right_column = right_table._columns[right_key]
         right_data = right_column.values()
-        right_key_indices = [right_table._columns.index(right_column)]
+        right_key_indices = [right_column.index]
 
     # Build names and type lists
     column_names = list(self._column_names)
@@ -164,7 +164,7 @@ def join(self, right_table, left_key=None, right_key=None, inner=False, full_out
         matching_rows = right_hash.get(left_value, None)
 
         if require_match and matching_rows is None:
-            raise ValueError('Left key "%s" does not have a matching right key.' % left_value)
+            raise ValueError('Left key "%s" does not have a matching right key.' % (left_value,))
 
         # Rows with matches
         if matching_rows:
