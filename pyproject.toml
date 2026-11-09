@@ -43,7 +43,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "coverage>=3.7.1",
-    # lxml has no PyPy wheels for Windows.
+    # lxml has no wheels for PyPy 8 (pp80), and building it on Windows needs libxml2.
     "cssselect>=0.9.1;platform_python_implementation!='PyPy' or sys_platform!='win32'",
     "lxml>=3.6.0;platform_python_implementation!='PyPy' or sys_platform!='win32'",
     # CI is not configured to install PyICU on macOS and Windows.
