@@ -43,8 +43,9 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "coverage>=3.7.1",
-    "cssselect>=0.9.1",
-    "lxml>=3.6.0",
+    # lxml has no PyPy wheels for Windows.
+    "cssselect>=0.9.1;platform_python_implementation!='PyPy' or sys_platform!='win32'",
+    "lxml>=3.6.0;platform_python_implementation!='PyPy' or sys_platform!='win32'",
     # CI is not configured to install PyICU on macOS and Windows.
     "PyICU>=2.4.2;sys_platform=='linux'",
     "pytest",

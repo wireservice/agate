@@ -1,9 +1,13 @@
+import importlib.util
+import unittest
+
 import leather
 
 from agate import Table
 from agate.data_types import Number, Text
 
 
+@unittest.skipUnless(importlib.util.find_spec('lxml'), 'lxml is not installed')
 class TestTableCharts(leather.LeatherTestCase):
     def setUp(self):
         self.rows = (
