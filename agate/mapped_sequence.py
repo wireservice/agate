@@ -78,13 +78,21 @@ class MappedSequence(Sequence):
         """
         Retrieve values from this array by index, slice or key.
         """
-        if isinstance(key, slice):
-            indices = range(*key.indices(len(self)))
-            values = self.values()
-            return tuple(values[i] for i in indices)
+        values = self.values()
+
         # Note: can't use isinstance because bool is a subclass of int
-        elif type(key) is int:
-            return self.values()[key]
+        if type(key) is int:
+            return values[key]
+        elif type(key) is slice:  # slice can't be subclassed
+            return tuple(values[key])
+
+        keys = self.keys()
+        if keys is not None:
+            # Only keys with a value can match, as in dict()
+            if len(keys) > len(values):
+                keys = keys[:len(values)]
+            if keys.count(key) == 1:
+                return values[keys.index(key)]
         return self.dict()[key]
 
     def __setitem__(self, key, value):
