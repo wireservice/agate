@@ -14,8 +14,7 @@ class Median(Aggregation):
     for implementation details.
 
     :param column_name:
-        The name of a column containing :class:`.Number` or :class:`.TimeDelta`
-        data.
+        The name of a column containing :class:`.Number` or :class:`.TimeDelta` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name

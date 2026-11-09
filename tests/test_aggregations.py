@@ -262,6 +262,23 @@ class TestDateTimeAggregation(unittest.TestCase):
         self.assertEqual(percentiles[50], datetime.timedelta(seconds=15))
         self.assertEqual(percentiles[100], datetime.timedelta(seconds=20))
 
+    def test_quartiles(self):
+        Quartiles('test').validate(self.time_delta_table)
+        self.assertEqual(Quartiles('test').run(self.time_delta_table)[2], datetime.timedelta(seconds=15))
+
+    def test_quintiles(self):
+        Quintiles('test').validate(self.time_delta_table)
+        self.assertEqual(Quintiles('test').run(self.time_delta_table)[3], datetime.timedelta(seconds=20))
+
+    def test_deciles(self):
+        Deciles('test').validate(self.time_delta_table)
+        self.assertEqual(Deciles('test').run(self.time_delta_table)[5], datetime.timedelta(seconds=15))
+
+    def test_iqr(self):
+        self.assertIsInstance(IQR('test').get_aggregate_data_type(self.time_delta_table), TimeDelta)
+        IQR('test').validate(self.time_delta_table)
+        self.assertEqual(IQR('test').run(self.time_delta_table), datetime.timedelta(seconds=10))
+
 
 class TestNumberAggregation(unittest.TestCase):
     def setUp(self):

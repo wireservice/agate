@@ -1,7 +1,7 @@
 from agate.aggregations.base import Aggregation
 from agate.aggregations.has_nulls import HasNulls
 from agate.aggregations.percentiles import Percentiles
-from agate.data_types import Number
+from agate.data_types import Number, TimeDelta
 from agate.exceptions import DataTypeError
 from agate.utils import Quantiles
 from agate.warns import warn_null_calculation
@@ -21,7 +21,7 @@ class Deciles(Aggregation):
     This aggregation can not be applied to a :class:`.TableSet`.
 
     :param column_name:
-        The name of a column containing :class:`.Number` data.
+        The name of a column containing :class:`.Number` or :class:`.TimeDelta` data.
     """
     def __init__(self, column_name):
         self._column_name = column_name
@@ -29,8 +29,8 @@ class Deciles(Aggregation):
     def validate(self, table):
         column = table.columns[self._column_name]
 
-        if not isinstance(column.data_type, Number):
-            raise DataTypeError('Deciles can only be applied to columns containing Number data.')
+        if not isinstance(column.data_type, (Number, TimeDelta)):
+            raise DataTypeError('Deciles can only be applied to columns containing Number or TimeDelta data.')
 
         has_nulls = HasNulls(self._column_name).run(table)
 
