@@ -164,3 +164,16 @@ class TestPrintHTML(AgateTestCase):
         self.assertEqual(html.count('<tr>'), 4)
         self.assertEqual(html.count('<th>'), 3)
         self.assertEqual(html.count('<td '), 9)
+
+
+class TestPrintHTMLEscaping(AgateTestCase):
+    def test_print_html_escapes_markup(self):
+        table = Table([['<b>x</b>', 'a&b']], ['<i>h</i>', 'plain'])
+        output = StringIO()
+        warnings.simplefilter('ignore')
+        table.print_html(output=output)
+
+        self.assertIn('<th>&lt;i&gt;h&lt;/i&gt;</th>', output.getvalue())
+        self.assertIn('<th>plain</th>', output.getvalue())
+        self.assertIn('<td style="text-align: left;">&lt;b&gt;x&lt;/b&gt;</td>', output.getvalue())
+        self.assertIn('<td style="text-align: left;">a&amp;b</td>', output.getvalue())
