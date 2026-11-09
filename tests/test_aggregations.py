@@ -279,6 +279,56 @@ class TestDateTimeAggregation(unittest.TestCase):
         IQR('test').validate(self.time_delta_table)
         self.assertEqual(IQR('test').run(self.time_delta_table), datetime.timedelta(seconds=10))
 
+    def test_mad_time_delta(self):
+        self.assertIsInstance(MAD('test').get_aggregate_data_type(self.time_delta_table), TimeDelta)
+        MAD('test').validate(self.time_delta_table)
+        self.assertEqual(MAD('test').run(self.time_delta_table), datetime.timedelta(seconds=5))
+
+    def test_mad_time_delta_all_nulls(self):
+        self.assertIsNone(MAD('null').run(self.time_delta_table))
+
+    def test_mad_time_delta_with_nulls(self):
+        with self.assertWarns(NullCalculationWarning):
+            MAD('mixed').validate(self.time_delta_table)
+
+        warnings.simplefilter('ignore')
+
+        try:
+            MAD('mixed').validate(self.time_delta_table)
+        finally:
+            warnings.resetwarnings()
+
+        self.assertEqual(MAD('mixed').run(self.time_delta_table), datetime.timedelta(seconds=0))
+
+    def test_mode_time_delta(self):
+        rows = [
+            [datetime.timedelta(seconds=10), datetime.timedelta(seconds=15)],
+            [datetime.timedelta(seconds=20), None],
+            [datetime.timedelta(seconds=20), datetime.timedelta(seconds=15)],
+        ]
+
+        table = Table(rows, ['test', 'mixed'], [TimeDelta(), TimeDelta()])
+
+        self.assertIsInstance(Mode('test').get_aggregate_data_type(table), TimeDelta)
+        Mode('test').validate(table)
+        self.assertEqual(Mode('test').run(table), datetime.timedelta(seconds=20))
+
+    def test_mode_time_delta_all_nulls(self):
+        self.assertIsNone(Mode('null').run(self.time_delta_table))
+
+    def test_mode_time_delta_with_nulls(self):
+        with self.assertWarns(NullCalculationWarning):
+            Mode('mixed').validate(self.time_delta_table)
+
+        warnings.simplefilter('ignore')
+
+        try:
+            Mode('mixed').validate(self.time_delta_table)
+        finally:
+            warnings.resetwarnings()
+
+        self.assertEqual(Mode('mixed').run(self.time_delta_table), datetime.timedelta(seconds=15))
+
 
 class TestNumberAggregation(unittest.TestCase):
     def setUp(self):
