@@ -595,6 +595,14 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertEqual(percentiles[99], Decimal('990.5'))
         self.assertEqual(percentiles[100], Decimal('1000'))
 
+    def test_percentiles_exact_ranks(self):
+        table = Table([(n,) for n in range(1, 101)], ['ints'], [self.number_type])
+
+        percentiles = Percentiles('ints').run(table)
+
+        self.assertEqual(percentiles[7], Decimal('7.5'))
+        self.assertEqual(percentiles[29], Decimal('29.5'))
+
     def test_percentiles_all_nulls(self):
         self.assertEqual(Percentiles('four').run(self.table), Quantiles([None] * 101))
 
