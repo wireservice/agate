@@ -1,3 +1,5 @@
+import importlib.util
+import unittest
 from collections import OrderedDict
 
 import leather
@@ -6,6 +8,7 @@ from agate import Table, TableSet
 from agate.data_types import Number, Text
 
 
+@unittest.skipUnless(importlib.util.find_spec('lxml'), 'lxml is not installed')
 class TestTableSetCharts(leather.LeatherTestCase):
     def setUp(self):
         self.table1 = (
