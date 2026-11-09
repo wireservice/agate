@@ -527,8 +527,6 @@ class TestNumberAggregation(unittest.TestCase):
         self.assertIsInstance(MAD('two').get_aggregate_data_type(self.table), Number)
         self.assertAlmostEqual(MAD('two').run(self.table), Decimal('0.34'))
 
-        # A column with real spread must not collapse to zero: the absolute
-        # deviations have to be sorted before their median is taken.
         spread = Table([[Decimal(n)] for n in range(1, 10)], ['x'], [self.number_type])
         self.assertEqual(MAD('x').run(spread), Decimal('2'))
 

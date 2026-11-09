@@ -54,3 +54,4 @@ agate is made by a community. The following individuals have contributed code, d
 * `Josh Renaud <https://github.com/Kirkman>`__
 * `Vincent Gao <https://github.com/gaoflow>`__
 * `Sanjay Santhanam <https://github.com/Sanjays2402>`__
+* `Andrew Chen <https://github.com/chuenchen309>`__
