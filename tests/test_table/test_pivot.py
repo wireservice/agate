@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from agate import Table
 from agate.aggregations import Sum
-from agate.computations import Percent
+from agate.computations import Formula, Percent
 from agate.data_types import Number, Text
 from agate.testcase import AgateTestCase
 
@@ -211,6 +211,24 @@ class TestPivot(AgateTestCase):
         self.assertColumnNames(pivot_table, ['gender', 'blue', 'green'])
         self.assertColumnTypes(pivot_table, [Text, Number, Number])
         self.assertRows(pivot_table, pivot_rows)
+
+    def test_pivot_compute_text(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        computation = Formula(self.text_type, lambda row: 'count=' + str(row['Count']))
+
+        pivot_table = table.pivot('gender', 'color', computation=computation, default_value=None)
+
+        self.assertColumnTypes(pivot_table, [Text, Text, Text])
+        self.assertRows(pivot_table, [('male', 'count=3', None), ('female', 'count=1', 'count=2')])
+
+    def test_pivot_compute_numeric_text(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        computation = Formula(self.text_type, lambda row: str(row['Count']))
+
+        pivot_table = table.pivot('gender', 'color', computation=computation, default_value=None)
+
+        self.assertColumnTypes(pivot_table, [Text, Text, Text])
+        self.assertRows(pivot_table, [('male', '3', None), ('female', '1', '2')])
 
     def test_pivot_compute_kwargs(self):
         table = Table(self.rows, self.column_names, self.column_types)

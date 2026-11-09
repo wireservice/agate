@@ -114,7 +114,7 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
         pivot_count = len(set(table.columns[pivot].values()))
 
         if computation is not None:
-            column_types = computation.get_computed_data_type(table)
+            column_type = computation.get_computed_data_type(table)
             table = apply_computation(table)
 
         column_types = [column_type] * pivot_count
