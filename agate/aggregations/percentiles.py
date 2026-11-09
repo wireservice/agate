@@ -1,5 +1,3 @@
-import math
-
 from agate.aggregations.base import Aggregation
 from agate.aggregations.has_nulls import HasNulls
 from agate.data_types import Number, TimeDelta
@@ -56,10 +54,10 @@ class Percentiles(Aggregation):
         quantiles = [data[0]]
 
         for percentile in range(1, 100):
-            k = len(data) * (float(percentile) / 100)
+            quotient, remainder = divmod(len(data) * percentile, 100)
 
-            low = max(1, int(math.ceil(k)))
-            high = min(len(data), int(math.floor(k + 1)))
+            low = max(1, quotient + bool(remainder))
+            high = min(len(data), quotient + 1)
 
             # No remainder
             if low == high:
