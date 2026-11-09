@@ -371,7 +371,7 @@ class TestDateTime(unittest.TestCase):
         ))
 
     def test_cast_parser_timezone(self):
-        tzinfo = ZoneInfo('US/Pacific')
+        tzinfo = ZoneInfo('America/Los_Angeles')
         datetime_type = DateTime(timezone=tzinfo)
 
         values = ('3/1/1994 12:30 PM', '2/17/2011 06:30', None, 'January 5th, 1984 22:37', 'n/a')

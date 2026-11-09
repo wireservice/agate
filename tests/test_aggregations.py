@@ -364,7 +364,7 @@ class TestNumberAggregation(unittest.TestCase):
             with self.assertRaises(NullCalculationWarning):
                 Mode('one').validate(self.table)
 
-            with self.assertRaises(DataTypeError):
+            with self.assertRaisesRegex(DataTypeError, 'Mode'):
                 Mode('three').validate(self.table)
 
         warnings.simplefilter('ignore')
