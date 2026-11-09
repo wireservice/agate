@@ -1,3 +1,5 @@
+from copy import copy
+
 from agate import utils
 from agate.rows import Row
 from agate.type_tester import TypeTester
@@ -82,7 +84,7 @@ def normalize(self, key, properties, property_column='property', value_column='v
     key_column_types = [self._column_types[self._column_names.index(name)] for name in key]
 
     if column_types is None or isinstance(column_types, TypeTester):
-        tester = TypeTester() if column_types is None else column_types
+        tester = TypeTester() if column_types is None else copy(column_types)
         force_update = dict(zip(key, key_column_types))
         force_update.update(tester._force)
         tester._force = force_update

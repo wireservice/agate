@@ -63,6 +63,19 @@ class TestNormalize(AgateTestCase):
         self.assertColumnNames(normalized_table, ['one', 'property', 'value'])
         self.assertColumnTypes(normalized_table, [Number, Text, Text])
 
+    def test_normalize_reuses_type_tester(self):
+        tester = TypeTester()
+        force = tester._force
+        text_table = Table([('10', 2)], ['key', 'amount'], [Text(), Number()])
+        number_table = Table([(10, 2)], ['key', 'amount'], [Number(), Number()])
+
+        text_table.normalize('key', 'amount', column_types=tester)
+        result = number_table.normalize('key', 'amount', column_types=tester)
+
+        self.assertIsInstance(result.columns['key'].data_type, Number)
+        self.assertIs(tester._force, force)
+        self.assertEqual(tester._force, {})
+
     def test_normalize_multiple_fields(self):
         table = Table(self.rows, self.column_names, self.column_types)
 

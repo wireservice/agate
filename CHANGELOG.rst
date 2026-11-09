@@ -12,6 +12,8 @@
 - fix: :meth:`.Table.join`, if the right table has any columns with values identical to the ``right_key`` column, omits the ``right_key`` column from the output, instead of the first of the identical columns.
 - fix: :meth:`.Table.join`, with ``require_match=True`` and a composite key, raises a ``ValueError`` for an unmatched key, instead of a ``TypeError``.
 
+- fix: :meth:`.Table.normalize` no longer changes a supplied :class:`.TypeTester`.
+
 1.14.2 - February 27, 2026
 --------------------------
 
