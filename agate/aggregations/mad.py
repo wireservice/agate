@@ -39,4 +39,4 @@ class MAD(Aggregation):
         data = column.values_without_nulls_sorted()
         if data:
             m = self._median.run(table)
-            return median(tuple(abs(n - m) for n in data))
+            return median(sorted(abs(n - m) for n in data))
