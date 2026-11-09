@@ -1,3 +1,4 @@
+import html
 import math
 import sys
 
@@ -116,9 +117,9 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
         for j, d in enumerate(formatted_row):
             # Text is left-justified, all other values are right-justified
             if isinstance(self._column_types[j], Text):
-                write('<td style="text-align: left;">%s</td>' % d)
+                write('<td style="text-align: left;">%s</td>' % html.escape(d))
             else:
-                write('<td style="text-align: right;">%s</td>' % d)
+                write('<td style="text-align: right;">%s</td>' % html.escape(d))
 
         write('</tr>')
 
@@ -128,7 +129,7 @@ def print_html(self, max_rows=20, max_columns=6, output=sys.stdout, max_column_w
     write('<tr>')
 
     for i, col in enumerate(column_names):
-        write('<th>%s</th>' % col)
+        write('<th>%s</th>' % html.escape(col))
 
     write('</tr>')
     write('</thead>')
