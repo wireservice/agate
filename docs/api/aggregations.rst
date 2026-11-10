@@ -20,6 +20,7 @@ Basic aggregations
     agate.All
     agate.Any
     agate.Count
+agate.First
     agate.HasNulls
     agate.Min
     agate.Max
@@ -62,6 +63,7 @@ Detailed list
 .. autoclass:: agate.Any
 .. autoclass:: agate.Count
 .. autoclass:: agate.Deciles
+.. autoclass:: agate.First
 .. autoclass:: agate.HasNulls
 .. autoclass:: agate.IQR
 .. autoclass:: agate.MAD
