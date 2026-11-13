@@ -175,7 +175,22 @@ def round_limits(minimum, maximum):
     to one higher than the first significant digit shared by both.
 
     See unit tests for examples.
+
+    :param minimum:
+        The minimum value to round.
+    :param maximum:
+        The maximum value to round.
+    :raises ValueError:
+        If either limit is null or not a finite number, for instance when
+        the underlying column contains only null values, or contains NaN
+        or infinity values.
     """
+    for name, limit in (('minimum', minimum), ('maximum', maximum)):
+        if limit is None or not limit.is_finite():
+            raise ValueError(
+                'Can not round %s limit: %s is not a finite number.' % (name, limit)
+            )
+
     min_bits = minimum.normalize().as_tuple()
     max_bits = maximum.normalize().as_tuple()
 

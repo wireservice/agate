@@ -178,6 +178,9 @@ def print_bars(self, label_column_name='group', value_column_name='Count', domai
     # Bars
     for i, label in enumerate(formatted_labels):
         value = value_column[i]
+        if isinstance(value, Decimal) and value.is_nan():
+            # NaN can not be ordered or plotted; treat it like a null value
+            value = None
         if value == 0 or value is None:
             bar_width = 0
         elif value > 0:

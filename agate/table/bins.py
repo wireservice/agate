@@ -89,6 +89,10 @@ def bins(self, column_name, count=10, start=None, end=None):
         if value is None:
             return None
 
+        if isinstance(value, Decimal) and not value.is_finite():
+            # NaN and infinity can not be placed in a numeric bin
+            return None
+
         i = 1
 
         try:
