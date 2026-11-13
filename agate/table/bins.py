@@ -36,8 +36,8 @@ def bins(self, column_name, count=10, start=None, end=None):
         Max(column_name).run(self)
     )
     # Infer bin start/end positions
-    start = minimum if not start else Decimal(start)
-    end = maximum if not end else Decimal(end)
+    start = minimum if start is None else Decimal(start)
+    end = maximum if end is None else Decimal(end)
 
     # Calculate bin size
     spread = abs(end - start)

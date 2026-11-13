@@ -95,6 +95,18 @@ class TestBins(AgateTestCase):
         self.assertSequenceEqual(table_one.rows[0], ['[0 - 2)', 20])
         self.assertSequenceEqual(table_two.rows[8], ['[8 - 10]', 20])
 
+    def test_bins_zero_start_end(self):
+        positive = [[i] for i in range(50, 100)]
+        negative = [[i] for i in range(-90, -40)]
+
+        table_one = Table(positive, self.column_names, self.column_types).bins('number', 10, start=0, end=100)
+        table_two = Table(negative, self.column_names, self.column_types).bins('number', 10, start=-100, end=0)
+
+        self.assertSequenceEqual(table_one.rows[0], ['[50 - 60)', 10])
+        self.assertSequenceEqual(table_one.rows[4], ['[90 - 100]', 10])
+        self.assertSequenceEqual(table_two.rows[0], ['[-90 - -80)', 10])
+        self.assertSequenceEqual(table_two.rows[4], ['[-50 - -40)', 10])
+
     def test_bins_decimals(self):
         rows = []
 
