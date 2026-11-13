@@ -4,6 +4,8 @@ from babel.numbers import format_decimal
 
 from agate import utils
 from agate.aggregations import Max, Min
+from agate.data_types import Number
+from agate.exceptions import DataTypeError
 
 
 def bins(self, column_name, count=10, start=None, end=None):
@@ -31,10 +33,18 @@ def bins(self, column_name, count=10, start=None, end=None):
     :returns:
         A new :class:`Table`.
     """
-    minimum, maximum = utils.round_limits(
-        Min(column_name).run(self),
-        Max(column_name).run(self)
-    )
+    column = self.columns[column_name]
+    if not isinstance(column.data_type, Number):
+        raise DataTypeError('Bins can only be applied to columns containing Number data.')
+
+    minimum = Min(column_name).run(self)
+    maximum = Max(column_name).run(self)
+
+    # All-null / empty Number columns have no limits to round.
+    if minimum is None or maximum is None:
+        return self.pivot(lambda row: None, key_name=column_name)
+
+    minimum, maximum = utils.round_limits(minimum, maximum)
     # Infer bin start/end positions
     start = minimum if not start else Decimal(start)
     end = maximum if not end else Decimal(end)
