@@ -496,3 +496,12 @@ class TestTimeDelta(unittest.TestCase):
     def test_cast_error(self):
         with self.assertRaises(CastError):
             self.type.cast('quack')
+
+    def test_cast_error_message(self):
+        with self.assertRaises(CastError) as context:
+            self.type.cast('quack')
+
+        self.assertEqual(
+            str(context.exception),
+            'Can not parse value "quack" as timedelta.'
+        )

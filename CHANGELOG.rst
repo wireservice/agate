@@ -1,6 +1,8 @@
 1.14.3 - Unreleased
 -------------------
 
+- fix: :meth:`.Table.bins` raises a ``DataTypeError`` when the column is not a :class:`.Number` column, instead of an ``AttributeError``.
+- fix: :class:`.TimeDelta` cast error messages no longer contain a stray ``to``.
 - feat: :class:`.Median`, :class:`.Percentiles`, :class:`.Quartiles`, :class:`.Quintiles`, :class:`.Deciles` and :class:`.IQR` can be applied to :class:`.TimeDelta` columns, like :class:`.Sum` and :class:`.Mean`.
 - fix: :meth:`.Table.distinct` now deduplicates rows when ``key`` is a sequence of column names.
 - fix: :class:`.Rank` ranks null values last when ``reverse=True``.
