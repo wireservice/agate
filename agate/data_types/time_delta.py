@@ -35,6 +35,6 @@ class TimeDelta(DataType):
             seconds = None
 
         if seconds is None:
-            raise CastError('Can not parse value "%s" to as timedelta.' % d)
+            raise CastError('Can not parse value "%s" as timedelta.' % d)
 
         return datetime.timedelta(seconds=seconds)

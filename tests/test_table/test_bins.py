@@ -3,7 +3,8 @@ from decimal import Decimal
 from babel.numbers import get_decimal_symbol
 
 from agate import Table
-from agate.data_types import Number, Text
+from agate.data_types import Number, Text, TimeDelta
+from agate.exceptions import DataTypeError
 from agate.testcase import AgateTestCase
 
 
@@ -145,3 +146,13 @@ class TestBins(AgateTestCase):
             ['[0' + get_decimal_symbol() + '9 - 1' + get_decimal_symbol() + '0]', 10]
         )
         self.assertSequenceEqual(new_table.rows[10], [None, 1])
+
+    def test_bins_non_number_column(self):
+        table = Table(
+            [['0:30:00'], ['2:00:00'], ['5:00:00']],
+            ['when'],
+            [TimeDelta()]
+        )
+
+        with self.assertRaises(DataTypeError):
+            table.bins('when')
