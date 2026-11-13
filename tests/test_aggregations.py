@@ -200,6 +200,33 @@ class TestDateTimeAggregation(unittest.TestCase):
     def test_min_all_nulls(self):
         self.assertIsNone(Min('null').run(self.table))
 
+    def test_min_skips_nan(self):
+        rows = [
+            (Decimal('NaN'),),
+            (Decimal('1'),),
+            (Decimal('2'),),
+        ]
+        table = Table(rows, ['number'], [Number()])
+        self.assertEqual(Min('number').run(table), Decimal('1'))
+
+    def test_max_skips_nan(self):
+        rows = [
+            (Decimal('NaN'),),
+            (Decimal('1'),),
+            (Decimal('2'),),
+        ]
+        table = Table(rows, ['number'], [Number()])
+        self.assertEqual(Max('number').run(table), Decimal('2'))
+
+    def test_max_keeps_infinity(self):
+        rows = [
+            (Decimal('Infinity'),),
+            (Decimal('1'),),
+            (Decimal('2'),),
+        ]
+        table = Table(rows, ['number'], [Number()])
+        self.assertEqual(Max('number').run(table), Decimal('Infinity'))
+
     def test_min_time_delta(self):
         self.assertIsInstance(Min('test').get_aggregate_data_type(self.time_delta_table), TimeDelta)
         Min('test').validate(self.time_delta_table)

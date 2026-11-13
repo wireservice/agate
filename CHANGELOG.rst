@@ -1,6 +1,9 @@
 1.14.3 - Unreleased
 -------------------
 
+- fix: :class:`.Min` and :class:`.Max` skip NaN values, instead of raising a ``decimal.InvalidOperation``.
+- fix: :meth:`.Table.bins` assigns NaN values to the null bin, like null values, and raises a ``ValueError`` with a clear message if the column limits are not finite numbers (for example, if the column contains only NaN or infinity values).
+- fix: :meth:`.Table.print_bars` treats NaN values like null values, instead of raising a ``decimal.InvalidOperation``, and raises a ``ValueError`` with a clear message if the column limits are not finite numbers.
 - feat: :class:`.Median`, :class:`.Percentiles`, :class:`.Quartiles`, :class:`.Quintiles`, :class:`.Deciles` and :class:`.IQR` can be applied to :class:`.TimeDelta` columns, like :class:`.Sum` and :class:`.Mean`.
 - fix: :meth:`.Table.distinct` now deduplicates rows when ``key`` is a sequence of column names.
 - fix: :class:`.Rank` ranks null values last when ``reverse=True``.

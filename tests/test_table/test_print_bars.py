@@ -63,6 +63,29 @@ class TestPrintBars(AgateTestCase):
         with self.assertRaises(ValueError):
             table.print_bars('three', 'one', domain=(5, 0))
 
+    def test_print_bars_nan(self):
+        rows = (
+            ('NaN', 2, 'a'),
+            ('1', None, None),
+            ('2', 1, 'c')
+        )
+        table = Table(rows, self.column_names, self.column_types)
+
+        output = StringIO()
+        table.print_bars('three', 'one', output=output)
+        self.assertIn('NaN', output.getvalue())
+
+    def test_print_bars_infinity(self):
+        rows = (
+            ('Infinity', 2, 'a'),
+            ('1', None, None),
+            ('2', 1, 'c')
+        )
+        table = Table(rows, self.column_names, self.column_types)
+
+        with self.assertRaises(ValueError):
+            table.print_bars('three', 'one')
+
     def test_print_bars_negative(self):
         rows = (
             ('-1.7', 2, 'a'),

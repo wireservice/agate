@@ -145,3 +145,50 @@ class TestBins(AgateTestCase):
             ['[0' + get_decimal_symbol() + '9 - 1' + get_decimal_symbol() + '0]', 10]
         )
         self.assertSequenceEqual(new_table.rows[10], [None, 1])
+
+    def test_bins_nan(self):
+        rows = [
+            [Decimal('NaN')],
+            [Decimal('1')],
+            [Decimal('2')],
+        ]
+
+        new_table = Table(rows, self.column_names, self.column_types).bins('number')
+
+        self.assertColumnNames(new_table, ['number', 'Count'])
+        self.assertColumnTypes(new_table, [Text, Number])
+
+        # the finite values are binned; NaN rows are counted as null
+        counts = dict(zip(new_table.columns['number'].values(), new_table.columns['Count'].values()))
+        self.assertIn(None, counts)
+        self.assertEqual(counts[None], 1)
+        self.assertEqual(sum(v for k, v in counts.items() if k is not None), 2)
+
+    def test_bins_nan_only(self):
+        rows = [
+            [Decimal('NaN')],
+            [Decimal('NaN')],
+        ]
+
+        with self.assertRaises(ValueError):
+            Table(rows, self.column_names, self.column_types).bins('number')
+
+    def test_bins_infinity(self):
+        rows = [
+            [Decimal('Infinity')],
+            [Decimal('1')],
+            [Decimal('2')],
+        ]
+
+        with self.assertRaises(ValueError):
+            Table(rows, self.column_names, self.column_types).bins('number')
+
+    def test_bins_negative_infinity(self):
+        rows = [
+            [Decimal('-Infinity')],
+            [Decimal('1')],
+            [Decimal('2')],
+        ]
+
+        with self.assertRaises(ValueError):
+            Table(rows, self.column_names, self.column_types).bins('number')

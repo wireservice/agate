@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from agate.aggregations.base import Aggregation
 from agate.data_types import Date, DateTime, Number, TimeDelta
 from agate.exceptions import DataTypeError
@@ -31,6 +33,9 @@ class Max(Aggregation):
     def run(self, table):
         column = table.columns[self._column_name]
 
-        data = column.values_without_nulls()
+        data = [
+            d for d in column.values_without_nulls()
+            if not isinstance(d, Decimal) or not d.is_nan()
+        ]
         if data:
             return max(data)
