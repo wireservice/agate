@@ -37,7 +37,7 @@ class Variance(Aggregation):
         column = table.columns[self._column_name]
 
         data = column.values_without_nulls()
-        if data:
+        if len(data) > 1:
             mean = self._mean.run(table)
             return sum((n - mean) ** 2 for n in data) / (len(data) - 1)
 
