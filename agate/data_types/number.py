@@ -109,7 +109,7 @@ class Number(DataType):
         return d
 
     def jsonify(self, d):
-        if d is None:
-            return d
+        if d is None or not d.is_finite():
+            return None
 
         return float(d)
