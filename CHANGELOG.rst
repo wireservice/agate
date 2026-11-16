@@ -11,6 +11,7 @@
 - fix: :meth:`.Table.join` accepts ``right_key`` as a sequence containing column indices, like ``[0, 1]``. Previously, it raised a ``ValueError``.
 - fix: :meth:`.Table.join`, if the right table has any columns with values identical to the ``right_key`` column, omits the ``right_key`` column from the output, instead of the first of the identical columns.
 - fix: :meth:`.Table.join`, with ``require_match=True`` and a composite key, raises a ``ValueError`` for an unmatched key, instead of a ``TypeError``.
+- fix: :meth:`.Table.to_json` serializes a non-finite number (``Infinity``, ``-Infinity`` or ``NaN``) as ``null``, instead of as an invalid JSON token that standard JSON parsers reject.
 
 1.14.2 - February 27, 2026
 --------------------------

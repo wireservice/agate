@@ -164,3 +164,27 @@ class TestJSON(AgateTestCase):
             self.assertEqual(js1, js2)
         finally:
             sys.stdout = old
+
+    def test_to_json_non_finite_numbers(self):
+        # Infinity and NaN are not valid JSON, so they must be serialized as null.
+        rows = (
+            (Decimal('Infinity'),),
+            (Decimal('-Infinity'),),
+            (Decimal('NaN'),),
+            (Decimal('1.5'),),
+        )
+
+        table = Table(rows, ['value'], [Number()])
+
+        output = StringIO()
+        table.to_json(output)
+
+        text = output.getvalue()
+        self.assertNotIn('Infinity', text)
+        self.assertNotIn('NaN', text)
+        self.assertEqual(json.loads(text), [
+            {'value': None},
+            {'value': None},
+            {'value': None},
+            {'value': 1.5},
+        ])
