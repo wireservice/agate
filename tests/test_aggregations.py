@@ -513,6 +513,17 @@ class TestNumberAggregation(unittest.TestCase):
     def test_stdev_all_nulls(self):
         self.assertIsNone(StDev('four').run(self.table))
 
+    def test_variance_single_value(self):
+        # The sample variance is undefined for a single value, so Variance and
+        # StDev return null, like a column with no values, instead of raising a
+        # decimal.InvalidOperation error. The population statistics are 0.
+        table = Table([(5,)], ['value'], [Number()])
+
+        self.assertIsNone(Variance('value').run(table))
+        self.assertIsNone(StDev('value').run(table))
+        self.assertEqual(PopulationVariance('value').run(table), Decimal('0'))
+        self.assertEqual(PopulationStDev('value').run(table), Decimal('0'))
+
     def test_population_stdev(self):
         with warnings.catch_warnings():
             warnings.simplefilter('error')

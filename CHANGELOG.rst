@@ -11,6 +11,7 @@
 - fix: :meth:`.Table.join` accepts ``right_key`` as a sequence containing column indices, like ``[0, 1]``. Previously, it raised a ``ValueError``.
 - fix: :meth:`.Table.join`, if the right table has any columns with values identical to the ``right_key`` column, omits the ``right_key`` column from the output, instead of the first of the identical columns.
 - fix: :meth:`.Table.join`, with ``require_match=True`` and a composite key, raises a ``ValueError`` for an unmatched key, instead of a ``TypeError``.
+- fix: :class:`.Variance` and :class:`.StDev` return ``null`` for a column with a single value, like a column with no values, instead of raising a ``decimal.InvalidOperation`` error. The sample variance is undefined for one data point.
 
 1.14.2 - February 27, 2026
 --------------------------
