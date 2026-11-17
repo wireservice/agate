@@ -242,6 +242,17 @@ class TestTableComputation(unittest.TestCase):
         self.assertEqual(to_one_place(new_table.columns['test'][2]), Decimal('100.0'))
         self.assertEqual(to_one_place(new_table.columns['test'][3]), Decimal('33.3'))
 
+    def test_percent_change_zero_before(self):
+        table = Table([(0, 5), (0, 0), (2, 3)], ['before', 'after'], [Number(), Number()])
+
+        new_table = table.compute([
+            ('test', PercentChange('before', 'after'))
+        ])
+
+        self.assertIsNone(new_table.columns['test'][0])
+        self.assertIsNone(new_table.columns['test'][1])
+        self.assertEqual(new_table.columns['test'][2], Decimal('50'))
+
     def test_percent_change_invalid_columns(self):
         with self.assertRaises(DataTypeError):
             self.table.compute([

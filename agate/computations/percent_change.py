@@ -9,6 +9,9 @@ class PercentChange(Computation):
     """
     Calculate the percent difference between two columns.
 
+    The result is null for a row whose "before" value is zero, because the
+    percent change is undefined.
+
     :param before_column_name:
         The name of a column containing the "before" :class:`.Number` values.
     :param after_column_name:
@@ -48,7 +51,7 @@ class PercentChange(Computation):
             before = row[self._before_column_name]
             after = row[self._after_column_name]
 
-            if before is not None and after is not None:
+            if before is not None and after is not None and before != 0:
                 new_column.append((after - before) / before * 100)
             else:
                 new_column.append(None)
