@@ -93,3 +93,31 @@ class TestHomogenize(AgateTestCase):
         self.assertColumnNames(homogenized, self.column_names)
         self.assertColumnTypes(homogenized, [Number, Number, Text])
         self.assertRows(homogenized, rows)
+
+    def test_homogenize_single_column_generator(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+
+        def missing_values():
+            yield '2'
+            yield '3'
+            yield '3'
+
+        homogenized = table.homogenize('one', missing_values(), [5, 'd'])
+
+        self.assertCountEqual(
+            [tuple(row) for row in homogenized.rows],
+            self.rows + ((2, 5, 'd'), (3, 5, 'd'))
+        )
+        self.assertColumnTypes(homogenized, [Number, Number, Text])
+        self.assertRows(table, self.rows)
+
+    def test_homogenize_single_column_nested_generator(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        compare_values = ([value] for value in [2, 3])
+
+        homogenized = table.homogenize(['one'], compare_values)
+
+        self.assertCountEqual(
+            [tuple(row) for row in homogenized.rows],
+            self.rows + ((2, None, None), (3, None, None))
+        )

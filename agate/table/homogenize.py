@@ -47,6 +47,7 @@ def homogenize(self, key, compare_values, default_row=None):
         key = [key]
 
     if len(key) == 1:
+        compare_values = list(compare_values)
         if any(not utils.issequence(compare_value) for compare_value in compare_values):
             compare_values = [[compare_value] for compare_value in compare_values]
 
