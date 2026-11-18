@@ -484,6 +484,15 @@ class TestBasic(AgateTestCase):
         self.assertColumnTypes(new_table, [Number, Number, Text])
         self.assertRows(new_table, self.rows[-2:-1])
 
+    def test_limit_zero_stop(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        self.assertRows(table.limit(2, 0), [])
+
+    def test_limit_zero_step(self):
+        table = Table(self.rows, self.column_names, self.column_types)
+        with self.assertRaises(ValueError):
+            table.limit(2, step=0)
+
     def test_limit_step_only(self):
         table = Table(self.rows, self.column_names, self.column_types)
 

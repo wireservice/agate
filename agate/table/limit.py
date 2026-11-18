@@ -15,7 +15,7 @@ def limit(self, start_or_stop=None, stop=None, step=None):
     :returns:
         A new :class:`.Table`.
     """
-    if stop or step:
+    if stop is not None or step is not None:
         s = slice(start_or_stop, stop, step)
     else:
         s = slice(start_or_stop)
