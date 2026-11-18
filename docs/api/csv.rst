@@ -10,7 +10,7 @@ Agate methods will use these version automatically. If you would like to use the
 
     from agate import csv
 
-Due to nuanced differences between the versions, these classes are implemented seperately for Python 2 and Python 3. The documentation for both versions is provided below, but only the one for your version of Python is imported with the above code.
+Due to nuanced differences between the versions, these classes are implemented separately for Python 2 and Python 3. The documentation for both versions is provided below, but only the one for your version of Python is imported with the above code.
 
 Python 3
 --------
