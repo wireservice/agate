@@ -23,6 +23,14 @@ Mathematical computations
     agate.PercentileRank
     agate.Rank
 
+Text computations
+-----------------
+
+.. autosummary::
+    :nosignatures:
+
+    agate.Slug
+
 Detailed list
 -------------
 

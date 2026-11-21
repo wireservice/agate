@@ -19,14 +19,30 @@ class Slug(Computation):
         Defaults to False.
     """
     def __init__(self, column_name, ensure_unique=False, **kwargs):
+        """
+        Store the column name(s) to slugify and the slugify options.
+
+        Extra keyword arguments are passed through to :func:`slugify` when
+        the computation runs.
+        """
         self._column_name = column_name
         self._ensure_unique = ensure_unique
         self._slug_args = kwargs
 
     def get_computed_data_type(self, table):
+        """
+        Return the :class:`.Text` data type of the computed column.
+        """
         return Text()
 
     def validate(self, table):
+        """
+        Verify the slug column(s) can be slugified.
+
+        Raises :class:`.DataTypeError` when a column does not contain
+        :class:`.Text` data and :class:`ValueError` when a column contains
+        nulls, since null values cannot be slugified.
+        """
         if issequence(self._column_name):
             column_names = self._column_name
         else:
