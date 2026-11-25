@@ -12,6 +12,7 @@ def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
 
     :param path:
         File path or file-like object to write to.
+        Files opened by this method use UTF-8 encoding.
     :param key:
         If specified, JSON will be output as an hash instead of a list. May
         be either the name of a column from the this table containing
@@ -51,7 +52,7 @@ def to_json(self, path, key=None, newline=False, indent=None, **kwargs):
         else:
             if os.path.dirname(path) and not os.path.exists(os.path.dirname(path)):
                 os.makedirs(os.path.dirname(path))
-            f = open(path, 'w')
+            f = open(path, 'w', encoding='utf-8')
 
         def dump_json(data):
             json.dump(data, f, **json_kwargs)
