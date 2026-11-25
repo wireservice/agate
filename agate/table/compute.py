@@ -10,14 +10,15 @@ def compute(self, computations, replace=False):
     to each row.
 
     :param computations:
-        A sequence of pairs of new column names and :class:`.Computation`
-        instances.
+        An iterable of pairs of new column names and :class:`.Computation`
+        instances. Generators are accepted.
     :param replace:
         If :code:`True` then new column names can match existing names, and
         those columns will be replaced with the computed data.
     :returns:
         A new :class:`.Table`.
     """
+    computations = tuple(computations)
     column_names = list(copy(self._column_names))
     column_types = list(copy(self._column_types))
 
