@@ -147,9 +147,7 @@ class MappedSequence(Sequence):
         try:
             return self.dict()[key]
         except KeyError:
-            if default:
-                return default
-            return None
+            return default
 
     @memoize
     def dict(self):
