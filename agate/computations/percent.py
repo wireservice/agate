@@ -17,13 +17,27 @@ class Percent(Computation):
         default, the :class:`.Sum` of the values in the column will be used.
     """
     def __init__(self, column_name, total=None):
+        """
+        Store the column name and the optional total.
+        """
         self._column_name = column_name
         self._total = total
 
     def get_computed_data_type(self, table):
+        """
+        Return the :class:`.Number` data type of the computed column.
+        """
         return Number()
 
     def validate(self, table):
+        """
+        Verify the percent column can be computed.
+
+    Raises :class:`.DataTypeError` when the column does not contain
+    :class:`.Number` data, or when a given total is not a positive
+    number. Warns when the column contains nulls, since null values
+    are passed through as nulls.
+    """
         column = table.columns[self._column_name]
 
         if not isinstance(column.data_type, Number):
