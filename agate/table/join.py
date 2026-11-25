@@ -73,6 +73,8 @@ def join(self, right_table, left_key=None, right_key=None, inner=False, full_out
     :returns:
         A new :class:`.Table`.
     """
+    from agate.table import Table
+
     if inner and full_outer:
         raise ValueError('A join can not be both "inner" and "full_outer".')
 
@@ -207,5 +209,8 @@ def join(self, right_table, left_key=None, right_key=None, inner=False, full_out
             new_row = ([None] * len(self._columns)) + list(right_table.rows[right_index])
 
             rows.append(Row(new_row, column_names))
+
+    if full_outer:
+        return Table(rows, column_names, column_types, _is_fork=True)
 
     return self._fork(rows, column_names, column_types, row_names=row_names)
