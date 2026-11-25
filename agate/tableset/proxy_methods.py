@@ -1,3 +1,6 @@
+from collections import OrderedDict
+
+
 def bins(self, *args, **kwargs):
     """
     Calls :meth:`.Table.bins` on each table in the TableSet.
@@ -36,8 +39,11 @@ def exclude(self, *args, **kwargs):
 def find(self, *args, **kwargs):
     """
     Calls :meth:`.Table.find` on each table in the TableSet.
+
+    Returns an ordered dictionary of group keys to matching rows or
+    :code:`None`. Nested TableSets produce nested dictionaries.
     """
-    return self._proxy('find', *args, **kwargs)
+    return OrderedDict((key, table.find(*args, **kwargs)) for key, table in self.items())
 
 
 def group_by(self, *args, **kwargs):
