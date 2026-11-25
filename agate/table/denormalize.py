@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from copy import copy
 from decimal import Decimal
 
 from agate import utils
@@ -62,7 +63,8 @@ def denormalize(self, key=None, property_column='property', value_column='value'
     :param column_types:
         A sequence of column types with length equal to number of unique
         values in field_column or an instance of :class:`.TypeTester`.
-        Defaults to a generic :class:`.TypeTester`.
+        Defaults to a generic :class:`.TypeTester`. A supplied tester is not
+        modified when preserving key column types.
     :returns:
         A new :class:`.Table`.
     """
@@ -120,7 +122,7 @@ def denormalize(self, key=None, property_column='property', value_column='value'
     key_column_types = [self.column_types[self.column_names.index(name)] for name in key]
 
     if column_types is None or isinstance(column_types, TypeTester):
-        tester = TypeTester() if column_types is None else column_types
+        tester = TypeTester() if column_types is None else copy(column_types)
         force_update = dict(zip(key, key_column_types))
         force_update.update(tester._force)
         tester._force = force_update
