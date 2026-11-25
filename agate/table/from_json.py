@@ -38,6 +38,9 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
     if key is not None and newline:
         raise ValueError('key and newline may not be specified together.')
 
+    kwargs.setdefault('object_pairs_hook', OrderedDict)
+    kwargs.setdefault('parse_float', Decimal)
+
     close = False
 
     try:
@@ -46,21 +49,21 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
 
             if hasattr(path, 'read'):
                 for line in path:
-                    js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
+                    js.append(json.loads(line, **kwargs))
             else:
                 f = open(path, encoding=encoding)
                 close = True
 
                 for line in f:
-                    js.append(json.loads(line, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs))
+                    js.append(json.loads(line, **kwargs))
         else:
             if hasattr(path, 'read'):
-                js = json.load(path, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
+                js = json.load(path, **kwargs)
             else:
                 f = open(path, encoding=encoding)
                 close = True
 
-                js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
+                js = json.load(f, **kwargs)
 
         if isinstance(js, dict):
             if not key:
