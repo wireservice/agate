@@ -27,7 +27,8 @@ def homogenize(self, key, compare_values, default_row=None):
     values.
 
     :param key:
-        Either a column name or a sequence of such names.
+        Either a column name or a sequence of such names. The names may be
+        in any order; comparison values must follow the same order.
     :param compare_values:
         Either an array of column values if key is a single column name or a
         sequence of arrays of values if key is a sequence of names. It can
@@ -67,7 +68,7 @@ def homogenize(self, key, compare_values, default_row=None):
             else:
                 new_row = [None] * (len(self._column_names) - len(key))
 
-            for i, d in zip(column_indexes, difference):
+            for i, d in sorted(zip(column_indexes, difference)):
                 new_row.insert(i, d)
 
         new_row = [self._columns[i].data_type.cast(v) for i, v in enumerate(new_row)]
