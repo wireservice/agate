@@ -38,14 +38,13 @@ class Rank(Computation):
         column = table.columns[self._column_name]
 
         if self._comparer:
-            data_sorted = sorted(column.values(), key=cmp_to_key(self._comparer))
-            if self._reverse:
-                data_sorted.reverse()
+            non_nulls = sorted(column.values_without_nulls(), key=cmp_to_key(self._comparer))
         else:
             non_nulls = list(column.values_without_nulls_sorted())
-            if self._reverse:
-                non_nulls.reverse()
-            data_sorted = non_nulls + [None] * (len(column.values()) - len(non_nulls))
+
+        if self._reverse:
+            non_nulls.reverse()
+        data_sorted = non_nulls + [None] * (len(column.values()) - len(non_nulls))
 
         ranks = {}
         rank = 0
