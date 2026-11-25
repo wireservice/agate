@@ -7,7 +7,7 @@ from agate.rows import Row
 @classmethod
 def merge(cls, tables, row_names=None, column_names=None):
     """
-    Create a new table from a sequence of similar tables.
+    Create a new table from an iterable of similar tables.
 
     This method will not carry over row names from the merged tables, but new
     row names can be specified with the :code:`row_names` argument.
@@ -18,7 +18,7 @@ def merge(cls, tables, row_names=None, column_names=None):
     :code:`table.column_names`.
 
     :param tables:
-        An sequence of :class:`.Table` instances.
+        An iterable of :class:`.Table` instances, including generators.
     :param row_names:
         See :class:`.Table` for the usage of this parameter.
     :param column_names:
@@ -29,6 +29,7 @@ def merge(cls, tables, row_names=None, column_names=None):
     """
     from agate.table import Table
 
+    tables = tuple(tables)
     new_columns = OrderedDict()
 
     for table in tables:
