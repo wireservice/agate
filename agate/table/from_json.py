@@ -63,7 +63,7 @@ def from_json(cls, path, row_names=None, key=None, newline=False, column_types=N
                 js = json.load(f, object_pairs_hook=OrderedDict, parse_float=Decimal, **kwargs)
 
         if isinstance(js, dict):
-            if not key:
+            if key is None:
                 raise TypeError(
                     'When converting a JSON document with a top-level dictionary element, a key must be specified.'
                 )
