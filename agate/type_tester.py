@@ -44,7 +44,8 @@ class TypeTester:
         An optional limit on how many rows to evaluate before selecting the
         most likely type. Note that applying a limit may mean errors arise when
         the data is cast--if the guess is proved incorrect in further rows of
-        data.
+        data. A limit of zero disables inference and uses :class:`.Text` for
+        columns without a forced type.
     :param types:
         A sequence of possible types to test against. This be used to specify
         what data formats you want to test against. For instance, you may want
@@ -95,7 +96,7 @@ class TypeTester:
             sample_rows = rows[:self._limit]
         elif self._limit == 0:
             text = Text()
-            return tuple([text] * num_columns)
+            return tuple(self._force.get(name, text) for name in column_names)
         else:
             sample_rows = rows
 
