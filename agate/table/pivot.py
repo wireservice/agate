@@ -39,6 +39,9 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
     If one or more keys are specified then the resulting table will
     automatically have :code:`row_names` set to those keys.
 
+    If both :code:`key` and :code:`pivot` are omitted, the result is a
+    single-row, single-column table containing the aggregate of all rows.
+
     See also the related method :meth:`.Table.denormalize`.
 
     :param key:
@@ -75,6 +78,8 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
     :returns:
         A new :class:`.Table`.
     """
+    from agate.table import Table
+
     if key is None:
         key = []
     elif not utils.issequence(key):
@@ -125,6 +130,12 @@ def pivot(self, key=None, pivot=None, aggregation=None, computation=None, defaul
         table = groups.aggregate([
             (aggregation_name, aggregation)
         ])
+
+        if groups is self:
+            table = Table(
+                [[table[aggregation_name]]], [aggregation_name],
+                [aggregation.get_aggregate_data_type(self)]
+            )
 
         if computation:
             table = apply_computation(table)
