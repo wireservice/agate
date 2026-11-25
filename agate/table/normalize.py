@@ -59,6 +59,8 @@ def normalize(self, key, properties, property_column='property', value_column='v
 
     if not utils.issequence(key):
         key = [key]
+    else:
+        key = list(key)
 
     if not utils.issequence(properties):
         properties = [properties]

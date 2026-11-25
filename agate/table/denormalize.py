@@ -72,6 +72,8 @@ def denormalize(self, key=None, property_column='property', value_column='value'
         key = []
     elif not utils.issequence(key):
         key = [key]
+    else:
+        key = list(key)
 
     field_names = []
     row_data = OrderedDict()
