@@ -14,6 +14,9 @@ def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwar
     single JSON object with key value (Table key and list of row objects)
     pairs for each :class:`Table`.
 
+    For a directory, table keys are the filenames with only the final
+    ``.json`` extension removed.
+
     See :meth:`.Table.from_json` for additional details.
 
     :param path:
@@ -39,7 +42,7 @@ def from_json(cls, path, column_names=None, column_types=None, keys=None, **kwar
             raise ValueError('If specified, keys must have length equal to number of JSON files')
 
         for i, filepath in enumerate(filepaths):
-            name = os.path.split(filepath)[1].strip('.json')
+            name = os.path.splitext(os.path.basename(filepath))[0]
 
             if keys is not None:
                 tables[name] = Table.from_json(filepath, keys[i], column_types=column_types, **kwargs)
