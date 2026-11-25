@@ -140,6 +140,8 @@ def join(self, right_table, left_key=None, right_key=None, inner=False, full_out
 
         column_types.append(column.data_type)
 
+    column_names = utils.deduplicate(column_names, column_names=True)
+
     if columns is not None and not full_outer:
         right_table = right_table.select([n for n in right_table._column_names if n in columns])
 
