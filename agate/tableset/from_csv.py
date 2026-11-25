@@ -10,6 +10,8 @@ def from_csv(cls, dir_path, column_names=None, column_types=None, row_names=None
     """
     Create a new :class:`TableSet` from a directory of CSVs.
 
+    Table keys are the filenames with only the final ``.csv`` extension removed.
+
     See :meth:`.Table.from_csv` for additional details.
 
     :param dir_path:
@@ -32,7 +34,7 @@ def from_csv(cls, dir_path, column_names=None, column_types=None, row_names=None
     tables = OrderedDict()
 
     for path in glob(os.path.join(dir_path, '*.csv')):
-        name = os.path.split(path)[1].strip('.csv')
+        name = os.path.splitext(os.path.basename(path))[0]
 
         tables[name] = Table.from_csv(path, column_names, column_types, row_names=row_names, header=header, **kwargs)
 
