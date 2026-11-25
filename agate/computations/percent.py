@@ -42,7 +42,7 @@ class Percent(Computation):
         """
         # If the user has provided a total, use that
         if self._total is not None:
-            total = self._total
+            total = Number().cast(self._total)
         # Otherwise compute the sum of all the values in that column to
         # act as our denominator
         else:
