@@ -30,7 +30,7 @@ class MappedSequence(Sequence):
         self._values = tuple(values)
 
         if keys is not None:
-            self._keys = keys
+            self._keys = tuple(keys)
         else:
             self._keys = None
 
