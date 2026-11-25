@@ -37,6 +37,8 @@ def from_object(cls, obj, row_names=None, column_types=None):
 
     Column names and types will be inferred from the data.
 
+    Leading and trailing slashes in object keys are preserved in column names.
+
     Not all rows are required to have the same keys. Missing elements will
     be filled in with null values.
 

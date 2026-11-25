@@ -231,7 +231,7 @@ def parse_object(obj, path=''):
     elif isinstance(obj, (list, tuple)):
         iterator = enumerate(obj)
     else:
-        return {path.strip('/'): obj}
+        return {path[:-1] if path.endswith('/') else path: obj}
 
     d = OrderedDict()
 
