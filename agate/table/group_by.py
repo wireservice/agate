@@ -39,7 +39,7 @@ def group_by(self, key, key_name=None, key_type=None):
 
     groups = OrderedDict()
 
-    for row in self._rows:
+    for i, row in enumerate(self._rows):
         if key_is_row_function:
             group_name = key(row)
         else:
@@ -50,14 +50,16 @@ def group_by(self, key, key_name=None, key_type=None):
         if group_name not in groups:
             groups[group_name] = []
 
-        groups[group_name].append(row)
+        groups[group_name].append(i)
 
     if not groups:
         return TableSet([self._fork([])], [], key_name=key_name, key_type=key_type)
 
     output = OrderedDict()
 
-    for group, rows in groups.items():
-        output[group] = self._fork(rows)
+    for group, indices in groups.items():
+        rows = [self._rows[i] for i in indices]
+        row_names = None if self._row_names is None else [self._row_names[i] for i in indices]
+        output[group] = self._fork(rows, row_names=row_names)
 
     return TableSet(output.values(), output.keys(), key_name=key_name, key_type=key_type)
