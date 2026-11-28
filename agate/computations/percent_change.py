@@ -15,13 +15,26 @@ class PercentChange(Computation):
         The name of a column containing the "after" :class:`.Number` values.
     """
     def __init__(self, before_column_name, after_column_name):
+        """
+        Store the names of the before and after columns.
+        """
         self._before_column_name = before_column_name
         self._after_column_name = after_column_name
 
     def get_computed_data_type(self, table):
+        """
+        Return the :class:`.Number` data type of the computed column.
+        """
         return Number()
 
     def validate(self, table):
+        """
+        Verify the percent change can be computed.
+
+        Raises :class:`.DataTypeError` when either column does not contain
+        :class:`.Number` data. Warns when either column contains nulls,
+        since null values are passed through as nulls.
+        """
         before_column = table.columns[self._before_column_name]
         after_column = table.columns[self._after_column_name]
 
